@@ -40,6 +40,7 @@ export const axiosHelper = async ({
         method,
         headers,
         data: method === 'POST' && payload,
+        params: method === 'GET' && payload
     };
 
     try {

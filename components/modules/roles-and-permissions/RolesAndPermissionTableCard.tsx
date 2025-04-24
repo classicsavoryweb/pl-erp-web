@@ -7,20 +7,27 @@ import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 
 const RolesAndPermissionTableCard = () => {
 
     const roles = useApiCall();
+    const paginator = usePagination();
 
     useAsyncEffect(() => {
         roles.setLoading(true);
-        getAllRolesAndPermissions()
+        getAllRolesAndPermissions({
+            page: paginator.page,
+            per_page: paginator.per_page
+        })
         .then((resp) => {
             if (resp.error) {
                 toast.error("Error fetching roles and permissions");
             } else {
                 roles.setDataSet(resp.data.data);
+                paginator.setPage(resp.data.current_page);
+                paginator.setPaginationData(resp.data);
             }
         })
         .catch(() => {
@@ -29,7 +36,7 @@ const RolesAndPermissionTableCard = () => {
         .finally(() => {
             roles.setLoading(false);
         });
-    }, []);
+    }, [paginator.reload, roles.reload]);
 
     const columnSettings = [
         {
@@ -59,6 +66,8 @@ const RolesAndPermissionTableCard = () => {
             <Table
                 dataSet={roles.dataSet}
                 columnSettings={columnSettings}
+                loading={roles.loading}
+                paginator={paginator}
             />
         </Card>
     );

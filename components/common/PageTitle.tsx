@@ -3,14 +3,12 @@ interface TitleInterface {
     title: string;
 };
 
-import Head from 'next/head';
-
 const PageTitle = ({
     title
 }: TitleInterface) => {
     return (
         <>
-            <p className="text-xl font-semibold text-gray-500">
+            <p className="text-xl font-semibold text-gray-500 py-3">
                 {title}
             </p>
         </>

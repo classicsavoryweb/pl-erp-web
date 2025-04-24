@@ -1,6 +1,7 @@
 "use client";
 import { COLUMNTYPES } from "@/constants/column";
 import _ from "lodash";
+import TableLoader from "./TableLoader";
 
 interface columnSetting {
     columnHead: string;
@@ -13,17 +14,23 @@ interface TableInterface {
     dataSet: any[];
     columnSettings: columnSetting[];
     dataKey?: string;
+    loading?: boolean;
+    withActions?: boolean;
+    paginator?: any;
 };
 
 const Table = ({
     dataSet = [],
     columnSettings,
     dataKey = "id",
+    loading = false,
+    withActions = false,
+    paginator
 }: TableInterface) => {
 
     return (
         <div className="relative my-2 w-full overflow-hidden overflow-x-auto">
-            <table className="w-full border border-collapse border-slate-400 rounded-md min-w-[1000px]">
+            <table className="w-full rounded-md min-w-[1000px]">
                 <thead className="bg-gray-100">
                     <tr>
                         {
@@ -39,9 +46,12 @@ const Table = ({
                         }
                     </tr>
                 </thead>
-
                 <tbody>
-                        { dataSet.map((data, idx) => {
+                        { loading
+                            ?
+                                <tr><td colSpan={withActions ? columnSettings.length + 1 : columnSettings.length} className="w-full p-2"><TableLoader/></td></tr>
+                            :
+                            dataSet.map((data, idx) => {
                             return (
                                 <tr key={idx}>
                                     {
@@ -68,6 +78,44 @@ const Table = ({
                         } 
                 </tbody>
             </table>
+            { !loading && dataSet.length > 0 &&
+                <div
+                    className="w-full flex justify-between items-center pt-2 text-gray-700"
+                >
+                    <p>Showing records {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
+
+                    <div className="flex gap-x-1 justify-end items-center">
+                        { paginator.paginationData.links.map((link: any, key: number) => {
+                            if (link.url) {
+                                return (
+                                    <button
+                                        key={key}
+                                        className={`
+                                            px-2
+                                            ${link.active ? "bg-red-500 text-slate-50" : "bg-red-200 hover:bg-red-500 hover:text-slate-50 hover:cursor-pointer"}
+                                        `}
+                                        onClick={() => {
+                                            if (!link.active) {
+                                                if (link.label === "Next &raquo;") {
+                                                    paginator.onClickSetPageNumber(paginator.paginationData.current_page + 1);
+                                                } else if (link.label === "&laquo; Previous") {
+                                                    paginator.onClickSetPageNumber(paginator.paginationData.current_page - 1);
+                                                } else {
+                                                    paginator.onClickSetPageNumber(Number(link.label));
+                                                }
+                                            }
+                                        }}
+                                    >
+                                        <span dangerouslySetInnerHTML={{ __html: link.label }} />
+                                    </button>
+                                )
+                            }
+                        })
+
+                        }
+                    </div>
+                </div>
+            }
         </div>
     );
 };

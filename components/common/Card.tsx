@@ -15,7 +15,7 @@ const Card = ({
     return (
         <Tag
             onSubmit={handleSubmit}
-            className="bg-white w-full my-2 p-4 rounded-md"
+            className="bg-zinc-50 w-full my-2 p-4 rounded-md"
         >
             {children}
         </Tag>
