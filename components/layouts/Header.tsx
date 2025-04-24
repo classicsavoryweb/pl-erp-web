@@ -53,7 +53,7 @@ const Header = () => {
             {toggle && (
                 <div className="absolute w-full bg-zinc-50 rounded-b-xl shadow-lg py-2 z-50 overflow-hidden">
                     <p
-                        className="px-4 py-2 text-gray-700 flex items-center hover:bg-gray-100 cursor-pointer"
+                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer"
                         onClick={() => {router.push("/change-password")}}
                     >
                         <LockOpenOutlinedIcon
@@ -63,7 +63,7 @@ const Header = () => {
                         Change Password
                     </p>
                     <p
-                        className="px-4 py-2 text-gray-700 flex items-center hover:bg-gray-100 cursor-pointer"
+                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer"
                         onClick={ async () => {
                             await logout();
                             Cookies.remove('authToken');

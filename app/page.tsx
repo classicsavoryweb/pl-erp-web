@@ -12,7 +12,7 @@ export default function Home() {
 			<PageTitle
 				title="Dashboard"
 			/>
-			<div className="grid grid-cols-3 gap-x-5 text-gray-500">
+			<div className="grid grid-cols-3 gap-x-5">
 				<Card>
 					<p className="text-md font-medium">Contractual Employees</p>
 					<p className="text-3xl text-red-600 font-medium">0</p>

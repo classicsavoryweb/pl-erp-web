@@ -45,7 +45,7 @@ const Textfield = ({
                 />
                 {isPassword && (
                     <div
-                        className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-slate-600"
+                        className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer"
                         onClick={() => setShowPassword(prev => !prev)}
                     >
                         {showPassword ? (

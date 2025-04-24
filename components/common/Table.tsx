@@ -60,7 +60,7 @@ const Table = ({
                                             return (
                                                 <td
                                                     key={key}
-                                                    className="p-2 border-1 border-slate-300 text-sm text-gray-500 text-md"
+                                                    className="p-2 border-1 border-slate-300 text-sm text-md"
                                                 >
                                                     { settings.columnType === COLUMNTYPES.string &&
                                                        columnData
@@ -80,7 +80,7 @@ const Table = ({
             </table>
             { !loading && dataSet.length > 0 &&
                 <div
-                    className="w-full text-md flex justify-between items-center pt-2 text-gray-500"
+                    className="w-full text-md flex justify-between items-center pt-2"
                 >
                     <p>Showing records {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
 
