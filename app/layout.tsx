@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { ToastContainer } from 'react-toastify';
 import HolyLoader from "holy-loader";
+import AuthProvider from "@/context/AuthProvider";
 
 export const metadata: Metadata = {
   	title: "Classic Savory ERP",
@@ -24,7 +25,9 @@ export default function RootLayout({
 					easing="linear"
 					showSpinner
 				/>
-				{children}
+				<AuthProvider>
+					{children}
+				</AuthProvider>
 			</body>
 		</html>
 	);

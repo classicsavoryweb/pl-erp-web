@@ -43,6 +43,11 @@ export const routes: Route[] = [
                 name: "Roles and Permissions",
                 pathname: "/administrators/roles-and-permissions",
                 permission: "can_view_roles_and_permissions"
+            },
+            {
+                name: "Users",
+                pathname: "/administrators/users",
+                permission: "can_view_users"
             }
         ]
     },
@@ -61,25 +66,6 @@ export const routes: Route[] = [
             {
                 name: "Positions",
                 pathname: "/maintenance/positions",
-                permission: "can_view_positions"
-            }
-        ]
-    },
-    {
-        name: "Employees",
-        icon: "EngineeringOutlined",
-        type: "dropdown",
-        permission: "can_view_employees_module",
-        basepath: "/maintenance",
-        subLinks: [
-            {
-                name: "Employee Tracking",
-                pathname: "/",
-                permission: "can_view_branches"
-            },
-            {
-                name: "Positions",
-                pathname: "/",
                 permission: "can_view_positions"
             }
         ]

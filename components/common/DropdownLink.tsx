@@ -25,15 +25,15 @@ const DropdownLink = ({
                 className={`
                     w-full
                     flex
-                    ${isActive ? "bg-red-600/70 text-white" : "hover:bg-red-300/20"}
+                    ${isActive ? "bg-red-600/70 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
                     rounded-md
                     p-3
-                    flex
                     justify-between
                     items-center
                     font-semibold
                     hover:cursor-pointer
                     text-gray-500
+                    focus:outline-none
                 `}
 
                 onClick={() => {
@@ -76,6 +76,7 @@ const DropdownLink = ({
                                     text-gray-500
                                     text-sm
                                     px-8
+                                    focus:outline-none
                                 `}
                             >
                                     <svg

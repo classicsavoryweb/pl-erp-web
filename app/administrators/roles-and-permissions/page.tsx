@@ -1,9 +1,13 @@
-import Authenticated from "@/components/layouts/Authenticated";
+import PageTitle from "@/components/common/PageTitle";
+import RolesAndPermissionTableCard from "@/components/modules/roles-and-permissions/RolesAndPermissionTableCard";
 
 const Page = () => {
     return (
         <>
-            <p>roles and permissions</p>
+            <PageTitle
+                title="Roles and Permissions"
+            />
+            <RolesAndPermissionTableCard/>
         </>
     );
 };

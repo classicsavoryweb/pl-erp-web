@@ -23,10 +23,13 @@ const Authenticated = ({
                     />
                 </div>
 
+                <div className="w-full px-2">
+                    <hr className="text-slate-300"/>
+                </div>
                 <Sidebar/>
             </div>
             <div className="w-full h-screen">
-                <div className="bg-white border-b-1 flex justify-end items-center border-slate-300 h-[9vh]">
+                <div className="bg-white border-b-1 flex justify-end items-center border-slate-300 h-[9vh] pr-3">
                     <Header/>
                 </div>
                 <div className="h-[91vh] max-h-[91vh] p-3 overflow-auto">
