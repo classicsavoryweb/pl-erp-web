@@ -8,9 +8,26 @@ import Image from "next/image";
 export default function Home() {
 	return (
 		<Authenticated>
+
 			<PageTitle
 				title="Dashboard"
 			/>
+			<div className="grid grid-cols-3 gap-x-5 text-gray-500">
+				<Card>
+					<p className="text-md font-medium">Contractual Employees</p>
+					<p className="text-3xl text-red-600 font-medium">0</p>
+				</Card>
+
+				<Card>
+					<p className="text-md font-medium">Regulary Employees</p>
+					<p className="text-3xl text-red-600 font-medium">0</p>
+				</Card>
+
+				<Card>
+					<p className="text-md font-medium">Probationary Employees</p>
+					<p className="text-3xl  text-red-600 font-medium">0</p>
+				</Card>
+			</div>
 		</Authenticated>
 	);
 }

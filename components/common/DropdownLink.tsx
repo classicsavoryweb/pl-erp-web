@@ -25,7 +25,7 @@ const DropdownLink = ({
                 className={`
                     w-full
                     flex
-                    ${isActive ? "bg-red-600/70 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
+                    ${isActive ? "bg-red-600 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
                     rounded-md
                     p-3
                     justify-between

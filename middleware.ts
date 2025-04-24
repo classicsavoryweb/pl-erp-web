@@ -10,6 +10,10 @@ export function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url));
     }
 
+    if (pathname === "/login" && authToken) {
+        return NextResponse.redirect(new URL('/', request.url));
+    }
+
     return NextResponse.next();
 };
 

@@ -60,7 +60,7 @@ const Table = ({
                                             return (
                                                 <td
                                                     key={key}
-                                                    className="p-2 border-1 border-slate-300 text-sm text-gray-500"
+                                                    className="p-2 border-1 border-slate-300 text-sm text-gray-500 text-md"
                                                 >
                                                     { settings.columnType === COLUMNTYPES.string &&
                                                        columnData
@@ -80,7 +80,7 @@ const Table = ({
             </table>
             { !loading && dataSet.length > 0 &&
                 <div
-                    className="w-full flex justify-between items-center pt-2 text-gray-700"
+                    className="w-full text-md flex justify-between items-center pt-2 text-gray-500"
                 >
                     <p>Showing records {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
 
@@ -92,7 +92,8 @@ const Table = ({
                                         key={key}
                                         className={`
                                             px-2
-                                            ${link.active ? "bg-red-500 text-slate-50" : "bg-red-200 hover:bg-red-500 hover:text-slate-50 hover:cursor-pointer"}
+                                            text-md
+                                            ${link.active ? "bg-red-600 text-slate-50" : "bg-red-200 hover:bg-red-600 hover:text-slate-50 hover:cursor-pointer"}
                                         `}
                                         onClick={() => {
                                             if (!link.active) {

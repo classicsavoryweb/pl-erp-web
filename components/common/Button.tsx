@@ -24,7 +24,7 @@ const Button = ({
         <div className="relative py-2">
             <button
                 type={type}
-                className={`bg-red-600 text-slate-50 w-full h-[40px] rounded-md ${!isDisabled && "hover:bg-red-700 active:bg-red-600 hover:cursor-pointer"} focus:outline-none`}
+                className={`bg-red-600 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-red-700 active:bg-red-600 hover:cursor-pointer"} focus:outline-none`}
                 disabled={loading}
                 onClick={onClick}
             >
