@@ -30,7 +30,7 @@ const Table = ({
 
     return (
         <div className="relative my-2 w-full overflow-hidden overflow-x-auto">
-            <table className="w-full rounded-md min-w-[1000px]">
+            <table className="w-full rounded-md">
                 <thead className="bg-gray-100">
                     <tr>
                         {

@@ -10,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { logout } from '@/api/authentication';
 import Cookies from 'js-cookie';
 import { AuthContext } from '@/context/AuthProvider';
+import { toast } from 'react-toastify';
 
 const Header = () => {
     const [toggle, setToggle] = useState<boolean>(false);
@@ -64,12 +65,12 @@ const Header = () => {
                     </p>
                     <p
                         className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer"
-                        onClick={ async () => {
-                            await logout();
+                        onClick={async () => {
                             Cookies.remove('authToken');
                             Cookies.remove('permissions');
                             Cookies.remove('userDetails');
                             router.push('/login');
+                            toast.success("Logged out successfully");
                         }}
                     >
                         <LogoutOutlinedIcon

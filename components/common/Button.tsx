@@ -8,6 +8,7 @@ interface ButtonInterface {
     loading?: boolean;
     type?: "button"|"submit";
     disabled?: boolean;
+    variant?: "primary" | "secondary";
 };
 
 const Button = ({
@@ -16,15 +17,22 @@ const Button = ({
     loading = false,
     type = "button",
     disabled = false,
+    variant = "primary"
 }: ButtonInterface) => {
 
     const isDisabled = disabled || loading;
+    const primary = `bg-red-600 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-red-700 active:bg-red-600 hover:cursor-pointer"}`
+    const secondary = `bg-gray-600 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-gray-700 active:bg-gray-600 hover:cursor-pointer"}`
 
     return (
         <div className="relative py-2">
             <button
                 type={type}
-                className={`bg-red-600 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-red-700 active:bg-red-600 hover:cursor-pointer"} focus:outline-none`}
+                className={`
+                    ${variant === "primary" && primary}
+                    ${variant === "secondary" && secondary}
+                    focus:outline-none`
+                }
                 disabled={loading}
                 onClick={onClick}
             >
