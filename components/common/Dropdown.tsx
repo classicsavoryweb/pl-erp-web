@@ -53,6 +53,7 @@ const Dropdown = ({
                     }
                 </select>
             </div>
+            {error && <p className="text-red-400">{error}</p>}
         </div>
     );
 };

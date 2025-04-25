@@ -21,7 +21,7 @@ const Button = ({
 }: ButtonInterface) => {
 
     const isDisabled = disabled || loading;
-    const primary = `bg-red-600 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-red-700 active:bg-red-600 hover:cursor-pointer"}`
+    const primary = `bg-red-800 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-red-700 active:bg-red-800 hover:cursor-pointer"}`
     const secondary = `bg-gray-500 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-gray-600 active:bg-gray-500 hover:cursor-pointer"}`
 
     return (

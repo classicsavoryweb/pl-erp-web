@@ -14,6 +14,7 @@ interface UserDetails {
 
 interface AuthContextType {
     userDetails: UserDetails;
+    permissions: any[];
 }
 
 
@@ -28,6 +29,7 @@ const defaultUserDetails: UserDetails = {
 
 export const AuthContext = createContext<AuthContextType>({
     userDetails: defaultUserDetails,
+    permissions: []
 });
 
 const AuthProvider = ({
@@ -35,19 +37,22 @@ const AuthProvider = ({
 }: {children: React.ReactNode}) => {
     const pathName = usePathname();
     const [userDetails, setUserDetails] = useState<UserDetails>(defaultUserDetails);
-
+    const [permissions, setPermissions] = useState<any>([]);
     
     useEffect(() => {
         const userDetails = Cookies.get('userDetails');
+        const permissions = Cookies.get('permissions');
 
         if (userDetails) {
             setUserDetails(JSON.parse(userDetails ?? ""));
+            setPermissions(JSON.parse(permissions ?? ""));
         }
     }, [pathName]);
 
     return (
         <AuthContext.Provider value={{
-            userDetails
+            userDetails,
+            permissions
         }}>
             {children}
         </AuthContext.Provider>

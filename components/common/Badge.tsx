@@ -10,10 +10,10 @@ const Badge = ({
     return (
             <p
                 className={`inline-block px-2 py-1 m-[2px]
-                    ${status === "default" && "bg-zinc-500"}
-                    ${status === "danger" && "bg-red-600"}
+                    ${status === "default" && "bg-zinc-700"}
+                    ${status === "danger" && "bg-red-800"}
                     ${status === "warning" && "bg-orange-600"}
-                    ${status === "success" && "bg-green-600"}
+                    ${status === "success" && "bg-green-800"}
                     text-slate-50
                     text-[10px]
                     rounded-full

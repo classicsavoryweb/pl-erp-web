@@ -4,8 +4,9 @@ import { DropdownRoute } from "@/constants/routes";
 import * as Icons from "@mui/icons-material";
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
-import { useState } from "react";
+import { useContext, useState } from "react";
 import Link from "next/link";
+import { AuthContext } from "@/context/AuthProvider";
 
 interface DropDownInterface {
     route: DropdownRoute;
@@ -18,14 +19,17 @@ const DropdownLink = ({
 }: DropDownInterface) => {
     const IconComponent = Icons[route.icon as keyof typeof Icons];
     const [toggle, setToggle] = useState<boolean>(isActive);
+    const { permissions } = useContext(AuthContext);
 
     return (
+
+        permissions.includes(route.permission) &&
         <div className={`relative ${toggle && "bg-red-300/10" } rounded-md overflow-hidden mt-1`}>
             <button
                 className={`
                     w-full
                     flex
-                    ${isActive ? "bg-red-600 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
+                    ${isActive ? "bg-red-800 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
                     rounded-md
                     p-3
                     justify-between
@@ -62,6 +66,7 @@ const DropdownLink = ({
                 <div>
                     {route.subLinks.map((link, index) => {
                         return (
+                            permissions.includes(link.permission) &&
                             <Link
                                 key={index}
                                 href={link.pathname}

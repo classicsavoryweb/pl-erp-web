@@ -21,7 +21,7 @@ const Header = () => {
         <div className="relative">
             { Object.values(userDetails).some((value) => value !== "") &&
                 <div
-                    className={`flex items-center py-2 px-3 bg-red-600 ${toggle ? "rounded-t-xl" : "rounded-3xl"} cursor-pointer focus:outline-none`}
+                    className={`flex items-center py-2 px-3 bg-red-800 ${toggle ? "rounded-t-xl" : "rounded-3xl"} cursor-pointer focus:outline-none`}
                     onClick={() => {
                         setToggle(prev => !prev);
                     }}

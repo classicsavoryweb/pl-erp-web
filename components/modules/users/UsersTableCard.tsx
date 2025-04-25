@@ -44,8 +44,13 @@ const UsersTableCard = () => {
 
     const columnSettings = [
         {
+            columnHead: "Employee Number",
+            path: "employee_number",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Name",
-            path: "first_name",
+            path: "full_name",
             columnType: COLUMNTYPES.string
         },
         {

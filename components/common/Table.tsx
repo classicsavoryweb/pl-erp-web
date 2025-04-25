@@ -31,13 +31,13 @@ const Table = ({
     return (
         <div className="relative my-2 w-full overflow-hidden overflow-x-auto">
             <table className="w-full rounded-md">
-                <thead className="bg-gray-100">
+                <thead className="bg-red-800">
                     <tr>
                         {
                             columnSettings.map((settings, key) => {
                                 return (
                                     <th key={key}
-                                        className="text-left p-2 border-slate-400 border-1 text-gray-500"
+                                        className="text-left p-2 border-slate-300 border-1 text-zinc-100"
                                     >
                                         {settings.columnHead}
                                     </th>
@@ -93,7 +93,7 @@ const Table = ({
                                         className={`
                                             px-2
                                             text-md
-                                            ${link.active ? "bg-red-600 text-slate-50" : "bg-red-200 hover:bg-red-600 hover:text-slate-50 hover:cursor-pointer"}
+                                            ${link.active ? "bg-red-800 text-slate-50" : "bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
                                         `}
                                         onClick={() => {
                                             if (!link.active) {

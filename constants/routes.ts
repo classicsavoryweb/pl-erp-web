@@ -32,6 +32,39 @@ export const routes: Route[] = [
         type: "link",
         permission: ""
     },
+
+    //maintenance module
+    {
+        name: "Maintenance",
+        icon: "EngineeringOutlined",
+        type: "dropdown",
+        permission: "can_view_maintenance_module",
+        basepath: "/maintenance",
+        subLinks: [
+            {
+                name: "Branches",
+                pathname: "/maintenance/branches",
+                permission: ""
+            },
+            {
+                name: "Positions",
+                pathname: "/maintenance/positions",
+                permission: ""
+            },
+            {
+                name: "Station/ Location",
+                pathname: "/maintenance/positions",
+                permission: ""
+            },
+            {
+                name: "Employment Status",
+                pathname: "/maintenance/positions",
+                permission: ""
+            },
+        ]
+    },
+
+    //administrator module
     {
         name: "Administrators",
         icon: "AdminPanelSettingsOutlined",
@@ -48,25 +81,6 @@ export const routes: Route[] = [
                 name: "Users",
                 pathname: "/administrators/users",
                 permission: "can_view_users"
-            }
-        ]
-    },
-    {
-        name: "Maintenance",
-        icon: "EngineeringOutlined",
-        type: "dropdown",
-        permission: "can_view_administrators_module",
-        basepath: "/maintenance",
-        subLinks: [
-            {
-                name: "Branches",
-                pathname: "/maintenance/branches",
-                permission: "can_view_branches"
-            },
-            {
-                name: "Positions",
-                pathname: "/maintenance/positions",
-                permission: "can_view_positions"
             }
         ]
     },

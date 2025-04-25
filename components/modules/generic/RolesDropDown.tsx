@@ -2,8 +2,6 @@ import { getAllRoles } from "@/api/roles-and-permissions";
 import Dropdown from "@/components/common/Dropdown";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
-import { useState } from "react";
-
 interface SelectInterface {
     label: string;
     placeholder?: string;
