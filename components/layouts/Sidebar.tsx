@@ -17,9 +17,10 @@ const Sidebar = () => {
             {routes.map((route, index) => {
                 const IconComponent = Icons[route.icon as keyof typeof Icons];
                 if (route.type === "link") {
+
                     const isActive = pathName === route.pathname;
                     return (
-                        (route.pathname === "/" || permissions.includes(route.permission)) &&         
+                        (route.permission === "" || permissions.includes(route.permission)) &&         
                         <Link
                             key={index}
                             href={route.pathname}
