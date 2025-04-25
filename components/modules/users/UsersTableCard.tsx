@@ -1,0 +1,104 @@
+"use client";
+
+import { getAllUsers } from "@/api/users";
+import Card from "@/components/common/Card";
+import Table from "@/components/common/Table";
+import { useApiCall } from "@/hooks/api-call";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import usePagination from "@/hooks/pagination";
+import { toast } from "react-toastify";
+import { COLUMNTYPES } from "@/constants/column";
+import Badge from "@/components/common/Badge";
+import Button from "@/components/common/Button";
+import { useModal } from "@/hooks/modal";
+import CreateUsersForm from "./CreateUsersForm";
+
+const UsersTableCard = () => {
+
+    const users = useApiCall();
+    const paginator = usePagination();
+    const createUser = useModal();
+
+    useAsyncEffect(() => {
+        users.setLoading(true);
+        getAllUsers({
+            page: paginator.page,
+            per_page: paginator.per_page
+        })
+        .then((resp) => {
+            if (resp.error) {
+                toast.error("Error fetching users");
+            } else {
+                users.setDataSet(resp.data.data);
+                paginator.setPage(resp.data.current_page);
+                paginator.setPaginationData(resp.data);
+            }
+        })
+        .catch(() => {
+            toast.error("Error encountered");
+        })
+        .finally(() => {
+            users.setLoading(false);
+        });
+    }, [users.reload]);
+
+    const columnSettings = [
+        {
+            columnHead: "Name",
+            path: "first_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Email",
+            path: "email",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Role",
+            path: "role.name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Status",
+            path: "",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                if (data.status === "inactive") {
+                    return <Badge status="danger" label={data.status}/>
+                } else {
+                    return <Badge status="success" label={data.status}/>
+                }
+            }
+        }
+    ]
+
+    return (
+        <>
+            <Card>
+                <div className="flex justify-end items-center">
+                    <div
+                        className="w-[150px]"
+                    >
+                        <Button
+                            label="Create new user"
+                            onClick={createUser.onOpen}
+                        />
+                    </div>
+                </div>
+                <Table
+                    dataSet={users.dataSet}
+                    columnSettings={columnSettings}
+                    loading={users.loading}
+                    paginator={paginator}
+                />
+            </Card>
+
+            <CreateUsersForm
+                modal={createUser}
+                onSubmitCallback={users.triggerReload}
+            />
+        </>
+    )
+};
+
+export default UsersTableCard;

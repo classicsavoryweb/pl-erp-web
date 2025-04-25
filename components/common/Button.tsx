@@ -22,16 +22,18 @@ const Button = ({
 
     const isDisabled = disabled || loading;
     const primary = `bg-red-600 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-red-700 active:bg-red-600 hover:cursor-pointer"}`
-    const secondary = `bg-gray-600 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-gray-700 active:bg-gray-600 hover:cursor-pointer"}`
+    const secondary = `bg-gray-500 text-slate-50 w-full px-3 h-[40px] rounded-md ${!isDisabled && "hover:bg-gray-600 active:bg-gray-500 hover:cursor-pointer"}`
 
     return (
-        <div className="relative py-2">
+        <div className="w-full py-2">
             <button
                 type={type}
                 className={`
                     ${variant === "primary" && primary}
                     ${variant === "secondary" && secondary}
-                    focus:outline-none`
+                    focus:outline-none
+                    w-full
+                    `
                 }
                 disabled={loading}
                 onClick={onClick}

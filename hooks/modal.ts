@@ -11,4 +11,13 @@ export const useModal = () => {
     const onClose = () => {
         setShowing(false);
     };
+
+    return {
+        loading,
+        setLoading,
+        isShowing,
+        setShowing,
+        onClose,
+        onOpen
+    };
 };

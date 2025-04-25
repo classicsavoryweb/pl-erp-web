@@ -10,10 +10,12 @@ import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
+import CreateRolesAndPermissionsForm from "./CreateRolesAndPermissionsForm";
+import { useModal } from "@/hooks/modal";
 
 const RolesAndPermissionTableCard = () => {
-
     const roles = useApiCall();
+    const createModal = useModal();
     const paginator = usePagination();
 
     useAsyncEffect(() => {
@@ -63,20 +65,31 @@ const RolesAndPermissionTableCard = () => {
     ];
 
     return (
-        <Card>
-            <div className="flex justify-end items-center">
-                <Button
-                    label="Create new role"
-                    onClick={() => {}}
+        <>
+            <Card>
+                <div className="flex justify-end items-center">
+                    <div
+                        className="w-[150px]"
+                    >
+                        <Button
+                            label="Create new role"
+                            onClick={createModal.onOpen}
+                        />
+                    </div>
+                </div>
+                <Table
+                    dataSet={roles.dataSet}
+                    columnSettings={columnSettings}
+                    loading={roles.loading}
+                    paginator={paginator}
                 />
-            </div>
-            <Table
-                dataSet={roles.dataSet}
-                columnSettings={columnSettings}
-                loading={roles.loading}
-                paginator={paginator}
+            </Card>
+
+            <CreateRolesAndPermissionsForm
+                modal={createModal}
+                onSubmitCallback={roles.triggerReload}
             />
-        </Card>
+        </>
     );
 };
 

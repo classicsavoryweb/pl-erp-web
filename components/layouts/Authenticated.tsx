@@ -27,7 +27,7 @@ const Authenticated = ({
                 <Sidebar/>
             </div>
             <div className="w-full h-screen">
-                <div className="w-full bg-zinc-50 border-b-1 flex justify-end items-center border-slate-300 h-[9vh] pr-3">
+                <div className="w-full bg-zinc-50 border-b-1 flex justify-end items-center border-slate-300 h-[9vh] px-5">
                     <Header/>
                 </div>
                 <div className="w-full h-[91vh] max-h-[91vh] p-5 overflow-auto">

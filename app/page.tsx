@@ -1,5 +1,5 @@
 "use client";
-import Modal from "@/components/common/Modal";
+import Grid from "@/components/common/Grid";
 import PageTitle from "@/components/common/PageTitle";
 import Authenticated from "@/components/layouts/Authenticated";
 import SummaryCardCount from "@/components/modules/dashboard/SummaryCardCount";
@@ -10,7 +10,9 @@ export default function Home() {
 			<PageTitle
 				title="Dashboard"
 			/>
-			<div className="grid grid-cols-3 gap-x-5">
+			<Grid
+				cols={3}
+			>
 				<SummaryCardCount
 					title="Contractual Employees"
 					displayReport={0}
@@ -23,7 +25,7 @@ export default function Home() {
 					title="Probationary Employees"
 					displayReport={0}
 				/>
-			</div>
+			</Grid>
 		</Authenticated>
 	);
-}
+};

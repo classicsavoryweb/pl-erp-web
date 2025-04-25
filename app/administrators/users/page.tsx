@@ -1,4 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
+import UsersTableCard from "@/components/modules/users/UsersTableCard";
 
 const Page = () => {
     return (
@@ -6,6 +7,8 @@ const Page = () => {
             <PageTitle
                 title="Users"
             />
+
+            <UsersTableCard/>
         </>
     );
 };
