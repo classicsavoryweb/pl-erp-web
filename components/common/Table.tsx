@@ -86,7 +86,11 @@ const Table = ({
                 <tbody>
                         { loading
                             ?
-                                <tr><td colSpan={withActions ? columnSettings.length + 1 : columnSettings.length} className="w-full p-2"><TableLoader/></td></tr>
+                                <tr>
+                                    <td colSpan={withActions ? columnSettings.length + 1 : columnSettings.length} className="w-full p-2">
+                                        <TableLoader/>
+                                    </td>
+                                </tr>
                             :
                             dataSet.map((data, idx) => {
                             return (

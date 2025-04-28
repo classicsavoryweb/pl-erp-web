@@ -26,13 +26,22 @@ export const getAllRoles = async () => {
     });
 
     return resData;
-}
+};
 
 export const updateOrCreateRolesAndPermissions = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/update-or-create-roles-and-permissions',
         method: 'POST',
         payload: payload
+    });
+
+    return resData;
+};
+
+export const deleteRole = async (roleId: number) => {
+    const resData = await axiosHelper({
+        func_path: `/delete-role/${roleId}`,
+        method: 'GET',
     });
 
     return resData;

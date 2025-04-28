@@ -44,22 +44,22 @@ export const routes: Route[] = [
             {
                 name: "Branches",
                 pathname: "/maintenance/branches",
-                permission: ""
+                permission: "can_view_branches"
             },
             {
                 name: "Positions",
                 pathname: "/maintenance/positions",
-                permission: ""
+                permission: "can_view_positions"
             },
             {
                 name: "Stations",
                 pathname: "/maintenance/stations",
-                permission: ""
+                permission: "can_view_stations"
             },
             {
                 name: "Employee Status",
                 pathname: "/maintenance/employee-status",
-                permission: ""
+                permission: "can_view_employee_status"
             },
         ]
     },

@@ -12,13 +12,17 @@ import Badge from "@/components/common/Badge";
 import Button from "@/components/common/Button";
 import { useModal } from "@/hooks/modal";
 import CreateUsersForm from "./CreateUsersForm";
+import EditUsersForm from "./EditUsersForm";
+import { useState } from "react";
 
 const UsersTableCard = () => {
 
     const users = useApiCall();
     const paginator = usePagination();
     const createUser = useModal();
-
+    const editUser = useModal();
+    const [data, setData] = useState<any>({});
+    
     useAsyncEffect(() => {
         users.setLoading(true);
         getAllUsers({
@@ -80,9 +84,23 @@ const UsersTableCard = () => {
     const tableActions = [
         {
             label: "Edit",
-            onClick: (data: any) => {console.log(data)}
+            onClick: (data: any) => {
+                setData({
+                    first_name: data.first_name,
+                    middle_name: data.middle_name ?? "",
+                    last_name: data.last_name,
+                    id: data.id,
+                    role_id: data.role_id,
+                    employee_number: data.employee_number,
+                    email: data.email,
+                    password: "",
+                    confirm_password: "",
+                    status: data.status
+                });
+                editUser.onOpen();
+            }
         }
-    ]
+    ];
 
     return (
         <>
@@ -110,6 +128,12 @@ const UsersTableCard = () => {
             <CreateUsersForm
                 modal={createUser}
                 onSubmitCallback={users.triggerReload}
+            />
+
+            <EditUsersForm
+                modal={editUser}
+                onSubmitCallback={users.triggerReload}
+                formValue={data}
             />
         </>
     )

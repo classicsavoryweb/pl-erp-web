@@ -1,6 +1,6 @@
 "use client";
 
-import { getAllRolesAndPermissions } from "@/api/roles-and-permissions";
+import { deleteRole, getAllRolesAndPermissions } from "@/api/roles-and-permissions";
 import Badge from "@/components/common/Badge";
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
@@ -12,10 +12,14 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import CreateRolesAndPermissionsForm from "./CreateRolesAndPermissionsForm";
 import { useModal } from "@/hooks/modal";
+import EditRolesAndPermissionsForm from "./EditRolesAndPermissionsForm";
+import { useState } from "react";
 
 const RolesAndPermissionTableCard = () => {
     const roles = useApiCall();
     const createModal = useModal();
+    const [data, setData] = useState<any>({});
+    const editModal = useModal();
     const paginator = usePagination();
 
     useAsyncEffect(() => {
@@ -68,13 +72,28 @@ const RolesAndPermissionTableCard = () => {
         {
             label: "Edit",
             onClick: (data: any) => {
-                console.log("role >>>> ",data.name);
+                const permissionNames = data.permissions.map((p:any) => p.name);
+                setData({
+                    name: data.name,
+                    permissions: permissionNames
+                });
+                editModal.onOpen();
             }
         },
         {
             label: "Delete",
             onClick: (data: any) => {
-                console.log("delete >>> ", data);
+                alert("Are you sure?");
+                deleteRole(data.id).then((resp) => {
+                    if (resp.error) {
+                        toast.error(resp.data.message);
+                    } else {
+                        toast.success("Roles and permission deleted successfully.");
+                        roles.triggerReload();
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
             }
         },
     ];
@@ -104,6 +123,12 @@ const RolesAndPermissionTableCard = () => {
 
             <CreateRolesAndPermissionsForm
                 modal={createModal}
+                onSubmitCallback={roles.triggerReload}
+            />
+
+            <EditRolesAndPermissionsForm
+                formValue={data}
+                modal={editModal}
                 onSubmitCallback={roles.triggerReload}
             />
         </>

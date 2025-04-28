@@ -19,3 +19,13 @@ export const createUser = async (payload: {}) => {
 
     return resData;
 };
+
+export const editUser = async (payload: {}, id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-user/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};

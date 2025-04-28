@@ -34,7 +34,7 @@ const ActionDropDown = ({
             </button>
             
             { toggle &&
-                 <div className="absolute flex flex-col items-start w-full z-50 bg-gray-200 shadow-md">
+                 <div className="absolute flex flex-col items-start w-full z-50 bg-gray-200 shadow-lg">
                     {actions.map((action, idx) => (
                         <button
                             key={idx}
