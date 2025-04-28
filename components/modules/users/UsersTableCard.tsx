@@ -40,7 +40,7 @@ const UsersTableCard = () => {
         .finally(() => {
             users.setLoading(false);
         });
-    }, [users.reload]);
+    }, [paginator.reload, users.reload]);
 
     const columnSettings = [
         {
@@ -75,6 +75,13 @@ const UsersTableCard = () => {
                 }
             }
         }
+    ];
+    
+    const tableActions = [
+        {
+            label: "Edit",
+            onClick: (data: any) => {console.log(data)}
+        }
     ]
 
     return (
@@ -95,6 +102,8 @@ const UsersTableCard = () => {
                     columnSettings={columnSettings}
                     loading={users.loading}
                     paginator={paginator}
+                    withActions
+                    actions={tableActions}
                 />
             </Card>
 

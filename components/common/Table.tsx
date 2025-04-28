@@ -2,12 +2,18 @@
 import { COLUMNTYPES } from "@/constants/column";
 import _ from "lodash";
 import TableLoader from "./TableLoader";
+import ActionDropDown from "./ActionDropDown";
 
 interface columnSetting {
     columnHead: string;
     path: string;
     columnType: typeof COLUMNTYPES[keyof typeof COLUMNTYPES],
     function?: (data:any) => any;
+};
+
+type ActionType = {
+    label: string;
+    onClick: (data: any) => void;
 };
 
 interface TableInterface {
@@ -17,6 +23,7 @@ interface TableInterface {
     loading?: boolean;
     withActions?: boolean;
     paginator?: any;
+    actions?: ActionType[]
 };
 
 const Table = ({
@@ -25,12 +32,35 @@ const Table = ({
     dataKey = "id",
     loading = false,
     withActions = false,
-    paginator
+    paginator,
+    actions
 }: TableInterface) => {
 
+    const currentPage = paginator.paginationData.current_page;
+    const totalPages = paginator.paginationData.last_page;
+
+    const getCustomLinks = () => {
+        let pages: (string | number)[] = [];
+
+        pages.push(1);
+        if (totalPages >= 2) pages.push(2);
+
+        if (currentPage > 4) pages.push("...");
+
+        if (currentPage > 2 && currentPage < totalPages - 1) pages.push(currentPage);
+
+        if (currentPage < totalPages - 3) pages.push("...");
+
+        if (totalPages - 1 > 2) pages.push(totalPages - 1);
+        if (totalPages > 2) pages.push(totalPages);
+
+        return pages;
+    };
+
+
     return (
-        <div className="relative my-2 w-full overflow-hidden overflow-x-auto">
-            <table className="w-full rounded-md">
+        <div className="relative my-2 w-full">
+            <table className="w-full rounded-md overflow-x-auto">
                 <thead className="bg-red-800">
                     <tr>
                         {
@@ -43,6 +73,13 @@ const Table = ({
                                     </th>
                                 )
                             })
+                        }
+                        {   withActions &&
+                            <th
+                                className="text-left p-2 border-slate-300 border-1 text-zinc-100"
+                            >
+                                Action
+                            </th>
                         }
                     </tr>
                 </thead>
@@ -60,7 +97,7 @@ const Table = ({
                                             return (
                                                 <td
                                                     key={key}
-                                                    className="p-2 border-1 border-slate-300 text-sm text-md"
+                                                    className=" py-1 px-2 border-1 border-slate-300 text-sm text-md"
                                                 >
                                                     { settings.columnType === COLUMNTYPES.string &&
                                                        columnData
@@ -72,6 +109,17 @@ const Table = ({
                                                 </td>
                                             )
                                         })
+                                    }
+
+                                    { withActions && actions &&
+                                        <td
+                                            className="py-1 px-2 border-1 border-slate-300 text-sm text-md"
+                                        >
+                                            <ActionDropDown
+                                                data={data}
+                                                actions={actions}
+                                            />
+                                        </td>
                                     }
                                 </tr>       
                             )})
@@ -85,35 +133,43 @@ const Table = ({
                     <p>Showing records {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
 
                     <div className="flex gap-x-1 justify-end items-center">
-                        { paginator.paginationData.links.map((link: any, key: number) => {
-                            if (link.url) {
-                                return (
-                                    <button
-                                        key={key}
-                                        className={`
-                                            px-2
-                                            text-md
-                                            ${link.active ? "bg-red-800 text-slate-50" : "bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
-                                        `}
-                                        onClick={() => {
-                                            if (!link.active) {
-                                                if (link.label === "Next &raquo;") {
-                                                    paginator.onClickSetPageNumber(paginator.paginationData.current_page + 1);
-                                                } else if (link.label === "&laquo; Previous") {
-                                                    paginator.onClickSetPageNumber(paginator.paginationData.current_page - 1);
-                                                } else {
-                                                    paginator.onClickSetPageNumber(Number(link.label));
-                                                }
-                                            }
-                                        }}
-                                    >
-                                        <span dangerouslySetInnerHTML={{ __html: link.label }} />
-                                    </button>
-                                )
-                            }
-                        })
+                        {currentPage > 1 && (
+                            <button
+                                className="px-2 text-md bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                onClick={() => paginator.onClickSetPageNumber(currentPage - 1)}
+                            >
+                                Previous
+                            </button>
+                        )}
 
-                        }
+                        {getCustomLinks().map((item, key) => {
+                            if (item === "...") {
+                                return <span key={key} className="px-2">...</span>;
+                            }
+
+                            return (
+                                <button
+                                    key={key}
+                                    className={`
+                                        px-2
+                                        text-md
+                                        ${paginator.paginationData.current_page === item ? "bg-red-800 text-slate-50" : "bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
+                                    `}
+                                    onClick={() => paginator.onClickSetPageNumber(Number(item))}
+                                >
+                                    {item}
+                                </button>
+                            );
+                        })}
+
+                        {currentPage < totalPages && (
+                            <button
+                                className="px-2 text-md bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                onClick={() => paginator.onClickSetPageNumber(currentPage + 1)}
+                            >
+                                Next
+                            </button>
+                        )}
                     </div>
                 </div>
             }

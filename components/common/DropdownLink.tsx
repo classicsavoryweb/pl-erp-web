@@ -7,6 +7,7 @@ import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import { useContext, useState } from "react";
 import Link from "next/link";
 import { AuthContext } from "@/context/AuthProvider";
+import { usePathname } from "next/navigation";
 
 interface DropDownInterface {
     route: DropdownRoute;
@@ -20,6 +21,7 @@ const DropdownLink = ({
     const IconComponent = Icons[route.icon as keyof typeof Icons];
     const [toggle, setToggle] = useState<boolean>(isActive);
     const { permissions } = useContext(AuthContext);
+    const pathName = usePathname();
 
     return (
         permissions.includes(route.permission) &&
@@ -64,6 +66,8 @@ const DropdownLink = ({
             { toggle &&
                 <div>
                     {route.subLinks.map((link, index) => {
+                        const active = link.pathname === pathName;
+
                         return (
                             (permissions.includes(link.permission) || link.permission === "") &&
                             <Link
@@ -77,10 +81,10 @@ const DropdownLink = ({
                                     p-2
                                     items-center
                                     font-medium
-                                    text-gray-500
                                     text-sm
                                     px-8
                                     focus:outline-none
+                                    ${active ? "text-red-800" : "text-gray-500"}
                                 `}
                             >
                                     <svg

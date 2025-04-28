@@ -21,7 +21,7 @@ const Header = () => {
         <div className="relative">
             { Object.values(userDetails).some((value) => value !== "") &&
                 <div
-                    className={`flex items-center py-2 px-3 bg-red-800 ${toggle ? "rounded-t-xl" : "rounded-3xl"} cursor-pointer focus:outline-none`}
+                    className={`flex items-center py-2 px-3 bg-red-800 ${toggle ? "rounded-t-3xl" : "rounded-3xl"} cursor-pointer focus:outline-none`}
                     onClick={() => {
                         setToggle(prev => !prev);
                     }}
@@ -52,7 +52,7 @@ const Header = () => {
             }
 
             {toggle && (
-                <div className="absolute w-full bg-zinc-50 rounded-b-xl shadow-lg py-2 z-50 overflow-hidden">
+                <div className="absolute w-full bg-zinc-50 rounded-b-3xl shadow-lg py-2 z-50 overflow-hidden">
                     <p
                         className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer"
                         onClick={() => {router.push("/change-password")}}

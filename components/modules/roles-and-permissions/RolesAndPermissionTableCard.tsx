@@ -64,6 +64,21 @@ const RolesAndPermissionTableCard = () => {
         }
     ];
 
+    const tableActions = [
+        {
+            label: "Edit",
+            onClick: (data: any) => {
+                console.log("role >>>> ",data.name);
+            }
+        },
+        {
+            label: "Delete",
+            onClick: (data: any) => {
+                console.log("delete >>> ", data);
+            }
+        },
+    ];
+
     return (
         <>
             <Card>
@@ -82,6 +97,8 @@ const RolesAndPermissionTableCard = () => {
                     columnSettings={columnSettings}
                     loading={roles.loading}
                     paginator={paginator}
+                    withActions
+                    actions={tableActions}
                 />
             </Card>
 

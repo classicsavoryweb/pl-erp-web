@@ -7,3 +7,17 @@ body {
     font-family: "Poppins", sans-serif;
     font-size: 15px;
 }
+/* 
+.my-toast-success {
+    background-color: #28a745 !important;
+    color: white !important;
+    border-left: 6px solid #218838;
+    font-weight: bold;
+}
+
+.my-toast-error {
+    background-color: #dc3545 !important;
+    color: white !important;
+    border-left: 6px solid #bd2130;
+    font-weight: bold;
+} */

@@ -52,13 +52,13 @@ export const routes: Route[] = [
                 permission: ""
             },
             {
-                name: "Station/ Location",
-                pathname: "/maintenance/positions",
+                name: "Stations",
+                pathname: "/maintenance/stations",
                 permission: ""
             },
             {
-                name: "Employment Status",
-                pathname: "/maintenance/positions",
+                name: "Employee Status",
+                pathname: "/maintenance/employee-status",
                 permission: ""
             },
         ]
@@ -73,15 +73,15 @@ export const routes: Route[] = [
         basepath: "/administrator",
         subLinks: [
             {
+                name: "Users",
+                pathname: "/administrators/users",
+                permission: "can_view_users"
+            },
+            {
                 name: "Roles and Permissions",
                 pathname: "/administrators/roles-and-permissions",
                 permission: "can_view_roles_and_permissions"
             },
-            {
-                name: "Users",
-                pathname: "/administrators/users",
-                permission: "can_view_users"
-            }
         ]
     },
 ];

@@ -20,7 +20,7 @@ export default function RootLayout({
 				<ToastContainer/>
 				<HolyLoader
 					color="#E11D48"
-					height="3px"
+					height="5px"
 					speed={250}
 					easing="linear"
 					showSpinner

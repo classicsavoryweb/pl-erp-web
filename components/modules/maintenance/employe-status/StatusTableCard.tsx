@@ -1,0 +1,96 @@
+"use client";
+
+import Button from "@/components/common/Button";
+import Card from "@/components/common/Card";
+import Table from "@/components/common/Table";
+import { COLUMNTYPES } from "@/constants/column";
+import { useApiCall } from "@/hooks/api-call";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import usePagination from "@/hooks/pagination";
+import { toast } from "react-toastify";
+import { useModal } from "@/hooks/modal";
+import { getAllStatus } from "@/api/employee-status";
+
+const EmployeeStatusCard = () => {
+    const status = useApiCall();
+    const createModal = useModal();
+    const paginator = usePagination();
+
+    useAsyncEffect(() => {
+        status.setLoading(true);
+        getAllStatus({
+            page: paginator.page,
+            per_page: paginator.per_page
+        })
+        .then((resp) => {
+            if (resp.error) {
+                toast.error("Error fetching employee status");
+            } else {
+                status.setDataSet(resp.data.data);
+                paginator.setPage(resp.data.current_page);
+                paginator.setPaginationData(resp.data);
+            }
+        })
+        .catch(() => {
+            toast.error("Error encountered");
+        })
+        .finally(() => {
+            status.setLoading(false);
+        });
+    }, [paginator.reload, status.reload]);
+
+    const columnSettings = [
+        {
+            columnHead: "Type",
+            path: "type",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Description",
+            path: "description",
+            columnType: COLUMNTYPES.string
+        }
+    ];
+
+    const tableActions = [
+        {
+            label: "Edit",
+            onClick: (data: any) => {
+                console.log("role >>>> ",data.name);
+            }
+        },
+        {
+            label: "Delete",
+            onClick: (data: any) => {
+                console.log("delete >>> ", data);
+            }
+        },
+    ];
+
+    return (
+        <>
+            <Card>
+                <div className="flex justify-end items-center">
+                    <div
+                        className="w-[170px]"
+                    >
+                        <Button
+                            label="Create new status"
+                            onClick={createModal.onOpen}
+                        />
+                    </div>
+                </div>
+                <Table
+                    dataSet={status.dataSet}
+                    columnSettings={columnSettings}
+                    loading={status.loading}
+                    paginator={paginator}
+                    withActions
+                    actions={tableActions}
+                />
+            </Card>
+        </>
+    );
+};
+
+export default EmployeeStatusCard;
