@@ -9,11 +9,16 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { getAllStations } from "@/api/station";
+import { deleteStation, getAllStations } from "@/api/station";
+import { useState } from "react";
+import CreateStationForm from "./CreateStationForm";
+import EditStationForm from "./EditStationForm";
 
 const StationTableCard = () => {
     const stations = useApiCall();
     const createModal = useModal();
+    const editModal = useModal();
+    const [data, setData] = useState({});
     const paginator = usePagination();
 
     useAsyncEffect(() => {
@@ -56,13 +61,31 @@ const StationTableCard = () => {
         {
             label: "Edit",
             onClick: (data: any) => {
-                console.log("role >>>> ",data.name);
+                editModal.onOpen();
+                setData({
+                    id: data.id,
+                    name: data.name,
+                    station_order: data.station_order
+                });
             }
         },
         {
             label: "Delete",
             onClick: (data: any) => {
-                console.log("delete >>> ", data);
+                if (!confirm("Are you sure?")) {
+                    return;
+                }
+                deleteStation(data.id).then((resp) => {
+                    if (resp.error) {
+                        toast.error(resp.data.message);
+                    } else {
+                        toast.success("Station deleted successfully.");
+                        stations.triggerReload();
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
+
             }
         },
     ];
@@ -89,6 +112,17 @@ const StationTableCard = () => {
                     actions={tableActions}
                 />
             </Card>
+
+            <CreateStationForm
+                modal={createModal}
+                onSubmitCallback={stations.triggerReload}
+            />
+
+            <EditStationForm
+                modal={editModal}
+                onSubmitCallback={stations.triggerReload}
+                formValue={data}
+            />
         </>
     );
 };

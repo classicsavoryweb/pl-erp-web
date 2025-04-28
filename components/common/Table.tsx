@@ -132,7 +132,7 @@ const Table = ({
             </table>
             { !loading && dataSet.length > 0 &&
                 <div
-                    className="w-full text-md flex justify-between items-center pt-2"
+                    className="w-full text-sm flex justify-between items-center pt-2"
                 >
                     <p>Showing records {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
 
