@@ -9,11 +9,16 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { getAllStatus } from "@/api/employee-status";
+import { deleteEmployeeStatus, getAllStatus } from "@/api/employee-status";
+import CreateEmployeeStatusForm from "./CreateEmployeeStatusForm";
+import { useState } from "react";
+import EditEmployeeStatusForm from "./EditEmployeeStatusForm";
 
 const EmployeeStatusCard = () => {
     const status = useApiCall();
     const createModal = useModal();
+    const editModal = useModal();
+    const [data, setData] = useState({});
     const paginator = usePagination();
 
     useAsyncEffect(() => {
@@ -56,13 +61,31 @@ const EmployeeStatusCard = () => {
         {
             label: "Edit",
             onClick: (data: any) => {
-                console.log("role >>>> ",data.name);
+                editModal.onOpen();
+                setData({
+                    id: data.id,
+                    type: data.type,
+                    description: data.description
+                });
             }
         },
         {
             label: "Delete",
             onClick: (data: any) => {
-                console.log("delete >>> ", data);
+                if (!confirm("Are you sure?")) {
+                    return;
+                }
+                deleteEmployeeStatus(data.id).then((resp) => {
+                    if (resp.error) {
+                        toast.error(resp.data.message);
+                    } else {
+                        toast.success("Employee status deleted successfully.");
+                        status.triggerReload();
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
+
             }
         },
     ];
@@ -89,6 +112,17 @@ const EmployeeStatusCard = () => {
                     actions={tableActions}
                 />
             </Card>
+
+            <CreateEmployeeStatusForm
+                modal={createModal}
+                onSubmitCallback={status.triggerReload}
+            />
+
+            <EditEmployeeStatusForm
+                modal={editModal}
+                onSubmitCallback={status.triggerReload}
+                formValue={data}
+            />
         </>
     );
 };

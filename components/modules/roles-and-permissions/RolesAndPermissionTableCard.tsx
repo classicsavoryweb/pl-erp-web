@@ -83,7 +83,9 @@ const RolesAndPermissionTableCard = () => {
         {
             label: "Delete",
             onClick: (data: any) => {
-                alert("Are you sure?");
+                if (!confirm("Are you sure?")) {
+                    return;
+                }
                 deleteRole(data.id).then((resp) => {
                     if (resp.error) {
                         toast.error(resp.data.message);

@@ -35,6 +35,12 @@ const EditUsersForm = ({
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
+            first_name: Yup.string().required("First name is required."),
+            last_name: Yup.string().required("Last name is required."),
+            email: Yup.string().required("Email is required."),
+            employee_number: Yup.string().required("Employee number is required."),
+            role_id: Yup.string().required("Role is required."),
+            status: Yup.string().required("Status is required."),
             password: Yup.string(),
             confirm_password: Yup.string().when('password', (password, schema) =>
                 String(password) !== ""
