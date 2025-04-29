@@ -1,3 +1,5 @@
+"use client";
+
 import { getAllRoles } from "@/api/roles-and-permissions";
 import Dropdown from "@/components/common/Dropdown";
 import { useApiCall } from "@/hooks/api-call";

@@ -10,6 +10,16 @@ export const getAllStations = async (payload?: {}) => {
     return resData;
 };
 
+export const getStations = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-stations',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const createStation = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-station',

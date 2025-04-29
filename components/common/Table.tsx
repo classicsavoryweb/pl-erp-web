@@ -59,7 +59,7 @@ const Table = ({
 
 
     return (
-        <div className="relative my-2 w-full">
+        <div className="relative my-1 w-full">
             <table className="w-full rounded-md overflow-x-auto">
                 <thead className="bg-red-800">
                     <tr>

@@ -1,6 +1,3 @@
-"use client";
-import ActionDropDown from "@/components/common/ActionDropDown";
-import Card from "@/components/common/Card";
 import Grid from "@/components/common/Grid";
 import PageTitle from "@/components/common/PageTitle";
 import Authenticated from "@/components/layouts/Authenticated";
