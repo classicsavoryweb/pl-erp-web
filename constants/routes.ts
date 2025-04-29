@@ -74,6 +74,22 @@ export const routes: Route[] = [
         ]
     },
 
+    //employee module
+    {
+        name: "Employees",
+        icon: "PeopleAltOutlined",
+        type: "dropdown",
+        permission: "can_view_employee_module",
+        basepath: "/maintenance",
+        subLinks: [
+            {
+                name: "Employee Tracking",
+                pathname: "/maintenance/employee-tracking",
+                permission: "can_view_employee_tracing"
+            },
+        ]
+    },
+
     //administrator module
     {
         name: "Administrators",
