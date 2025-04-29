@@ -81,6 +81,7 @@ const AgencyTableCard = () => {
             onClick: (data: any) => {
                 editModal.onOpen();
                 setData({
+                    id: data.id,
                     status: data.status,
                     name: data.name,
                     employee_code: data.employee_code,
