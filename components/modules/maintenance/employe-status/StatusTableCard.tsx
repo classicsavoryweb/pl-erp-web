@@ -13,6 +13,7 @@ import { deleteEmployeeStatus, getAllStatus } from "@/api/employee-status";
 import CreateEmployeeStatusForm from "./CreateEmployeeStatusForm";
 import { useState } from "react";
 import EditEmployeeStatusForm from "./EditEmployeeStatusForm";
+import Badge from "@/components/common/Badge";
 
 const EmployeeStatusCard = () => {
     const status = useApiCall();
@@ -54,6 +55,18 @@ const EmployeeStatusCard = () => {
             columnHead: "Description",
             path: "description",
             columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Status",
+            path: "",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                if (data.status === "inactive") {
+                    return <Badge status="danger" label={data.status}/>
+                } else {
+                    return <Badge status="success" label={data.status}/>
+                }
+            }
         }
     ];
 
@@ -65,7 +78,8 @@ const EmployeeStatusCard = () => {
                 setData({
                     id: data.id,
                     type: data.type,
-                    description: data.description
+                    description: data.description,
+                    status: data.status
                 });
             }
         },

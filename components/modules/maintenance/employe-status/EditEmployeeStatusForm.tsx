@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -24,11 +25,13 @@ const EditEmployeeStatusForm = ({
         initialValues: {
             type: "",
             description: "",
+            status: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             type: Yup.string().required("Type is required."),
             description: Yup.string().required("Description is required."),
+            status: Yup.string().required("Status is required."),
         }),
         onSubmit: (values, {resetForm, setSubmitting}) => {
             setSubmitting(true);
@@ -96,6 +99,15 @@ const EditEmployeeStatusForm = ({
                     required
                     onChange={updateEmployeeStatusForm.handleChange}
                     error={updateEmployeeStatusForm.errors.description}
+                />
+                <ActiveInactiveDropDown
+                    label="Status"
+                    placeholder="select status"
+                    name="status"
+                    value={updateEmployeeStatusForm.values.status}
+                    required
+                    onChange={updateEmployeeStatusForm.handleChange}
+                    error={updateEmployeeStatusForm.errors.status}
                 />
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
