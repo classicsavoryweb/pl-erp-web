@@ -61,6 +61,16 @@ export const routes: Route[] = [
                 pathname: "/maintenance/employee-status",
                 permission: "can_view_employee_status"
             },
+            {
+                name: "Agencies",
+                pathname: "/maintenance/agencies",
+                permission: "can_view_agencies"
+            },
+            {
+                name: "Offenses",
+                pathname: "/maintenance/offenses",
+                permission: "can_view_offenses"
+            },
         ]
     },
 

@@ -23,7 +23,7 @@ const ActionDropDown = ({
     return (
         <div className="relative w-[100px] py-1">
             <button
-                className="bg-gray-200 w-full py-1 px-3 hover:cursor-pointer flex justify-between items-center gap-x-1 text-sm"
+                className="bg-gray-200 w-full py-1 px-2 hover:cursor-pointer flex justify-between items-center gap-x-1 text-sm"
                 onClick={() => setToggle(prev => !prev)}
             >
                 Action

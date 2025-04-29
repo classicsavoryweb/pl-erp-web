@@ -35,11 +35,11 @@ const ActiveInactiveDropDown = ({
             options={[
                 {
                     label: "Active",
-                    value: "Active"
+                    value: "active"
                 },
                 {
                     label: "Inactive",
-                    value: "Inactive"
+                    value: "inactive"
                 }
             ]}
             required={required}
