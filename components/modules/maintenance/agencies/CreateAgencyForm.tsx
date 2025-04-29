@@ -6,10 +6,7 @@ import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import StationDropDown from "../../generic/StationDropDown";
-import { createPosition } from "@/api/positions";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
-import RankDropDown from "../../generic/RankDropDown";
 import { createAgency } from "@/api/agencies";
 
 interface FormModalInterface {
