@@ -20,7 +20,7 @@ const RolesAndPermissionTableCard = () => {
     const createModal = useModal();
     const [data, setData] = useState<any>({});
     const editModal = useModal();
-    const paginator = usePagination();
+    const paginator = usePagination(5);
 
     useAsyncEffect(() => {
         roles.setLoading(true);

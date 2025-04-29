@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { createStation, editStation } from "@/api/station";
 import { useEffect } from "react";
+import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -25,11 +26,13 @@ const EditStationForm = ({
         initialValues: {
             station_order: "",
             name: "",
+            status: ""
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             station_order: Yup.string().required("Station order is required."),
             name: Yup.string().required("Station name is required."),
+            status: Yup.string().required("Status is required."),
         }),
         onSubmit: (values, {resetForm, setSubmitting}) => {
             setSubmitting(true);
@@ -78,6 +81,15 @@ const EditStationForm = ({
                     required
                     onChange={editStationFormHandler.handleChange}
                     error={editStationFormHandler.errors.name}
+                />
+                <ActiveInactiveDropDown
+                    label="Status"
+                    placeholder="select status"
+                    name="status"
+                    value={editStationFormHandler.values.status}
+                    required
+                    onChange={editStationFormHandler.handleChange}
+                    error={editStationFormHandler.errors.status}
                 />
                 <Dropdown
                     label="Station order"

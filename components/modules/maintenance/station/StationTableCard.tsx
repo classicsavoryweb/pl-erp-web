@@ -13,6 +13,7 @@ import { deleteStation, getAllStations } from "@/api/station";
 import { useState } from "react";
 import CreateStationForm from "./CreateStationForm";
 import EditStationForm from "./EditStationForm";
+import Badge from "@/components/common/Badge";
 
 const StationTableCard = () => {
     const stations = useApiCall();
@@ -54,6 +55,18 @@ const StationTableCard = () => {
             columnHead: "Station Order",
             path: "station_order",
             columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Status",
+            path: "",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                if (data.status === "inactive") {
+                    return <Badge status="danger" label={data.status}/>
+                } else {
+                    return <Badge status="success" label={data.status}/>
+                }
+            }
         }
     ];
 
@@ -65,27 +78,9 @@ const StationTableCard = () => {
                 setData({
                     id: data.id,
                     name: data.name,
-                    station_order: data.station_order
+                    station_order: data.station_order,
+                    status: data.status
                 });
-            }
-        },
-        {
-            label: "Delete",
-            onClick: (data: any) => {
-                if (!confirm("Are you sure?")) {
-                    return;
-                }
-                deleteStation(data.id).then((resp) => {
-                    if (resp.error) {
-                        toast.error(resp.data.message);
-                    } else {
-                        toast.success("Station deleted successfully.");
-                        stations.triggerReload();
-                    }
-                }).catch(() => {
-                    toast.error("Error encountered");
-                });
-
             }
         },
     ];

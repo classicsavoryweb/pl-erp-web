@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { createStation } from "@/api/station";
+import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -22,11 +23,13 @@ const CreateStationForm = ({
         initialValues: {
             station_order: "",
             name: "",
+            status: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             station_order: Yup.string().required("Station order is required."),
             name: Yup.string().required("Station name is required."),
+            status: Yup.string().required("Status is required."),
         }),
         onSubmit: (values, {resetForm, setSubmitting}) => {
             setSubmitting(true);
@@ -69,6 +72,15 @@ const CreateStationForm = ({
                     required
                     onChange={createStationFormHandler.handleChange}
                     error={createStationFormHandler.errors.name}
+                />
+                <ActiveInactiveDropDown
+                    label="Status"
+                    placeholder="select status"
+                    name="status"
+                    value={createStationFormHandler.values.status}
+                    required
+                    onChange={createStationFormHandler.handleChange}
+                    error={createStationFormHandler.errors.status}
                 />
                 <Dropdown
                     label="Station order"
