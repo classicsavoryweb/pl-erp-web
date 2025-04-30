@@ -43,6 +43,11 @@ export const adminRoutes: Route[] = [
                 pathname: "/administrators/roles-and-permissions",
                 permission: "can_view_roles_and_permissions"
             },
+            {
+                name: "Activity Logs",
+                pathname: "/administrators/activity-logs",
+                permission: "can_view_activity_logs"
+            },
         ]
     },
 ];

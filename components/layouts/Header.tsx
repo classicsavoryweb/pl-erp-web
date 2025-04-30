@@ -66,6 +66,7 @@ const Header = () => {
                     <p
                         className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer"
                         onClick={async () => {
+                            await logout();
                             Cookies.remove('authToken');
                             Cookies.remove('permissions');
                             Cookies.remove('userDetails');

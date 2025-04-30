@@ -3,6 +3,7 @@ import { COLUMNTYPES } from "@/constants/column";
 import _ from "lodash";
 import TableLoader from "./TableLoader";
 import ActionDropDown from "./ActionDropDown";
+import moment from 'moment';
 
 interface columnSetting {
     columnHead: string;
@@ -101,12 +102,14 @@ const Table = ({
                                             return (
                                                 <td
                                                     key={key}
-                                                    className=" py-1 px-2 border-1 border-slate-300 text-sm text-md"
+                                                    className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm text-md overflow-auto max-w-[400px]`}
                                                 >
                                                     { settings.columnType === COLUMNTYPES.string &&
                                                        columnData
                                                     }
-
+                                                    { settings.columnType === COLUMNTYPES.timestamp &&
+                                                       moment(columnData).format("YYYY-MM-DD HH:mm:ss")
+                                                    }
                                                     { settings.columnType === COLUMNTYPES.function &&
                                                         settings.function && settings.function(data)
                                                     }
