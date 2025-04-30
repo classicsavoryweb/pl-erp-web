@@ -1,0 +1,105 @@
+import Button from "@/components/common/Button";
+import Modal from "@/components/common/Modal";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
+import ActiveInactiveDropDown from "../../../generic/ActiveInactiveDropDown";
+import { createSubCategory } from "@/api/offenses";
+import Textfield from "@/components/common/Textfield";
+
+interface FormModalInterface {
+    modal: any;
+    onSubmitCallback: () => void;
+};
+
+const CreateSubCategoryForm = ({
+    modal,
+    onSubmitCallback
+}: FormModalInterface) => {
+
+    const createSubCategoryFormHandler = useFormik({
+        initialValues: {
+            name: "",
+            status: "",
+        },
+        validateOnChange: false,
+        validationSchema: Yup.object().shape({
+            name: Yup.string().required("Name is required."),
+            status: Yup.string().required("Status is required."),
+        }),
+        onSubmit: (values, {resetForm, setSubmitting}) => {
+            setSubmitting(true);
+            createSubCategory(values)
+            .then((resp) => {
+                if(!resp.error) {
+                    toast.success("Sub category created successfully");
+                    onSubmitCallback();
+                    modal.onClose();
+                    resetForm();
+                } else {
+                    toast.error(resp.data.message);
+                }
+            }).catch(() => {
+                toast.error("Error encountered");
+            }).finally((() => {
+                setSubmitting(false);
+            }));
+        }
+    });
+
+    return (
+        <Modal
+            isShowing={modal.isShowing}
+            title="Create new sub category"
+            onClose={() => {
+                modal.onClose();
+                createSubCategoryFormHandler.resetForm();
+            }}
+            loading={modal.loading}
+            size="md"
+        >
+            <form onSubmit={createSubCategoryFormHandler.handleSubmit}>
+                <Textfield
+                    label="Name"
+                    placeholder="enter name"
+                    name="name"
+                    value={createSubCategoryFormHandler.values.name}
+                    required
+                    onChange={createSubCategoryFormHandler.handleChange}
+                    error={createSubCategoryFormHandler.errors.name}
+                />
+                <ActiveInactiveDropDown
+                    label="Status"
+                    placeholder="select status"
+                    name="status"
+                    value={createSubCategoryFormHandler.values.status}
+                    required
+                    onChange={createSubCategoryFormHandler.handleChange}
+                    error={createSubCategoryFormHandler.errors.status}
+                />
+                <hr className="mt-6 pb-2 text-slate-300"/>
+                <div className="flex justify-end">
+                    <div className="w-1/2 flex justify-end items-center gap-x-2">
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={() => {
+                                modal.onClose();
+                                createSubCategoryFormHandler.resetForm();
+                            }}
+                        />
+
+                        <Button
+                            type="submit"
+                            label="Submit"
+                            loading={createSubCategoryFormHandler.isSubmitting}
+                            onClick={() => {}}
+                        />
+                    </div>              
+                </div>
+            </form>
+        </Modal>
+    );
+};
+
+export default CreateSubCategoryForm;

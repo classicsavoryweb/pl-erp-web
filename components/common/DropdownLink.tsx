@@ -24,7 +24,7 @@ const DropdownLink = ({
     const pathName = usePathname();
 
     return (
-        permissions.includes(route.permission) &&
+        (route.permission === "" || permissions.includes(route.permission)) &&
         <div className={`relative ${toggle && "bg-red-300/10" } rounded-md overflow-hidden mt-1`}>
             <button
                 className={`

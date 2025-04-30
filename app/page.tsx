@@ -10,7 +10,7 @@ export default function Home() {
 				title="Dashboard"
 			/>
 			<Grid
-				cols={3}
+				cols={4}
 			>
 				<SummaryCardCount
 					title="Contractual Employees"
@@ -22,6 +22,10 @@ export default function Home() {
 				/>
 				<SummaryCardCount
 					title="Probationary Employees"
+					displayReport={0}
+				/>
+				<SummaryCardCount
+					title="Branches"
 					displayReport={0}
 				/>
 			</Grid>
