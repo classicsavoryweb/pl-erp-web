@@ -7,17 +7,37 @@ body {
     font-family: "Poppins", sans-serif;
     font-size: 15px;
 }
-/* 
-.my-toast-success {
-    background-color: #28a745 !important;
-    color: white !important;
-    border-left: 6px solid #218838;
-    font-weight: bold;
+
+.Toastify__toast--success .Toastify__progress-bar {
+    background: #166534;
 }
 
-.my-toast-error {
-    background-color: #dc3545 !important;
-    color: white !important;
-    border-left: 6px solid #bd2130;
-    font-weight: bold;
-} */
+.Toastify__toast--error .Toastify__progress-bar {
+    background: #991b1b;
+}
+
+.Toastify__toast--success .Toastify__toast-icon {
+    background-color: #166534;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Toastify__toast--error .Toastify__toast-icon {
+    background-color: #991b1b;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.Toastify__toast--success .Toastify__toast-icon svg {
+    fill: #166534;
+    background-color:#f1f5f9;
+}
+
+.Toastify__toast--error .Toastify__toast-icon svg {
+    fill: #991b1b;
+    background-color:#f1f5f9;
+}
