@@ -1,3 +1,6 @@
+import { adminRoutes } from "./admin-routes";
+import { hrRoutes } from "./hr-routes";
+
 interface SubLink {
     name: string;
     pathname: string;
@@ -32,82 +35,6 @@ export const routes: Route[] = [
         type: "link",
         permission: ""
     },
-
-    //maintenance module
-    {
-        name: "Maintenance",
-        icon: "EngineeringOutlined",
-        type: "dropdown",
-        permission: "can_view_maintenance_module",
-        basepath: "/maintenance",
-        subLinks: [
-            {
-                name: "Branches",
-                pathname: "/maintenance/branches",
-                permission: "can_view_branches"
-            },
-            {
-                name: "Positions",
-                pathname: "/maintenance/positions",
-                permission: "can_view_positions"
-            },
-            {
-                name: "Stations",
-                pathname: "/maintenance/stations",
-                permission: "can_view_stations"
-            },
-            {
-                name: "Employee Status",
-                pathname: "/maintenance/employee-status",
-                permission: "can_view_employee_status"
-            },
-            {
-                name: "Agencies",
-                pathname: "/maintenance/agencies",
-                permission: "can_view_agencies"
-            },
-            {
-                name: "Offenses",
-                pathname: "/maintenance/offenses",
-                permission: "can_view_offenses"
-            },
-        ]
-    },
-
-    //employee module
-    {
-        name: "Employees",
-        icon: "PeopleAltOutlined",
-        type: "dropdown",
-        permission: "can_view_employee_module",
-        basepath: "/maintenance",
-        subLinks: [
-            {
-                name: "Employee Tracking",
-                pathname: "/maintenance/employee-tracking",
-                permission: "can_view_employee_tracing"
-            },
-        ]
-    },
-
-    //administrator module
-    {
-        name: "Administrators",
-        icon: "AdminPanelSettingsOutlined",
-        type: "dropdown",
-        permission: "can_view_administrators_module",
-        basepath: "/administrator",
-        subLinks: [
-            {
-                name: "Users",
-                pathname: "/administrators/users",
-                permission: "can_view_users"
-            },
-            {
-                name: "Roles and Permissions",
-                pathname: "/administrators/roles-and-permissions",
-                permission: "can_view_roles_and_permissions"
-            },
-        ]
-    },
+    ...hrRoutes,
+    ...adminRoutes
 ];
