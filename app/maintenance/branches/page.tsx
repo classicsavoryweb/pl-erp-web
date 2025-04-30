@@ -1,4 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
+import BranchesTableCard from "@/components/modules/maintenance/branches/BranchesTableCard";
 
 const Page = () => {
     return (
@@ -6,7 +7,7 @@ const Page = () => {
             <PageTitle
                 title="Branches"
             />
-
+            <BranchesTableCard/>
         </>
     );
 };
