@@ -70,34 +70,38 @@ const DropdownLink = ({
 
                         return (
                             (permissions.includes(link.permission) || link.permission === "") &&
-                            <Link
-                                key={index}
-                                href={link.pathname}
-                                className={`
-                                    w-full
-                                    flex
-                                    hover:bg-red-300/20
-                                    rounded-md
-                                    p-2
-                                    items-center
-                                    font-medium
-                                    text-sm
-                                    px-8
-                                    focus:outline-none
-                                    ${active ? "text-red-800" : "text-gray-500"}
-                                `}
-                            >
-                                    <svg
-                                        width="25"
-                                        height="25"
-                                        viewBox="0 0 25 25"
-                                        fill="none"
-                                        xmlns="http://www.w3.org/2000/svg"
-                                    >
-                                        <path d="M4 4v10h10" stroke="currentColor" strokeWidth="1" />
-                                    </svg>
-                                    {link.name}
-                            </Link>
+                            <div key={index}>
+                                <Link
+                                    href={link.pathname}
+                                    className={`
+                                        w-full
+                                        flex
+                                        hover:bg-red-300/20
+                                        rounded-md
+                                        p-2
+                                        items-center
+                                        font-medium
+                                        text-sm
+                                        px-8
+                                        focus:outline-none
+                                        ${active ? "text-red-800" : "text-gray-500"}
+                                    `}
+                                >
+                                        <svg
+                                            width="25"
+                                            height="25"
+                                            viewBox="0 0 25 25"
+                                            fill="none"
+                                            xmlns="http://www.w3.org/2000/svg"
+                                        >
+                                            <path d="M4 4v10h10" stroke="currentColor" strokeWidth="1" />
+                                        </svg>
+                                        {link.name}
+                                </Link>
+
+
+                                {link.break && <div className="px-6"><hr className="text-gray-300"/></div> }
+                            </div>
                         )
                     })
                     }

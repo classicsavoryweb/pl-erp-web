@@ -3,6 +3,7 @@ interface SubLink {
     name: string;
     pathname: string;
     permission: string;
+    break?: boolean;
 }
 
 interface BaseRoute {

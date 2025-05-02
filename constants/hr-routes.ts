@@ -2,6 +2,7 @@ interface SubLink {
     name: string;
     pathname: string;
     permission: string;
+    break?: boolean;
 }
 
 interface BaseRoute {
@@ -45,7 +46,8 @@ export const hrRoutes: Route[] = [
             {
                 name: "Stations",
                 pathname: "/maintenance/stations",
-                permission: "can_view_stations"
+                permission: "can_view_stations",
+                break: true
             },
             {
                 name: "Employee Status",
@@ -60,7 +62,35 @@ export const hrRoutes: Route[] = [
             {
                 name: "Offenses",
                 pathname: "/maintenance/offenses",
-                permission: "can_view_offenses"
+                permission: "can_view_offenses",
+                break: true
+            },
+            {
+                name: "Training Titles",
+                pathname: "/maintenance/training-titles",
+                permission: "can_view_training_titles",
+                break: true
+            },
+            {
+                name: "Diagnosis",
+                pathname: "/maintenance/diagnosis",
+                permission: "can_view_diagnosis",
+                break: true
+            },
+            {
+                name: "Rate per Group",
+                pathname: "/maintenance/rate-per-group",
+                permission: "can_view_rate_per_group"
+            },
+            {
+                name: "Salary Positions",
+                pathname: "/maintenance/salary-positions",
+                permission: "can_view_salary_positions"
+            },
+            {
+                name: "Bank Account Types",
+                pathname: "/maintenance/bank-account-types",
+                permission: "can_view_salary_positions"
             },
         ]
     },
@@ -68,16 +98,19 @@ export const hrRoutes: Route[] = [
         name: "Employees",
         icon: "PeopleAltOutlined",
         type: "dropdown",
-        permission: "",
+        permission: "can_view_employees_module",
         basepath: "/employees",
         subLinks: [
             {
                 name: "Employee Tracking",
                 pathname: "/employees/employee-tracking",
+                permission: "can_view_employee_tracking"
+            },
+            {
+                name: "Add Employee",
+                pathname: "/employees/add-employee",
                 permission: ""
             },
         ]
     },
-
-    // can_view_employee_tracking can_view_employee_module
 ];

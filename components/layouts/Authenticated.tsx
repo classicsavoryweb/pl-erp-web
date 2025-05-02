@@ -11,7 +11,7 @@ const Authenticated = ({
 }) => {
     return (
         <div className="h-screen w-screen flex">
-            <div className="bg-zinc-50 h-full w-[330px] border-r-1 border-slate-300 overflow-y-auto pb-5">
+            <div className="bg-zinc-50 h-full w-[330px] border-r-1 border-slate-300 pb-5">
                 <div className="w-full flex justify-center py-2">
                     <Image
                         alt="classic savory logo"
@@ -24,7 +24,9 @@ const Authenticated = ({
                 <div className="w-full px-2">
                     <hr className="text-slate-300"/>
                 </div>
-                <Sidebar/>
+                <div className="h-[90vh] max-h-[90vh] overflow-auto pb-5">
+                    <Sidebar/>
+                </div>
             </div>
             <div className="w-full h-screen">
                 <div className="w-full bg-zinc-50 border-b-1 flex justify-end items-center border-slate-300 h-[9vh] px-5">
