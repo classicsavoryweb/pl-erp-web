@@ -4,5 +4,6 @@ export const COLUMNTYPES = {
     link: "link",
     date: "date",
     timestamp: "timestamp",
-    function: "function"
+    function: "function",
+    status: "status"
 };

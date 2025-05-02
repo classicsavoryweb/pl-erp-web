@@ -40,7 +40,7 @@ const CreateTrainingTitleForm = ({
             createTrainingTitle(values)
             .then((resp) => {
                 if(!resp.error) {
-                    toast.success("Station created successfully");
+                    toast.success("Training title created successfully");
                     onSubmitCallback();
                     modal.onClose();
                     resetForm();

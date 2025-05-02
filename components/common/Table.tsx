@@ -4,6 +4,7 @@ import _ from "lodash";
 import TableLoader from "./TableLoader";
 import ActionDropDown from "./ActionDropDown";
 import moment from 'moment';
+import Badge from "./Badge";
 
 interface columnSetting {
     columnHead: string;
@@ -112,6 +113,9 @@ const Table = ({
                                                     }
                                                     { settings.columnType === COLUMNTYPES.function &&
                                                         settings.function && settings.function(data)
+                                                    }
+                                                    { settings.columnType === COLUMNTYPES.status &&
+                                                            <Badge status={ columnData === "inactive" ? "danger": "success"} label={data.status}/>
                                                     }
                                                 </td>
                                             )
