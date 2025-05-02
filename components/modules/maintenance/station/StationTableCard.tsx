@@ -58,15 +58,8 @@ const StationTableCard = () => {
         },
         {
             columnHead: "Status",
-            path: "",
-            columnType: COLUMNTYPES.function,
-            function: (data: any) => {
-                if (data.status === "inactive") {
-                    return <Badge status="danger" label={data.status}/>
-                } else {
-                    return <Badge status="success" label={data.status}/>
-                }
-            }
+            path: "status",
+            columnType: COLUMNTYPES.status,
         }
     ];
 

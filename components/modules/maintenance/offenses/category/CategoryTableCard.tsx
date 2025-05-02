@@ -53,14 +53,7 @@ const CategoryTableCard = () => {
         {
             columnHead: "Status",
             path: "status",
-            columnType: COLUMNTYPES.function,
-            function: (data: any) => {
-                if (data.status === "inactive") {
-                    return <Badge status="danger" label={data.status}/>
-                } else {
-                    return <Badge status="success" label={data.status}/>
-                }
-            }
+            columnType: COLUMNTYPES.status,
         }
     ];
 
