@@ -19,7 +19,7 @@ const SalaryPositionsTableCard = () => {
     const createModal = useModal();
     const editModal = useModal();
     const [data, setData] = useState({});
-    const paginator = usePagination(3);
+    const paginator = usePagination();
 
     useAsyncEffect(() => {
         api.setLoading(true);
