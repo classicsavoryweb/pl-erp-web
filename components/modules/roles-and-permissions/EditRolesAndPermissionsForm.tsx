@@ -50,7 +50,7 @@ const EditRolesAndPermissionsForm = ({
                     resetForm();
                     modal.onClose();
                 } else {
-                    toast.error("Saving role and permissions failed.");
+                    toast.error(resp.data.message);
                 }
             })
             .catch(() => {
