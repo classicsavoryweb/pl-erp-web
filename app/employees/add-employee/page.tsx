@@ -7,7 +7,7 @@ const Page = () => {
             <PageTitle
                 title="Add Employee"
             />
-            <div className="w-[500px]">
+            <div className="w-[550px]">
                 <AddEmployeeForm/>
             </div>
         </>
