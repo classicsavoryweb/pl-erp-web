@@ -1,6 +1,6 @@
 import Card from "@/components/common/Card";
-import LoginForm from "@/components/forms/auth/LoginForm";
 import Guest from "@/components/layouts/Guest";
+import LoginForm from "@/components/modules/login/LoginForm";
 import Image from "next/image";
 
 const LoginPage = () => {

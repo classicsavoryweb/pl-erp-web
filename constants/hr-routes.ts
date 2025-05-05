@@ -69,7 +69,6 @@ export const hrRoutes: Route[] = [
                 name: "Training Titles",
                 pathname: "/maintenance/training-titles",
                 permission: "can_view_training_titles",
-                break: true
             },
             {
                 name: "Diagnosis",
@@ -109,7 +108,7 @@ export const hrRoutes: Route[] = [
             {
                 name: "Add Employee",
                 pathname: "/employees/add-employee",
-                permission: ""
+                permission: "can_perform_employee_tracking"
             },
         ]
     },
