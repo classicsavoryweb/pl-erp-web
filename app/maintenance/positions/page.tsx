@@ -7,8 +7,6 @@ const Page = () => {
             <PageTitle
                 title="Positions"
             />
-
-
             <PositionsTableCard/>
         </>
     );

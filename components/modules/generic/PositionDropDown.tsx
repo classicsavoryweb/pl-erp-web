@@ -10,7 +10,7 @@ interface SelectInterface {
     name: string;
     onChange: (e: any) => void;
     error?: string;
-    value?: string;
+    value?: string | number;
     required?: boolean;
 }
 

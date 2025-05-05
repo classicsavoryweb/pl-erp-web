@@ -11,7 +11,7 @@ interface SelectInterface {
         target: { name: string; value: string }
     }) => void;
     error?: string;
-    value?: string;
+    value?: string|number;
     required?: boolean;
     options: {
         label: string;
