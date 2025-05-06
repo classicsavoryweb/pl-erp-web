@@ -103,7 +103,7 @@ const SearchableDropDown = ({
                     </div>
                 )}
             </div>
-            {error && <p className="text-red-400 text-sm mt-1">{error}</p>}
+            {error && <p className="text-red-400 text-sm">{error}</p>}
         </div>
     );
 };

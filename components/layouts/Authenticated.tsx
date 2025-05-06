@@ -10,7 +10,7 @@ const Authenticated = ({
     children : React.ReactNode;
 }) => {
     return (
-        <div className="h-screen w-screen flex">
+        <div className="h-screen w-full flex">
             <div className="bg-zinc-50 h-full w-[330px] border-r-1 border-slate-300 pb-5">
                 <div className="w-full flex justify-center py-2">
                     <Image
