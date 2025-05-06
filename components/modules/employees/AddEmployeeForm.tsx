@@ -13,6 +13,7 @@ import BranchDropDown from "../generic/BranchDropDown";
 import PositionDropDown from "../generic/PositionDropDown";
 import { addEmployee } from "@/api/employee";
 import { toast } from "react-toastify";
+import Dropdown from "@/components/common/Dropdown";
 
 const AddEmployeeForm = () => {
 
@@ -30,6 +31,7 @@ const AddEmployeeForm = () => {
             date_hired: "",
             birthday: "",
             contact_number: "",
+            contract_duration: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -42,6 +44,7 @@ const AddEmployeeForm = () => {
             home_branch_id: Yup.string().required("Home branch is required"),
             date_hired: Yup.string().required("Date hired is required"),
             birthday: Yup.string().required("Birthday is required"),
+            contract_duration: Yup.string().required("Contract duration is required"),
             contact_number: Yup.string().required("Contact number is required")
                 .min(11, "Minimum of 11 characters")
                 .max(13, "Minimum of 13 characters"),
@@ -194,6 +197,29 @@ const AddEmployeeForm = () => {
                     onChange={addEmployeeHandler.handleChange}
                     value={addEmployeeHandler.values.position_id}
                     error={addEmployeeHandler.errors.position_id}
+                    required
+                />
+                <Dropdown
+                    label="Contract Duration"
+                    name="contract_duration"
+                    placeholder="select contract duration"
+                    onChange={addEmployeeHandler.handleChange}
+                    value={addEmployeeHandler.values.contract_duration}
+                    error={addEmployeeHandler.errors.contract_duration}
+                    options={[
+                        {label: "1", value: "1"},
+                        {label: "2", value: "2"},
+                        {label: "3", value: "3"},
+                        {label: "4", value: "4"},
+                        {label: "5", value: "5"},
+                        {label: "6", value: "6"},
+                        {label: "7", value: "7"},
+                        {label: "8", value: "8"},
+                        {label: "9", value: "9"},
+                        {label: "10", value: "10"},
+                        {label: "11", value: "11"},
+                        {label: "12", value: "12"},
+                    ]}
                     required
                 />
                 <Grid
