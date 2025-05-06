@@ -28,6 +28,8 @@ const AddEmployeeForm = () => {
             branch_id: "",
             home_branch_id: "",
             date_hired: "",
+            birthday: "",
+            contact_number: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -39,10 +41,14 @@ const AddEmployeeForm = () => {
             branch_id: Yup.string().required("Branch is required"),
             home_branch_id: Yup.string().required("Home branch is required"),
             date_hired: Yup.string().required("Date hired is required"),
+            birthday: Yup.string().required("Birthday is required"),
+            contact_number: Yup.string().required("Contact number is required")
+                .min(11, "Minimum of 11 characters")
+                .max(13, "Minimum of 13 characters"),
             agency_id: Yup.string().when('type', (type, schema) =>
-                            String(type) === "agency"
-                                ? schema.required('Agency is required')
-                                : schema.notRequired())
+                String(type) === "agency"
+                    ? schema.required('Agency is required')
+                    : schema.notRequired())
         }),
         onSubmit: (values, {resetForm, setSubmitting}) => {
             setSubmitting(true);
@@ -125,6 +131,27 @@ const AddEmployeeForm = () => {
                         onChange={addEmployeeHandler.handleChange}
                         value={addEmployeeHandler.values.gender}
                         error={addEmployeeHandler.errors.gender}
+                        required
+                    />
+                    <Textfield
+                        label="Birthday"
+                        name="birthday"
+                        type="date"
+                        placeholder="enter date hired"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.birthday}
+                        error={addEmployeeHandler.errors.birthday}
+                        required
+                    />
+                </Grid>
+                <Grid cols={2}>
+                    <Textfield
+                        label="Contact number"
+                        name="contact_number"
+                        placeholder="enter contact number"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.contact_number}
+                        error={addEmployeeHandler.errors.contact_number}
                         required
                     />
                     <Textfield

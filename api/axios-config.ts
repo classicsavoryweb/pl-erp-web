@@ -35,12 +35,22 @@ export const axiosHelper = async ({
 
     const apiUrl = `${api_url}${func_path}`;
 
+    let newPayload;
+
+    if (payload) {
+        newPayload = Object.fromEntries(
+            Object.entries(payload).filter(
+                ([_, value]) => value !== null && value !== ''
+            )
+        );
+    }
+
     const axiosConfig = {
         url: encodeURI(apiUrl),
         method,
         headers,
-        data: method === 'POST' && payload,
-        params: method === 'GET' && payload
+        data: method === 'POST' && newPayload,
+        params: method === 'GET' && newPayload
     };
 
     try {

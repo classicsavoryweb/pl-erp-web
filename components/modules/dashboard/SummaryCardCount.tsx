@@ -12,7 +12,7 @@ const SummaryCardCount = ({
     return (
         <div className="bg-zinc-50 w-full my-2 p-4 rounded-md border-l-5 border-red-700">
             <p className="text-md ">{title}</p>
-            <p className="text-3xl font-medium">{displayReport}</p>
+            <p className="text-3xl font-medium">{displayReport.toLocaleString('en-US')}</p>
         </div>
     )
 };

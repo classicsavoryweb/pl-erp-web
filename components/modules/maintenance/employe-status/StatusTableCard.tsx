@@ -76,25 +76,6 @@ const EmployeeStatusCard = () => {
                 });
             }
         },
-        // {
-        //     label: "Delete",
-        //     onClick: (data: any) => {
-        //         if (!confirm("Are you sure?")) {
-        //             return;
-        //         }
-        //         deleteEmployeeStatus(data.id).then((resp) => {
-        //             if (resp.error) {
-        //                 toast.error(resp.data.message);
-        //             } else {
-        //                 toast.success("Employee status deleted successfully.");
-        //                 status.triggerReload();
-        //             }
-        //         }).catch(() => {
-        //             toast.error("Error encountered");
-        //         });
-
-        //     }
-        // },
     ];
 
     return (

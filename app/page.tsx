@@ -1,7 +1,6 @@
-import Grid from "@/components/common/Grid";
 import PageTitle from "@/components/common/PageTitle";
 import Authenticated from "@/components/layouts/Authenticated";
-import SummaryCardCount from "@/components/modules/dashboard/SummaryCardCount";
+import SummaryCards from "@/components/modules/dashboard/SummaryCards";
 
 export default function Home() {
 	return (
@@ -9,26 +8,7 @@ export default function Home() {
 			<PageTitle
 				title="Dashboard"
 			/>
-			<Grid
-				cols={4}
-			>
-				<SummaryCardCount
-					title="Contractual Employees"
-					displayReport={0}
-				/>
-				<SummaryCardCount
-					title="Regular Employees"
-					displayReport={0}
-				/>
-				<SummaryCardCount
-					title="Probationary Employees"
-					displayReport={0}
-				/>
-				<SummaryCardCount
-					title="Branches"
-					displayReport={0}
-				/>
-			</Grid>
+			<SummaryCards/>
 		</Authenticated>
 	);
 };

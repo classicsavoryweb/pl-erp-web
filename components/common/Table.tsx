@@ -5,6 +5,7 @@ import TableLoader from "./TableLoader";
 import ActionDropDown from "./ActionDropDown";
 import moment from 'moment';
 import Badge from "./Badge";
+import EmptyState from "./EmptyState";
 
 interface columnSetting {
     columnHead: string;
@@ -86,61 +87,70 @@ const Table = ({
                     </tr>
                 </thead>
                 <tbody>
-                        { loading
-                            ?
+                        { loading &&
                                 <tr>
                                     <td colSpan={withActions ? columnSettings.length + 1 : columnSettings.length} className="w-full p-2">
                                         <TableLoader/>
                                     </td>
                                 </tr>
-                            :
+                        }
+                        { dataSet.length > 0 &&
                             dataSet.map((data, idx) => {
-                            return (
-                                <tr key={idx}>
-                                    {
-                                        columnSettings.map((settings, key) => {
-                                            const columnData = _.get(data, settings.path) || "—";
-                                            return (
-                                                <td
-                                                    key={key}
-                                                    className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm text-md overflow-auto max-w-[400px]`}
-                                                >
-                                                    { settings.columnType === COLUMNTYPES.string &&
-                                                       columnData
-                                                    }
-                                                    { settings.columnType === COLUMNTYPES.timestamp &&
-                                                       moment(columnData).format("YYYY-MM-DD HH:mm:ss")
-                                                    }
-                                                    { settings.columnType === COLUMNTYPES.function &&
-                                                        settings.function && settings.function(data)
-                                                    }
-                                                    { settings.columnType === COLUMNTYPES.amount &&
-                                                        Number(columnData).toLocaleString('en-US', {
-                                                            minimumFractionDigits: 2,
-                                                            maximumFractionDigits: 2,
-                                                        })
-                                                    }
-                                                    { settings.columnType === COLUMNTYPES.status &&
-                                                            <Badge status={ columnData === "inactive" ? "danger": "success"} label={data.status}/>
-                                                    }
-                                                </td>
-                                            )
-                                        })
-                                    }
+                                return (
+                                    <tr key={idx}>
+                                        {
+                                            columnSettings.map((settings, key) => {
+                                                const columnData = _.get(data, settings.path) || "—";
+                                                return (
+                                                    <td
+                                                        key={key}
+                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm text-md overflow-auto max-w-[400px]`}
+                                                    >
+                                                        { settings.columnType === COLUMNTYPES.string &&
+                                                           columnData
+                                                        }
+                                                        { settings.columnType === COLUMNTYPES.timestamp &&
+                                                           moment(columnData).format("YYYY-MM-DD HH:mm:ss")
+                                                        }
+                                                        { settings.columnType === COLUMNTYPES.function &&
+                                                            settings.function && settings.function(data)
+                                                        }
+                                                        { settings.columnType === COLUMNTYPES.amount &&
+                                                            Number(columnData).toLocaleString('en-US', {
+                                                                minimumFractionDigits: 2,
+                                                                maximumFractionDigits: 2,
+                                                            })
+                                                        }
+                                                        { settings.columnType === COLUMNTYPES.status &&
+                                                                <Badge status={ columnData === "inactive" ? "danger": "success"} label={data.status}/>
+                                                        }
+                                                    </td>
+                                                )
+                                            })
+                                        }
+    
+                                        { withActions && actions &&
+                                            <td
+                                                className="py-1 px-2 border-1 border-slate-300 text-sm text-md"
+                                            >
+                                                <ActionDropDown
+                                                    data={data}
+                                                    actions={actions}
+                                                />
+                                            </td>
+                                        }
+                                    </tr>       
+                                )})
+                        }
+                        { (!loading && dataSet.length) === 0 &&
+                            <tr>
+                                <td colSpan={withActions ? columnSettings.length + 1 : columnSettings.length} className="w-full p-2 text-center">
+                                    <EmptyState/>
+                                    <p className="text-sm">No data available...</p>
+                                </td>
+                            </tr>
 
-                                    { withActions && actions &&
-                                        <td
-                                            className="py-1 px-2 border-1 border-slate-300 text-sm text-md"
-                                        >
-                                            <ActionDropDown
-                                                data={data}
-                                                actions={actions}
-                                            />
-                                        </td>
-                                    }
-                                </tr>       
-                            )})
-                        } 
+                        }
                 </tbody>
             </table>
             { !loading && dataSet.length > 0 &&
