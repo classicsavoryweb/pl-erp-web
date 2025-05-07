@@ -4,35 +4,29 @@ import Image from "next/image";
 import Header from "./Header";
 import Sidebar from "./Sidebar";
 
-const Authenticated = ({
-    children
-}: {
-    children : React.ReactNode;
-}) => {
+const Authenticated = ({ children }: { children: React.ReactNode }) => {
     return (
-        <div className="h-screen w-full flex">
-            <div className="bg-zinc-50 h-full w-[330px] border-r-1 border-slate-300 pb-5">
-                <div className="w-full flex justify-center py-2">
+        <div className="min-h-screen max-h-screen w-full flex overflow-hidden">
+            <div className="bg-zinc-50 w-[280px] max-w-[280px] border-r border-slate-300 flex flex-col">
+                <div className="w-full flex justify-center py-3">
                     <Image
                         alt="classic savory logo"
                         src="/images/classic-savory.png"
-                        width={150}
+                        width={120}
                         height={100}
                     />
                 </div>
 
-                <div className="w-full px-2">
-                    <hr className="text-slate-300"/>
-                </div>
-                <div className="h-[90vh] max-h-[90vh] overflow-auto pb-5">
-                    <Sidebar/>
+                <div className="flex-1 overflow-auto px-2 pb-5">
+                    <Sidebar />
                 </div>
             </div>
-            <div className="w-full h-screen">
-                <div className="w-full bg-zinc-50 border-b-1 flex justify-end items-center border-slate-300 h-[9vh] px-5">
-                    <Header/>
+
+            <div className="flex-1 flex flex-col min-h-screen max-h-screen overflow-hidden">
+                <div className="w-full bg-zinc-50 border-b border-slate-300 h-[9vh] max-h-[9vh] px-5 flex items-center justify-end">
+                    <Header />
                 </div>
-                <div className="w-full h-[91vh] max-h-[91vh] p-5 overflow-auto">
+                <div className="flex-1 overflow-auto p-5">
                     {children}
                 </div>
             </div>

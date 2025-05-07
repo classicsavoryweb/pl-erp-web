@@ -39,6 +39,7 @@ const DropdownLink = ({
                     hover:cursor-pointer
                     text-gray-500
                     focus:outline-none
+                    text-sm
                 `}
 
                 onClick={() => {
@@ -55,11 +56,11 @@ const DropdownLink = ({
                 { toggle
                     ?
                     <ExpandLessOutlinedIcon
-                        style={{ width: '25px', height: '25px' }}
+                        style={{ width: '20px', height: '20px' }}
                     />
                     :
                     <ExpandMoreOutlinedIcon
-                        style={{ width: '25px', height: '25px' }}
+                        style={{ width: '20px', height: '20px' }}
                     />
                 }
             </button>
@@ -82,7 +83,7 @@ const DropdownLink = ({
                                         items-center
                                         font-medium
                                         text-sm
-                                        px-8
+                                        px-6
                                         focus:outline-none
                                         ${active ? "text-red-800" : "text-gray-500"}
                                     `}

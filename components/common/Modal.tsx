@@ -28,7 +28,7 @@ const Modal = ({
 }: ModalInterface) => {
     return (
         isShowing &&
-        <div className="h-screen w-screen fixed inset-0 z-50 flex justify-center items-start pt-5 bg-black/70">
+        <div className="h-screen w-screen fixed inset-0 z-50 flex justify-center items-start py-5 bg-black/70 overflow-auto">
             <div
                 className={`bg-zinc-50 rounded shadow-lg w-full ${sizeClasses[size]} px-5 py-3 relative`}
             >
