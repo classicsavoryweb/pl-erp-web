@@ -62,11 +62,6 @@ const BranchesTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Mall Admin",
-            path: "mall_admin",
-            columnType: COLUMNTYPES.string
-        },
-        {
             columnHead: "Address",
             path: "address",
             columnType: COLUMNTYPES.string
@@ -90,14 +85,17 @@ const BranchesTableCard = () => {
                 editModal.onOpen();
                 setData({
                     id: data.id,
-                    name : data.name ,
-                    branch_number : data.branch_number ,
-                    status : data.status ,
-                    mall_admin : data.mall_admin ,
-                    short_name : data.short_name ,
-                    address : data.address ,
-                    location : data.location ,
-                    date_open : data.date_open ,
+                    name : data.name,
+                    branch_email : data.branch_email,
+                    status : data.status,
+                    short_name : data.short_name,
+                    address : data.address,
+                    location : data.location,
+                    date_open : data.date_open,
+                    company : data.company,
+                    branch_head_employee_number: data.branch_head_employee_number,
+                    group_head_employee_number: data.group_head_employee_number,
+                    rate_code: data.rate_code
                 });
             }
         },
