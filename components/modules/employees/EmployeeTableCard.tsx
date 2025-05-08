@@ -9,10 +9,12 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { getAllEmployees } from "@/api/employee";
+import { useRouter } from "next/navigation";
 
 const EmployeeTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination();
+    const router = useRouter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -50,12 +52,12 @@ const EmployeeTableCard = () => {
         },
         {
             columnHead: "Position",
-            path: "position.description",
+            path: "current_position.description",
             columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Branch",
-            path: "branch.name",
+            path: "current_branch.name",
             columnType: COLUMNTYPES.string
         },
         {
@@ -74,7 +76,7 @@ const EmployeeTableCard = () => {
         {
             label: "View",
             onClick: (data: any) => {
-
+                router.push(`/employees/${data.employee_number}`);
             }
         },
     ];

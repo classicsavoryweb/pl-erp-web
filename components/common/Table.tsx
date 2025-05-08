@@ -88,11 +88,11 @@ const Table = ({
                 </thead>
                 <tbody>
                         { loading &&
-                                <tr>
-                                    <td colSpan={withActions ? columnSettings.length + 1 : columnSettings.length} className="w-full p-2">
-                                        <TableLoader/>
-                                    </td>
-                                </tr>
+                            <tr>
+                                <td colSpan={withActions ? columnSettings.length + 1 : columnSettings.length} className="w-full p-2">
+                                    <TableLoader/>
+                                </td>
+                            </tr>
                         }
                         { dataSet.length > 0 &&
                             dataSet.map((data, idx) => {
@@ -104,7 +104,7 @@ const Table = ({
                                                 return (
                                                     <td
                                                         key={key}
-                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm text-md overflow-auto max-w-[400px]`}
+                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm overflow-auto max-w-[400px]`}
                                                     >
                                                         { settings.columnType === COLUMNTYPES.string &&
                                                            columnData
@@ -122,7 +122,7 @@ const Table = ({
                                                             })
                                                         }
                                                         { settings.columnType === COLUMNTYPES.status &&
-                                                                <Badge status={ columnData === "inactive" ? "danger": "success"} label={data.status}/>
+                                                            <Badge status={ columnData === "inactive" ? "danger": "success"} label={data.status}/>
                                                         }
                                                     </td>
                                                 )
@@ -131,7 +131,7 @@ const Table = ({
     
                                         { withActions && actions &&
                                             <td
-                                                className="py-1 px-2 border-1 border-slate-300 text-sm text-md"
+                                                className="py-1 px-2 border-1 border-slate-300 text-sm"
                                             >
                                                 <ActionDropDown
                                                     data={data}

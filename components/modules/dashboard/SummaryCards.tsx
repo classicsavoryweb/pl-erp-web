@@ -9,8 +9,9 @@ import { useState } from "react";
 
 const SummaryCards = () => {
     const [data, setData] = useState<any>({});
-
+    const [loading, setLoading] = useState<boolean>(true);
     useAsyncEffect(() => {
+        setLoading(true);
         getAllSummaryDetails()
         .then((resp) => {
             if (resp.error) {
@@ -21,6 +22,8 @@ const SummaryCards = () => {
         })
         .catch(() => {
             toast.error("Error encountered");
+        }).then(() => {
+            setLoading(false);
         })
     }, []);
 
@@ -31,18 +34,22 @@ const SummaryCards = () => {
             <SummaryCardCount
                 title="Contractual Employees"
                 displayReport={data.contractual_employees || 0}
+                loading={loading}
             />
             <SummaryCardCount
                 title="Regular Employees"
                 displayReport={data.regular_employees || 0}
+                loading={loading}
             />
             <SummaryCardCount
                 title="Probationary Employees"
                 displayReport={data.probationary_employees || 0}
+                loading={loading}
             />
             <SummaryCardCount
                 title="Branches"
                 displayReport={data.branches || 0}
+                loading={loading}
             />
         </Grid>
     );
