@@ -37,166 +37,199 @@ const EmployeeDetailsCard = () => {
     }, []);
 
     return (
-        <Card
-            loading={api.loading}
-        >
-            <div className="flex justify-between pb-5">
-                <div className="flex justify-start items-center gap-x-10">
-                    <Image
-                        src={ employee.gender === "Male" ? "/images/profile-pic-male.svg" : "/images/profile-pic-female.svg"}
-                        width={140}
-                        height={140}
-                        alt="profile picture"
+        <div className="flex gap-x-5">
+            <div className="w-1/2">
+                <Card
+                    loading={api.loading}
+                    size="big"
+                >
+                    <div className="flex justify-between pb-5">
+                        <div className="flex justify-start items-center gap-x-10">
+                            <Image
+                                src={ employee.gender === "Male" ? "/images/profile-pic-male.svg" : "/images/profile-pic-female.svg"}
+                                width={140}
+                                height={140}
+                                alt="profile picture"
+                            />
+                            <div>
+                                <p className="text-2xl font-semibold">{employee.last_name}, {employee.first_name}</p>
+                                <p className="text-md font-semibold">{employee.current_position?.description} - {employee.employee_number}</p>
+                                <p className="text-md font-semibold">
+                                    {getTenure(employee.date_hired)}
+                                </p>
+                                <p className="text-md font-semibold">{employee.employee_status?.description}</p>
+                                <Badge
+                                    status={employee.status === "active" ? "success" : "danger"}
+                                    label={employee.status}
+                                />
+                            </div>
+                        </div>
+                        <div>
+                            <Button
+                                label="Edit"
+                                onClick={() => {}}
+                            />
+                        </div>
+                    </div>
+
+                    <hr className=" text-slate-300" />
+                    <div className="py-5">
+                        <p className="text-md font-semibold text-red-800">Employment Details:</p>
+                            <EmployeeBasicInfo
+                                label="Employee Number"
+                                detail={employee.employee_number}
+                            />
+                            <EmployeeBasicInfo
+                                label="Biometric Number"
+                                detail={employee.biometric_number}
+                            />
+                            <EmployeeBasicInfo
+                                label="Date Hired"
+                                detail={employee.date_hired}
+                            />
+                            <EmployeeBasicInfo
+                                label="Employment Type"
+                                detail={employee.type}
+                            />
+                            <EmployeeBasicInfo
+                                label="Regularization Date"
+                                detail={employee.regularization_date}
+                            />
+                    </div>
+
+                    <hr className=" text-slate-300" />
+                    <div className="py-5">
+                        <p className="text-md font-semibold text-red-800">Personal Details:</p>
+                            <EmployeeBasicInfo
+                                label="Full name"
+                                detail={`${employee.last_name}, ${employee.first_name} ${employee.middle_name}`}
+                            />
+                            <EmployeeBasicInfo
+                                label="Civil status"
+                                detail={employee.civil_status}
+                            />
+                            <EmployeeBasicInfo
+                                label="Birthday"
+                                detail={employee.date_hired}
+                            />
+                            <EmployeeBasicInfo
+                                label="Birthplace"
+                                detail={employee.birthplace}
+                            />
+                            <EmployeeBasicInfo
+                                label="Gender"
+                                detail={employee.gender}
+                            />
+                            <EmployeeBasicInfo
+                                label="Height"
+                                detail={employee.height}
+                            /> 
+                    </div>
+
+                    <hr className=" text-slate-300" />
+                    <div className="py-5">
+                        <p className="text-md font-semibold text-red-800">Contact Details:</p>
+                        <EmployeeBasicInfo
+                            label="Email"
+                            detail={employee.email}
+                        />
+                        <EmployeeBasicInfo
+                            label="Contact number"
+                            detail={employee.contact_number}
+                        />
+                        <EmployeeBasicInfo
+                            label="Address"
+                            detail={employee.address}
+                        />
+                        <EmployeeBasicInfo
+                            label="Region"
+                            detail={employee.region}
+                        />
+                    </div>
+
+                    <hr className=" text-slate-300" />
+                    <div className="pt-5">
+                        <p className="text-md font-semibold text-red-800">Government Identification:</p>
+                            <EmployeeBasicInfo
+                                label="TIN"
+                                detail={employee.tin}
+                            />
+                            <EmployeeBasicInfo
+                                label="SSS"
+                                detail={employee.sss}
+                            />
+                            <EmployeeBasicInfo
+                                label="PAGIBIG"
+                                detail={employee.pagibig}
+                            />
+                            <EmployeeBasicInfo
+                                label="Philhealth"
+                                detail={employee.philhealth}
+                            />
+                            <EmployeeBasicInfo
+                                label="Tax Type"
+                                detail={employee.tax_type}
+                            />
+                    </div>
+                </Card>
+            </div>
+
+            <div className="w-1/3">
+                <Card
+                    loading={api.loading}
+                >
+                    <p className="font-semibold text-red-800">Position:</p>
+                    <EmployeeBasicInfo
+                        label="Description"
+                        detail={employee.current_position?.description}
                     />
-                    <div>
-                        <p className="text-2xl font-semibold">{employee.last_name}, {employee.first_name}</p>
-                        <p className="text-md font-semibold">{employee.current_position?.description} - {employee.employee_number}</p>
-                        <p className="text-md font-semibold">
-                            {getTenure(employee.date_hired)}
-                        </p>
-                        <p className="text-md font-semibold">{employee.employee_status?.description}</p>
-                        <Badge
-                            status={employee.employee_status?.type === "active" ? "success" : "danger"}
-                            label={employee.employee_status?.type}
-                        />
-                    </div>
-                </div>
-                <div>
-                    <Button
-                        label="Edit"
-                        onClick={() => {}}
+                    <EmployeeBasicInfo
+                        label="Date Started"
+                        detail={employee.positions && employee.positions[employee.positions.length - 1]?.pivot.date_started}
                     />
-                </div>
-            </div>
-
-            <hr className=" text-slate-300" />
-            <div className="py-5">
-                <p className="text-md font-semibold">Employment Details:</p>
-                <Grid cols={2}>
-                    <div>
-                        <EmployeeBasicInfo
-                            label="Employee Number"
-                            detail={employee.employee_number}
-                        />
-                        <EmployeeBasicInfo
-                            label="Biometric Number"
-                            detail={employee.biometric_number}
-                        />
-                        <EmployeeBasicInfo
-                            label="Date Hired"
-                            detail={employee.date_hired}
-                        />
-                        <EmployeeBasicInfo
-                            label="Employment Type"
-                            detail={employee.type}
-                        />
-                        <EmployeeBasicInfo
-                            label="Regularization Date"
-                            detail={employee.regularization_date}
-                        />
+                    <div className="py-3">
+                        <hr className=" text-slate-300" />
                     </div>
-                    <div>
-                        <EmployeeBasicInfo
-                            label="Branch"
-                            detail={employee.current_branch?.name}
-                        />
-                        <EmployeeBasicInfo
-                            label="Home Branch"
-                            detail={employee.home_branch?.name}
-                        />
-                        <EmployeeBasicInfo
-                            label="Branch Head"
-                            detail={employee.current_branch?.branch_head}
-                        />
-                        <EmployeeBasicInfo
-                            label="Group Head"
-                            detail={employee.current_branch?.group_head}
-                        />
+                    <EmployeeBasicInfo
+                        label="Station"
+                        detail={employee.station?.name}
+                    />
+                </Card>
+                <div className="py-[2px]"/>
+                <Card
+                    loading={api.loading}
+                >
+                    <p className="font-semibold text-red-800">Branch:</p>
+                    <EmployeeBasicInfo
+                        label="Branch"
+                        detail={employee.current_branch?.name}
+                    />
+                    <EmployeeBasicInfo
+                        label="Date Assigned"
+                        detail={employee.branches && employee.branches[employee.branches.length - 1]?.pivot.date_assigned}
+                    />
+                    <EmployeeBasicInfo
+                        label="Home Branch"
+                        detail={employee.home_branch?.name}
+                    />
+                    <div className="py-3">
+                        <hr className=" text-slate-300" />
                     </div>
-                </Grid>
+                    <EmployeeBasicInfo
+                        label="Company"
+                        detail={employee.current_branch?.company}
+                    />
+                    <EmployeeBasicInfo
+                        label="Branch Head"
+                        detail={employee.current_branch?.branch_head}
+                    />
+                    <EmployeeBasicInfo
+                        label="Group Head"
+                        detail={employee.current_branch?.group_head}
+                    />
+                </Card>
             </div>
-
-            <hr className=" text-slate-300" />
-            <div className="py-5">
-                <p className="text-md font-semibold">Personal Details:</p>
-                <Grid cols={2}>
-                    <div>
-                        <EmployeeBasicInfo
-                            label="Full name"
-                            detail={`${employee.last_name}, ${employee.first_name} ${employee.middle_name}`}
-                        />
-                        <EmployeeBasicInfo
-                            label="Civil status"
-                            detail={employee.civil_status}
-                        />
-                        <EmployeeBasicInfo
-                            label="Birthday"
-                            detail={employee.date_hired}
-                        />
-                        <EmployeeBasicInfo
-                            label="Birthplace"
-                            detail={employee.birthplace}
-                        />
-                        <EmployeeBasicInfo
-                            label="Gender"
-                            detail={employee.gender}
-                        />
-                    </div>
-                    <div>
-                        <EmployeeBasicInfo
-                            label="Height"
-                            detail={employee.height}
-                        />
-                    </div>
-                </Grid>
-            </div>
-
-            <hr className=" text-slate-300" />
-            <div className="py-5">
-                <p className="text-md font-semibold">Contact Details:</p>
-                <EmployeeBasicInfo
-                    label="Email"
-                    detail={employee.email}
-                />
-                <EmployeeBasicInfo
-                    label="Contact number"
-                    detail={employee.contact_number}
-                />
-                <EmployeeBasicInfo
-                    label="Address"
-                    detail={employee.address}
-                />
-                <EmployeeBasicInfo
-                    label="Region"
-                    detail={employee.region}
-                />
-            </div>
-
-            <hr className=" text-slate-300" />
-            <div className="pt-5">
-                <p className="text-md font-semibold">Government Identification:</p>
-                <EmployeeBasicInfo
-                    label="TIN"
-                    detail={employee.tin}
-                />
-                <EmployeeBasicInfo
-                    label="SSS"
-                    detail={employee.sss}
-                />
-                <EmployeeBasicInfo
-                    label="PAGIBIG"
-                    detail={employee.pagibig}
-                />
-                <EmployeeBasicInfo
-                    label="Philhealth"
-                    detail={employee.philhealth}
-                />
-                <EmployeeBasicInfo
-                    label="Tax Type"
-                    detail={employee.tax_type}
-                />
-            </div>
-        </Card>
+        </div>
     );
 };
 
