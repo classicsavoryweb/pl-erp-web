@@ -38,3 +38,13 @@ export const addEmployee = async (payload: {}) => {
 
     return resData;
 };
+
+export const getEmployeeAuditLogs = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-audit-logs/${employeeNumber}`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};

@@ -9,7 +9,6 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { toast } from "react-toastify";
 import EmployeeBasicInfo from "./EmployeeBasicInfo";
-import Grid from "@/components/common/Grid";
 import Badge from "@/components/common/Badge";
 import { getTenure } from "@/helper/tenure";
 
@@ -38,7 +37,7 @@ const EmployeeDetailsCard = () => {
 
     return (
         <div className="flex gap-x-5">
-            <div className="w-1/2">
+            <div className="w-4/8">
                 <Card
                     loading={api.loading}
                     size="big"
@@ -174,7 +173,7 @@ const EmployeeDetailsCard = () => {
                 </Card>
             </div>
 
-            <div className="w-1/3">
+            <div className="w-2/8">
                 <Card
                     loading={api.loading}
                 >
