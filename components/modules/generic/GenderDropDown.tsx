@@ -32,11 +32,11 @@ const GenderDropDown = ({
             options={[
                 {
                     label: "Male",
-                    value: "male"
+                    value: "Male"
                 },
                 {
                     label: "Female",
-                    value: "female"
+                    value: "Female"
                 }
             ]}
             required={required}

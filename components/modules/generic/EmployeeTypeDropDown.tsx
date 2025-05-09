@@ -32,11 +32,11 @@ const EmployeeTypeDropDown = ({
             options={[
                 {
                     label: "Direct",
-                    value: "direct"
+                    value: "Direct"
                 },
                 {
                     label: "Agency",
-                    value: "agency"
+                    value: "Agency"
                 }
             ]}
             required={required}
