@@ -94,7 +94,7 @@ const Table = ({
                                 </td>
                             </tr>
                         }
-                        { dataSet.length > 0 &&
+                        { (!loading && dataSet.length > 0 ) &&
                             dataSet.map((data, idx) => {
                                 return (
                                     <tr key={idx}>

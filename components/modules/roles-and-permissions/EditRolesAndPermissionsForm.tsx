@@ -92,7 +92,7 @@ const EditRolesAndPermissionsForm = ({
                 createRole.resetForm();
             }}
             loading={modal.loading}
-            size="lg"
+            size="xl"
         >
             <form onSubmit={createRole.handleSubmit}>
                 <Textfield
@@ -114,28 +114,33 @@ const EditRolesAndPermissionsForm = ({
                 >
                     { permissions.map((permission: any, key:number) => {
                         return (
-                            <Checkbox
-                                key={key}
-                                label={permission.name}
-                                value={permission.name}
-                                checked={createRole.values.permissions.includes(permission.name)}
-                                onChange={(e) => {
-                                    const value = e.target.value;
-                                    const selectedPermissions = createRole.values.permissions;
-                        
-                                    if (e.target.checked) {
-                                        createRole.setFieldValue("permissions", [...selectedPermissions, value]);
-                                    } else {
-                                        const updatedPermissions = selectedPermissions.filter((permission) => permission !== value);
-                                        createRole.setFieldValue("permissions", updatedPermissions);
-                                    }
-                                }}
-                            />
+                            <div className={` ${ String(permission.name).includes("module") ? "col-span-2 pt-[5px]" : ""}`}>
+                                <Checkbox
+                                    highlight={String(permission.name).includes("module")}
+                                    key={key}
+                                    label={permission.name}
+                                    value={permission.name}
+                                    checked={createRole.values.permissions.includes(permission.name)}
+                                    onChange={(e) => {
+                                        const value = e.target.value;
+                                        const selectedPermissions = createRole.values.permissions;
+                            
+                                        if (e.target.checked) {
+                                            createRole.setFieldValue("permissions", [...selectedPermissions, value]);
+                                        } else {
+                                            const updatedPermissions = selectedPermissions.filter((permission) => permission !== value);
+                                            createRole.setFieldValue("permissions", updatedPermissions);
+                                        }
+                                    }}
+                                />
+                            </div>
                         )
                     })
 
                     }                    
                 </Grid>
+
+
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">

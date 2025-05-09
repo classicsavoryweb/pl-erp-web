@@ -103,23 +103,26 @@ const CreateRolesAndPermissionsForm = ({
                 >
                     { permissions.map((permission: any, key:number) => {
                         return (
-                            <Checkbox
-                                key={key}
-                                label={permission.name}
-                                value={permission.name}
-                                onChange={(e: any) => {
-                                    if (e.target.checked) {
-                                        createRole.setFieldValue("permissions",
-                                            [...createRole.values.permissions,
-                                                e.target.value
-                                        ]);
-                                    } else {
-                                        const permissions = createRole.values.permissions;
-                                        permissions.filter((permission) => permission !== e.target.value);
-                                        createRole.setFieldValue("permissions", permissions);
-                                    }
-                                }}
-                            />
+                            <div className={` ${ String(permission.name).includes("module") ? "col-span-2 pt-[5px]" : ""}`}>
+                                <Checkbox
+                                    highlight={String(permission.name).includes("module")}
+                                    key={key}
+                                    label={permission.name}
+                                    value={permission.name}
+                                    onChange={(e: any) => {
+                                        if (e.target.checked) {
+                                            createRole.setFieldValue("permissions",
+                                                [...createRole.values.permissions,
+                                                    e.target.value
+                                            ]);
+                                        } else {
+                                            const permissions = createRole.values.permissions;
+                                            permissions.filter((permission) => permission !== e.target.value);
+                                            createRole.setFieldValue("permissions", permissions);
+                                        }
+                                    }}
+                                />
+                            </div>
                         )
                     })
 

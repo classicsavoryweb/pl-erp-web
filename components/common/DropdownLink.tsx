@@ -83,7 +83,7 @@ const DropdownLink = ({
                                         items-center
                                         font-medium
                                         text-sm
-                                        px-6
+                                        px-3
                                         focus:outline-none
                                         ${active ? "text-red-800" : "text-gray-500"}
                                     `}
