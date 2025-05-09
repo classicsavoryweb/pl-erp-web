@@ -27,6 +27,39 @@ export type Route = LinkRoute | DropdownRoute;
 
 export const hrRoutes: Route[] = [
     {
+        name: "Employees",
+        icon: "PeopleAltOutlined",
+        type: "dropdown",
+        permission: "can_view_employees_module",
+        basepath: "/employees",
+        subLinks: [
+            {
+                name: "Employee Tracking",
+                pathname: "/employees/employee-tracking",
+                permission: "can_view_employee_tracking"
+            },
+            {
+                name: "Add Employee",
+                pathname: "/employees/add-employee",
+                permission: "can_perform_employee_tracking"
+            },
+        ]
+    },
+    {
+        name: "Reports",
+        icon: "FolderCopyOutlined",
+        type: "dropdown",
+        permission: "",
+        basepath: "/reports",
+        subLinks: [
+            {
+                name: "Offenses",
+                pathname: "/reports/offenses",
+                permission: ""
+            },
+        ]
+    },
+    {
         name: "Maintenance",
         icon: "EngineeringOutlined",
         type: "dropdown",
@@ -90,25 +123,6 @@ export const hrRoutes: Route[] = [
                 name: "Bank Account Types",
                 pathname: "/maintenance/bank-account-types",
                 permission: "can_view_salary_positions"
-            },
-        ]
-    },
-    {
-        name: "Employees",
-        icon: "PeopleAltOutlined",
-        type: "dropdown",
-        permission: "can_view_employees_module",
-        basepath: "/employees",
-        subLinks: [
-            {
-                name: "Employee Tracking",
-                pathname: "/employees/employee-tracking",
-                permission: "can_view_employee_tracking"
-            },
-            {
-                name: "Add Employee",
-                pathname: "/employees/add-employee",
-                permission: "can_perform_employee_tracking"
             },
         ]
     },
