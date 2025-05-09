@@ -22,7 +22,6 @@ const EmployeeDetailsCard = () => {
         getEmployee(String(employeeNumber))
         .then((resp) => {
             if (!resp.error) {
-                console.log(resp.data.employee);
                 setEmployee(resp.data.employee);
             } else {
                 toast.error(resp.data.message); 
@@ -37,7 +36,7 @@ const EmployeeDetailsCard = () => {
 
     return (
         <div className="flex gap-x-5">
-            <div className="w-4/8">
+            <div className="w-7/12">
                 <Card
                     loading={api.loading}
                     size="big"
@@ -100,11 +99,11 @@ const EmployeeDetailsCard = () => {
                     <div className="py-5">
                         <p className="text-md font-semibold text-red-800">Personal Details:</p>
                             <EmployeeBasicInfo
-                                label="Full name"
+                                label="Full Name"
                                 detail={`${employee.last_name}, ${employee.first_name} ${employee.middle_name}`}
                             />
                             <EmployeeBasicInfo
-                                label="Civil status"
+                                label="Civil Status"
                                 detail={employee.civil_status}
                             />
                             <EmployeeBasicInfo
@@ -133,7 +132,7 @@ const EmployeeDetailsCard = () => {
                             detail={employee.email}
                         />
                         <EmployeeBasicInfo
-                            label="Contact number"
+                            label="Contact Number"
                             detail={employee.contact_number}
                         />
                         <EmployeeBasicInfo
@@ -173,7 +172,7 @@ const EmployeeDetailsCard = () => {
                 </Card>
             </div>
 
-            <div className="w-2/8">
+            <div className="w-5/12">
                 <Card
                     loading={api.loading}
                 >
@@ -200,7 +199,7 @@ const EmployeeDetailsCard = () => {
                 >
                     <p className="font-semibold text-red-800">Branch:</p>
                     <EmployeeBasicInfo
-                        label="Branch"
+                        label="Current Branch"
                         detail={employee.current_branch?.name}
                     />
                     <EmployeeBasicInfo
@@ -225,6 +224,103 @@ const EmployeeDetailsCard = () => {
                     <EmployeeBasicInfo
                         label="Group Head"
                         detail={employee.current_branch?.group_head}
+                    />
+                </Card>
+                { (employee.education && ( employee.education.college || employee.education.highschool)) &&
+                    <>
+                        <div className="py-[2px]"/>
+                        <Card
+                            loading={api.loading}
+                        >
+                            <p className="font-semibold text-red-800">Education:</p>
+                            { employee.education && employee.education?.college &&
+                                <>
+                                    <EmployeeBasicInfo
+                                        label="College"
+                                        detail={employee.education?.college}
+                                    />
+                                    <EmployeeBasicInfo
+                                        label="Course"
+                                        detail={employee.education?.course}
+                                    />
+                                    <EmployeeBasicInfo
+                                        label="Address"
+                                        detail={employee.education?.college_address}
+                                    />
+                                    <EmployeeBasicInfo
+                                        label="Duration"
+                                        detail={`${employee.education?.college_date_started} - ${employee.education?.college_date_graduated}`}
+                                    />
+                                </>
+                            }
+                            { employee.education && employee.education?.highschool &&
+                                <>
+                                    <EmployeeBasicInfo
+                                        label="Highschool"
+                                        detail={employee.education?.highschool}
+                                    />
+                                    <EmployeeBasicInfo
+                                        label="Address"
+                                        detail={employee.education?.highschool_address}
+                                    />
+                                    <EmployeeBasicInfo
+                                        label="Duration"
+                                        detail={`${employee.education?.highschool_date_started} - ${employee.education?.highschool_date_graduated}`}
+                                    />
+                                </>
+                            }
+                        </Card>
+                    </>
+                }
+                { employee.dependents && employee.dependents.length > 0 &&
+                    <>
+                        <div className="py-[2px]"/>
+                        <Card
+                            loading={api.loading}
+                        >
+                            <p className="font-semibold text-red-800">Dependents:</p>
+                            { employee.dependents &&
+                                employee.dependents.map((dependent: any, idx: number) => {
+                                    return (
+                                        <div
+                                            className="pt-1"
+                                            key={idx}
+                                        >
+                                            <EmployeeBasicInfo
+                                                label="Name"
+                                                detail={dependent.dependent_name}
+                                            />
+                                            <EmployeeBasicInfo
+                                                label="Birthday"
+                                                detail={dependent.birthday}
+                                            />
+                                        </div>
+                                    )
+                                })
+                            }
+                        </Card>
+                    </>
+                }
+                <div className="py-[2px]"/>
+                <Card
+                    loading={api.loading}
+                >
+                    <p className="font-semibold text-red-800">Emergency Contact:</p>
+                    <EmployeeBasicInfo
+                        label="Contact Name"
+                        detail={employee.emergency_contact_name}
+                    />
+                    <EmployeeBasicInfo
+                        label="Contact Number"
+                        detail={employee.emergency_contact_number}
+                    />
+                    <EmployeeBasicInfo
+                        label="Address"
+                        detail={employee.emergency_contact_address}
+                    />
+                    <EmployeeBasicInfo
+                        label="Relationship"
+                        detail={employee.emergency_contact_relationship}
                     />
                 </Card>
             </div>

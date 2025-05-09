@@ -48,3 +48,33 @@ export const getEmployeeAuditLogs = async (employeeNumber: string, payload: {}) 
 
     return resData;
 };
+
+export const getEmployeePositions = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-positions/${employeeNumber}`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getEmployeeBranchhes = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-branches/${employeeNumber}`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getEmployeeContractHistory = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-contracts/${employeeNumber}`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};

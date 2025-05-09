@@ -45,7 +45,7 @@ const EmployeeAuditLogs = () => {
 
     const columnSettings = [
         {
-            columnHead: "Log Name",
+            columnHead: "Log name",
             path: "log_name",
             columnType: COLUMNTYPES.string
         },
@@ -55,9 +55,14 @@ const EmployeeAuditLogs = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Created By",
+            columnHead: "Created by",
             path: "causer.full_name",
             columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Logged at",
+            path: "created_at",
+            columnType: COLUMNTYPES.timestamp
         },
     ];
 

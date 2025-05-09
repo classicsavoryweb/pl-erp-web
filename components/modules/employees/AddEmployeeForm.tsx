@@ -88,7 +88,7 @@ const AddEmployeeForm = () => {
                         error={addEmployeeHandler.errors.type}
                         required
                     />
-                    { addEmployeeHandler.values.type === "agency" &&
+                    { addEmployeeHandler.values.type === "Agency" &&
                         <AgencyDropDown
                             label="Agency"
                             name="agency_id"
