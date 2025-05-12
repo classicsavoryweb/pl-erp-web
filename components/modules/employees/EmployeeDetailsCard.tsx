@@ -1,44 +1,25 @@
 "use client";
-import { getEmployee } from "@/api/employee";
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
-import { useApiCall } from "@/hooks/api-call";
-import { useAsyncEffect } from "@/hooks/async-effect";
 import Image from "next/image";
-import { useParams } from "next/navigation";
-import { useState } from "react";
-import { toast } from "react-toastify";
+import { useParams, useRouter } from "next/navigation";
+import { useContext } from "react";
 import EmployeeBasicInfo from "./EmployeeBasicInfo";
 import Badge from "@/components/common/Badge";
 import { getTenure } from "@/helper/tenure";
+import { EmployeeContext } from "@/context/EmployeeProvider";
 
 const EmployeeDetailsCard = () => {
     const params = useParams();
     const employeeNumber = params["employee-number"];
-    const [employee, setEmployee] = useState<any>({});
-    const api = useApiCall();
-
-    useAsyncEffect(() => {
-        getEmployee(String(employeeNumber))
-        .then((resp) => {
-            if (!resp.error) {
-                setEmployee(resp.data.employee);
-            } else {
-                toast.error(resp.data.message); 
-            }
-
-        }).catch(() => {
-            toast.error("Error fetching employee details");
-        }).finally(() => {
-            api.setLoading(false);
-        });
-    }, []);
+    const router = useRouter();
+    const {employee, loading} = useContext(EmployeeContext);
 
     return (
         <div className="flex gap-x-5">
             <div className="w-7/12">
                 <Card
-                    loading={api.loading}
+                    loading={loading}
                     size="big"
                 >
                     <div className="flex justify-between pb-5">
@@ -65,14 +46,16 @@ const EmployeeDetailsCard = () => {
                         <div>
                             <Button
                                 label="Edit"
-                                onClick={() => {}}
+                                onClick={() => {
+                                    router.push(`/employees/edit/${employeeNumber}`)
+                                }}
                             />
                         </div>
                     </div>
 
                     <hr className=" text-slate-300" />
                     <div className="py-5">
-                        <p className="text-md font-semibold text-red-800">Employment Details:</p>
+                        <p className="text-md font-semibold text-red-800">Employment Details</p>
                             <EmployeeBasicInfo
                                 label="Employee Number"
                                 detail={employee.employee_number}
@@ -97,7 +80,7 @@ const EmployeeDetailsCard = () => {
 
                     <hr className=" text-slate-300" />
                     <div className="py-5">
-                        <p className="text-md font-semibold text-red-800">Personal Details:</p>
+                        <p className="text-md font-semibold text-red-800">Personal Details</p>
                             <EmployeeBasicInfo
                                 label="Full Name"
                                 detail={`${employee.last_name}, ${employee.first_name} ${employee.middle_name}`}
@@ -126,7 +109,7 @@ const EmployeeDetailsCard = () => {
 
                     <hr className=" text-slate-300" />
                     <div className="py-5">
-                        <p className="text-md font-semibold text-red-800">Contact Details:</p>
+                        <p className="text-md font-semibold text-red-800">Contact Details</p>
                         <EmployeeBasicInfo
                             label="Email"
                             detail={employee.email}
@@ -147,7 +130,7 @@ const EmployeeDetailsCard = () => {
 
                     <hr className=" text-slate-300" />
                     <div className="pt-5">
-                        <p className="text-md font-semibold text-red-800">Government Identification:</p>
+                        <p className="text-md font-semibold text-red-800">Government Identification</p>
                             <EmployeeBasicInfo
                                 label="TIN"
                                 detail={employee.tin}
@@ -174,9 +157,9 @@ const EmployeeDetailsCard = () => {
 
             <div className="w-5/12">
                 <Card
-                    loading={api.loading}
+                    loading={loading}
                 >
-                    <p className="font-semibold text-red-800">Position:</p>
+                    <p className="font-semibold text-red-800">Position</p>
                     <EmployeeBasicInfo
                         label="Description"
                         detail={employee.current_position?.description}
@@ -195,12 +178,16 @@ const EmployeeDetailsCard = () => {
                 </Card>
                 <div className="py-[2px]"/>
                 <Card
-                    loading={api.loading}
+                    loading={loading}
                 >
-                    <p className="font-semibold text-red-800">Branch:</p>
+                    <p className="font-semibold text-red-800">Branch</p>
                     <EmployeeBasicInfo
                         label="Current Branch"
                         detail={employee.current_branch?.name}
+                    />
+                    <EmployeeBasicInfo
+                        label="Company"
+                        detail={employee.current_branch?.company}
                     />
                     <EmployeeBasicInfo
                         label="Date Assigned"
@@ -214,10 +201,6 @@ const EmployeeDetailsCard = () => {
                         <hr className=" text-slate-300" />
                     </div>
                     <EmployeeBasicInfo
-                        label="Company"
-                        detail={employee.current_branch?.company}
-                    />
-                    <EmployeeBasicInfo
                         label="Branch Head"
                         detail={employee.current_branch?.branch_head}
                     />
@@ -230,7 +213,7 @@ const EmployeeDetailsCard = () => {
                     <>
                         <div className="py-[2px]"/>
                         <Card
-                            loading={api.loading}
+                            loading={loading}
                         >
                             <p className="font-semibold text-red-800">Education:</p>
                             { employee.education && employee.education?.college &&
@@ -276,9 +259,9 @@ const EmployeeDetailsCard = () => {
                     <>
                         <div className="py-[2px]"/>
                         <Card
-                            loading={api.loading}
+                            loading={loading}
                         >
-                            <p className="font-semibold text-red-800">Dependents:</p>
+                            <p className="font-semibold text-red-800">Dependents</p>
                             { employee.dependents &&
                                 employee.dependents.map((dependent: any, idx: number) => {
                                     return (
@@ -303,9 +286,9 @@ const EmployeeDetailsCard = () => {
                 }
                 <div className="py-[2px]"/>
                 <Card
-                    loading={api.loading}
+                    loading={loading}
                 >
-                    <p className="font-semibold text-red-800">Emergency Contact:</p>
+                    <p className="font-semibold text-red-800">Emergency Contact</p>
                     <EmployeeBasicInfo
                         label="Contact Name"
                         detail={employee.emergency_contact_name}

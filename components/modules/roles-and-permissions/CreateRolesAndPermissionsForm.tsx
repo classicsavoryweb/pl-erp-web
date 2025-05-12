@@ -103,10 +103,9 @@ const CreateRolesAndPermissionsForm = ({
                 >
                     { permissions.map((permission: any, key:number) => {
                         return (
-                            <div className={` ${ String(permission.name).includes("module") ? "col-span-2 pt-[5px]" : ""}`}>
+                            <div key={key} className={` ${ String(permission.name).includes("module") ? "col-span-2 pt-[5px]" : ""}`}>
                                 <Checkbox
                                     highlight={String(permission.name).includes("module")}
-                                    key={key}
                                     label={permission.name}
                                     value={permission.name}
                                     onChange={(e: any) => {

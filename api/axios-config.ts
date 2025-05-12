@@ -38,11 +38,13 @@ export const axiosHelper = async ({
     let newPayload;
 
     if (payload) {
-        newPayload = Object.fromEntries(
-            Object.entries(payload).filter(
-                ([_, value]) => value !== null && value !== ''
-            )
-        );
+        // newPayload = Object.fromEntries(
+        //     Object.entries(payload).filter(
+        //         ([_, value]) => value !== null && value !== ''
+        //     )
+        // );
+
+        newPayload = cleanPayload(payload)
     }
 
     const axiosConfig = {
@@ -80,3 +82,16 @@ export const axiosHelper = async ({
         };
     }
 };
+
+function cleanPayload(payload: any): any {
+    if (Array.isArray(payload)) {
+        return payload.map((item: any) => cleanPayload(item)).filter((item: any) => item !== null && item !== '');
+    } else if (typeof payload === 'object' && payload !== null) {
+        return Object.fromEntries(
+            Object.entries(payload)
+                .map(([key, value]: [string, any]) => [key, cleanPayload(value)])
+                .filter(([_, value]) => value !== null && value !== '')
+        );
+    }
+    return payload;
+}

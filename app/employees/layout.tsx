@@ -1,4 +1,5 @@
 import Authenticated from "@/components/layouts/Authenticated";
+import EmployeeProvider from "@/context/EmployeeProvider";
 
 export default function Layout({
   	children,
@@ -7,7 +8,9 @@ export default function Layout({
 }>) {
 	return (
 		<Authenticated>
-            {children}
+			<EmployeeProvider>
+				{children}
+			</EmployeeProvider>
         </Authenticated>
 	);
 }

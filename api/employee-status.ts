@@ -10,6 +10,16 @@ export const getAllStatus = async (payload?: {}) => {
     return resData;
 };
 
+export const getStatus = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-status',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const createEmployeeStatus = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-employee-status',
