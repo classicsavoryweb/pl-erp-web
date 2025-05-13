@@ -104,7 +104,7 @@ const Table = ({
                                                 return (
                                                     <td
                                                         key={key}
-                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm overflow-auto max-w-[400px]`}
+                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm max-w-[400px]`}
                                                     >
                                                         { settings.columnType === COLUMNTYPES.string &&
                                                            columnData

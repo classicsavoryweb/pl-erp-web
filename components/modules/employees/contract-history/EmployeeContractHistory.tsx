@@ -1,16 +1,20 @@
 "use client";
 import { getEmployeeContractHistory, getEmployeePositions } from "@/api/employee";
+import ActionDropDown from "@/components/common/ActionDropDown";
 import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
+import { EmployeeContext } from "@/context/EmployeeProvider";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { toast } from "react-toastify";
+import EmployeeContractForm from "./EmployeeContractForm";
+import Button from "@/components/common/Button";
 
 const EmployeeContractHistory = () => {
     const params = useParams();
@@ -19,6 +23,8 @@ const EmployeeContractHistory = () => {
     const paginator = usePagination(5);
     const [data, setData] = useState<any>({});
     const modal = useModal();
+    const [action, setAction] = useState<"add" | "edit">("add");
+    const { triggerReload } = useContext(EmployeeContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -60,61 +66,71 @@ const EmployeeContractHistory = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Remarks",
-            path: "remarks",
-            columnType: COLUMNTYPES.string
-        },
-        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status
         },
+        {
+            columnHead: "Action",
+            path: "date_appointed",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                const dataIndex = api.dataSet.findIndex(item => data.id === item.id);
+                if (dataIndex === 0) {
+                    return (
+                        <ActionDropDown
+                            data={data}
+                            actions={[
+                                {
+                                    label: "Edit",
+                                    onClick: () => {
+                                        setAction("edit");
+                                        modal.onOpen();
+                                        setData({
+                                            id: data.id,
+                                            contract_start_date: data.contract_start_date,
+                                            contract_end_date: data.contract_end_date,
+                                            status: data.status,
+                                            remarks: data.remarks,
+                                        });
+                                    }
+                                }
+                            ]}
+                        />
+                    )
+                }
+            }
+        },
     ];
-
-    // const tableActions = [
-    //     {
-    //         label: "View",
-    //         onClick: (data: any) => {
-    //             modal.onOpen();
-    //             setData(data);
-    //         }
-    //     },
-    // ];
     
     return (
         <>
-            <Modal
-                isShowing={modal.isShowing}
-                onClose={modal.onClose}
-                title="Properties"
-                size="xl"
-            >    
-                { data.properties?.old &&
-                    <div>
-                        <p>Old Data:</p>
-                        <pre className="text-[12px]">
-                            {JSON.stringify(data.properties?.old, null, 2)}
-                        </pre>
-                    </div>
-                }
-                { data.properties?.attributes &&
-                    <div>
-                        <p>{data.properties?.old ? "New Data" : "Data:"}</p>
-                        <pre className="text-[12px]">
-                            {JSON.stringify(data.properties?.attributes, null, 2)}
-                        </pre>
-                    </div>
-
-                }
-            </Modal>
-
+            <EmployeeContractForm
+                modal={modal}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    modal.onClose();
+                    triggerReload();
+                }}
+                action={action}
+                data={data}
+            />
+            <div className="flex justify-end">
+                <div>
+                    <Button
+                        label="Add"
+                        onClick={() => {
+                            setAction("add");
+                            modal.onOpen();
+                        }}
+                    />
+                </div>
+            </div>
             <Table
                 dataSet={api.dataSet}
                 columnSettings={columnSettings}
                 loading={api.loading}
                 paginator={paginator}
-                // withActions
-                // actions={tableActions}
             />
         </>
     );

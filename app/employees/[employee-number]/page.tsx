@@ -1,9 +1,9 @@
 import Accordion from "@/components/common/Accordion";
 import EmployeeAuditLogs from "@/components/modules/employees/EmployeeAuditLogs";
-import EmployeeBranchHistory from "@/components/modules/employees/EmployeeBranchHistory";
-import EmployeeContractHistory from "@/components/modules/employees/EmployeeContractHistory";
 import EmployeeDetailsCard from "@/components/modules/employees/EmployeeDetailsCard";
-import EmployeePositionHistory from "@/components/modules/employees/EmployeePositionHistory";
+import EmployeeBranchHistory from "@/components/modules/employees/branch-history/EmployeeBranchHistory";
+import EmployeeContractHistory from "@/components/modules/employees/contract-history/EmployeeContractHistory";
+import EmployeePositionHistory from "@/components/modules/employees/position-history/EmployeePositionHistory";
 
 const Page = () => {
     return (

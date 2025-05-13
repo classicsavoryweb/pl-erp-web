@@ -88,3 +88,63 @@ export const updateEmployee = async ( employeeNumber: string, payload: {}) => {
 
     return resData;
 };
+
+export const addEmployeePosition = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/add-employee-position/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const updateEmployeePosition = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-employee-position/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const addEmployeeBranch = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/add-employee-branch/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const updateEmployeeBranch = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-employee-branch/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const addEmployeeContract = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/add-employee-contract/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const updateEmployeeContract = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-employee-contract/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
