@@ -191,7 +191,7 @@ const EmployeeDetailsCard = () => {
                     />
                     <EmployeeBasicInfo
                         label="Date Assigned"
-                        detail={employee.branches && employee.branches[employee.branches.length - 1]?.pivot.date_assigned}
+                        detail={employee.branches && employee.branches[0]?.pivot.date_assigned}
                     />
                     <EmployeeBasicInfo
                         label="Home Branch"

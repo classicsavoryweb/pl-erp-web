@@ -50,6 +50,16 @@ const EmployeePositionHistory = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Date Started",
+            path: "date_started",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "OIC",
+            path: "oic_assignment",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Date started",
             path: "date_started",
             columnType: COLUMNTYPES.string

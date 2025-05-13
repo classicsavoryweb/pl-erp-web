@@ -45,8 +45,18 @@ const EmployeeBranchHistory = () => {
 
     const columnSettings = [
         {
+            columnHead: "Branch Number",
+            path: "branch.branch_number",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Branch",
             path: "branch.name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Branch Head",
+            path: "branch.branch_head",
             columnType: COLUMNTYPES.string
         },
         {

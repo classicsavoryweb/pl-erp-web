@@ -45,17 +45,17 @@ const EmployeeContractHistory = () => {
 
     const columnSettings = [
         {
-            columnHead: "Contract number",
+            columnHead: "Contract Number",
             path: "contract_number",
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Contract start date",
+            columnHead: "Contract Start Date",
             path: "contract_start_date",
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Contract end date",
+            columnHead: "Contract End Date",
             path: "contract_end_date",
             columnType: COLUMNTYPES.string
         },

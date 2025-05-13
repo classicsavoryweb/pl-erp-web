@@ -17,6 +17,7 @@ const EditPersonalDetails = ({
     return (
         <Card
             loading={loading}
+            size='medium'
         >
             <p className="text-md font-semibold text-red-800">Personal Details</p>
 

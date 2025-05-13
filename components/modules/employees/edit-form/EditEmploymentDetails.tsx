@@ -25,6 +25,7 @@ const EditEmploymentDetails = ({
     return (
         <Card
             loading={loading}
+            size='medium'
         >
             <p className="text-md font-semibold text-red-800">Employment Details</p>
             <Grid
@@ -74,14 +75,6 @@ const EditEmploymentDetails = ({
                     placeholder='select employee status'
                     required
                 />
-                <ActiveInactiveDropDown
-                    onChange={formHandler.handleChange}
-                    label='Status'
-                    name="status"
-                    value={formHandler.values.status}
-                    placeholder='select employee status'
-                    required
-                />
                 <Textfield
                     type='date'
                     onChange={formHandler.handleChange}
@@ -97,6 +90,14 @@ const EditEmploymentDetails = ({
                     name="regularization_date"
                     value={formHandler.values.regularization_date || ""}
                     disabled={formHandler.values.employee_status_id != 2}
+                />
+                <ActiveInactiveDropDown
+                    onChange={formHandler.handleChange}
+                    label='Status'
+                    name="status"
+                    value={formHandler.values.status}
+                    placeholder='select employee status'
+                    required
                 />
                 { formHandler.values.status === "inactive" &&
                     <>
