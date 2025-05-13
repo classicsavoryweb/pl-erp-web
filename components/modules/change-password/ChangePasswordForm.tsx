@@ -77,7 +77,7 @@ const ChangePasswordForm = () => {
                 error={formHandler.errors.confirm_password}
                 required
             />
-            <div className="py-20"/>
+            <div className="py-25"/>
             <Button
                 loading={formHandler.isSubmitting}
                 type="submit"

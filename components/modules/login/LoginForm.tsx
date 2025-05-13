@@ -23,16 +23,17 @@ const LoginForm = () => {
             email: Yup.string().required("Email is required."),
             password: Yup.string().required("Password is required.")
         }),
-        onSubmit: (values, {setErrors, setSubmitting}) => {
+        onSubmit: (values, {setSubmitting}) => {
             setSubmitting(true);
             login(values)
             .then((resp) => {
                 if (resp.error) {
                     toast.error(resp.data.message);
                 } else {
-                    Cookies.set('authToken', resp.data.token, {path: '/'});
-                    Cookies.set('permissions', JSON.stringify(resp.data.permissions), {path: '/'});
-                    Cookies.set('userDetails', JSON.stringify(resp.data.user), {path: '/'});
+                    const expiresInHours = 12 / 24;
+                    Cookies.set('authToken', resp.data.token, {path: '/' ,expires: expiresInHours});
+                    Cookies.set('permissions', JSON.stringify(resp.data.permissions), {path: '/' ,expires: expiresInHours});
+                    Cookies.set('userDetails', JSON.stringify(resp.data.user), {path: '/ ', expires: expiresInHours});
                     router.push("/");
                 }
             })
