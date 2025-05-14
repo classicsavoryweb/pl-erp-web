@@ -168,9 +168,6 @@ const EmployeeDetailsCard = () => {
                         label="Date Started"
                         detail={employee.positions && employee.positions[employee.positions.length - 1]?.pivot.date_started}
                     />
-                    <div className="py-3">
-                        <hr className=" text-slate-300" />
-                    </div>
                     <EmployeeBasicInfo
                         label="Station"
                         detail={employee.station?.name}

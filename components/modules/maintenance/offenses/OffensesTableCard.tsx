@@ -87,7 +87,7 @@ const OffensesTableCard = () => {
     return (
         <>
             <Card>
-                <p>Offenses</p>
+                <p className="text-red-800 font-semibold">Offenses</p>
                 <div className="flex justify-end items-center">
                     <div
                         className="w-[180px]"
