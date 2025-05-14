@@ -12,7 +12,7 @@ export const getAllBankAccountTypes = async (payload?: {}) => {
 
 export const getBankAccountTypes = async (payload?: {}) => {
     const resData = await axiosHelper({
-        func_path: '/get-all-bank-account-types',
+        func_path: '/get-bank-account-types',
         method: 'GET',
         payload: payload
     });

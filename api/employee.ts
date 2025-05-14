@@ -148,3 +148,33 @@ export const updateEmployeeContract = async ( employeeNumber: string, payload: {
 
     return resData;
 };
+
+export const getEmployeeBankDetailsHistory = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-bank-details/${employeeNumber}`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const addEmployeeBankDetails = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/add-employee-bank-details/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const updateEmployeeBankDetails = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-employee-bank-details/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};

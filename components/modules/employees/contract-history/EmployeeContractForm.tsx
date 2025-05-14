@@ -32,7 +32,7 @@ const EmployeeContractForm = ({
     const formHandler = useFormik({
         initialValues: {
             id: "",
-            status: "",
+            status: "active",
             contract_number: "",
             contract_start_date: "",
             contract_end_date: "",
