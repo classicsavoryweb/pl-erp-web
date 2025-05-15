@@ -10,17 +10,21 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { getAllEmployees } from "@/api/employee";
 import { useRouter } from "next/navigation";
+import FilterCard from "../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const EmployeeTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination();
     const router = useRouter();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllEmployees({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -37,16 +41,16 @@ const EmployeeTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
-            columnHead: "Employee number",
+            columnHead: "Employee Number",
             path: "employee_number",
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Full name",
+            columnHead: "Full Name",
             path: "full_name",
             columnType: COLUMNTYPES.string
         },
@@ -61,7 +65,7 @@ const EmployeeTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Date hired",
+            columnHead: "Date Hired",
             path: "date_hired",
             columnType: COLUMNTYPES.string
         },
@@ -83,6 +87,12 @@ const EmployeeTableCard = () => {
 
     return (
         <>
+            <FilterCard
+                hasDateRange
+                withStatus
+                filterHandler={filter}
+                columnSettings={columnSettings}
+            />
             <Card>
                 <Table
                     dataSet={api.dataSet}

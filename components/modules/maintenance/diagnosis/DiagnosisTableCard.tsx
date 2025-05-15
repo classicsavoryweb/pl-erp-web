@@ -14,6 +14,8 @@ import Badge from "@/components/common/Badge";
 import { getAllDiagnosis } from "@/api/diagnosis";
 import CreateDiagnosisForm from "./CreateDiagnosisForm";
 import EditDiagnosisForm from "./EditDiagnosisForm";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const DiagnosisTableCard = () => {
     const api = useApiCall();
@@ -21,12 +23,14 @@ const DiagnosisTableCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllDiagnosis({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -43,7 +47,7 @@ const DiagnosisTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -81,6 +85,11 @@ const DiagnosisTableCard = () => {
 
     return (
         <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                withStatus
+            />
             <Card>
                 <div className="flex justify-end items-center">
                     <div

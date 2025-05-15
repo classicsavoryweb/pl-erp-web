@@ -7,7 +7,6 @@ const Page = () => {
             <PageTitle
                 title="Employee Tracking"
             />
-
             <EmployeeTableCard/>
         </>
     );

@@ -11,6 +11,7 @@ const Page = () => {
             <PageTitle
                 title="Offenses"
             />
+            <OffensesTableCard/>
             <Grid
                 cols={2}
             >
@@ -25,7 +26,6 @@ const Page = () => {
                     <SubCategoryTableCard/>
                 </Accordion>
             </Grid>
-            <OffensesTableCard/>
         </>
     );
 };

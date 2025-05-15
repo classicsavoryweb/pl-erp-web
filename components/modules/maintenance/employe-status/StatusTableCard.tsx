@@ -14,6 +14,8 @@ import CreateEmployeeStatusForm from "./CreateEmployeeStatusForm";
 import { useState } from "react";
 import EditEmployeeStatusForm from "./EditEmployeeStatusForm";
 import Badge from "@/components/common/Badge";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const EmployeeStatusCard = () => {
     const status = useApiCall();
@@ -21,12 +23,14 @@ const EmployeeStatusCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         status.setLoading(true);
         getAllStatus({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -43,7 +47,7 @@ const EmployeeStatusCard = () => {
         .finally(() => {
             status.setLoading(false);
         });
-    }, [paginator.reload, status.reload]);
+    }, [paginator.reload, status.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -80,6 +84,11 @@ const EmployeeStatusCard = () => {
 
     return (
         <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                withStatus
+            />
             <Card>
                 <div className="flex justify-end items-center">
                     <div

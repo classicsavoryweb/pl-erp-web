@@ -13,6 +13,8 @@ import { useState } from "react";
 import { getAllBankAccountTypes } from "@/api/bank-account-types";
 import CreateBankAccountTypeForm from "./CreateBankAccountTypeForm";
 import EditBankAccountTypeForm from "./EditBankAccountTypeForm";
+import { useFilter } from "@/hooks/use-filter";
+import FilterCard from "../../cards/FilterCard";
 
 const BankAccountTypeCard = () => {
     const api = useApiCall();
@@ -20,12 +22,14 @@ const BankAccountTypeCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllBankAccountTypes({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -42,7 +46,7 @@ const BankAccountTypeCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -79,6 +83,11 @@ const BankAccountTypeCard = () => {
 
     return (
         <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                withStatus
+            />
             <Card>
                 <div className="flex justify-end items-center">
                     <div>

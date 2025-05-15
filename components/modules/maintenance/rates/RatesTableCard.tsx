@@ -13,6 +13,8 @@ import { useState } from "react";
 import { getAlllRates } from "@/api/rates";
 import CreateRateForm from "./CreateRateForm";
 import EditRateForm from "./EditRateForm";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const RatesTableCard = () => {
     const api = useApiCall();
@@ -20,12 +22,14 @@ const RatesTableCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAlllRates({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -42,7 +46,7 @@ const RatesTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -85,6 +89,11 @@ const RatesTableCard = () => {
 
     return (
         <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                withStatus
+            />
             <Card>
                 <div className="flex justify-end items-center">
                     <div>

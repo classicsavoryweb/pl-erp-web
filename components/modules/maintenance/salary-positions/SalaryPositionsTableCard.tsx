@@ -13,6 +13,8 @@ import { getAllSalaryPositions } from "@/api/salary-positions";
 import Card from "@/components/common/Card";
 import CreateSalaryPositionForm from "./CreateSalaryPositionForm";
 import EditSalaryPositionForm from "./EditSalaryPositionForm";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const SalaryPositionsTableCard = () => {
     const api = useApiCall();
@@ -20,12 +22,14 @@ const SalaryPositionsTableCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllSalaryPositions({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -42,7 +46,7 @@ const SalaryPositionsTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -84,33 +88,40 @@ const SalaryPositionsTableCard = () => {
     ];
 
     return (
-        <Card>
-            <div className="flex justify-end items-center">
-                <div>
-                    <Button
-                        label="Create new salary position"
-                        onClick={createModal.onOpen}
-                    />
-                </div>
-            </div>
-            <Table
-                dataSet={api.dataSet}
+        <>
+            <FilterCard
                 columnSettings={columnSettings}
-                loading={api.loading}
-                paginator={paginator}
-                withActions
-                actions={tableActions}
+                filterHandler={filter}
+                withStatus
             />
-            <CreateSalaryPositionForm
-                modal={createModal}
-                onSubmitCallback={api.triggerReload}
-            />
-            <EditSalaryPositionForm
-                modal={editModal}
-                onSubmitCallback={api.triggerReload}
-                formValue={data}
-            />
-        </Card>
+            <Card>
+                <div className="flex justify-end items-center">
+                    <div>
+                        <Button
+                            label="Create new salary position"
+                            onClick={createModal.onOpen}
+                        />
+                    </div>
+                </div>
+                <Table
+                    dataSet={api.dataSet}
+                    columnSettings={columnSettings}
+                    loading={api.loading}
+                    paginator={paginator}
+                    withActions
+                    actions={tableActions}
+                />
+                <CreateSalaryPositionForm
+                    modal={createModal}
+                    onSubmitCallback={api.triggerReload}
+                />
+                <EditSalaryPositionForm
+                    modal={editModal}
+                    onSubmitCallback={api.triggerReload}
+                    formValue={data}
+                />
+            </Card>
+        </>
     );
 };
 

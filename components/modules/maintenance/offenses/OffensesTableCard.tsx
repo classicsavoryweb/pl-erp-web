@@ -14,6 +14,8 @@ import Badge from "@/components/common/Badge";
 import { getAllOffenses } from "@/api/offenses";
 import CreateOffenseForm from "./CreateOffenseForm";
 import EditOffenseForm from "./EditOffenseForm";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const OffensesTableCard = () => {
     const api = useApiCall();
@@ -21,12 +23,14 @@ const OffensesTableCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllOffenses({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -43,7 +47,7 @@ const OffensesTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -86,6 +90,11 @@ const OffensesTableCard = () => {
 
     return (
         <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                withStatus
+            />
             <Card>
                 <p className="text-red-800 font-semibold">Offenses</p>
                 <div className="flex justify-end items-center">

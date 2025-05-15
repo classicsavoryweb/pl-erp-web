@@ -15,6 +15,8 @@ import { getAllPositions } from "@/api/positions";
 import Badge from "@/components/common/Badge";
 import CreatePositionForm from "./CreatePositionForm";
 import EditPositionForm from "./EditPositionForm";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const PositionsTableCard = () => {
     const api = useApiCall();
@@ -22,12 +24,14 @@ const PositionsTableCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllPositions({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -44,7 +48,7 @@ const PositionsTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -87,6 +91,11 @@ const PositionsTableCard = () => {
 
     return (
         <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                withStatus
+            />
             <Card>
                 <div className="flex justify-end items-center">
                     <div

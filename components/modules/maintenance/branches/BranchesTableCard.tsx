@@ -14,6 +14,8 @@ import Badge from "@/components/common/Badge";
 import { getAllBranches } from "@/api/branches";
 import CreateBranchForm from "./CreateBranchForm";
 import EditBranchForm from "./EditBranchForm";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const BranchesTableCard = () => {
     const api = useApiCall();
@@ -21,12 +23,14 @@ const BranchesTableCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllBranches({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -43,7 +47,7 @@ const BranchesTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -103,6 +107,12 @@ const BranchesTableCard = () => {
 
     return (
         <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                hasDateRange
+                withStatus
+            />
             <Card>
                 <div className="flex justify-end items-center">
                     <div

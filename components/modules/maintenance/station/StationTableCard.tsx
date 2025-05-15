@@ -14,6 +14,8 @@ import { useState } from "react";
 import CreateStationForm from "./CreateStationForm";
 import EditStationForm from "./EditStationForm";
 import Badge from "@/components/common/Badge";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
 
 const StationTableCard = () => {
     const stations = useApiCall();
@@ -21,12 +23,14 @@ const StationTableCard = () => {
     const editModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         stations.setLoading(true);
         getAllStations({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -43,7 +47,7 @@ const StationTableCard = () => {
         .finally(() => {
             stations.setLoading(false);
         });
-    }, [paginator.reload, stations.reload]);
+    }, [paginator.reload, stations.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -80,6 +84,11 @@ const StationTableCard = () => {
 
     return (
         <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                withStatus
+            />
             <Card>
                 <div className="flex justify-end items-center">
                     <div
