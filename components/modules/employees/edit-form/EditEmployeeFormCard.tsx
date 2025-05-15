@@ -105,7 +105,7 @@ const EditEmployeeFormCard = () => {
 
     useEffect(() => {
         if (!loading) {
-            editEmployeeForm.setValues(employee);
+            editEmployeeForm.setValues(employee as any);
         }
     }, [employee]);
 

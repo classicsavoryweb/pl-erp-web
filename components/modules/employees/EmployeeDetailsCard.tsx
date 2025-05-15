@@ -25,18 +25,18 @@ const EmployeeDetailsCard = () => {
                     <div className="flex justify-between pb-5">
                         <div className="flex justify-start items-center gap-x-10">
                             <Image
-                                src={ employee.gender === "Male" ? "/images/profile-pic-male.svg" : "/images/profile-pic-female.svg"}
+                                src={ employee?.gender === "Male" ? "/images/profile-pic-male.svg" : "/images/profile-pic-female.svg"}
                                 width={140}
                                 height={140}
                                 alt="profile picture"
                             />
                             <div>
                                 <p className="text-2xl font-semibold">{employee.last_name}, {employee.first_name}</p>
-                                <p className="text-md font-semibold">{employee.current_position?.description} - {employee.employee_number}</p>
-                                <p className="text-md font-semibold">
-                                    {getTenure(employee.date_hired)}
+                                <p className="text-md font-semibold text-gray-500">{employee.current_position?.description} - {employee.employee_number}</p>
+                                <p className="text-md font-semibold text-gray-500">
+                                    {getTenure(employee.date_hired, employee.separation_date)}
                                 </p>
-                                <p className="text-md font-semibold">{employee.employee_status?.description}</p>
+                                <p className="text-md font-semibold text-gray-500">{employee.employee_status?.description}</p>
                                 <Badge
                                     status={employee.status === "active" ? "success" : "danger"}
                                     label={employee.status}

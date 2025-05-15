@@ -70,7 +70,7 @@ const SearchableDropDown = ({
                     onClick={() => setToggle(prev => !prev)}
                 >
                     <div className="flex justify-between items-center">
-                        {selectedLabel}
+                        <p className="truncate">{selectedLabel}</p>
                         {toggle ? (
                             <ExpandLessOutlinedIcon style={{ width: '25px', height: '25px' }} />
                         ) : (

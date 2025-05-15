@@ -2,12 +2,17 @@ import moment from "moment";
 
 export const getTenure = (dateHired: string, separationDate?:string) => {
     let date:any = "";
-
-    if (separationDate) {
-        date = separationDate;
+    
+    if (
+        separationDate !== null &&
+        separationDate !== "" &&
+        separationDate !== "1900-01-01"
+    ) {
+        date = moment(separationDate);
     } else {
         date = moment();
     }
+
     const hired = moment(dateHired);
   
     const years = date.diff(hired, 'years');

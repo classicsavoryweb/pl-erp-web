@@ -4,6 +4,7 @@ import EmployeeDetailsCard from "@/components/modules/employees/EmployeeDetailsC
 import EmployeeBankDetailsHistory from "@/components/modules/employees/bank-history/BankDetailsHistory";
 import EmployeeBranchHistory from "@/components/modules/employees/branch-history/EmployeeBranchHistory";
 import EmployeeContractHistory from "@/components/modules/employees/contract-history/EmployeeContractHistory";
+import EmployeeOffenseHistory from "@/components/modules/employees/offense-history/EmployeeOffenseHistory";
 import EmployeePositionHistory from "@/components/modules/employees/position-history/EmployeePositionHistory";
 
 const Page = () => {
@@ -32,6 +33,13 @@ const Page = () => {
                     title="Contracts"
                 >
                     <EmployeeContractHistory/>
+                </Accordion>
+            </div>
+            <div className="w-full">
+                <Accordion
+                    title="Offenses"
+                >
+                    <EmployeeOffenseHistory/>
                 </Accordion>
             </div>
             <div className="w-full">

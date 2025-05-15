@@ -10,6 +10,26 @@ export const getAllOffenses = async (payload?: {}) => {
     return resData;
 };
 
+export const getOffenses = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-offenses',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getSanctions = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-sanctions',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const createOffense = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-offense',
