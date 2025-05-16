@@ -6,6 +6,7 @@ import EmployeeBranchHistory from "@/components/modules/employees/branch-history
 import EmployeeContractHistory from "@/components/modules/employees/contract-history/EmployeeContractHistory";
 import EmployeeOffenseHistory from "@/components/modules/employees/offense-history/EmployeeOffenseHistory";
 import EmployeePositionHistory from "@/components/modules/employees/position-history/EmployeePositionHistory";
+import EmployeeRequirementsList from "@/components/modules/employees/requirements/EmployeeRequirementsList";
 
 const Page = () => {
     return (
@@ -47,6 +48,13 @@ const Page = () => {
                     title="Bank Details"
                 >
                     <EmployeeBankDetailsHistory/>
+                </Accordion>
+            </div>
+            <div className="w-full">
+                <Accordion
+                    title="Requirements"
+                >
+                    <EmployeeRequirementsList/>
                 </Accordion>
             </div>
             <div className="w-full">

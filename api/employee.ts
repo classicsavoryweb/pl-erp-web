@@ -208,3 +208,22 @@ export const updateEmployeeOffense = async ( employeeNumber: string, payload: {}
 
     return resData;
 };
+
+export const getEmployeeRequirements = async (employeeNumber: string) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-requirements/${employeeNumber}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
+export const updateOrCreateEmployeeRequirements = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/create-or-edit-employee-requirements/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
