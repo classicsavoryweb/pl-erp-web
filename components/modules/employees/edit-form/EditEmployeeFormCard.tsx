@@ -99,7 +99,7 @@ const EditEmployeeFormCard = () => {
                 toast.error("Error encountered")
             }).finally(() => {
                 setSubmitting(false);
-            })
+            });
         }
     });
 

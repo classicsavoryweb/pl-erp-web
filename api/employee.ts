@@ -83,7 +83,10 @@ export const updateEmployee = async ( employeeNumber: string, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/update-employee/${employeeNumber}`,
         method: 'POST',
-        payload: payload
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
     });
 
     return resData;

@@ -35,8 +35,8 @@ const EditEmploymentDetails = ({
                     <div className="flex justify-between pb-5">
                         <div className="flex justify-start items-center gap-x-10">
                             <Image
-                                src={ employee.image 
-                                    ? employee.image 
+                                src={ employee.profile_picture 
+                                    ? employee.profile_picture 
                                     : employee.gender === "Male" 
                                         ? "/images/profile-pic-male.svg"
                                         : "/images/profile-pic-female.svg"
@@ -62,10 +62,14 @@ const EditEmploymentDetails = ({
                 </div>
                 <Textfield
                     type='file'
-                    onChange={formHandler.handleChange}
+                    onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) {
+                        formHandler.setFieldValue("image", file);
+                        }
+                    }}
                     label='Image'
                     name="image"
-                    value={formHandler.values.image || ""}
                 />
                 <EmploymentStatusDropdown
                     onChange={formHandler.handleChange}

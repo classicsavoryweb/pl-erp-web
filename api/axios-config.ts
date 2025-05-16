@@ -5,6 +5,7 @@ interface dataType {
     func_path: string;
     method: 'POST' | 'GET';
     payload?: any;
+    additionalHeaders?: any;
 };
 
 const api_url = process.env.NEXT_PUBLIC_API_URL;
@@ -13,6 +14,7 @@ export const axiosHelper = async ({
     func_path,
     method,
     payload,
+    additionalHeaders
 }: dataType) => {
     if (api_url === undefined) {
         return {
@@ -23,8 +25,8 @@ export const axiosHelper = async ({
     }
 
     let headers: any = {
-        'Content-Type': 'application/json',
         'Accept': 'application/json',
+        ...additionalHeaders
     };
 
     const token = Cookies.get('authToken');
@@ -38,13 +40,7 @@ export const axiosHelper = async ({
     let newPayload;
 
     if (payload) {
-        // newPayload = Object.fromEntries(
-        //     Object.entries(payload).filter(
-        //         ([_, value]) => value !== null && value !== ''
-        //     )
-        // );
-
-        newPayload = cleanPayload(payload)
+        newPayload = cleanPayload(payload);
     }
 
     const axiosConfig = {
@@ -84,14 +80,23 @@ export const axiosHelper = async ({
 };
 
 function cleanPayload(payload: any): any {
-    if (Array.isArray(payload)) {
-        return payload.map((item: any) => cleanPayload(item)).filter((item: any) => item !== null && item !== '');
-    } else if (typeof payload === 'object' && payload !== null) {
-        return Object.fromEntries(
-            Object.entries(payload)
-                .map(([key, value]: [string, any]) => [key, cleanPayload(value)])
-                .filter(([_, value]) => value !== null && value !== '')
-        );
-    }
+  if (payload instanceof File || payload instanceof Blob) {
     return payload;
+  }
+
+  if (Array.isArray(payload)) {
+    return payload
+      .map((item) => cleanPayload(item))
+      .filter((item) => item !== null && item !== '');
+  }
+
+  if (typeof payload === 'object' && payload !== null) {
+    return Object.fromEntries(
+      Object.entries(payload)
+        .map(([key, value]) => [key, cleanPayload(value)])
+        .filter(([_, value]) => value !== null && value !== '')
+    );
+  }
+
+  return payload;
 }
