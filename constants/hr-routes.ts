@@ -53,7 +53,7 @@ export const hrRoutes: Route[] = [
         basepath: "/reports",
         subLinks: [
             {
-                name: "Offenses",
+                name: "Employee Offenses",
                 pathname: "/reports/employee-offenses",
                 permission: "can_view_offenses"
             },

@@ -26,8 +26,19 @@ export const axiosHelper = async ({
 
     let headers: any = {
         'Accept': 'application/json',
-        ...additionalHeaders
     };
+
+    if (additionalHeaders) {
+        headers = {
+            ...headers,
+            ...additionalHeaders
+        };
+    } else {
+        headers = {
+            ...headers,
+            "Content-Type": "application/json"
+        };
+    }
 
     const token = Cookies.get('authToken');
 

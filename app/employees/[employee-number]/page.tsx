@@ -7,6 +7,7 @@ import EmployeeContractHistory from "@/components/modules/employees/contract-his
 import EmployeeOffenseHistory from "@/components/modules/employees/offense-history/EmployeeOffenseHistory";
 import EmployeePositionHistory from "@/components/modules/employees/position-history/EmployeePositionHistory";
 import EmployeeRequirementsList from "@/components/modules/employees/requirements/EmployeeRequirementsList";
+import EmployeeTraingingHistory from "@/components/modules/employees/trainings/EmployeeTrainingHistory";
 
 const Page = () => {
     return (
@@ -55,6 +56,13 @@ const Page = () => {
                     title="Requirements"
                 >
                     <EmployeeRequirementsList/>
+                </Accordion>
+            </div>
+            <div className="w-full">
+                <Accordion
+                    title="Trainings"
+                >
+                    <EmployeeTraingingHistory/>
                 </Accordion>
             </div>
             <div className="w-full">

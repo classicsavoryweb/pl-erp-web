@@ -230,3 +230,22 @@ export const updateOrCreateEmployeeRequirements = async ( employeeNumber: string
 
     return resData;
 };
+
+export const getEmployeeTrainings = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-trainings/${employeeNumber}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
+export const addEmployeeTrainingTitle = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/add-employee-training-title/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
