@@ -49,13 +49,13 @@ export const hrRoutes: Route[] = [
         name: "Reports",
         icon: "FolderCopyOutlined",
         type: "dropdown",
-        permission: "",
+        permission: "can_view_reports_module",
         basepath: "/reports",
         subLinks: [
             {
                 name: "Offenses",
-                pathname: "/reports/offenses",
-                permission: ""
+                pathname: "/reports/employee-offenses",
+                permission: "can_view_offenses"
             },
         ]
     },
