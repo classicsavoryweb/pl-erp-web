@@ -43,7 +43,7 @@ const EditTrainingTitleForm = ({
             editTrainingTitle(values, formValue.id)
             .then((resp) => {
                 if(!resp.error) {
-                    toast.success("Training title created successfully");
+                    toast.success("Training title updated successfully");
                     onSubmitCallback();
                     modal.onClose();
                     resetForm();

@@ -104,6 +104,11 @@ export const hrRoutes: Route[] = [
                 permission: "can_view_training_titles",
             },
             {
+                name: "Vaccine Brand",
+                pathname: "/maintenance/vaccine-brand",
+                permission: "can_view_vaccine_brand",
+            },
+            {
                 name: "Diagnosis",
                 pathname: "/maintenance/diagnosis",
                 permission: "can_view_diagnosis",
