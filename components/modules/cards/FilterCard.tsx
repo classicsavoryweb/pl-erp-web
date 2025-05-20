@@ -59,13 +59,6 @@ const FilterCard = ({
             >
                 <form className="pt-5" onSubmit={formHandler.handleSubmit}>
                     <Grid cols={2}>
-                        <Textfield
-                            name="key_word"
-                            label="Keyword"
-                            placeholder="enter keyword"
-                            value={formHandler.values.key_word}
-                            onChange={formHandler.handleChange}
-                        />
                         <Dropdown
                             placeholder="select column"
                             label="Column"
@@ -79,6 +72,13 @@ const FilterCard = ({
                                     value: column.path
                                 }
                             })}
+                        />
+                        <Textfield
+                            name="key_word"
+                            label="Keyword"
+                            placeholder="enter keyword"
+                            value={formHandler.values.key_word}
+                            onChange={formHandler.handleChange}
                         />
                     </Grid>
 
@@ -129,7 +129,7 @@ const FilterCard = ({
                         <div className="w-[100px]">
                             <Button
                                 type="submit"
-                                label="Filter"
+                                label="Search"
                                 onClick={() => {}}
                             />    
                         </div>
