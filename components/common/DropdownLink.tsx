@@ -48,7 +48,7 @@ const DropdownLink = ({
             >
                 <div className="flex gap-2">
                     <IconComponent
-                        style={{ width: '20px', height: '20px' }}
+                        style={{ width: '19px', height: '19px' }}
                     />
                     {route.name}
                 </div>
@@ -56,11 +56,11 @@ const DropdownLink = ({
                 { toggle
                     ?
                     <ExpandLessOutlinedIcon
-                        style={{ width: '20px', height: '20px' }}
+                        style={{ width: '19px', height: '19px' }}
                     />
                     :
                     <ExpandMoreOutlinedIcon
-                        style={{ width: '20px', height: '20px' }}
+                        style={{ width: '19px', height: '19px' }}
                     />
                 }
             </button>

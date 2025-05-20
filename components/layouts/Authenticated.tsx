@@ -7,7 +7,7 @@ import Sidebar from "./Sidebar";
 const Authenticated = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="min-h-screen max-h-screen w-full flex overflow-hidden">
-            <div className="bg-zinc-50 w-[270px] max-w-[270px] border-r border-slate-400/30 flex flex-col">
+            <div className="bg-zinc-50 min-w-[260px] max-w-[260px] border-r border-slate-400/30 flex flex-col">
                 <div className="w-full flex justify-center py-3">
                     <Image
                         alt="classic savory logo"
