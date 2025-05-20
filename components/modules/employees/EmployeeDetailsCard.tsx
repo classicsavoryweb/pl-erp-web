@@ -236,14 +236,14 @@ const EmployeeDetailsCard = () => {
                                         label="Duration"
                                         detail={`${employee.education?.college_date_started} - ${employee.education?.college_date_graduated}`}
                                     />
-
-                                    <div className="py-3">
-                                        <hr className=" text-slate-300" />
-                                    </div>
                                 </>
                             }
                             { employee.education && employee.education?.highschool &&
                                 <>
+                                    <div className="py-3">
+                                        <hr className=" text-slate-300" />
+                                    </div>
+
                                     <EmployeeBasicInfo
                                         label="Highschool"
                                         detail={employee.education?.highschool}

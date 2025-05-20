@@ -8,6 +8,7 @@ import EmployeeOffenseHistory from "@/components/modules/employees/offense-histo
 import EmployeePositionHistory from "@/components/modules/employees/position-history/EmployeePositionHistory";
 import EmployeeRequirementsList from "@/components/modules/employees/requirements/EmployeeRequirementsList";
 import EmployeeTraingingHistory from "@/components/modules/employees/trainings/EmployeeTrainingHistory";
+import EmployeeVaccinationHistory from "@/components/modules/employees/vaccinnation/EmployeeVaccinationHistory";
 
 const Page = () => {
     return (
@@ -61,6 +62,20 @@ const Page = () => {
             <div className="w-full">
                 <Accordion
                     title="Trainings"
+                >
+                    <EmployeeTraingingHistory/>
+                </Accordion>
+            </div>
+            <div className="w-full">
+                <Accordion
+                    title="Vaccination"
+                >
+                    <EmployeeVaccinationHistory/>
+                </Accordion>
+            </div>
+            <div className="w-full">
+                <Accordion
+                    title="Health and Safety"
                 >
                     <EmployeeTraingingHistory/>
                 </Accordion>

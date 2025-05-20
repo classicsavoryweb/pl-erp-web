@@ -249,3 +249,33 @@ export const addEmployeeTrainingTitle = async ( employeeNumber: string, payload:
 
     return resData;
 };
+
+
+export const getEmployeeVaccination = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-vaccination/${employeeNumber}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
+export const addEmployeeVaccination = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/add-employee-vaccination/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const editEmployeeVaccination = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-employee-vaccination/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};

@@ -52,7 +52,6 @@ const EmployeeOffenseForm = ({
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            // date_committed: Yup.string().required("Date committed is required."),
             offense_id : Yup.string().required("Offense is required."),
             sanction_id : Yup.string().required("Sanction is required."),
             transgression : Yup.string().required("Transgression is required."),
