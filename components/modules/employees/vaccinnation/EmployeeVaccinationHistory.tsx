@@ -1,5 +1,5 @@
 "use client";
-import { getEmployeeTrainings, getEmployeeVaccination } from "@/api/employee";
+import { getEmployeeVaccination } from "@/api/employee";
 import Button from "@/components/common/Button";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
@@ -11,7 +11,6 @@ import { useParams } from "next/navigation";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { EmployeeContext } from "@/context/EmployeeProvider";
-import ActionDropDown from "@/components/common/ActionDropDown";
 import EmployeeVaccinationForm from "./EmployeeVaccinationForm";
 import Badge from "@/components/common/Badge";
 

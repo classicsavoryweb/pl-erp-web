@@ -279,3 +279,32 @@ export const editEmployeeVaccination = async ( employeeNumber: string, payload: 
 
     return resData;
 };
+
+export const getEmployeeHealthAndSafety = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-health-safety/${employeeNumber}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
+export const addEmployeeHealthAndSafety = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/add-employee-health-safety/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const editEmployeeHealthAndSafety= async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-employee-health-safety/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
