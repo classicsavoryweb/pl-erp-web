@@ -81,6 +81,18 @@ const EmployeeDetailsCard = () => {
                                 label="Regularization Date"
                                 detail={employee.regularization_date}
                             />
+                            { employee.status === "inactive" &&
+                                <>
+                                    <EmployeeBasicInfo
+                                        label="Date Separated"
+                                        detail={employee.separation_date}
+                                    />
+                                    <EmployeeBasicInfo
+                                        label="Separation Reason"
+                                        detail={employee.separation_reason}
+                                    />
+                                </>
+                            }
                     </div>
 
                     <hr className=" text-slate-300" />
