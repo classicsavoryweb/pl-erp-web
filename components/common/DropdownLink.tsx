@@ -79,7 +79,7 @@ const DropdownLink = ({
                                         flex
                                         hover:bg-red-300/20
                                         rounded-md
-                                        p-2
+                                        p-[7px]
                                         items-center
                                         font-medium
                                         text-sm
