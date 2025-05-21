@@ -53,9 +53,30 @@ export const hrRoutes: Route[] = [
         basepath: "/reports",
         subLinks: [
             {
+                name: "Employment Status",
+                pathname: "/reports/employment-status",
+                permission: "can_view_reports_offenses_employment_status",
+            },
+            {
+                name: "Tardiness",
+                pathname: "/reports/tardiness",
+                permission: "can_view_reports_tardiness",
+                break:true
+            },
+            {
                 name: "Employee Offenses",
                 pathname: "/reports/employee-offenses",
-                permission: "can_view_offenses"
+                permission: "can_view_reports_offenses"
+            },
+            {
+                name: "Vaccination",
+                pathname: "/reports/vaccination",
+                permission: "can_view_reports_vaccination"
+            },
+            {
+                name: "Health and Safety",
+                pathname: "/reports/health-and-safety",
+                permission: "can_view_reports_health_and_safety"
             },
         ]
     },
