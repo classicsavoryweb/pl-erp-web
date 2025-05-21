@@ -150,6 +150,11 @@ export const hrRoutes: Route[] = [
                 pathname: "/maintenance/bank-account-types",
                 permission: "can_view_salary_positions"
             },
+            {
+                name: "COE Reasons",
+                pathname: "/maintenance/coe-reasons",
+                permission: "can_view_coe_reasons"
+            },
         ]
     },
 ];
