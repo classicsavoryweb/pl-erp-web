@@ -252,9 +252,11 @@ const EmployeeDetailsCard = () => {
                             }
                             { employee.education && employee.education?.highschool &&
                                 <>
-                                    <div className="py-3">
-                                        <hr className=" text-slate-300" />
-                                    </div>
+                                    { employee.education?.college &&
+                                        <div className="py-3">
+                                            <hr className=" text-slate-300" />
+                                        </div>
+                                    }
 
                                     <EmployeeBasicInfo
                                         label="Highschool"
