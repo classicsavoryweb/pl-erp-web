@@ -93,6 +93,8 @@ const EmployeeOffenseHistory = () => {
                     date_served_da : data.date_served_da,
                     remarks : data.remarks,
                     attachment : data.attachment,
+                    attachment_file_name : data.attachment_file_name,
+                    attached_file: data.attached_file
                 });
                 modal.onOpen();
             }

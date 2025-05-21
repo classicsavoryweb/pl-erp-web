@@ -6,11 +6,10 @@ import TextArea from "@/components/common/TextArea"
 import Button from "@/components/common/Button"
 import { useFormik } from "formik"
 import * as Yup from "yup";
-import { addEmployeeContract, addEmployeeOffense, updateEmployeeContract, updateEmployeeOffense } from "@/api/employee"
+import { addEmployeeOffense, updateEmployeeOffense } from "@/api/employee"
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
-import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import Grid from "@/components/common/Grid";
 import OffenseDropDown from "../../generic/OffenseDropDown";
@@ -49,6 +48,8 @@ const EmployeeOffenseForm = ({
             date_served_da : "",
             remarks : "",
             attachment : "",
+            attachment_file_name : "",
+            attached_file : "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -227,11 +228,23 @@ const EmployeeOffenseForm = ({
                     type="file"
                     label="Attachment"
                     name="attachment"
-                    placeholder="enter suspension dates"
-                    value={formHandler.values.attachment || ""}
-                    error={formHandler.errors.attachment}
-                    onChange={formHandler.handleChange}
+                    onChange={(event) => {
+                        const file = event.target.files?.[0];
+                        if (file) {
+                            formHandler.setFieldValue("attachment", file);
+                        }
+                    }}
                 />
+            }
+            { formHandler.values.attachment &&
+                <a
+                    href={`${formHandler.values.attached_file}`}
+                    target="_blank"
+                    download={formHandler.values.attachment_file_name}
+                    className="text-blue-700 underline"
+                >
+                    {formHandler.values.attachment_file_name}
+                </a>
             }
             <Button
                 loading={formHandler.isSubmitting}
