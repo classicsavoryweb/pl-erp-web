@@ -5,7 +5,6 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
-import { createDiagnosis } from "@/api/diagnosis";
 import { createCoeReason } from "@/api/coe-reason";
 
 interface FormModalInterface {

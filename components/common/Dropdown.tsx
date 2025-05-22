@@ -11,6 +11,7 @@ interface SelectInterface {
         value: string;
     }[];
     loading?: boolean;
+    disabled?: boolean;
 }
 
 const Dropdown = ({
@@ -22,7 +23,8 @@ const Dropdown = ({
     value,
     required,
     options,
-    loading = false
+    loading = false,
+    disabled = false,
 }: SelectInterface) => {
     return (
         <div className="relative py-1">
@@ -35,7 +37,11 @@ const Dropdown = ({
                     name={name}
                     value={value}
                     onChange={onChange}
-                    className={`w-full h-[40px] rounded-md focus:outline-none border-2 ${error ? "border-red-400" : "border-slate-300 focus:border-slate-400"} p-2`}
+                    disabled={disabled}
+                    className={`
+                        w-full h-[40px] rounded-md focus:outline-none border-2 ${error ? "border-red-400" : "border-slate-300 focus:border-slate-400"} p-2
+                        ${disabled ? "hover:cursor-not-allowed" : ""}
+                    `}
                 >
                     <option disabled value="">{loading ? "loading..." :placeholder}</option>
 

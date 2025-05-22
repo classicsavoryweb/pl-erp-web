@@ -3,7 +3,7 @@
 import LoadingState from "./LoadingState";
 
 interface ModalInterface {
-    size?: "sm" | "md" | "lg" | "xl";
+    size?: "sm" | "md" | "lg" | "xl" | "xxl";
     isShowing: boolean;
     title: string;
     onClose: () => void;
@@ -12,10 +12,11 @@ interface ModalInterface {
 };
 
 const sizeClasses = {
-    sm: "max-w-[400px]",
-    md: "max-w-[500px]",
-    lg: "max-w-[700px]",
-    xl: "max-w-[900px]",
+    sm: "min-w-[400px] max-w-[400px]",
+    md: "min-w-[500px] max-w-[500px]",
+    lg: "min-w-[700px] max-w-[700px]",
+    xl: "min-w-[900px] max-w-[900px]",
+    xxl: "min-w-[1200px] max-w-[1200px]",
 };
 
 const Modal = ({

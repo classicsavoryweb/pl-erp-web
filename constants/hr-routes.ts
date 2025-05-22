@@ -64,6 +64,12 @@ export const hrRoutes: Route[] = [
                 break:true
             },
             {
+                name: "COE Requests",
+                pathname: "/reports/coe-requests",
+                permission: "can_view_reports_coe_requests",
+                break:true
+            },
+            {
                 name: "Employee Offenses",
                 pathname: "/reports/employee-offenses",
                 permission: "can_view_reports_offenses"

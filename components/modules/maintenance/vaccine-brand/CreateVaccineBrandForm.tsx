@@ -50,7 +50,7 @@ const CreateVaccineBrandForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create new training title"
+            title="Create Vaccine Brand"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();

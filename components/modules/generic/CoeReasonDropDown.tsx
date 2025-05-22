@@ -35,7 +35,7 @@ const CoeReasonDropDown = ({
                 const newDataset = resp.data.coe_reasons.map((reason: any) => {
                     return {
                         label: reason.reason,
-                        value: reason.id
+                        value: reason.reason
                     };
                 });
                 api.setDataSet(newDataset);
