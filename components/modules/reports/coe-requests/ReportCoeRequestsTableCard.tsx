@@ -18,6 +18,7 @@ import CreateReportCoeRequestForm from "./CreateReportCoeRequestForm";
 import CoePreviewModal from "./CoePreviewModal";
 import { useState } from "react";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import confirm from "@/components/common/Confirm";
 
 const ReportCoeRequestsTableCard = () => {
     const [selectedRequest, setSelectedRequest] = useState<number>(0);
@@ -154,9 +155,12 @@ const ReportCoeRequestsTableCard = () => {
         {
             label: "Cancel",
             onClick: async (data: any) => {
-                if (!confirm("Are you sure you want to cancel?")) {
-                    return;
-                }
+                const isConfirmed = await confirm({
+                    title: "Cancel Request",
+                    message: "Are you sure you want to cancel this request?",
+                });
+
+                isConfirmed &&
                 cancelCOERequest(data.id).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
@@ -171,10 +175,13 @@ const ReportCoeRequestsTableCard = () => {
         },
         {
             label: "Approve",
-            onClick: (data: any) => {
-                if (!confirm("Are you sure you want to approve?")) {
-                    return;
-                }
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Approve Request",
+                    message: "Are you sure you want to approve this request?",
+                });
+
+                isConfirmed &&
                 approveCOERequest(data.id).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);

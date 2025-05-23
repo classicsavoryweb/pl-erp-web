@@ -1,46 +1,46 @@
 "use client";
 
-import { createConfirmation } from "react-confirm";
+import { createConfirmation, confirmable } from "react-confirm";
 import Modal from "./Modal";
 import { useState } from "react";
+import Button from "./Button";
 
-const ConfirmBody = ({ proceed, cancel, title, message }: any) => {
-  const [loading, setLoading] = useState(false);
+export interface ConfirmModalProps {
+    title: string;
+    message: string;
+}
 
-  const handleConfirm = () => {
-    setLoading(true);
-    setTimeout(() => proceed(true), 300); // simulate delay
-  };
+interface InternalConfirmProps extends ConfirmModalProps {
+    proceed: (value?: any) => void;
+}
 
-  const handleCancel = () => {
-    cancel(false);
-  };
+const ConfirmBody = ({ title, message, proceed }: InternalConfirmProps) => {
+    const [show, setShow] = useState(true);
 
-  return (
-    <Modal isShowing={true} onClose={handleCancel} title={title} size="sm" loading={loading}>
-        <div className="space-y-6">
-            <p className="text-gray-700">{message}</p>
-            <div className="flex justify-end gap-2">
-                <button
-                    className="px-4 py-2 rounded bg-gray-200 hover:bg-gray-300 text-sm"
-                    onClick={handleCancel}
-                    disabled={loading}
-                >
-                    Cancel
-                </button>
-                <button
-                    className="px-4 py-2 rounded bg-red-600 hover:bg-red-700 text-white text-sm"
-                    onClick={handleConfirm}
-                    disabled={loading}
-                >
-                    Confirm
-                </button>
+    const handleConfirm = () => {
+        setShow(false);
+        proceed(true);
+    };
+
+    const handleCancel = () => {
+        setShow(false);
+        proceed(false);
+    };
+
+    return (
+        <Modal isShowing={show} onClose={handleCancel} title={title} size="sm">
+            <div className="space-y-6">
+                <p className="text-gray-700">{message}</p>
+                <div className="flex justify-end gap-2">
+                <Button label="Cancel" variant="secondary" onClick={handleCancel} />
+                <Button label="Confirm" onClick={handleConfirm} />
+                </div>
             </div>
-        </div>
-    </Modal>
-  );
+        </Modal>
+    );
 };
 
-const confirm = createConfirmation(ConfirmBody);
+const Confirmable = confirmable<ConfirmModalProps, boolean>(ConfirmBody);
+const confirm = createConfirmation<ConfirmModalProps, boolean>(Confirmable);
 
 export default confirm;

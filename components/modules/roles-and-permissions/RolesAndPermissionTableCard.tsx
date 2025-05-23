@@ -14,6 +14,7 @@ import CreateRolesAndPermissionsForm from "./CreateRolesAndPermissionsForm";
 import { useModal } from "@/hooks/modal";
 import EditRolesAndPermissionsForm from "./EditRolesAndPermissionsForm";
 import { useState } from "react";
+import confirm from "@/components/common/Confirm";
 
 const RolesAndPermissionTableCard = () => {
     const roles = useApiCall();
@@ -82,10 +83,13 @@ const RolesAndPermissionTableCard = () => {
         },
         {
             label: "Delete",
-            onClick: (data: any) => {
-                if (!confirm("Are you sure?")) {
-                    return;
-                }
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Delete roles and permission",
+                    message: "Are you sure you want to delete?"
+                });
+
+                isConfirmed &&
                 deleteRole(data.id).then((resp) => {
                     if (resp.error) {
                         toast.error(resp.data.message);
