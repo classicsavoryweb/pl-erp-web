@@ -11,13 +11,16 @@ import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import Link from "next/link";
 import Badge from "@/components/common/Badge";
-import { getAllReportsCoeRequests } from "@/api/reports/reports-coe-request";
+import { approveCOERequest, cancelCOERequest, getAllReportsCoeRequests } from "@/api/reports/reports-coe-request";
 import Button from "@/components/common/Button";
 import { useModal } from "@/hooks/modal";
 import CreateReportCoeRequestForm from "./CreateReportCoeRequestForm";
 import CoePreviewModal from "./CoePreviewModal";
+import { useState } from "react";
+import ActionDropDown from "@/components/common/ActionDropDown";
 
 const ReportCoeRequestsTableCard = () => {
+    const [selectedRequest, setSelectedRequest] = useState<number>(0);
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
@@ -75,7 +78,7 @@ const ReportCoeRequestsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Coe Reason",
+            columnHead: "COE Purpose",
             path: "coe_reason",
             columnType: COLUMNTYPES.string
         },
@@ -107,30 +110,81 @@ const ReportCoeRequestsTableCard = () => {
                 />
             }
         },
+        {
+            columnHead: "Action",
+            path: "status",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let actions = actionSettings;
+                if (data.status === "Pending") {
+                    actions = [
+                        actionSettings[1],
+                        actionSettings[2],
+                    ];
+                } else if (data.status === "Approved") {
+                    actions = [
+                        actionSettings[0],
+                    ];
+                }
+
+                if (data.status === "Pending" || data.status === "Approved") {
+                    return (
+                        <ActionDropDown
+                            data={data}
+                            actions={actions}
+                        />
+                    );
+                } else {
+                    return "—";
+                }
+
+            }
+
+        }
     ];
 
     const actionSettings = [
         {
             label: "View",
             onClick: async (data: any) => {
+                setSelectedRequest(data.id);
                 viewCoeModal.onOpen();
-                console.log("VIEW >>>> ", data);
             }
         },
         {
             label: "Cancel",
             onClick: async (data: any) => {
-                //Cancelled
-
-                console.log("CANCEL >>>> ", data);
+                if (!confirm("Are you sure you want to cancel?")) {
+                    return;
+                }
+                cancelCOERequest(data.id).then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        api.triggerReload();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
             }
         },
         {
             label: "Approve",
-            onClick: async (data: any) => {
-                //Approved
-
-                console.log("APPROVE >>>> ", data);
+            onClick: (data: any) => {
+                if (!confirm("Are you sure you want to approve?")) {
+                    return;
+                }
+                approveCOERequest(data.id).then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        api.triggerReload();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
             }
         },
     ];
@@ -148,10 +202,8 @@ const ReportCoeRequestsTableCard = () => {
             />
             <CoePreviewModal
                 modal={viewCoeModal}
-                onSubmitCallback={api.triggerReload}
-                data={{}}
+                requestId={Number(selectedRequest)}
             />
-
             <Card>
                 <div className="flex justify-end items-center">
                     <div
@@ -168,8 +220,6 @@ const ReportCoeRequestsTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    actions={actionSettings}
-                    withActions
                 />
             </Card>
         </>

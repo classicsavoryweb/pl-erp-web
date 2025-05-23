@@ -19,6 +19,16 @@ export const getEmployee = async (employeeNumber: string) => {
     return resData;
 };
 
+export const getEmployeesList = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-employees-list',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const getEmployees = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-employees',

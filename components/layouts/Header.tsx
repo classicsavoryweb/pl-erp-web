@@ -31,7 +31,7 @@ const Header = () => {
                         style={{ width: '25px', height: '25px' }}
                     />
                     <p
-                        className={`text-slate-50 font-semibold font-poppins mr-3 mt-0.5 text-sm`}
+                        className={`text-slate-50 min-w-[140px] font-semibold font-poppins mr-3 mt-0.5 text-sm`}
                     >
                         {`${userDetails.employee_number} - ${userDetails.last_name}`}
                     </p>

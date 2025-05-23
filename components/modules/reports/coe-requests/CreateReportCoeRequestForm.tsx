@@ -4,12 +4,14 @@ import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
-import { createVaccine } from "@/api/vaccines";
-import EmployeeDropDown from "../../generic/EmployeeDropDown";
 import CoeReasonDropDown from "../../generic/CoeReasonDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import { addReportsCoeRequest } from "@/api/reports/reports-coe-request";
+import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
+import Badge from "@/components/common/Badge";
+import { useState } from "react";
+import TextArea from "@/components/common/TextArea";
+import Grid from "@/components/common/Grid";
 
 interface FormModalInterface {
     modal: any;
@@ -20,13 +22,17 @@ const CreateReportCoeRequestForm = ({
     modal,
     onSubmitCallback
 }: FormModalInterface) => {
-
+    const [employeeStatus, setStatus] = useState<string>("");
     const createFormHandler = useFormik({
         initialValues: {
             coe_reason: "",
-            employee_number: "",
+            employee: "",
             coe_format: "Normal Format",
             include_salary: "No",
+            employee_number: "",
+            places: "",
+            leave_from: "",
+            leave_to: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -34,6 +40,28 @@ const CreateReportCoeRequestForm = ({
             coe_format: Yup.string().required("COE Format is required."),
             employee_number: Yup.string().required("Employee is required."),
             include_salary: Yup.string().required("Include Salary is required."),
+            leave_from: Yup.string().when("coe_reason", (coe_reason, schema) => {
+                if ( String(coe_reason) === "Certificate of Leave - Special") {
+                    return schema.required("Leave from is required.");
+                }
+                return schema.notRequired();
+            }),
+            leave_to: Yup.string().when("coe_reason", (coe_reason, schema) => {
+                if ( String(coe_reason) === "Certificate of Leave - Special") {
+                    return schema.required("Leave to is required.");
+                }
+                return schema.notRequired();
+            }),
+            places: Yup.string().when("coe_reason", (coe_reason, schema) => {
+                if (
+                    String(coe_reason) === "Travel Purposes only" ||
+                    String(coe_reason) === "Certificate of Leave - Special" ||
+                    String(coe_reason) === "Travel Purposes - Special"
+                ) {
+                    return schema.required("Places is required.");
+                }
+                return schema.notRequired();
+            }),
         }),
         onSubmit: (values, {resetForm, setSubmitting}) => {
             setSubmitting(true);
@@ -43,6 +71,7 @@ const CreateReportCoeRequestForm = ({
                     toast.success("COE Request created successfully");
                     onSubmitCallback();
                     modal.onClose();
+                    setStatus("");
                     resetForm();
                 } else {
                     toast.error(resp.data.message);
@@ -67,22 +96,34 @@ const CreateReportCoeRequestForm = ({
             size="md"
         >
             <form onSubmit={createFormHandler.handleSubmit}>
-                <EmployeeDropDown
+                <SearchEmployeeDropDown
                     label="Employee"
                     placeholder="select employee"
-                    name="employee_number"
-                    value={createFormHandler.values.employee_number}
+                    name="employee"
                     required
-                    onChange={createFormHandler.handleChange}
+                    onChange={(e) => {
+                        const employeeDetails = e.target.value;
+                        setStatus(employeeDetails.status);
+                        createFormHandler.setFieldValue("employee", employeeDetails);
+                        createFormHandler.setFieldValue("coe_format", employeeDetails.status === "active" ? "Normal Format" : "Special Format");
+                        createFormHandler.setFieldValue("employee_number", employeeDetails.employee_number);
+                    }}
+                    value={createFormHandler.values.employee}
                     error={createFormHandler.errors.employee_number}
                 />
+                { createFormHandler.values.employee &&
+                    <Badge
+                        label={employeeStatus}
+                        status={employeeStatus === "active" ? "success" : "danger"}
+                    />
+                }
                 <Dropdown
                     label="COE Format"
                     placeholder="select format"
                     name="coe_format"
                     value={createFormHandler.values.coe_format}
                     required
-                    disabled
+                    disabled={employeeStatus !== "inactive"}
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.coe_format}
                     options={[
@@ -124,6 +165,45 @@ const CreateReportCoeRequestForm = ({
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.coe_reason}
                 />
+                { createFormHandler.values.coe_reason === "Certificate of Leave - Special" &&
+                    <Grid
+                        cols={2}
+                    >
+                        <Textfield
+                            type="date"
+                            label="Date From"
+                            name="leave_from"
+                            value={createFormHandler.values.leave_from}
+                            onChange={createFormHandler.handleChange}
+                            error={createFormHandler.errors.leave_from}
+                            required
+                        />
+                        <Textfield
+                            type="date"
+                            label="Date To"
+                            name="leave_to"
+                            value={createFormHandler.values.leave_to}
+                            onChange={createFormHandler.handleChange}
+                            error={createFormHandler.errors.leave_to}
+                            required
+                        />
+                    </Grid>
+                } 
+                { (
+                    createFormHandler.values.coe_reason === "Travel Purposes only" ||
+                    createFormHandler.values.coe_reason === "Certificate of Leave - Special" ||
+                    createFormHandler.values.coe_reason === "Travel Purposes - Special"
+                ) &&
+                    <TextArea
+                        placeholder="enter places"
+                        label="Country/ Place"
+                        name="places"
+                        value={createFormHandler.values.places}
+                        required
+                        onChange={createFormHandler.handleChange}
+                        error={createFormHandler.errors.places}
+                    /> 
+                } 
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
@@ -133,6 +213,7 @@ const CreateReportCoeRequestForm = ({
                             variant="secondary"
                             onClick={() => {
                                 modal.onClose();
+                                setStatus("");
                                 createFormHandler.resetForm();
                             }}
                         />

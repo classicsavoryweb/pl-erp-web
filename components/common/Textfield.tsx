@@ -46,7 +46,7 @@ const Textfield = ({
                     disabled={disabled}
                     className={`
                         w-full h-[40px] rounded-md focus:outline-none border-2 ${error ? "border-red-400" : "border-slate-300 focus:border-slate-400"} p-2
-                        ${disabled ? "hover:cursor-not-allowed" : ""}
+                        ${disabled ? "hover:cursor-not-allowed" : "cursor-text"}
                     `}
                 />
                 {isPassword && (

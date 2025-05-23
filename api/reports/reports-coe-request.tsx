@@ -29,3 +29,30 @@ export const editReportsCoeRequest = async ( id: string, payload: {}) => {
 
     return resData;
 };
+
+export const getReportsCoeRequest = async ( id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/get-reports-coe-request/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
+export const cancelCOERequest = async ( id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/cancel-reports-coe-request/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
+export const approveCOERequest = async ( id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/approve-reports-coe-request/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
