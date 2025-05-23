@@ -46,7 +46,7 @@ const SearchableDropDown = ({
     }, [keyWord, options]);
 
     useEffect(() => {
-        if (toggle) setHighlightedIndex(0);
+        if (toggle) setHighlightedIndex(-1);
     }, [toggle, keyWord]);
 
     const handleSelect = (selected: { label: string; value: string }) => {

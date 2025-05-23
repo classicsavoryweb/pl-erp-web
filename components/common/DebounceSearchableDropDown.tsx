@@ -36,7 +36,6 @@ const DebounceSearchableDropDown = ({
     const [loading, setLoading] = useState<boolean>(false);
 
     const selectedLabel = useMemo(() => {
-        if (loading) return "Loading...";
         return options.find((opt) => opt.label === value?.first_name + " " + value?.last_name)?.label || placeholder;
     }, [value, options, placeholder, loading]);
 
@@ -48,7 +47,7 @@ const DebounceSearchableDropDown = ({
     }, [keyWord, options]);
 
     useEffect(() => {
-        if (toggle) setHighlightedIndex(0);
+        if (toggle) setHighlightedIndex(-1);
     }, [toggle, keyWord]);
 
     const handleSelect = (selected: Option) => {
