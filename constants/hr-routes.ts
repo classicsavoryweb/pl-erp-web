@@ -46,42 +46,42 @@ export const hrRoutes: Route[] = [
         ]
     },
     {
-        name: "Reports",
+        name: "All Records",
         icon: "FolderCopyOutlined",
         type: "dropdown",
         permission: "can_view_reports_module",
-        basepath: "/reports",
+        basepath: "/all-records",
         subLinks: [
             {
                 name: "Employment Status",
-                pathname: "/reports/employment-status",
+                pathname: "/all-records/employment-status",
                 permission: "can_view_reports_offenses_employment_status",
             },
             {
                 name: "Tardiness",
-                pathname: "/reports/tardiness",
+                pathname: "/all-records/tardiness",
                 permission: "can_view_reports_tardiness",
                 break:true
             },
             {
                 name: "COE Requests",
-                pathname: "/reports/coe-requests",
+                pathname: "/all-records/coe-requests",
                 permission: "can_view_reports_coe_requests",
                 break:true
             },
             {
                 name: "Employee Offenses",
-                pathname: "/reports/employee-offenses",
+                pathname: "/all-records/employee-offenses",
                 permission: "can_view_reports_offenses"
             },
             {
                 name: "Vaccination",
-                pathname: "/reports/vaccination",
+                pathname: "/all-records/vaccination",
                 permission: "can_view_reports_vaccination"
             },
             {
                 name: "Health and Safety",
-                pathname: "/reports/health-and-safety",
+                pathname: "/all-records/health-and-safety",
                 permission: "can_view_reports_health_and_safety"
             },
         ]
