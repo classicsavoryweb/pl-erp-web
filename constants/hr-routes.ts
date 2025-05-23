@@ -79,11 +79,11 @@ export const hrRoutes: Route[] = [
                 pathname: "/all-records/vaccination",
                 permission: "can_view_reports_vaccination"
             },
-            {
-                name: "Health and Safety",
-                pathname: "/all-records/health-and-safety",
-                permission: "can_view_reports_health_and_safety"
-            },
+            // {
+            //     name: "Health and Safety",
+            //     pathname: "/all-records/health-and-safety",
+            //     permission: "can_view_reports_health_and_safety"
+            // },
         ]
     },
     {

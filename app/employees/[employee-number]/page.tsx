@@ -74,13 +74,13 @@ const Page = () => {
                     <EmployeeVaccinationHistory/>
                 </Accordion>
             </div>
-            <div className="w-full">
+            {/* <div className="w-full">
                 <Accordion
                     title="Health and Safety"
                 >
                     <EmployeeHealthSafetyHistory/>
                 </Accordion>
-            </div>
+            </div> */}
             <div className="w-full">
                 <Accordion
                     title="Audit Logs"
