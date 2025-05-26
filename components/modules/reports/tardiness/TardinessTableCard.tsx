@@ -1,0 +1,239 @@
+"use client";
+
+import Card from "@/components/common/Card";
+import Table from "@/components/common/Table";
+import { COLUMNTYPES } from "@/constants/column";
+import { useApiCall } from "@/hooks/api-call";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import usePagination from "@/hooks/pagination";
+import { toast } from "react-toastify";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
+import { approveTardiness, getAllReportsTardiness, voidTardiness } from "@/api/reports/reports-tardiness";
+import Link from "next/link";
+import Badge from "@/components/common/Badge";
+import ActionDropDown from "@/components/common/ActionDropDown";
+import confirm from "@/components/common/Confirm";
+import Button from "@/components/common/Button";
+import ImportModal from "./ImportModal";
+import { useModal } from "@/hooks/modal";
+
+const TardinessTableCard = () => {
+    const api = useApiCall();
+    const paginator = usePagination();
+    const importModal = useModal();
+    const filter = useFilter();
+
+    useAsyncEffect(() => {
+        api.setLoading(true);
+        getAllReportsTardiness({
+            page: paginator.page,
+            per_page: paginator.per_page,
+            ...filter.filters
+        })
+        .then((resp) => {
+            if (resp.error) {
+                toast.error("Error fetching tardiness");
+            } else {
+                api.setDataSet(resp.data.data);
+                paginator.setPage(resp.data.current_page);
+                paginator.setPaginationData(resp.data);
+            }
+        })
+        .catch(() => {
+            toast.error("Error encountered");
+        })
+        .finally(() => {
+            api.setLoading(false);
+        });
+    }, [paginator.reload, api.reload, filter.reload]);
+
+    const columnSettings = [
+        {
+            columnHead: "Employee",
+            path: "employee.full_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Employee Number",
+            path: "employee.employee_number",
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                return (
+                    <Link
+                        href={`/employees/${data.employee.employee_number}`}
+                        className="text-blue-700 underline"
+                    >
+                        {data.employee.employee_number}
+                    </Link>
+                )
+            }
+        },
+        {
+            columnHead: "Count",
+            path: "tardiness_sanction.count",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Month",
+            path: "month",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Year",
+            path: "year",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Total Minutes",
+            path: "total_minutes",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Status",
+            path: "status",
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                let status: "default" | "success" | "warning" | "danger" = "default";
+
+                switch(data.status) {
+                    case "Approved": 
+                        status = "success";
+                        break;
+                    case "Pending":
+                        status = "warning";
+                        break;
+                    case "Voided":
+                        status = "danger";
+                        break;
+                    default:
+                        status = "default";
+                        break;
+                };
+
+                return <Badge
+                    label={data.status}
+                    status={status}
+                />
+            }
+        },
+        {
+            columnHead: "Action",
+            path: "status",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let actions = actionSettings;
+                if (data.status === "Pending") {
+                    actions = [
+                        actionSettings[0],
+                        actionSettings[1],
+                        actionSettings[2],
+                    ];
+                } else if (data.status === "Approved") {
+                    actions = [
+                        actionSettings[0],
+                        actionSettings[2],
+                    ];
+                }
+
+                if (data.status !== "Voided" ) {
+                    return (
+                        <ActionDropDown
+                            data={data}
+                            actions={actions}
+                        />
+                    );
+                } else {
+                    return "—";
+                }
+
+            }
+
+        }
+    ];
+
+    const actionSettings = [
+        {
+            label: "Edit",
+            onClick: async (data: any) => {
+                console.log("EDIT >>> ",data);
+            }
+        },
+                {
+            label: "Approve",
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Approve Tardiness",
+                    message: "Are you sure you want to approve this tardiness?",
+                });
+
+                isConfirmed &&
+                approveTardiness(data.id).then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        api.triggerReload();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
+            }
+        },
+        {
+            label: "Void",
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Void Tardiness",
+                    message: "Are you sure you want to void this tardiness?",
+                });
+
+                isConfirmed &&
+                voidTardiness(data.id).then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        api.triggerReload();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
+            }
+        },
+    ];
+
+    return (
+        <>
+            <FilterCard
+                columnSettings={columnSettings}
+                filterHandler={filter}
+                hasDateRange
+            />
+            <Card>
+                <div className="flex justify-end">
+                    <div>
+                        <Button
+                            label="Import"
+                            onClick={() => {
+                                importModal.onOpen();
+                            }}
+                        />
+                    </div>
+                </div>
+                <Table
+                    dataSet={api.dataSet}
+                    columnSettings={columnSettings}
+                    loading={api.loading}
+                    paginator={paginator}
+                />
+            </Card>
+
+            <ImportModal
+                modal={importModal}
+            />
+        </>
+    );
+};
+
+export default TardinessTableCard;

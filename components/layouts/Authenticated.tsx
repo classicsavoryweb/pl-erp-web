@@ -18,13 +18,13 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                 </div>
 
 
-                <div className="flex-1 overflow-auto px-2 pb-5">
+                <div className="flex-1 overflow-auto px-2 pb-5 shadow">
                     <Sidebar />
                 </div>
             </div>
 
             <div className="flex-1 flex flex-col min-h-screen max-h-screen overflow-hidden">
-                <div className="w-full bg-zinc-50 border-b border-slate-400/30 h-[9vh] max-h-[9vh] px-5 flex items-center justify-end">
+                <div className="w-full bg-zinc-50 border-b border-slate-400/30 h-[9vh] max-h-[9vh] px-5 flex items-center justify-end shadow">
                     <Header />
                 </div>
                 <div className="flex-1 overflow-auto p-5">
