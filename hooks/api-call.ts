@@ -2,6 +2,7 @@ import { useState } from "react";
 
 export const useApiCall = () => {
     const [dataSet, setDataSet] = useState<any[]>([]);
+    const [data, setData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(true);
     const [reload, setReload] = useState<boolean>(true);
 
@@ -14,6 +15,8 @@ export const useApiCall = () => {
         loading,
         setLoading,
         reload,
-        triggerReload
+        triggerReload,
+        data,
+        setData
     };
 };

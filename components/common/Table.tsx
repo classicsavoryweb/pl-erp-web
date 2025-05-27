@@ -6,6 +6,7 @@ import ActionDropDown from "./ActionDropDown";
 import moment from 'moment';
 import Badge from "./Badge";
 import EmptyState from "./EmptyState";
+import Checkbox from "./Checkbox";
 
 interface columnSetting {
     columnHead: string;
@@ -26,7 +27,9 @@ interface TableInterface {
     loading?: boolean;
     withActions?: boolean;
     paginator?: any;
-    actions?: ActionType[]
+    actions?: ActionType[];
+    withCheckBox?: boolean;
+    onCheck?: (e: any) => void;
 };
 
 const Table = ({
@@ -36,7 +39,9 @@ const Table = ({
     loading = false,
     withActions = false,
     paginator,
-    actions
+    actions,
+    withCheckBox = false,
+    onCheck
 }: TableInterface) => {
 
     const currentPage = paginator.paginationData.current_page;
@@ -66,6 +71,13 @@ const Table = ({
             <table className="w-full rounded-md overflow-x-auto">
                 <thead className="bg-red-800">
                     <tr>
+                        { withCheckBox &&
+                            <th
+                                className="text-left p-2 border-slate-300 border-1 text-zinc-100"
+                            >
+                                Select
+                            </th>
+                        }
                         {
                             columnSettings.map((settings, key) => {
                                 return (
@@ -98,6 +110,20 @@ const Table = ({
                             dataSet.map((data, idx) => {
                                 return (
                                     <tr key={idx}>
+                                        { withCheckBox &&
+                                            <td
+                                                className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm max-w-[400px]`}
+                                            >
+                                                <div
+                                                    className="flex justify-center"
+                                                >
+                                                    <Checkbox
+                                                        value={data.id}
+                                                        onChange={(e:any) => onCheck && onCheck(e)}
+                                                    />
+                                                </div>
+                                            </td>
+                                        }
                                         {
                                             columnSettings.map((settings, key) => {
                                                 const columnData = _.get(data, settings.path) || "—";

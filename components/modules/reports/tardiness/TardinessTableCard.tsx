@@ -9,19 +9,24 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
-import { approveTardiness, getAllReportsTardiness, voidTardiness } from "@/api/reports/reports-tardiness";
+import { approveBulkTardiness, approveTardiness, getAllReportsTardiness, voidTardiness } from "@/api/reports/reports-tardiness";
 import Link from "next/link";
 import Badge from "@/components/common/Badge";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import confirm from "@/components/common/Confirm";
-import Button from "@/components/common/Button";
 import ImportModal from "./ImportModal";
 import { useModal } from "@/hooks/modal";
+import { useState } from "react";
+import EditTardinessModal from "./EditTardinessModal";
+import DropDownButtons from "@/components/common/DropDownButtons";
+import { useFormik } from "formik";
 
 const TardinessTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination();
     const importModal = useModal();
+    const [id, setId] = useState<number>(0);
+    const editModal = useModal();
     const filter = useFilter();
 
     useAsyncEffect(() => {
@@ -156,7 +161,8 @@ const TardinessTableCard = () => {
         {
             label: "Edit",
             onClick: async (data: any) => {
-                console.log("EDIT >>> ",data);
+                setId(data.id);
+                editModal.onOpen();
             }
         },
                 {
@@ -203,6 +209,53 @@ const TardinessTableCard = () => {
         },
     ];
 
+    const approveBulk = useFormik({
+        initialValues: {
+            tardiness_id: []
+        },
+        validateOnChange: false,
+        onSubmit:async (values, {resetForm}) => {
+            if (values.tardiness_id.length === 0) {
+                toast.error("Must select atleast 1 record");
+            } else {
+                approveBulkTardiness(values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        resetForm();
+                        api.triggerReload();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
+            }
+            
+        }
+    });
+
+
+    const globalActionSettings = [
+        {
+            label: "Import Tardiness",
+            onClick: () => {
+                importModal.onOpen();
+            }
+        },
+        {
+            label: "Approve Selected",
+            onClick: async () => {
+                const isConfirm = await confirm({
+                    title: "Approve Bulk Tardiness",
+                    message: "Are you sure you want to approve this tardiness?"
+                });
+
+                await approveBulk.submitForm();
+            }
+        },
+    ];
+
     return (
         <>
             <FilterCard
@@ -211,26 +264,39 @@ const TardinessTableCard = () => {
                 hasDateRange
             />
             <Card>
-                <div className="flex justify-end">
-                    <div>
-                        <Button
-                            label="Import"
-                            onClick={() => {
-                                importModal.onOpen();
-                            }}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={globalActionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
+                    withCheckBox
+                    onCheck={(e: any) => {
+                        if (e.target.checked) {
+                            approveBulk.setFieldValue("tardiness_id",
+                                [...approveBulk.values.tardiness_id,
+                                    e.target.value
+                            ]);
+                        } else {
+                            const tardiness_ids = approveBulk.values.tardiness_id;
+                            tardiness_ids.filter((tardiness) => tardiness !== e.target.value);
+                            approveBulk.setFieldValue("tardiness_id", tardiness_ids);
+                        }
+                    }}
                 />
             </Card>
 
             <ImportModal
                 modal={importModal}
+            />
+
+            <EditTardinessModal
+                modal={editModal}
+                id={id}
             />
         </>
     );
