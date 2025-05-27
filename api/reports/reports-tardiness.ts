@@ -27,3 +27,17 @@ export const approveTardiness = async ( id: number) => {
 
     return resData;
 };
+
+
+export const importTardinessOffenses = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/import-reports-tardiness`,
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+
+    return resData;
+};

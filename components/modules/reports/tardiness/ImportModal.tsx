@@ -5,6 +5,7 @@ import { useFormik } from "formik";
 import Textfield from "@/components/common/Textfield";
 import * as Yup from "yup";
 import confirm from "@/components/common/Confirm";
+import { importTardinessOffenses } from "@/api/reports/reports-tardiness";
 
 interface FormModalInterface {
     modal: any;
@@ -23,10 +24,22 @@ const ImportModal = ({
             tardiness_file: Yup.string().required("Excel file is required"),
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
-            const isConfirm = confirm({
+            const isConfirm = await confirm({
                 title: "Import",
                 message: "Are you sure you want to import?"
-            }) 
+            });
+
+            if (isConfirm) {
+                importTardinessOffenses(values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        modal.onClose();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                });
+            }
         }
     });
 
@@ -49,7 +62,6 @@ const ImportModal = ({
                     if (file) {
                         importForm.setFieldValue("tardiness_file", file);
                     }
-                    // importForm.setFieldValue("tardiness_file", event.target.files[0]);
                 }}
                 error={importForm.errors.tardiness_file}
                 required
@@ -70,7 +82,6 @@ const ImportModal = ({
                     <Button
                         type="submit"
                         label="Submit"
-                        loading={importForm.isSubmitting}
                         onClick={() => {}}
                     />
                 </div>              

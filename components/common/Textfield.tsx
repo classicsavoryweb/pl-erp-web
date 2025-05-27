@@ -11,7 +11,7 @@ interface TextfieldInterface {
     onChange: (e: any) => void;
     error?: string;
     value?: string;
-    type?: "text" | "email" | "date" | "password" | "file";
+    type?: "text" | "email" | "date" | "password" | "file" | "number";
     required?: boolean;
     disabled?: boolean;
 }
