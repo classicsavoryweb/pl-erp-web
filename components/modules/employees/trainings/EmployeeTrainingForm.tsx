@@ -58,8 +58,6 @@ const EmployeeTrainingForm = ({
             }).finally(() => {
                 setSubmitting(false);
             })
-
-            console.log(values);
         }
     });
 

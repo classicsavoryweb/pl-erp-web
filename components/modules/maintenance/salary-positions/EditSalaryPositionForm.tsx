@@ -58,7 +58,6 @@ const EditSalaryPositionForm = ({
 
     useEffect(() => {
         if (modal.isShowing) {
-            console.log(formValue);
             editFormHandler.setValues(formValue);
         }
     }, [modal.isShowing]);
