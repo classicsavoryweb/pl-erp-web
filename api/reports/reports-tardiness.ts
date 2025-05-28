@@ -83,3 +83,12 @@ export const sendTardinessNTE = async ( id: number, payload: {}) => {
 
     return resData;
 };
+
+export const getNTEDetaills = async ( id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/get-reports-nte-details/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};

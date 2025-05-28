@@ -9,7 +9,7 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
-import { approveBulkTardiness, approveTardiness, getAllReportsTardiness, sendTardinessNTE } from "@/api/reports/reports-tardiness";
+import { approveBulkTardiness, approveTardiness, getAllReportsTardiness, getNTEDetaills, sendTardinessNTE } from "@/api/reports/reports-tardiness";
 import Link from "next/link";
 import Badge from "@/components/common/Badge";
 import ActionDropDown from "@/components/common/ActionDropDown";
@@ -23,6 +23,7 @@ import { useFormik } from "formik";
 import VoidTardinessModal from "./VoidTardinessModal";
 import { pdf } from '@react-pdf/renderer';
 import TardinessNotice from "../../pdf/TardinessNotice";
+import TardinessMemoModal from "./TardinessMemoModal";
 
 const TardinessTableCard = () => {
     const api = useApiCall();
@@ -32,6 +33,7 @@ const TardinessTableCard = () => {
     const editModal = useModal();
     const voidModal = useModal();
     const filter = useFilter();
+    const viewMemo = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -213,12 +215,14 @@ const TardinessTableCard = () => {
             label: "View Memo",
             onClick: async (data: any) => {
                 setId(data.id);
+                viewMemo.onOpen();
             }
         },
         {
             label: "Send NTE",
             onClick: async (data: any) => {
-                const blob = await pdf(<TardinessNotice data={data} />).toBlob();
+                const resp = await getNTEDetaills(data.id);
+                const blob = await pdf(<TardinessNotice data={resp.data} />).toBlob();
                 const isConfirmed = await confirm({
                     title: "Send Tardiness NTE",
                     message: "Are you sure you want to send an NTE?",
@@ -266,7 +270,6 @@ const TardinessTableCard = () => {
             
         }
     });
-
 
     const globalActionSettings = [
         {
@@ -339,6 +342,11 @@ const TardinessTableCard = () => {
                     voidModal.onClose();
                     api.triggerReload();
                 }}
+            />
+
+            <TardinessMemoModal
+                modal={viewMemo}
+                id={id}
             />
         </>
     );
