@@ -21,7 +21,7 @@ const ActionDropDown = ({
     const [toggle, setToggle] = useState<boolean>(false);
 
     return (
-        <div className="relative w-[100px] py-1">
+        <div className="relative w-[115px] py-1">
             <button
                 className="bg-gray-200 w-full py-1 px-2 hover:cursor-pointer flex justify-between items-center gap-x-1 text-sm"
                 onClick={() => setToggle(prev => !prev)}
@@ -42,7 +42,7 @@ const ActionDropDown = ({
                                 action.onClick(data);
                                 setToggle(false);
                             }}
-                            className="py-1 px-3 hover:cursor-pointer border-b-1 border-slate-300 w-full text-left text-sm hover:bg-gray-300"
+                            className="py-1 px-2 hover:cursor-pointer border-b-1 border-slate-300 w-full text-left text-sm hover:bg-gray-300"
                         >
                             {action.label}
                         </button>

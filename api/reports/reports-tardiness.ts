@@ -10,10 +10,11 @@ export const getAllReportsTardiness = async (payload?: {}) => {
     return resData;
 };
 
-export const voidTardiness = async ( id: number) => {
+export const voidTardiness = async ( id: number, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/void-reports-tardiness/${id}`,
-        method: 'GET',
+        method: 'POST',
+        payload: payload
     });
 
     return resData;
@@ -65,6 +66,19 @@ export const editMinutesOfTardiness = async (payload: {}) => {
         func_path: "/edit-reports-minutes-tardiness",
         method: 'POST',
         payload: payload,
+    });
+
+    return resData;
+};
+
+export const sendTardinessNTE = async ( id: number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/send-report-tardiness-nte/${id}`,
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
     });
 
     return resData;

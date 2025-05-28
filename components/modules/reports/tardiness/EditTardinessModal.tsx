@@ -8,6 +8,7 @@ import confirm from "@/components/common/Confirm";
 import { editMinutesOfTardiness, getTardinessDetails } from "@/api/reports/reports-tardiness";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
+import Grid from "@/components/common/Grid";
 
 interface FormModalInterface {
     modal: any;
@@ -79,10 +80,11 @@ const EditTardinessModal = ({
             size="md"
         >
             <form onSubmit={editMinutes.handleSubmit}>
-                { editMinutes.values.tardiness_minutes  && editMinutes.values.tardiness_minutes.map((minutes: any, idx: number) => {
-                    return (
-                         <div key={idx}>
+                <Grid cols={2}>
+                    { editMinutes.values.tardiness_minutes  && editMinutes.values.tardiness_minutes.map((minutes: any, idx: number) => {
+                        return (
                             <Textfield
+                                key={idx}
                                 label={minutes.late_date}
                                 type="number"
                                 value={minutes.late_minutes}
@@ -94,30 +96,29 @@ const EditTardinessModal = ({
                                 name={`tardiness_minutes.${idx}.late_minutes`}
                                 required
                             />
-                        </div>
-                    );
-                })
-                }
+                        );
+                    })
+                    }
+                </Grid>
+                <hr className="mt-6 pb-2 text-slate-300"/>
+                <div className="flex justify-end">
+                    <div className="w-1/2 flex justify-end items-center gap-x-2">
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={() => {
+                                modal.onClose();
+                                editMinutes.resetForm();
+                            }}
+                        />
 
-            <hr className="mt-6 pb-2 text-slate-300"/>
-            <div className="flex justify-end">
-                <div className="w-1/2 flex justify-end items-center gap-x-2">
-                    <Button
-                        label="Cancel"
-                        variant="secondary"
-                        onClick={() => {
-                            modal.onClose();
-                            editMinutes.resetForm();
-                        }}
-                    />
-
-                    <Button
-                        type="submit"
-                        label="Submit"
-                        onClick={() => {}}
-                    />
-                </div>              
-            </div>
+                        <Button
+                            type="submit"
+                            label="Submit"
+                            onClick={() => {}}
+                        />
+                    </div>              
+                </div>
             </form>
         </Modal>
     );

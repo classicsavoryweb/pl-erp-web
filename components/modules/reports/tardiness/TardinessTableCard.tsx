@@ -9,7 +9,7 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
-import { approveBulkTardiness, approveTardiness, getAllReportsTardiness, voidTardiness } from "@/api/reports/reports-tardiness";
+import { approveBulkTardiness, approveTardiness, getAllReportsTardiness, sendTardinessNTE } from "@/api/reports/reports-tardiness";
 import Link from "next/link";
 import Badge from "@/components/common/Badge";
 import ActionDropDown from "@/components/common/ActionDropDown";
@@ -20,6 +20,9 @@ import { useState } from "react";
 import EditTardinessModal from "./EditTardinessModal";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { useFormik } from "formik";
+import VoidTardinessModal from "./VoidTardinessModal";
+import { pdf } from '@react-pdf/renderer';
+import TardinessNotice from "../../pdf/TardinessNotice";
 
 const TardinessTableCard = () => {
     const api = useApiCall();
@@ -27,6 +30,7 @@ const TardinessTableCard = () => {
     const importModal = useModal();
     const [id, setId] = useState<number>(0);
     const editModal = useModal();
+    const voidModal = useModal();
     const filter = useFilter();
 
     useAsyncEffect(() => {
@@ -95,6 +99,16 @@ const TardinessTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "NTE Status",
+            path: "nte_status",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "DA Status",
+            path: "da_status",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.function,
@@ -138,6 +152,8 @@ const TardinessTableCard = () => {
                     actions = [
                         actionSettings[0],
                         actionSettings[2],
+                        actionSettings[3],
+                        actionSettings[4],
                     ];
                 }
 
@@ -189,13 +205,29 @@ const TardinessTableCard = () => {
         {
             label: "Void",
             onClick: async (data: any) => {
+                setId(data.id);
+                voidModal.onOpen();
+            }
+        },
+        {
+            label: "View Memo",
+            onClick: async (data: any) => {
+                setId(data.id);
+            }
+        },
+        {
+            label: "Send NTE",
+            onClick: async (data: any) => {
+                const blob = await pdf(<TardinessNotice data={data} />).toBlob();
                 const isConfirmed = await confirm({
-                    title: "Void Tardiness",
-                    message: "Are you sure you want to void this tardiness?",
+                    title: "Send Tardiness NTE",
+                    message: "Are you sure you want to send an NTE?",
                 });
 
                 isConfirmed &&
-                voidTardiness(data.id).then((resp) => {
+                sendTardinessNTE(data.id, {
+                    "nte_memo": new File([blob], "nte_memo.pdf", { type: "application/pdf" })
+                }).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
                         api.triggerReload();
@@ -250,8 +282,9 @@ const TardinessTableCard = () => {
                     title: "Approve Bulk Tardiness",
                     message: "Are you sure you want to approve this tardiness?"
                 });
-
-                await approveBulk.submitForm();
+                if (isConfirm) {
+                    await approveBulk.submitForm();
+                }
             }
         },
     ];
@@ -297,6 +330,15 @@ const TardinessTableCard = () => {
             <EditTardinessModal
                 modal={editModal}
                 id={id}
+            />
+
+            <VoidTardinessModal
+                modal={voidModal}
+                id={id}
+                onSubmitCallBack={() => {
+                    voidModal.onClose();
+                    api.triggerReload();
+                }}
             />
         </>
     );
