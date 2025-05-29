@@ -9,6 +9,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import TextArea from "@/components/common/TextArea";
 import { createTrainingTitle, editTrainingTitle } from "@/api/training-title";
 import { useEffect } from "react";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -38,23 +39,31 @@ const EditTrainingTitleForm = ({
             speaker: Yup.string().required("Speaker is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            editTrainingTitle(values, formValue.id)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Training title updated successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+
+            const isConfirmed = await confirm({
+                title: "Edit Training Title",
+                message: "Are you sure you want to save changes?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                editTrainingTitle(values, formValue.id)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Training title updated successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

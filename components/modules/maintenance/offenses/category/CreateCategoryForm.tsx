@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../../generic/ActiveInactiveDropDown";
 import { createCategory } from "@/api/offenses";
 import Textfield from "@/components/common/Textfield";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -20,30 +21,37 @@ const CreateCategoryForm = ({
     const createCategoryFormHandler = useFormik({
         initialValues: {
             name: "",
-            status: "",
+            status: "active",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             name: Yup.string().required("Name is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            createCategory(values)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Category created successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Create Category",
+                message: "Are you sure you wantn to create?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                createCategory(values)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Category created successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

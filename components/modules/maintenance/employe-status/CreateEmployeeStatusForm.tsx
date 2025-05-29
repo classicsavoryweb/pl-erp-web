@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -22,7 +23,7 @@ const CreateEmployeeStatusForm = ({
         initialValues: {
             type: "",
             description: "",
-            status: "",
+            status: "active",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -30,23 +31,32 @@ const CreateEmployeeStatusForm = ({
             description: Yup.string().required("Description is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            createEmployeeStatus(values)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Employee status created successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+
+            const isConfirmed = await confirm({
+                title: "Create Employee Status",
+                message: "Are you sure you want to create?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                createEmployeeStatus(values)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Employee status created successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
+
         }
     });
 

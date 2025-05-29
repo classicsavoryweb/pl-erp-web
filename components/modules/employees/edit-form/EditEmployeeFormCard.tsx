@@ -14,10 +14,13 @@ import EditDependents from "./EditDependents";
 import Button from "@/components/common/Button";
 import { updateEmployee } from "@/api/employee";
 import { toast } from "react-toastify";
+import confirm from "@/components/common/Confirm";
+import { useRouter } from "next/navigation";
 
 const EditEmployeeFormCard = () => {
 
     const {employee, loading, triggerReload} = useContext(EmployeeContext);
+    const router = useRouter();
 
     const editEmployeeForm = useFormik({
         initialValues: {
@@ -85,21 +88,29 @@ const EditEmployeeFormCard = () => {
             contracts: []
         },
         validateOnChange: false,
-        onSubmit: (values, {setSubmitting}) => {
-            setSubmitting(true);
-            updateEmployee(employee.employee_number, values)
-            .then((resp) => {
-                if (!resp.error) {
-                    triggerReload();
-                    toast.success("Employee record updated successfully.")
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch((err) => {
-                toast.error("Error encountered")
-            }).finally(() => {
-                setSubmitting(false);
+        onSubmit:async (values, {setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Edit Employee Details",
+                message: "Are you sure you want to save changes?"
             });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                updateEmployee(employee.employee_number, values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        triggerReload();
+                        router.push(`/employees/${employee.employee_number}`);
+                        toast.success("Employee record updated successfully.")
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch((err) => {
+                    toast.error("Error encountered")
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
 

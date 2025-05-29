@@ -13,6 +13,7 @@ import CompanyDropDown from "../../generic/CompanyDropDown";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
 import Grid from "@/components/common/Grid";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -28,7 +29,7 @@ const CreateBranchForm = ({
         initialValues: {
             name : "" ,
             branch_email : "" ,
-            status : "" ,
+            status : "active" ,
             short_name : "" ,
             address : "" ,
             location : "" ,
@@ -52,30 +53,39 @@ const CreateBranchForm = ({
             branch_head_employee_number: Yup.string().required("Branch head is required."),
             group_head_employee_number: Yup.string().required("Group head is required.")
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            createBranch(values)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Branch created successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+
+            const isConfirmed = await confirm({
+                title: "Create Branch",
+                message: "Are you sure you want to create?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                createBranch(values)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Branch created successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
+
         }
     });
 
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create new branch"
+            title="Create New Branch"
             onClose={() => {
                 modal.onClose();
                 createBranchFormHandler.resetForm();
@@ -86,7 +96,7 @@ const CreateBranchForm = ({
             <form onSubmit={createBranchFormHandler.handleSubmit}>
                 <Grid cols={2}>
                     <Textfield
-                        label="Branch name"
+                        label="Branch Name"
                         placeholder="enter branch name"
                         name="name"
                         value={createBranchFormHandler.values.name}
@@ -95,7 +105,7 @@ const CreateBranchForm = ({
                         error={createBranchFormHandler.errors.name}
                     />
                     <Textfield
-                        label="Short name"
+                        label="Short Name"
                         placeholder="enter short name"
                         name="short_name"
                         value={createBranchFormHandler.values.short_name}
@@ -130,7 +140,7 @@ const CreateBranchForm = ({
                     cols={2}
                 >
                     <Textfield
-                        label="Date opened"
+                        label="Date Opened"
                         placeholder="enter date opened"
                         name="date_open"
                         type="date"
@@ -151,7 +161,7 @@ const CreateBranchForm = ({
                 </Grid>
                 <Grid cols={2}>
                     <Textfield
-                        label="Branch email"
+                        label="Branch Email"
                         placeholder="enter branch email"
                         name="branch_email"
                         value={createBranchFormHandler.values.branch_email}
@@ -160,7 +170,7 @@ const CreateBranchForm = ({
                         error={createBranchFormHandler.errors.branch_email}
                     />
                     <RateCodeDropDown
-                        label="Rate code"
+                        label="Rate Code"
                         placeholder="select rate code"
                         name="rate_code"
                         value={createBranchFormHandler.values.rate_code}
@@ -170,7 +180,7 @@ const CreateBranchForm = ({
                     />
                 </Grid>
                 <EmployeeDropDown
-                    label="Branch head"
+                    label="Branch Head"
                     placeholder="select branch head"
                     name="branch_head_employee_number"
                     value={createBranchFormHandler.values.branch_head_employee_number}
@@ -179,7 +189,7 @@ const CreateBranchForm = ({
                     error={createBranchFormHandler.errors.branch_head_employee_number}
                 />
                 <EmployeeDropDown
-                    label="Group head"
+                    label="Group Head"
                     placeholder="select group head"
                     name="group_head_employee_number"
                     value={createBranchFormHandler.values.group_head_employee_number}

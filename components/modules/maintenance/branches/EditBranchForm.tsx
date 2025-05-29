@@ -13,6 +13,7 @@ import Grid from "@/components/common/Grid";
 import CompanyDropDown from "../../generic/CompanyDropDown";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -54,23 +55,30 @@ const EditBranchForm = ({
             branch_head_employee_number: Yup.string().required("Branch head is required."),
             group_head_employee_number: Yup.string().required("Group head is required.")
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            editBranch(values, formValue.id)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Branch updated successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Edit Branch",
+                message: "Are you sure you want to save changes?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                editBranch(values, formValue.id)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Branch updated successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 
@@ -83,7 +91,7 @@ const EditBranchForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit branch"
+            title="Edit Branch"
             onClose={() => {
                 modal.onClose();
                 editBranchFormHandler.resetForm();
@@ -94,7 +102,7 @@ const EditBranchForm = ({
             <form onSubmit={editBranchFormHandler.handleSubmit}>
             <Grid cols={2}>
                     <Textfield
-                        label="Branch name"
+                        label="Branch Name"
                         placeholder="enter branch name"
                         name="name"
                         value={editBranchFormHandler.values.name}
@@ -103,7 +111,7 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.name}
                     />
                     <Textfield
-                        label="Short name"
+                        label="Short Name"
                         placeholder="enter short name"
                         name="short_name"
                         value={editBranchFormHandler.values.short_name}
@@ -138,7 +146,7 @@ const EditBranchForm = ({
                     cols={2}
                 >
                     <Textfield
-                        label="Date opened"
+                        label="Date Opened"
                         placeholder="enter date opened"
                         name="date_open"
                         type="date"
@@ -159,7 +167,7 @@ const EditBranchForm = ({
                 </Grid>
                 <Grid cols={2}>
                     <Textfield
-                        label="Branch email"
+                        label="Branch Email"
                         placeholder="enter branch email"
                         name="branch_email"
                         value={editBranchFormHandler.values.branch_email}
@@ -168,7 +176,7 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.branch_email}
                     />
                     <RateCodeDropDown
-                        label="Rate code"
+                        label="Rate Code"
                         placeholder="select rate code"
                         name="rate_code"
                         value={editBranchFormHandler.values.rate_code}
@@ -178,7 +186,7 @@ const EditBranchForm = ({
                     />
                 </Grid>
                 <EmployeeDropDown
-                    label="Branch head"
+                    label="Branch Head"
                     placeholder="select branch head"
                     name="branch_head_employee_number"
                     value={editBranchFormHandler.values.branch_head_employee_number}
@@ -187,7 +195,7 @@ const EditBranchForm = ({
                     error={editBranchFormHandler.errors.branch_head_employee_number}
                 />
                 <EmployeeDropDown
-                    label="Group head"
+                    label="Group Head"
                     placeholder="select group head"
                     name="group_head_employee_number"
                     value={editBranchFormHandler.values.group_head_employee_number}

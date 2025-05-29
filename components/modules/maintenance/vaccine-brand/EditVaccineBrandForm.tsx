@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { useEffect } from "react";
 import { editVaccine } from "@/api/vaccines";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -30,23 +31,30 @@ const EditVaccineBrandForm = ({
             description: Yup.string().required("Description is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            editVaccine(values, formValue.id)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Vaccine brand updated successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Edit Vaccine Brand",
+                message: "Are you sure you want to save changes?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                editVaccine(values, formValue.id)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Vaccine brand updated successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

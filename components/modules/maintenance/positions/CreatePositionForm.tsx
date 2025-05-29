@@ -10,6 +10,7 @@ import StationDropDown from "../../generic/StationDropDown";
 import { createPosition } from "@/api/positions";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import RankDropDown from "../../generic/RankDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -26,7 +27,7 @@ const CreatePositionForm = ({
             station_id: "",
             description: "",
             rank: "",
-            status: ""
+            status: "active"
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -35,23 +36,30 @@ const CreatePositionForm = ({
             rank: Yup.string().required("Rank is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            createPosition(values)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Position created successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Create Position",
+                message: "Are you sure you want to create?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                createPosition(values)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Position created successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

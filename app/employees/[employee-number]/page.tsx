@@ -4,7 +4,6 @@ import EmployeeDetailsCard from "@/components/modules/employees/EmployeeDetailsC
 import EmployeeBankDetailsHistory from "@/components/modules/employees/bank-history/BankDetailsHistory";
 import EmployeeBranchHistory from "@/components/modules/employees/branch-history/EmployeeBranchHistory";
 import EmployeeContractHistory from "@/components/modules/employees/contract-history/EmployeeContractHistory";
-import EmployeeHealthSafetyHistory from "@/components/modules/employees/health-and-safety/EmployeeHealthSafetyHistory";
 import EmployeeOffenseHistory from "@/components/modules/employees/offense-history/EmployeeOffenseHistory";
 import EmployeePositionHistory from "@/components/modules/employees/position-history/EmployeePositionHistory";
 import EmployeeRequirementsList from "@/components/modules/employees/requirements/EmployeeRequirementsList";

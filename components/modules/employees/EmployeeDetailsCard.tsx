@@ -36,7 +36,7 @@ const EmployeeDetailsCard = () => {
                                 alt="profile picture"
                             />
                             <div>
-                                <p className="text-2xl font-semibold">{employee.last_name}, {employee.first_name}</p>
+                                <p className="text-2xl font-semibold">{employee.last_name}, {employee.first_name} {employee.middle_name && String(employee.middle_name).charAt(0) + "."}</p>
                                 <p className="text-md font-semibold text-gray-500">{employee.current_position?.description} - {employee.employee_number}</p>
                                 <p className="text-md font-semibold text-gray-500">
                                     {getTenure(employee.date_hired, employee.separation_date)}
@@ -99,8 +99,16 @@ const EmployeeDetailsCard = () => {
                     <div className="py-5">
                         <p className="text-md font-semibold text-red-800">Personal Details</p>
                             <EmployeeBasicInfo
-                                label="Full Name"
-                                detail={`${employee.last_name}, ${employee.first_name} ${employee.middle_name}`}
+                                label="First Name"
+                                detail={employee.first_name}
+                            />
+                            <EmployeeBasicInfo
+                                label="Middle Name"
+                                detail={employee.middle_name}
+                            />
+                            <EmployeeBasicInfo
+                                label="Last Name"
+                                detail={employee.last_name}
                             />
                             <EmployeeBasicInfo
                                 label="Civil Status"
@@ -136,8 +144,12 @@ const EmployeeDetailsCard = () => {
                             detail={employee.contact_number}
                         />
                         <EmployeeBasicInfo
-                            label="Address"
+                            label="Present Address"
                             detail={employee.address}
+                        />
+                        <EmployeeBasicInfo
+                            label="Permanent Address"
+                            detail={employee.provincial_address}
                         />
                         <EmployeeBasicInfo
                             label="Region"

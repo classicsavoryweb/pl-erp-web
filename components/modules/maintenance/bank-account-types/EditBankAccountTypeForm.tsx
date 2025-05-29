@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { useEffect } from "react";
 import { editBankAccountType } from "@/api/bank-account-types";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -32,23 +33,31 @@ const EditBankAccountTypeForm = ({
                         number_length: Yup.string().required("Number length is required."),
                         status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            editBankAccountType(values, formValue.id)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Bank account type updated successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+
+            const isConfirmed = await confirm({
+                title: "Edit Bank Account Type",
+                message: "Are you sure you want to save changes?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                editBankAccountType(values, formValue.id)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Bank account type updated successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

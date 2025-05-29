@@ -35,7 +35,7 @@ const EmployeePositionForm = ({
             id: "",
             position_id: "",
             date_started: "",
-            oic_assignment: "",
+            oic_assignment: "No",
             date_appointed: "",
             remarks: "",
         },
@@ -126,6 +126,7 @@ const EmployeePositionForm = ({
                 type="date"
                 label="Date Appointed"
                 name="date_appointed"
+                disabled={formHandler.values.oic_assignment === "No"}
                 value={formHandler.values.date_appointed || ""}
                 error={formHandler.errors.date_appointed}
                 onChange={formHandler.handleChange}

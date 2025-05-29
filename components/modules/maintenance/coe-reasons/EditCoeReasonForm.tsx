@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { useEffect } from "react";
 import { editCoeReason } from "@/api/coe-reason";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -30,23 +31,31 @@ const EditCoeReasonForm = ({
             reason: Yup.string().required("Reason is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            editCoeReason(values, formValue.id)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Coe reason updated successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+
+            const isConfirmed = await confirm({
+                title: "Edit COE Reason",
+                message: "Are you sure you want to save changes?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                editCoeReason(values, formValue.id)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Coe reason updated successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

@@ -9,6 +9,7 @@ import { useEffect } from "react";
 import PositionDropDown from "../../generic/PositionDropDown";
 import RateCategoryDropDown from "../../generic/RateCategoryDropDown";
 import { editSalaryPosition } from "@/api/salary-positions";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -36,23 +37,30 @@ const EditSalaryPositionForm = ({
             rate_category: Yup.string().required("Rate Category is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            editSalaryPosition(values, formValue.id)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Rate updated successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Edit Salary Position",
+                message: "Are you sure you want to save changes?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                editSalaryPosition(values, formValue.id)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Rate updated successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

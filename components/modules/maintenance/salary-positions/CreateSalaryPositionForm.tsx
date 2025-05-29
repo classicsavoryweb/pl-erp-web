@@ -10,6 +10,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { createSalaryPosition } from "@/api/salary-positions";
 import PositionDropDown from "../../generic/PositionDropDown";
 import RateCategoryDropDown from "../../generic/RateCategoryDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -26,7 +27,7 @@ const CreateSalaryPositionForm = ({
             position_id: "",
             basic_salary: "",
             rate_category: "",
-            status: ""
+            status: "active"
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -35,23 +36,29 @@ const CreateSalaryPositionForm = ({
             rate_category: Yup.string().required("Rate Category is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            createSalaryPosition(values)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Salary position created successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Create Salary Position",
+                message: "Are you sure you want to create?"
+            });
+            if (isConfirmed) {
+                setSubmitting(true);
+                createSalaryPosition(values)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Salary position created successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

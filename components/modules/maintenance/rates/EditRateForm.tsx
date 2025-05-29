@@ -8,6 +8,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import TextArea from "@/components/common/TextArea";
 import { useEffect } from "react";
 import { editRate } from "@/api/rates";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -35,23 +36,29 @@ const EditRateForm = ({
             minimum: Yup.number().required("Minimum is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            editRate(values, formValue.id)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Rate updated successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit:async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Edit Rate",
+                message: "Are you sure you want to save changes?"
+            });
+            if (isConfirmed) {
+                setSubmitting(true);
+                editRate(values, formValue.id)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Rate updated successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

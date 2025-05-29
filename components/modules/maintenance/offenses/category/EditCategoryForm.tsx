@@ -7,6 +7,7 @@ import ActiveInactiveDropDown from "../../../generic/ActiveInactiveDropDown";
 import { editCategory } from "@/api/offenses";
 import Textfield from "@/components/common/Textfield";
 import { useEffect } from "react";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -30,23 +31,30 @@ const EditCategoryForm = ({
             name: Yup.string().required("Name is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            editCategory(values, formValue.id)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Sub category updated successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Edit Category",
+                message: "Are you sure you wantn to save changes?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                editCategory(values, formValue.id)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Sub category updated successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 
