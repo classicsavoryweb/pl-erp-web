@@ -6,7 +6,6 @@ import { toast } from "react-toastify";
 import { getNTEDetaills } from "@/api/reports/reports-tardiness";
 import TardinessNotice from "../../pdf/TardinessNotice";
 import { PDFViewer } from "@react-pdf/renderer";
-import TardinessNOD from "../../pdf/TardinessNOD";
 
 interface FormModalInterface {
     modal: any;
@@ -49,12 +48,9 @@ const TardinessMemoModal = ({
             <PDFViewer
                 className="w-full h-[85vh]"
             >
-                <TardinessNOD
+                <TardinessNotice
                     data={data}
                 />
-                {/* <TardinessNotice
-                    data={data}
-                /> */}
             </PDFViewer>
         </Modal>
     );
