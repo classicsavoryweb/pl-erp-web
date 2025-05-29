@@ -21,11 +21,20 @@ const styles = StyleSheet.create({
 	headerLabel: { width: 100 },
 	flex: {flexDirection: "row", gap: 50},
 	textRed: { color: "red" }
+
 });
 
 interface TardinessNoticeInterface {
     data: any;
 }
+
+const chunkArray = (arr: any[], size: number) => {
+	const chunks = [];
+	for (let i = 0; i < arr.length; i += size) {
+		chunks.push(arr.slice(i, i + size));
+	}
+	return chunks;
+};
 
 const TardinessNotice = ({
   data
@@ -34,8 +43,10 @@ const TardinessNotice = ({
 		<Document>
 			<Page size="LETTER" style={styles.page}>
 				<View style={styles.header}>
-					<Text style={styles.bold}>SAVORY FASTFOOD INC. HEAD OFFICE</Text>
-					<Text>84 Sto. Domingo St. Quezon City</Text>
+					<Text style={styles.bold}>SAVORY FASTFOOD INC.</Text>
+					<Text style={{...styles.bold, marginTop: -3}}>HEAD OFFICE</Text>
+					<Text style={{ fontSize: 8, marginTop: -3}}>#84 Sto. Domingo St.cor. N.S. Amoranto</Text>
+					<Text style={{ fontSize: 8, marginTop: -4}} >Brgy. Sto. Domingo, Quezon City</Text>
 				</View>
 
 				<View style={styles.section}>
@@ -65,6 +76,22 @@ const TardinessNotice = ({
 					</View>
 				</View>
 
+				<View
+					style={{
+						marginTop: -20,
+						marginBottom: 5
+					}}
+				>
+					<Text
+						style={{
+							width: "100%",
+							borderBottom: 1
+						}}
+					>
+						{"\u00A0".repeat(60)}	
+					</Text>
+				</View>
+
 				<View style={styles.section}>
 					<Text>
 						It was brought to our attention that you committed a violation of the Code of Discipline particularly those under Company Productivity section 2.1.5 classified as First Degree Offense to wit:
@@ -85,31 +112,27 @@ const TardinessNotice = ({
 					<Text>
 					As per timekeeping for the cut-off period of {data.first_cut_off} and {data.second_cut_off}, our records show the following incident/s of tardiness, to wit:
 					</Text>
+
 					<View style={styles.flex}>
-						<View>
-							{ data.first_cut_off_minutes_late && data.first_cut_off_minutes_late.map((minutes: any, idx: number) => {
-								return (
-									<Text key={idx} style={{...styles.textRed, fontSize: 7 }}>
-										{moment(minutes.late_date).format("MM/DD/YYYY")} - {minutes.late_minutes} Minutes late
-									</Text>
-								);
-							})
-							}
-						</View>
-						<View>
-							{ data.second_cut_off_minutes_late && data.second_cut_off_minutes_late.map((minutes: any, idx: number) => {
-								return (
-									<Text key={idx} style={{...styles.textRed, fontSize: 7 }}>
-										{moment(minutes.late_date).format("MM/DD/YYYY")} - {minutes.late_minutes} Minutes late
-									</Text>
-								);
-							})
-							}
+						<View style={{ flexDirection: 'row', flexWrap: 'wrap', marginTop: 3 }}>
+							{data.tardiness_minutes_late &&
+							chunkArray(data.tardiness_minutes_late.slice(0, 99), 9).map((group, colIdx) => (
+								<View key={colIdx} style={{ paddingRight: 35 }}>
+									{group.map((minutes: any, rowIdx: number) => (
+										<Text
+											key={rowIdx}
+											style={{ ...styles.textRed, fontSize: 7, marginTop: -5 }}
+										>
+											{moment(minutes.late_date).format('MM/DD/YYYY')} - {minutes.late_minutes} Minutes late
+										</Text>
+									))}
+								</View>
+							))}
 						</View>
 					</View>
 				</View>
 				
-				<View style={styles.section}>
+				<View style={{ marginTop: -10, marginBottom: 10 }}>
 					<Text style={styles.bold}>Total minutes tardy: {data.total_minutes}</Text>
 				</View>
 				<View style={styles.section}>
@@ -135,18 +158,19 @@ const TardinessNotice = ({
 				</View>
 				
 				
-				<View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 3 }}>
-					<View style={{...styles.section, width:500 }}>
+				<View style={{ flexDirection: "row", justifyContent: "space-between", marginTop: 10 }}>
+					<View style={{...styles.section, width:300 }}>
 						<Text style={{ fontWeight: "bold" }}>Issued by:</Text>
 						<Text
-						style={{
-							textDecoration: "underline",
-							minWidth: 500,
-							fontSize: 9,
-							marginTop: 4
-						}}
+							style={{
+								maxWidth: 200,
+								fontSize: 9,
+								marginTop: 4,
+								paddingBottom: 1,
+								borderBottom: 1
+							}}
 						>
-						Mr. Wilhim T. Ong{"\u00A0".repeat(40)}
+						Mr. Wilhim T. Ong
 						</Text>
 						<Text>Head of Human Resources</Text>
 						<Text style={{ fontStyle: "italic", fontSize: 6 }}>
@@ -154,17 +178,18 @@ const TardinessNotice = ({
 						</Text>
 					</View>
 
-					<View style={{...styles.section, width:500 }}>
+					<View style={{...styles.section, width:300 }}>
 						<Text style={{ fontWeight: "bold" }}>Acknowledged by:</Text>
 						<Text
 							style={{
-								textDecoration: "underline",
-								minWidth: 500,
+								paddingBottom: 1,
+								borderBottom: 1,
+								maxWidth: 200,
 								fontSize: 9,
-								marginTop: 4
+								marginTop: 4,
 							}}
 						>
-						{"\u00A0".repeat(80)}
+						{"\u00A0".repeat(60)}
 						</Text>
 						<Text>Printed Name & Signature of Employee / Date</Text>
 					</View>
@@ -172,7 +197,7 @@ const TardinessNotice = ({
 
 				<View style={styles.section}>
 					<Text>Cc: 201 File</Text>
-					<Text style={{...styles.bold, ...styles.indent}}>{data.group_head}</Text>
+					<Text style={{...styles.bold, marginLeft: 15 }}>{data.group_head}</Text>
 				</View>
 			</Page>
 		</Document>

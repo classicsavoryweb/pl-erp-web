@@ -24,6 +24,7 @@ import VoidTardinessModal from "./VoidTardinessModal";
 import { pdf } from '@react-pdf/renderer';
 import TardinessNotice from "../../pdf/TardinessNotice";
 import TardinessMemoModal from "./TardinessMemoModal";
+import SendNODModal from "./SendNODModal";
 
 const TardinessTableCard = () => {
     const api = useApiCall();
@@ -34,6 +35,7 @@ const TardinessTableCard = () => {
     const voidModal = useModal();
     const filter = useFilter();
     const viewMemo = useModal();
+    const sendNodMemo = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -157,6 +159,13 @@ const TardinessTableCard = () => {
                         actionSettings[3],
                         actionSettings[4],
                     ];
+
+                    if (data.nte_status === "Sent") {
+                        actions = [
+                            ...actions,
+                            actionSettings[5]
+                        ]
+                    }
                 }
 
                 if (data.status !== "Voided" ) {
@@ -241,6 +250,13 @@ const TardinessTableCard = () => {
                 }).catch(() => {
                     toast.error("Error encountered");
                 });
+            }
+        },
+        {
+            label: "Send NOD",
+            onClick: async (data: any) => {
+                setId(data.id);
+                sendNodMemo.onOpen();
             }
         },
     ];
@@ -347,6 +363,15 @@ const TardinessTableCard = () => {
             <TardinessMemoModal
                 modal={viewMemo}
                 id={id}
+            />
+
+            <SendNODModal
+                modal={sendNodMemo}
+                id={id}
+                onSubmitCallBack={() => {
+                    sendNodMemo.onClose();
+                    api.triggerReload();
+                }}
             />
         </>
     );

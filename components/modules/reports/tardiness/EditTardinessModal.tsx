@@ -9,6 +9,7 @@ import { editMinutesOfTardiness, getTardinessDetails } from "@/api/reports/repor
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
 import Grid from "@/components/common/Grid";
+import TextArea from "@/components/common/TextArea";
 
 interface FormModalInterface {
     modal: any;
@@ -80,26 +81,40 @@ const EditTardinessModal = ({
             size="md"
         >
             <form onSubmit={editMinutes.handleSubmit}>
-                <Grid cols={2}>
-                    { editMinutes.values.tardiness_minutes  && editMinutes.values.tardiness_minutes.map((minutes: any, idx: number) => {
-                        return (
-                            <Textfield
-                                key={idx}
-                                label={minutes.late_date}
-                                type="number"
-                                value={minutes.late_minutes}
-                                onChange={(e) => {
-                                    const updatedMinutes:any = [...editMinutes.values.tardiness_minutes];
-                                    updatedMinutes[idx].late_minutes = e.target.value;
-                                    editMinutes.setFieldValue('tardiness_minutes', updatedMinutes);
-                                }}
-                                name={`tardiness_minutes.${idx}.late_minutes`}
-                                required
-                            />
-                        );
-                    })
-                    }
-                </Grid>
+                { editMinutes.values.tardiness_minutes  && editMinutes.values.tardiness_minutes.map((minutes: any, idx: number) => {
+                    return (
+                        <div key={idx}>
+                            
+                                <Textfield
+                                    label={minutes.late_date}
+                                    type="number"
+                                    value={minutes.late_minutes}
+                                    onChange={(e) => {
+                                        const updatedMinutes:any = [...editMinutes.values.tardiness_minutes];
+                                        updatedMinutes[idx].late_minutes = e.target.value;
+                                        editMinutes.setFieldValue('tardiness_minutes', updatedMinutes);
+                                    }}
+                                    name={`tardiness_minutes.${idx}.late_minutes`}
+                                    required
+                                />
+
+                                <TextArea
+                                    label="Reason"
+                                    value={minutes.reason || ""}
+                                    onChange={(e) => {
+                                        const updatedMinutes:any = [...editMinutes.values.tardiness_minutes];
+                                        updatedMinutes[idx].reason = e.target.value;
+                                        editMinutes.setFieldValue('tardiness_minutes', updatedMinutes);
+                                    }}
+                                    name={`tardiness_minutes.${idx}.reason`}
+                                    required
+                                />
+                            
+                            <hr className="text-slate-300"/>
+                        </div>
+                    );
+                })
+                }
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">

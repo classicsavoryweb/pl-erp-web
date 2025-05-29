@@ -1,5 +1,4 @@
 import Modal from "@/components/common/Modal";
-import CoePDF from "../../pdf/CoePDF";
 import { useState } from "react";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
@@ -7,6 +6,7 @@ import { toast } from "react-toastify";
 import { getNTEDetaills } from "@/api/reports/reports-tardiness";
 import TardinessNotice from "../../pdf/TardinessNotice";
 import { PDFViewer } from "@react-pdf/renderer";
+import TardinessNOD from "../../pdf/TardinessNOD";
 
 interface FormModalInterface {
     modal: any;
@@ -49,9 +49,12 @@ const TardinessMemoModal = ({
             <PDFViewer
                 className="w-full h-[85vh]"
             >
-                <TardinessNotice
+                <TardinessNOD
                     data={data}
                 />
+                {/* <TardinessNotice
+                    data={data}
+                /> */}
             </PDFViewer>
         </Modal>
     );

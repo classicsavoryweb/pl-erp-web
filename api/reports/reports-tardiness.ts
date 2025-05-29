@@ -92,3 +92,16 @@ export const getNTEDetaills = async ( id: number) => {
 
     return resData;
 };
+
+export const sendTardinessNOD = async ( id: number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/send-report-tardiness-nod/${id}`,
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+
+    return resData;
+};
