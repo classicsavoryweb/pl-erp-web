@@ -15,6 +15,7 @@ import Grid from "@/components/common/Grid";
 import OffenseDropDown from "../../generic/OffenseDropDown";
 import OffenseActionDropDown from "../../generic/OffenseActionDropDown";
 import SanctionDropDown from "../../generic/SanctionDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -65,22 +66,29 @@ const EmployeeOffenseForm = ({
             date_served_da : Yup.string().required("Date served of DA is required."),
             remarks : Yup.string().required("Remarks is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            api(String(employeeNumber), values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success(resp.data.message);
-                    resetForm();
-                    onSubmitCallback();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered")
-            }).finally(() => {
-                setSubmitting(false);
-            })
+        onSubmit:async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Offense",
+                message: "Are you sure you want to save?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                api(String(employeeNumber), values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        resetForm();
+                        onSubmitCallback();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered")
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
 

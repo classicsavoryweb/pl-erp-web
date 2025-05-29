@@ -14,6 +14,7 @@ import PositionDropDown from "../generic/PositionDropDown";
 import { addEmployee } from "@/api/employee";
 import { toast } from "react-toastify";
 import Dropdown from "@/components/common/Dropdown";
+import confirm from "@/components/common/Confirm";
 
 const AddEmployeeForm = () => {
 
@@ -53,21 +54,28 @@ const AddEmployeeForm = () => {
                     ? schema.required('Agency is required')
                     : schema.notRequired())
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            addEmployee(values)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("Employee added successfully");
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Add Employee",
+                message: "Are you sure you want to save?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                addEmployee(values)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("Employee added successfully");
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

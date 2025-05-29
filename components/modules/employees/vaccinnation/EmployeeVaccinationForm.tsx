@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import TrainingTitleDropDown from "../../generic/TrainingTitleDropDown";
 import DoseDropDown from "../../generic/DoseDropDown";
 import VaccineBrandDropDown from "../../generic/VaccineBrandDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -46,22 +47,29 @@ const EmployeeVaccinationForm = ({
             dose: Yup.string().required("Dose is required."),
             vaccine_id: Yup.string().required("Vaccine is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            api(String(employeeNumber), values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success(resp.data.message);
-                    resetForm();
-                    onSubmitCallback();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered")
-            }).finally(() => {
-                setSubmitting(false);
-            })
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Vaccination",
+                message: "Are you sure you want to save?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                api(String(employeeNumber), values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        resetForm();
+                        onSubmitCallback();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered")
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
 

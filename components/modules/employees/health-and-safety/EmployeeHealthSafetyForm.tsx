@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import DiagnosisDropDown from "../../generic/DiagnosisDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -58,22 +59,29 @@ const EmployeeHealthSafetyForm = ({
             attending_physician : Yup.string().required("Attending Physician is required."),
             physician_name : Yup.string().required("Physician Name is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            api(String(employeeNumber), values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success(resp.data.message);
-                    resetForm();
-                    onSubmitCallback();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered")
-            }).finally(() => {
-                setSubmitting(false);
-            })
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Health and Safety",
+                message: "Are you sure you want to save?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                api(String(employeeNumber), values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        resetForm();
+                        onSubmitCallback();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered")
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
 

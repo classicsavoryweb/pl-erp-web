@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import TrainingTitleDropDown from "../../generic/TrainingTitleDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -42,22 +43,29 @@ const EmployeeTrainingForm = ({
             training_title_id: Yup.string().required("Training Title is required."),
             date: Yup.string().required("Date is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            api(String(employeeNumber), values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success(resp.data.message);
-                    resetForm();
-                    onSubmitCallback();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered")
-            }).finally(() => {
-                setSubmitting(false);
-            })
+        onSubmit:async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Trainings",
+                message: "Are you sure you want to save?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                api(String(employeeNumber), values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        resetForm();
+                        onSubmitCallback();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered")
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
 

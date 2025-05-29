@@ -13,6 +13,7 @@ import { useEffect, useState } from "react";
 import BankAccountTypeDropDown from "../../generic/BankAccounTypeDropDown";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { getBankAccountTypes } from "@/api/bank-account-types";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -61,22 +62,29 @@ const BankDetailsForm = ({
             bank_account_type_id: Yup.string().required("Bank account type is required."),
             remarks: Yup.string().required("Remarks is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            api(String(employeeNumber), values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success(resp.data.message);
-                    resetForm();
-                    onSubmitCallback();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered")
-            }).finally(() => {
-                setSubmitting(false);
-            })
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Bank Details",
+                message: "Are you sure you want to save?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                api(String(employeeNumber), values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        resetForm();
+                        onSubmitCallback();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered")
+                }).finally(() => {
+                    setSubmitting(false);
+                })
+            }
         }
     });
 

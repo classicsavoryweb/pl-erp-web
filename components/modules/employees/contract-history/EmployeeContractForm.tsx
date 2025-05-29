@@ -11,6 +11,7 @@ import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -44,22 +45,28 @@ const EmployeeContractForm = ({
             contract_end_date: Yup.string().required("Contract end date is required."),
             status: Yup.string().required("Status is required."),
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            api(String(employeeNumber), values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success(resp.data.message);
-                    resetForm();
-                    onSubmitCallback();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered")
-            }).finally(() => {
-                setSubmitting(false);
-            })
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Contract",
+                message: "Are you sure you want to save?"
+            });
+            if (isConfirmed) {
+                setSubmitting(true);
+                api(String(employeeNumber), values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        resetForm();
+                        onSubmitCallback();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered")
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
 

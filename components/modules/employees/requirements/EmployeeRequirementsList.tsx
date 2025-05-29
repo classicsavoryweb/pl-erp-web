@@ -3,6 +3,7 @@
 import { getEmployeeRequirements, updateOrCreateEmployeeRequirements } from "@/api/employee";
 import Button from "@/components/common/Button";
 import Checkbox from "@/components/common/Checkbox";
+import confirm from "@/components/common/Confirm";
 import Grid from "@/components/common/Grid";
 import TableLoader from "@/components/common/TableLoader";
 import { useApiCall } from "@/hooks/api-call";
@@ -38,20 +39,27 @@ const EmployeeRequirementsList = () => {
             chest_xray: "No",
             occupational_permit: "No",
         },
-        onSubmit: (values, {setSubmitting}) => {
-            setSubmitting(true);
-            updateOrCreateEmployeeRequirements(String(employeeNumber), values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success(resp.data.message);
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally(() => {
-                setSubmitting(false);
+        onSubmit:async (values, {setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Requirements",
+                message: "Are you sure you want to save?"
             });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                updateOrCreateEmployeeRequirements(String(employeeNumber), values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
 
