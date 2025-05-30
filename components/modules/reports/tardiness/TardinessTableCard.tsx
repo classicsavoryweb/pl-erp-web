@@ -23,8 +23,11 @@ import { useFormik } from "formik";
 import VoidTardinessModal from "./VoidTardinessModal";
 import { pdf } from '@react-pdf/renderer';
 import TardinessNotice from "../../pdf/TardinessNotice";
-import TardinessMemoModal from "./TardinessMemoModal";
 import SendNODModal from "./SendNODModal";
+import moment from "moment";
+import TardinessNTEModal from "./TardinessNTEModal";
+import TardinessNODModal from "./TardinesNODModal";
+import TardinessDetailsModal from "./TardinessDetailsModal";
 
 const TardinessTableCard = () => {
     const api = useApiCall();
@@ -34,7 +37,9 @@ const TardinessTableCard = () => {
     const editModal = useModal();
     const voidModal = useModal();
     const filter = useFilter();
-    const viewMemo = useModal();
+    const viewNTE = useModal();
+    const viewNOD = useModal();
+    const viewTardiness = useModal();
     const sendNodMemo = useModal();
 
     useAsyncEffect(() => {
@@ -90,7 +95,10 @@ const TardinessTableCard = () => {
         {
             columnHead: "Month",
             path: "month",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return moment().month(data.month - 1).format('MMM')
+            }
         },
         {
             columnHead: "Year",
@@ -108,7 +116,7 @@ const TardinessTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "DA Status",
+            columnHead: "NOD Status",
             path: "da_status",
             columnType: COLUMNTYPES.string
         },
@@ -157,27 +165,30 @@ const TardinessTableCard = () => {
                         actionSettings[0],
                         actionSettings[2],
                         actionSettings[3],
-                        actionSettings[4],
+                        actionSettings[5],
                     ];
 
                     if (data.nte_status === "Sent") {
                         actions = [
                             ...actions,
-                            actionSettings[5]
+                            actionSettings[4],
+                            actionSettings[6]
                         ]
                     }
+                } else {
+                    actions = [
+                        actionSettings[7],
+                    ];
                 }
 
-                if (data.status !== "Voided" ) {
-                    return (
-                        <ActionDropDown
-                            data={data}
-                            actions={actions}
-                        />
-                    );
-                } else {
-                    return "—";
-                }
+                    
+                return (
+                    <ActionDropDown
+                        data={data}
+                        actions={actions}
+                    />
+                );
+
 
             }
 
@@ -221,10 +232,17 @@ const TardinessTableCard = () => {
             }
         },
         {
-            label: "View Memo",
+            label: "View NTE",
             onClick: async (data: any) => {
                 setId(data.id);
-                viewMemo.onOpen();
+                viewNTE.onOpen();
+            }
+        },
+        {
+            label: "View NOD",
+            onClick: async (data: any) => {
+                setId(data.id);
+                viewNOD.onOpen();
             }
         },
         {
@@ -257,6 +275,13 @@ const TardinessTableCard = () => {
             onClick: async (data: any) => {
                 setId(data.id);
                 sendNodMemo.onOpen();
+            }
+        },
+        {
+            label: "View",
+            onClick: async (data: any) => {
+                setId(data.id);
+                viewTardiness.onOpen();
             }
         },
     ];
@@ -349,6 +374,10 @@ const TardinessTableCard = () => {
             <EditTardinessModal
                 modal={editModal}
                 id={id}
+                onSubmitCallBack={() => {
+                    editModal.onClose();
+                    api.triggerReload();
+                }}
             />
 
             <VoidTardinessModal
@@ -360,8 +389,18 @@ const TardinessTableCard = () => {
                 }}
             />
 
-            <TardinessMemoModal
-                modal={viewMemo}
+            <TardinessNTEModal
+                modal={viewNTE}
+                id={id}
+            />
+
+            <TardinessNODModal
+                modal={viewNOD}
+                id={id}
+            />
+
+            <TardinessDetailsModal
+                modal={viewTardiness}
                 id={id}
             />
 

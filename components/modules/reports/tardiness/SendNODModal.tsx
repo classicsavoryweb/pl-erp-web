@@ -31,10 +31,10 @@ const SendNODModal = ({
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             statement: Yup.string().when('with_statement', (keyWord, schema) => 
-                            String(keyWord) === "Yes"
-                                ? schema.required('Statement is required')
-                                : schema.notRequired()
-                        ),
+                String(keyWord) === "Yes"
+                    ? schema.required('Statement is required')
+                    : schema.notRequired()
+            ),
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
             const resp = await getNTEDetaills(id);
@@ -76,7 +76,10 @@ const SendNODModal = ({
                     name="with_statement"
                     placeholder="select option"
                     value={sendNODHandler.values.with_statement}
-                    onChange={sendNODHandler.handleChange}
+                    onChange={(e) => {
+                        sendNODHandler.handleChange(e);
+                        sendNODHandler.setFieldValue("statement", "With written explanation submitted.");
+                    }}
                     label="With Statement"
                     options={[
                         {

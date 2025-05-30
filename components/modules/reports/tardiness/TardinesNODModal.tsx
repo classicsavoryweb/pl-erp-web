@@ -4,15 +4,15 @@ import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { toast } from "react-toastify";
 import { getNTEDetaills } from "@/api/reports/reports-tardiness";
-import TardinessNotice from "../../pdf/TardinessNotice";
 import { PDFViewer } from "@react-pdf/renderer";
+import TardinessNOD from "../../pdf/TardinessNOD";
 
 interface FormModalInterface {
     modal: any;
     id: number;
 };
 
-const TardinessMemoModal = ({
+const TardinessNODModal = ({
     modal,
     id
 }: FormModalInterface) => {
@@ -38,7 +38,7 @@ const TardinessMemoModal = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Certificate of Employment"
+            title="Tardiness - Notice of Disciplinary Action"
             onClose={() => {
                 modal.onClose();
             }}
@@ -48,7 +48,7 @@ const TardinessMemoModal = ({
             <PDFViewer
                 className="w-full h-[85vh]"
             >
-                <TardinessNotice
+                <TardinessNOD
                     data={data}
                 />
             </PDFViewer>
@@ -56,4 +56,4 @@ const TardinessMemoModal = ({
     );
 };
 
-export default TardinessMemoModal;
+export default TardinessNODModal;
