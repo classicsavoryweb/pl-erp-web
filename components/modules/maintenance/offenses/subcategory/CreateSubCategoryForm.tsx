@@ -31,7 +31,7 @@ const CreateSubCategoryForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
                 title: "Create Sub Category",
-                message: "Are you sure you wantn to create?"
+                message: "Are you sure you want to create?"
             });
 
             if (isConfirmed) {

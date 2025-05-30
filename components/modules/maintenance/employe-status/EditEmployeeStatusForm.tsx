@@ -38,7 +38,7 @@ const EditEmployeeStatusForm = ({
 
             const isConfirmed = await confirm({
                 title: "Edit Employee Status",
-                message: "Are you sure you wantn to save changes?"
+                message: "Are you sure you want to save changes?"
             });
 
             if (isConfirmed) {

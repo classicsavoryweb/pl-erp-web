@@ -3,6 +3,7 @@
 import { changePassword } from "@/api/authentication";
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
+import confirm from "@/components/common/Confirm";
 import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
@@ -23,21 +24,28 @@ const ChangePasswordForm = () => {
             confirm_password: Yup.string().required("Confirm password is required.")
                 .oneOf([Yup.ref('new_password')], "Passwords must match."),
         }),
-        onSubmit: (values, {setSubmitting, setErrors, resetForm}) => {
-            setSubmitting(true);
-            changePassword(values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success("Password updated successfully");
-                    resetForm();
-                } else {
-                    setErrors(resp.data);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally(() => {
-                setSubmitting(false);
+        onSubmit: async (values, {setSubmitting, setErrors, resetForm}) => {
+            const isConfirmed = await confirm({
+                title: "Change Password",
+                message: "Are you sure you want to save changes?"
             });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                changePassword(values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success("Password updated successfully");
+                        resetForm();
+                    } else {
+                        setErrors(resp.data);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
     return (

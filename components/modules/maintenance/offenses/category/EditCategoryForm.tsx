@@ -34,7 +34,7 @@ const EditCategoryForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
                 title: "Edit Category",
-                message: "Are you sure you wantn to save changes?"
+                message: "Are you sure you want to save changes?"
             });
 
             if (isConfirmed) {
