@@ -66,6 +66,11 @@ const EmployeeContractHistory = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Duration",
+            path: "duration",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status

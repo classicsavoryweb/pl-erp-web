@@ -116,7 +116,11 @@ const EmployeeDetailsCard = () => {
                             />
                             <EmployeeBasicInfo
                                 label="Birthday"
-                                detail={employee.date_hired}
+                                detail={employee.birthday}
+                            />
+                            <EmployeeBasicInfo
+                                label="Age"
+                                detail={employee.age}
                             />
                             <EmployeeBasicInfo
                                 label="Birthplace"
