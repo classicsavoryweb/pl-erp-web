@@ -15,6 +15,7 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import EmployeeContractForm from "./EmployeeContractForm";
 import Button from "@/components/common/Button";
+import PrintInitialContractModal from "./PrintInitialContractModal";
 
 const EmployeeContractHistory = () => {
     const params = useParams();
@@ -25,6 +26,10 @@ const EmployeeContractHistory = () => {
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload } = useContext(EmployeeContext);
+
+    const [id, setId] = useState<number>(0);
+    const initialContractModal = useModal();
+    const extensionContractModal = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -81,29 +86,57 @@ const EmployeeContractHistory = () => {
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 const dataIndex = api.dataSet.findIndex(item => data.id === item.id);
+                let contractAction = [
+                    {
+                        label: "Edit",
+                        onClick: () => {
+                            setAction("edit");
+                            modal.onOpen();
+                            setData({
+                                id: data.id,
+                                contract_start_date: data.contract_start_date,
+                                contract_end_date: data.contract_end_date,
+                                status: data.status,
+                                remarks: data.remarks,
+                            });
+                        }
+                    },
+                    //initial contract [1]
+                    {
+                        label: "Print Contract",
+                        onClick: () => {
+                            setId(data.id);
+                            initialContractModal.onOpen();
+                        }
+                    },
+                    //extension contract [2]
+                    {
+                        label: "Print Contract",
+                        onClick: () => {
+                            setId(data.id);
+                        }
+                    },
+                ];
+
+                let actions = contractAction;
                 if (dataIndex === 0) {
-                    return (
-                        <ActionDropDown
-                            data={data}
-                            actions={[
-                                {
-                                    label: "Edit",
-                                    onClick: () => {
-                                        setAction("edit");
-                                        modal.onOpen();
-                                        setData({
-                                            id: data.id,
-                                            contract_start_date: data.contract_start_date,
-                                            contract_end_date: data.contract_end_date,
-                                            status: data.status,
-                                            remarks: data.remarks,
-                                        });
-                                    }
-                                }
-                            ]}
-                        />
-                    )
+                    actions=[
+                        contractAction[0],
+                        contractAction[2]
+                    ];
+                } else {
+                    actions = [
+                        contractAction[1]
+                    ];
                 }
+
+                return (
+                    <ActionDropDown
+                        data={data}
+                        actions={actions}
+                    />
+                )
+
             }
         },
     ];
@@ -120,6 +153,12 @@ const EmployeeContractHistory = () => {
                 action={action}
                 data={data}
             />
+
+            <PrintInitialContractModal
+                modal={initialContractModal}
+                contractId={id}
+            />
+
             <div className="flex justify-end">
                 <div>
                     <Button

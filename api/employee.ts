@@ -321,3 +321,12 @@ export const editEmployeeHealthAndSafety= async ( employeeNumber: string, payloa
 
     return resData;
 };
+
+export const getEmployeeContractDetails = async (id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-contract-details/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
