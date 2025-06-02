@@ -40,7 +40,7 @@ const styles = StyleSheet.create({
     },
     itemFlex: {
         paddingLeft: 25,
-        display: "flex",
+        alignItems: 'flex-start',
         width: "100%",  
         flexDirection: "row",
         gap: 5
@@ -390,6 +390,7 @@ const FirstContract = ({
 
                 <View
                     style={{
+                        paddingTop:15,  
                         display: "flex",
                         justifyContent: "space-between",
                         flexDirection: "row"

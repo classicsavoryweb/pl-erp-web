@@ -1,8 +1,6 @@
 "use client";
 import { getEmployeeContractHistory, getEmployeePositions } from "@/api/employee";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import Grid from "@/components/common/Grid";
-import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { EmployeeContext } from "@/context/EmployeeProvider";
@@ -16,6 +14,7 @@ import { toast } from "react-toastify";
 import EmployeeContractForm from "./EmployeeContractForm";
 import Button from "@/components/common/Button";
 import PrintInitialContractModal from "./PrintInitialContractModal";
+import PrintExtensionContractModal from "./PrintExtensionContractModal";
 
 const EmployeeContractHistory = () => {
     const params = useParams();
@@ -101,27 +100,36 @@ const EmployeeContractHistory = () => {
                             });
                         }
                     },
-                    //initial contract [1]
                     {
-                        label: "Print Contract",
+                        label: "Print Contract",//initial contract [1]
                         onClick: () => {
                             setId(data.id);
                             initialContractModal.onOpen();
                         }
-                    },
-                    //extension contract [2]
+                    },//extension contract [2]
                     {
                         label: "Print Contract",
                         onClick: () => {
+                            extensionContractModal.onOpen();
                             setId(data.id);
                         }
                     },
                 ];
 
                 let actions = contractAction;
-                if (dataIndex === 0) {
+
+                if (dataIndex === 0 && api.dataSet.length === 1) {
                     actions=[
                         contractAction[0],
+                        contractAction[1]
+                    ];
+                } else if (dataIndex === 0 && api.dataSet.length > 1) {
+                    actions=[
+                        contractAction[0],
+                        contractAction[2]
+                    ];
+                } else if (dataIndex !== api.dataSet.length-1) {
+                    actions=[
                         contractAction[2]
                     ];
                 } else {
@@ -156,6 +164,11 @@ const EmployeeContractHistory = () => {
 
             <PrintInitialContractModal
                 modal={initialContractModal}
+                contractId={id}
+            />
+
+            <PrintExtensionContractModal
+                modal={extensionContractModal}
                 contractId={id}
             />
 
