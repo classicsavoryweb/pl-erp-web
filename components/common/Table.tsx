@@ -44,8 +44,8 @@ const Table = ({
     onCheck
 }: TableInterface) => {
 
-    const currentPage = paginator.paginationData.current_page;
-    const totalPages = paginator.paginationData.last_page;
+    const currentPage = paginator && paginator.paginationData.current_page;
+    const totalPages = paginator && paginator.paginationData.last_page;
 
     const getCustomLinks = () => {
         let pages: (string | number)[] = [];
@@ -179,7 +179,7 @@ const Table = ({
                         }
                 </tbody>
             </table>
-            { !loading && dataSet.length > 0 &&
+            { !loading && paginator && dataSet.length > 0 &&
                 <div
                     className="w-full text-sm flex justify-between items-center pt-2"
                 >

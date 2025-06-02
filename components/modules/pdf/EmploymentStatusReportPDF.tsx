@@ -1,0 +1,392 @@
+import React from 'react';
+import { Document, Page, Text, View, PDFViewer, StyleSheet, Image } from '@react-pdf/renderer';
+import moment from 'moment';
+import _ from 'lodash';
+
+const styles = StyleSheet.create({
+    fullPage: {
+        width: '100%',
+        height: '87vh',
+    },
+    page: {
+        paddingTop: 50,
+        paddingLeft: 30,
+        paddingRight: 30,
+        fontSize: 8,
+        lineHeight: 1.25,
+        textAlign: 'justify'
+    },
+    bold: {
+        fontWeight: "bold"
+    },
+    section: {
+        paddingBottom: 10
+    },
+    sectionCenter: {
+        flexDirection: "column",
+        justifyContent: "center",
+        alignContent: "center",
+        textAlign: "center",
+        paddingBottom: 20
+    },
+    image: {
+        width: 150,
+    },
+    linedText: {
+        textDecoration: "underline"
+    },
+    boldedLinedText: {
+        textDecoration: "underline",
+        fontWeight: "bold"
+    },
+    itemFlex: {
+        paddingLeft: 25,
+        alignItems: 'flex-start',
+        width: "100%",  
+        flexDirection: "row",
+        gap: 5
+    },
+    table: {
+        width: "auto",
+        marginVertical: 10,
+        borderStyle: "solid",
+        borderWidth: 1,
+        borderRightWidth: 0,
+        borderBottomWidth: 0,
+    },
+    tableRow: {
+        flexDirection: "row",
+    },
+    tableColHeader: {
+        width: "33.33%",
+        borderStyle: "solid",
+        borderBottomWidth: 1,
+        borderRightWidth: 1,
+        padding: 5,
+        textAlign: "center"
+    },
+    tableCol: {
+        width: "33.33%",
+        borderStyle: "solid",
+        borderBottomWidth: 1,
+        borderRightWidth: 1,
+        padding: 5,
+        textAlign: "center"
+    },
+});
+
+const INDENT = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
+
+interface CoeInterface {
+    data: any;
+}
+const EmploymentStatusReportPDF = ({
+    data
+}: CoeInterface) => (
+    <PDFViewer style={styles.fullPage}>
+        <Document>
+            <Page size={[612, 936]} style={styles.page}>
+                <View
+                    style={styles.sectionCenter}
+                >   
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            justifyContent: "center"
+                        }}
+                    >
+                        <Text
+                            style={{
+                                fontWeight: "bold",
+                                fontSize: 14,
+                            }}
+                        >
+                            Savory Fastfood Incorporated
+                        </Text>
+                    </View>
+                    <Text
+                        style={{
+                            marginTop: 10,
+                            fontSize: 9
+                        }}
+                    >
+                        # 84 Sto. Domingo Street, Brgy. Sto. Domingo, Quezon City
+                    </Text>
+                    <Text
+                        style={{
+                            marginTop: 1,
+                            fontSize: 9
+                        }}
+                    >
+                        8230-9888 loc. 208
+                    </Text>
+                     <Text
+                        style={{
+                            marginTop: 1,
+                            fontSize: 9
+                        }}
+                    >
+                        sfirecords@classicsavory.com
+                    </Text>
+                    <Text style={{
+                        ...styles.bold,
+                        paddingTop: 15,
+                        fontSize: 11
+                    }}>
+                        Employment Status Report
+                    </Text>
+                </View>
+
+                <View
+                    style={{
+                        paddingTop: 20,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 20
+                    }}
+                >
+                    <Text
+                        style={{
+                            width: 40
+                        }}
+                    >
+                        TO
+                    </Text>
+                    <Text>
+                        :
+                    </Text>
+                    <View>
+                        <Text
+                            style={{
+                                fontWeight: "bold"
+                            }}
+                        >
+                            {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "} {_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
+                        </Text>
+                        <Text>
+                            {data.branch_oic.current_position.description}/ {data.branch.name}
+                        </Text>
+                    </View>
+                </View>
+
+                <View
+                    style={{
+                        paddingTop: 20,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 20
+                    }}
+                >
+                    <Text
+                        style={{
+                            width: 40
+                        }}
+                    >
+                        FROM
+                    </Text>
+                    <Text>
+                        :
+                    </Text>
+                    <View>
+                        <Text
+                            style={{
+                                fontWeight: "bold"
+                            }}
+                        >
+                            Mr. Wilhim T. Ong
+                        </Text>
+                        <Text>
+                            Human Resources Head
+                        </Text>
+                    </View>
+                </View>
+
+                <View
+                    style={{
+                        paddingTop: 20,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 20
+                    }}
+                >
+                    <Text
+                        style={{
+                            width: 40
+                        }}
+                    >
+                        DATE
+                    </Text>
+                    <Text>
+                        :
+                    </Text>
+                    <View>
+                        <Text
+                            style={{
+                                fontWeight: "bold"
+                            }}
+                        >
+                            {moment(data.date).format('MMMM DD, YYYY')}
+                        </Text>
+                    </View>
+                </View>
+
+                <View
+                    style={{
+                        paddingTop: 20,
+                        display: "flex",
+                        flexDirection: "row",
+                        gap: 20
+                    }}
+                >
+                    <Text
+                        style={{
+                            width: 40
+                        }}
+                    >
+                        SUBJECT
+                    </Text>
+                    <Text>
+                        :
+                    </Text>
+                    <View>
+                        <Text
+                            style={{
+                                fontWeight: "bold"
+                            }}
+                        >
+                            Employment Status Report ({moment(data.date).format('MMMM YYYY')})
+                        </Text>
+                    </View>
+                </View>
+
+
+                <View
+                    style={{
+                        marginTop: 0,
+                        marginBottom: 20
+                    }}
+                >
+                    <Text
+                        style={{
+                            width: "100%",
+                            borderBottom: 1
+                        }}
+                    >
+                        {"\u00A0".repeat(60)}	
+                    </Text>
+                </View>
+
+                <View
+                    style={styles.section}
+                >
+                    <Text>The probationary contract of the employee which is currently assigned in your handled branch is due to expire. Please consider labor cost, manpower scheduling, branches scheduled for closure and your future manpower requirements when you review the employee’s status:</Text>
+                    <View
+                        style={{
+                            paddingTop: 10,
+                            display: "flex",
+                            flexDirection: "row",
+                            gap: 0
+                        }}
+                    >
+                        <Text>Names colored in: </Text>
+                        <View>
+                            <Text><Text style={{fontWeight: "bold"}}>Black</Text> - Probationary period was not yet extended for 5 months.</Text>
+                            <Text><Text style={{fontWeight: "bold", color: "blue"}}>Blue</Text> - Probationary period has been extended already for 5 months, with total of 10 months.</Text>
+                        </View>
+                    </View>
+                </View>
+                    
+                <View style={styles.table}>
+                    <View style={styles.tableRow}>
+                        <View style={styles.tableColHeader}><Text style={styles.bold}>Name</Text></View>
+                        <View style={styles.tableColHeader}><Text style={styles.bold}>Position</Text></View>
+                        <View style={styles.tableColHeader}><Text style={styles.bold}>Date Hired</Text></View>
+                        <View style={styles.tableColHeader}><Text style={styles.bold}>Date End</Text></View>
+                        <View style={styles.tableColHeader}><Text style={styles.bold}>Employment Status</Text></View>
+                    </View>
+                    { data.data && data.data.map((employee: any, idx: number ) => {
+                        let color = employee.contracts.length > 1 ? "blue" : "black";
+
+                        return (
+                            <View style={styles.tableRow} key={idx}>
+                                <View style={styles.tableCol}>
+                                    <Text style={{ color: color }}>{employee.full_name}</Text>
+                                </View>
+                                <View style={styles.tableCol}><Text>{employee.current_position.description}</Text></View>
+                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_start_date).format('MMMM DD, YYYY')}</Text></View>
+                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_end_date).format('MMMM DD, YYYY')}</Text></View>
+                                <View style={styles.tableCol}><Text>{employee.latest_contract.remarks}</Text></View>
+                            </View>
+                        );
+                    })
+                    }
+                </View>
+
+                <View
+                    style={{
+                        ...styles.section,
+                        paddingTop: 20
+                    }}
+                >
+                    <Text>Please be informed that all information stated herein are <Text style={styles.bold}>private and confidential.</Text></Text>
+                    <Text>Should you have any questions, please feel free to call Human Resources Department.</Text>
+                </View>
+
+                <View
+                    style={styles.section}
+                >
+                    <Text>Thank you,</Text>
+                </View>
+
+                <View
+                    style={{
+                        paddingTop: 20,
+                    }}
+                >
+                    <Text style={{
+                        ...styles.bold,
+                        paddingBottom: 30
+                    }}>
+                        Recommended by:
+                    </Text>
+                    <Text
+                        style={{
+                            fontWeight: "bold"
+                        }}
+                    >
+                        {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "} {_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
+                    </Text>
+                    <Text>
+                        {data.branch_oic.current_position.description}/ {data.branch.name}
+                    </Text>
+                </View>
+
+                <View
+                    style={{
+                        paddingTop: 20,
+                    }}
+                >
+                    <Text style={{
+                        ...styles.bold,
+                        paddingBottom: 30
+                    }}>
+                        Noted by:
+                    </Text>
+                    <Text
+                        style={{
+                            fontWeight: "bold"
+                        }}
+                    >
+                        {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "} {_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
+                    </Text>
+                    <Text>
+                        {data.branch_oic.current_position.description}/ {data.branch.name}
+                    </Text>
+                </View>
+
+            </Page>
+        </Document>
+    </PDFViewer>
+);
+
+export default EmploymentStatusReportPDF;
