@@ -231,7 +231,7 @@ const EmployeeDetailsCard = () => {
                         <hr className=" text-slate-300" />
                     </div>
                     <EmployeeBasicInfo
-                        label="Branch Head"
+                        label="Branch OIC"
                         detail={employee.current_branch?.branch_head}
                     />
                     <EmployeeBasicInfo

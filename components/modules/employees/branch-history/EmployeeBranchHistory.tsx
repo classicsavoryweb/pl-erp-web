@@ -56,7 +56,7 @@ const EmployeeBranchHistory = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Branch Head",
+            columnHead: "Branch OIC",
             path: "branch.branch_head",
             columnType: COLUMNTYPES.string
         },
