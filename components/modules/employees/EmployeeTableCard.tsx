@@ -92,6 +92,10 @@ const EmployeeTableCard = () => {
                 withStatus
                 filterHandler={filter}
                 columnSettings={columnSettings}
+                withBranch
+                withEmployeeType
+                withEmploymentStatus
+                withPosition
             />
             <Card>
                 <Table

@@ -48,7 +48,7 @@ const EmploymentStatusDropdown = ({
         .finally(() => {
             api.setLoading(false);
         });
-    }, []);
+    }, [type]);
 
     return (
         <Dropdown
