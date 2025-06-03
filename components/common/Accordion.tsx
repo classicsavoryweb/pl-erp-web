@@ -8,14 +8,16 @@ import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 interface AccordionInterface {
     title: string;
     children: React.ReactNode;
+    isExpanded?: boolean;
 };
 
 const Accordion = ({
     title,
-    children
+    children,
+    isExpanded = false
 }: AccordionInterface) => {
 
-    const [toggle, setToggle] = useState<boolean>(false);
+    const [toggle, setToggle] = useState<boolean>(isExpanded);
 
     return (
         <div

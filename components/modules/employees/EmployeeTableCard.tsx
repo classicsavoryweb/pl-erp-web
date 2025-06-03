@@ -91,11 +91,41 @@ const EmployeeTableCard = () => {
                 hasDateRange
                 withStatus
                 filterHandler={filter}
-                columnSettings={columnSettings}
                 withBranch
                 withEmployeeType
                 withEmploymentStatus
                 withPosition
+                isExpanded
+                defaultColumnSelected="full_name"
+                dateLabel="Date Hired"
+                columnSettings={[
+                    {
+                        columnHead: "Employee Number",
+                        path: "employee_number",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Full Name",
+                        path: "full_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Last Name",
+                        path: "last_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Middle Name",
+                        path: "middle_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "First Name",
+                        path: "first_name",
+                        columnType: COLUMNTYPES.string
+                    },
+
+                ]}
             />
             <Card>
                 <Table

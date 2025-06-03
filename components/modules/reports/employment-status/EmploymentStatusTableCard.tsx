@@ -56,7 +56,7 @@ const EmploymentStatusTableCard = () => {
         initialValues: {
             branch_id : "",
             month: "",
-            year: "",
+            year: new Date().getFullYear(),
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -127,7 +127,7 @@ const EmploymentStatusTableCard = () => {
                             placeholder="select year"
                             label="Year"
                             name="year"
-                            value={formHandler.values.year}
+                            value={String(formHandler.values.year)}
                             onChange={formHandler.handleChange}
                             options={Array.from({ length: 100 }, (_, i) => {
                                 const year = new Date().getFullYear() - i;

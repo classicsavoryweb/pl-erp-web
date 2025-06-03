@@ -22,8 +22,12 @@ interface FilterInterface {
     withPosition?: boolean;
     withEmploymentStatus?: boolean;
     withEmployeeType?: boolean;
+    isExpanded?: boolean,
+    defaultColumnSelected?: string;
+    dateLabel?: string;
 };
 const FilterCard = ({
+    isExpanded = false,
     hasDateRange = false,
     columnSettings,
     filterHandler,
@@ -32,12 +36,14 @@ const FilterCard = ({
     withPosition = false,
     withEmploymentStatus = false,
     withEmployeeType = false,
+    defaultColumnSelected = "",
+    dateLabel = "Date"
 }: FilterInterface) => {
 
     const formHandler = useFormik({
         initialValues: {
             key_word: '',
-            column_type: '',
+            column_type: defaultColumnSelected,
             date_from: '',
             date_to: '',
             status: "",
@@ -72,6 +78,7 @@ const FilterCard = ({
         <div className="w-full">
             <Accordion
                 title="Filters"
+                isExpanded={isExpanded}
             >
                 <form className="pt-5" onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
@@ -143,14 +150,14 @@ const FilterCard = ({
                         <>
                             <Textfield
                                 name="date_from"
-                                label="Date From"
+                                label={`${dateLabel} From`}
                                 type="date"
                                 value={formHandler.values.date_from}
                                 onChange={formHandler.handleChange}
                             />
                             <Textfield
                                 name="date_to"
-                                label="Date To"
+                                label={`${dateLabel} To`}
                                 type="date"
                                 value={formHandler.values.date_to}
                                 error={formHandler.errors.date_to}
