@@ -161,7 +161,7 @@ const EmploymentStatusReportPDF = ({
                                 fontWeight: "bold"
                             }}
                         >
-                            {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "} {_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
+                            {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "}{_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
                         </Text>
                         <Text>
                             {data.branch_oic.current_position.description}/ {data.branch.name}
@@ -354,7 +354,7 @@ const EmploymentStatusReportPDF = ({
                             fontWeight: "bold"
                         }}
                     >
-                        {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "} {_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
+                        {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "}{_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
                     </Text>
                     <Text>
                         {data.branch_oic.current_position.description}/ {data.branch.name}
@@ -377,10 +377,10 @@ const EmploymentStatusReportPDF = ({
                             fontWeight: "bold"
                         }}
                     >
-                        {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "} {_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
+                        {data.group_head.gender === "Male" ? "Mr. " : "Ms. "}{_.words(data.group_head.first_name).map(_.capitalize).join(' ')} {data.group_head.middle_name && _.toUpper(data.group_head.middle_name.charAt(0)) + '.'} {_.words(data.group_head.last_name).map(_.capitalize).join(' ')}
                     </Text>
                     <Text>
-                        {data.branch_oic.current_position.description}/ {data.branch.name}
+                        {data.group_head.current_position.description}
                     </Text>
                 </View>
 
