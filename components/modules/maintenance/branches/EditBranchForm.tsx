@@ -30,6 +30,7 @@ const EditBranchForm = ({
     const editBranchFormHandler = useFormik({
         initialValues: {
             name : "" ,
+            branch_number : "" ,
             branch_email : "" ,
             status : "" ,
             short_name : "" ,
@@ -39,11 +40,14 @@ const EditBranchForm = ({
             company : "" ,
             branch_head_employee_number: "",
             group_head_employee_number: "",
-            rate_code: ""
+            rate_code: "",
+            kitchen_oic_employee_number: "",
+            mancom_employee_number: ""
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             name: Yup.string().required("Branch name is required."),
+            branch_number: Yup.string().required("Branch number is required."),
             branch_email: Yup.string().required("Branch email is required."),
             status: Yup.string().required("Status is required."),
             short_name: Yup.string().required("Short name is required."),
@@ -53,6 +57,7 @@ const EditBranchForm = ({
             company: Yup.string().required("Company is required."),
             rate_code: Yup.string().required("Rate code is required."),
             branch_head_employee_number: Yup.string().required("Branch OIC is required."),
+            mancom_employee_number: Yup.string().required("Mancom is required."),
             group_head_employee_number: Yup.string().required("Group head is required.")
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
@@ -119,10 +124,15 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.short_name}
                     />
-                </Grid>
-                <Grid
-                    cols={2}
-                >
+                    <Textfield
+                        label="Branch Number"
+                        placeholder="enter branch number"
+                        name="branch_number"
+                        value={editBranchFormHandler.values.branch_number}
+                        required
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.branch_number}
+                    />
                     <Textfield
                         label="Address"
                         placeholder="enter address"
@@ -141,10 +151,7 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.location}
                     />
-                </Grid>
-                <Grid
-                    cols={2}
-                >
+
                     <Textfield
                         label="Date Opened"
                         placeholder="enter date opened"
@@ -164,8 +171,7 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.company}
                     />
-                </Grid>
-                <Grid cols={2}>
+
                     <Textfield
                         label="Branch Email"
                         placeholder="enter branch email"
@@ -184,34 +190,54 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.rate_code}
                     />
+
+                    <EmployeeDropDown
+                        label="Branch OIC"
+                        placeholder="select branch oic"
+                        name="branch_head_employee_number"
+                        value={editBranchFormHandler.values.branch_head_employee_number}
+                        required
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.branch_head_employee_number}
+                    />
+                    <EmployeeDropDown
+                        label="Group Head"
+                        placeholder="select group head"
+                        name="group_head_employee_number"
+                        value={editBranchFormHandler.values.group_head_employee_number}
+                        required
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.group_head_employee_number}
+                    />
+
+                    <EmployeeDropDown
+                        label="Kitchen OIC"
+                        placeholder="select kitchen oic"
+                        name="kitchen_oic_employee_number"
+                        value={editBranchFormHandler.values.kitchen_oic_employee_number || ""}
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.kitchen_oic_employee_number}
+                    />
+                    <EmployeeDropDown
+                        label="Mancom"
+                        placeholder="select mancom"
+                        name="mancom_employee_number"
+                        value={editBranchFormHandler.values.mancom_employee_number}
+                        required
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.mancom_employee_number}
+                    />
+
+                    <ActiveInactiveDropDown
+                        label="Status"
+                        placeholder="select status"
+                        name="status"
+                        value={editBranchFormHandler.values.status}
+                        required
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.status}
+                    />
                 </Grid>
-                <EmployeeDropDown
-                    label="Branch OIC"
-                    placeholder="select branch oic"
-                    name="branch_head_employee_number"
-                    value={editBranchFormHandler.values.branch_head_employee_number}
-                    required
-                    onChange={editBranchFormHandler.handleChange}
-                    error={editBranchFormHandler.errors.branch_head_employee_number}
-                />
-                <EmployeeDropDown
-                    label="Group Head"
-                    placeholder="select group head"
-                    name="group_head_employee_number"
-                    value={editBranchFormHandler.values.group_head_employee_number}
-                    required
-                    onChange={editBranchFormHandler.handleChange}
-                    error={editBranchFormHandler.errors.group_head_employee_number}
-                />
-                <ActiveInactiveDropDown
-                    label="Status"
-                    placeholder="select status"
-                    name="status"
-                    value={editBranchFormHandler.values.status}
-                    required
-                    onChange={editBranchFormHandler.handleChange}
-                    error={editBranchFormHandler.errors.status}
-                />
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">

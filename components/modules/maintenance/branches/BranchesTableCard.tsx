@@ -90,6 +90,7 @@ const BranchesTableCard = () => {
                 setData({
                     id: data.id,
                     name : data.name,
+                    branch_number : data.branch_number,
                     branch_email : data.branch_email,
                     status : data.status,
                     short_name : data.short_name,
@@ -99,7 +100,9 @@ const BranchesTableCard = () => {
                     company : data.company,
                     branch_head_employee_number: data.branch_head_employee_number,
                     group_head_employee_number: data.group_head_employee_number,
-                    rate_code: data.rate_code
+                    rate_code: data.rate_code,
+                    kitchen_oic_employee_number: data.kitchen_oic_employee_number,
+                    mancom_employee_number: data.mancom_employee_number,
                 });
             }
         },
