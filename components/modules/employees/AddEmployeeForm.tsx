@@ -48,7 +48,7 @@ const AddEmployeeForm = () => {
             contract_duration: Yup.string().required("Contract duration is required"),
             contact_number: Yup.string().required("Contact number is required")
                 .min(11, "Minimum of 11 characters")
-                .max(13, "Minimum of 13 characters"),
+                .max(13, "Maximum of 13 characters"),
             agency_id: Yup.string().when('type', (type, schema) =>
                 String(type) === "agency"
                     ? schema.required('Agency is required')

@@ -178,6 +178,7 @@ const EmployeeContractHistory = () => {
                         label="Add"
                         onClick={() => {
                             setAction("add");
+                            setData(api.dataSet[0]);
                             modal.onOpen();
                         }}
                     />

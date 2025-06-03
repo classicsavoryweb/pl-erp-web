@@ -13,6 +13,7 @@ import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
 import confirm from "@/components/common/Confirm";
+import moment from 'moment';
 
 interface FormModalInterface {
     modal: any;
@@ -29,7 +30,7 @@ const EmployeePositionForm = ({
 }: FormModalInterface) => {
     const params = useParams();
     const employeeNumber = params["employee-number"];
-    const api = action === "add" ? addEmployeePosition : updateEmployeePosition; 
+    const api = action === "add" ? addEmployeePosition : updateEmployeePosition;
 
     const formHandler = useFormik({
         initialValues: {
@@ -43,7 +44,13 @@ const EmployeePositionForm = ({
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             position_id: Yup.string().required("Position is required."),
-            date_started: Yup.string().required("Date started is required."),
+            date_started: Yup.date()
+            .required('Date started is required.')
+            .when([], {
+                is: () => String(action) === 'add',
+                then: schema => schema.min(moment().startOf('day').toDate(), 'Date must be today or later.'),
+                otherwise: schema => schema,
+            }),
             oic_assignment: Yup.string(),
             date_appointed: Yup.string().when('oic_assignment', (oic_assignment, schema) =>
                 String(oic_assignment) === "Yes"

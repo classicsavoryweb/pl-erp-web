@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 import BranchDropDown from "../../generic/BranchDropDown";
 import confirm from "@/components/common/Confirm";
+import moment from "moment";
 
 interface FormModalInterface {
     modal: any;
@@ -40,7 +41,13 @@ const EmployeeBranchForm = ({
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             branch_id: Yup.string().required("Branch is required."),
-            date_assigned: Yup.string().required("Date assigned is required."),
+            date_assigned: Yup.date()
+            .required("Date assigned is required.")
+            .when([], {
+                is: () => String(action) === 'add',
+                then: schema => schema.min(moment().startOf('day').toDate(), 'Date must be today or later.'),
+                otherwise: schema => schema,
+            }),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 

@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import { useEffect } from "react";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import confirm from "@/components/common/Confirm";
+import moment from "moment";
 
 interface FormModalInterface {
     modal: any;
@@ -41,9 +42,42 @@ const EmployeeContractForm = ({
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            contract_start_date: Yup.string().required("Contract start date is required."),
-            contract_end_date: Yup.string().required("Contract end date is required."),
-            status: Yup.string().required("Status is required."),
+            contract_start_date: Yup.string()
+                .required('Contract start date is required')
+                .test(
+                'future-date',
+                `Contract start date must be after ${data.contract_end_date}`,
+                function (value) {
+                    if (!value || !data.contract_end_date) return true;
+
+                    if (action === "edit") {
+                        return true;
+                    }
+
+                    return moment(value).isAfter(moment(data.contract_end_date));
+                }),
+            contract_end_date: Yup.string()
+                .required('Contract end date is required')
+                .test(
+                'future-date',
+                'Contract end date must be later than start date',
+                function (value) {
+                    const { contract_start_date } = this.parent;
+                    if (!value || !contract_start_date) return true;
+
+                    return moment(value).isAfter(moment(contract_start_date));
+                })
+                .test(
+                'same-day',
+                'Contract end date must be the same day as the start date',
+                function (value) {
+                    const { contract_start_date } = this.parent;
+                    if (!value || !contract_start_date) return true;
+                    const isSame = moment(value).format("DD") === moment(contract_start_date).format("DD"); 
+
+                    return isSame;
+                }),
+            status: Yup.string().required("Status is required"),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
