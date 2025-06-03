@@ -126,11 +126,11 @@ const EmployeeVaccinationForm = ({
                 options={[
                     {
                         label: "Pending",
-                        value: "Pending"
+                        value: "PENDING"
                     },
                     {
                         label: "Done",
-                        value: "Done"
+                        value: "DONE"
                     },
                 ]}
                 onChange={formHandler.handleChange}

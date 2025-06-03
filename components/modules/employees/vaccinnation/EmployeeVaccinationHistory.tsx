@@ -70,7 +70,7 @@ const EmployeeVaccinationHistory = () => {
             function: (data:any) => {
                 return <Badge
                     label={data.status}
-                    status={ data.status === "Done" ? "success" : "warning"}
+                    status={ data.status === "DONE" ? "success" : "warning"}
                 />
             }
         },
