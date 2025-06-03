@@ -23,7 +23,7 @@ const Grid = ({
     children
 }: GridInterface) => {
     return (
-        <div className={`grid gap-x-2 ${colClasses[cols]}`}>
+        <div className={`grid gap-x-4 ${colClasses[cols]}`}>
             {children}
         </div>
     );
