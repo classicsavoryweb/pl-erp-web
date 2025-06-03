@@ -1,3 +1,4 @@
+"use client";
 import Accordion from "@/components/common/Accordion";
 import EmployeeAuditLogs from "@/components/modules/employees/EmployeeAuditLogs";
 import EmployeeDetailsCard from "@/components/modules/employees/EmployeeDetailsCard";
@@ -9,70 +10,109 @@ import EmployeePositionHistory from "@/components/modules/employees/position-his
 import EmployeeRequirementsList from "@/components/modules/employees/requirements/EmployeeRequirementsList";
 import EmployeeTraingingHistory from "@/components/modules/employees/trainings/EmployeeTrainingHistory";
 import EmployeeVaccinationHistory from "@/components/modules/employees/vaccinnation/EmployeeVaccinationHistory";
+import { AuthContext } from "@/context/AuthProvider";
+import { useContext } from "react";
 
 const Page = () => {
+
+    const { permissions } = useContext(AuthContext);
+
     return (
         <>
             <div className="w-11/12">
                 <EmployeeDetailsCard/>
             </div>
             <p className="pt-5 font-semibold text-red-800">Employee History Logs</p>
-            <div className="w-full">
-                <Accordion
-                    title="Positions"
-                >
-                    <EmployeePositionHistory/>
-                </Accordion>
-            </div>
-            <div className="w-full">
-                <Accordion
-                    title="Branches"
-                >
-                    <EmployeeBranchHistory/>
-                </Accordion>
-            </div>
-            <div className="w-full">
-                <Accordion
-                    title="Contracts"
-                >
-                    <EmployeeContractHistory/>
-                </Accordion>
-            </div>
-            <div className="w-full">
-                <Accordion
-                    title="Offenses"
-                >
-                    <EmployeeOffenseHistory/>
-                </Accordion>
-            </div>
-            <div className="w-full">
-                <Accordion
-                    title="Bank Details"
-                >
-                    <EmployeeBankDetailsHistory/>
-                </Accordion>
-            </div>
-            <div className="w-full">
-                <Accordion
-                    title="Requirements"
-                >
-                    <EmployeeRequirementsList/>
-                </Accordion>
-            </div>
-            <div className="w-full">
-                <Accordion
-                    title="Trainings"
-                >
-                    <EmployeeTraingingHistory/>
-                </Accordion>
-            </div>
-            <div className="w-full">
-                <Accordion
-                    title="Vaccination"
-                >
-                    <EmployeeVaccinationHistory/>
-                </Accordion>
-            </div>
+            { permissions.includes("can_view_employee_position") &&
+                <div className="w-full">
+                    <Accordion
+                        title="Positions"
+                    >
+                        <EmployeePositionHistory/>
+                    </Accordion>
+                </div>
+            }
+
+            { permissions.includes("can_view_employee_branches") && 
+                <div className="w-full">
+                    <Accordion
+                        title="Branches"
+                    >
+                        <EmployeeBranchHistory/>
+                    </Accordion>
+                </div>
+            }
+
+            { permissions.includes("can_view_employee_contracts") &&
+                <div className="w-full">
+                    <Accordion
+                        title="Contracts"
+                    >
+                        <EmployeeContractHistory/>
+                    </Accordion>
+                </div>
+            }
+
+            { permissions.includes("can_view_employee_offenses") &&
+                <div className="w-full">
+                    <Accordion
+                        title="Offenses"
+                    >
+                        <EmployeeOffenseHistory/>
+                    </Accordion>
+                </div>
+            }
+
+            { permissions.includes("can_view_employee_bank_details") &&
+                <div className="w-full">
+                    <Accordion
+                        title="Bank Details"
+                    >
+                        <EmployeeBankDetailsHistory/>
+                    </Accordion>
+                </div>
+            }
+
+            { permissions.includes("can_view_employee_requirements") &&
+                <div className="w-full">
+                    <Accordion
+                        title="Requirements"
+                    >
+                        <EmployeeRequirementsList/>
+                    </Accordion>
+                </div>
+            }
+
+            { permissions.includes("can_view_employee_training_titles") &&
+                <div className="w-full">
+                    <Accordion
+                        title="Trainings"
+                    >
+                        <EmployeeTraingingHistory/>
+                    </Accordion>
+                </div>
+            }
+
+            { permissions.includes("can_view_employee_vaccination") &&
+                <div className="w-full">
+                    <Accordion
+                        title="Vaccination"
+                    >
+                        <EmployeeVaccinationHistory/>
+                    </Accordion>
+                </div>
+            }
+
+            { permissions.includes("can_view_employee_audit_logs") &&
+                <div className="w-full">
+                    <Accordion
+                        title="Audit Logs"
+                    >
+                        <EmployeeAuditLogs/>
+                    </Accordion>
+                </div>
+            }
+
             {/* <div className="w-full">
                 <Accordion
                     title="Health and Safety"
@@ -80,13 +120,6 @@ const Page = () => {
                     <EmployeeHealthSafetyHistory/>
                 </Accordion>
             </div> */}
-            <div className="w-full">
-                <Accordion
-                    title="Audit Logs"
-                >
-                    <EmployeeAuditLogs/>
-                </Accordion>
-            </div>
         </>
     );
 };
