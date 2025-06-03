@@ -329,9 +329,13 @@ const EmploymentStatusReportPDF = ({
                     }}
                 >
                     <Text>Please be informed that all information stated herein are <Text style={styles.bold}>private and confidential.</Text></Text>
-                    <Text>Should you have any questions, please feel free to call Human Resources Department.</Text>
                 </View>
 
+                <View
+                    style={styles.section}
+                >
+                    <Text>Should you have any questions, please feel free to call Human Resources Department.</Text>
+                </View>
                 <View
                     style={styles.section}
                 >
@@ -340,7 +344,7 @@ const EmploymentStatusReportPDF = ({
 
                 <View
                     style={{
-                        paddingTop: 20,
+                        paddingTop: 30,
                     }}
                 >
                     <Text style={{
@@ -363,7 +367,7 @@ const EmploymentStatusReportPDF = ({
 
                 <View
                     style={{
-                        paddingTop: 20,
+                        paddingTop: 30,
                     }}
                 >
                     <Text style={{
