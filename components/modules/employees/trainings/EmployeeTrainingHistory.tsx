@@ -50,17 +50,17 @@ const EmployeeTraingingHistory = () => {
     const columnSettings = [
         {
             columnHead: "Title",
-            path: "training.title",
+            path: "training_title",
             columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Speaker",
-            path: "training.speaker",
+            path: "speaker",
             columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Venue",
-            path: "training.venue",
+            path: "venue",
             columnType: COLUMNTYPES.string
         },
         {
