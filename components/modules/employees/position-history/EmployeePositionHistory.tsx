@@ -69,6 +69,11 @@ const EmployeePositionHistory = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Remarks",
+            path: "remarks",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Action",
             path: "date_appointed",
             columnType: COLUMNTYPES.function,
@@ -119,6 +124,7 @@ const EmployeePositionHistory = () => {
                     <Button
                         label="Add"
                         onClick={() => {
+                            setData(api.dataSet[0]);
                             setAction("add");
                             modal.onOpen();
                         }}

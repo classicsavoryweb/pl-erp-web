@@ -46,10 +46,12 @@ const EmployeePositionForm = ({
             position_id: Yup.string().required("Position is required."),
             date_started: Yup.date()
             .required('Date started is required.')
-            .when([], {
-                is: () => String(action) === 'add',
-                then: schema => schema.min(moment().startOf('day').toDate(), 'Date must be today or later.'),
-                otherwise: schema => schema,
+            .test(
+            'future-date',
+            `Date must be the same or later than ${data.date_started}`,
+            function (value) {
+                
+                return moment(value).isSameOrAfter(moment(data.date_started));
             }),
             oic_assignment: Yup.string(),
             date_appointed: Yup.string().when('oic_assignment', (oic_assignment, schema) =>

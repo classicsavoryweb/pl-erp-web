@@ -80,7 +80,7 @@ const EmployeeTableCard = () => {
         {
             label: "View",
             onClick: (data: any) => {
-                router.push(`/employees/${data.employee_number}`);
+                window.open(`/employees/${data.employee_number}`, '_blank');
             }
         },
     ];

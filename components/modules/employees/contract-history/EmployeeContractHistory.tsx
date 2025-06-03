@@ -80,6 +80,11 @@ const EmployeeContractHistory = () => {
             columnType: COLUMNTYPES.status
         },
         {
+            columnHead: "Remarks",
+            path: "remarks",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Action",
             path: "date_appointed",
             columnType: COLUMNTYPES.function,
