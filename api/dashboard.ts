@@ -9,3 +9,13 @@ export const getAllSummaryDetails = async (payload?: {}) => {
 
     return resData;
 };
+
+export const getEmployeeBirthMonth = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-employees-birthmonth',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};

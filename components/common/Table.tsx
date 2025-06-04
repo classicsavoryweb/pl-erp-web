@@ -188,7 +188,7 @@ const Table = ({
                     <div className="flex gap-x-1 justify-end items-center">
                         {currentPage > 1 && (
                             <button
-                                className="px-2 text-md bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                className="px-2 text-sm bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
                                 onClick={() => paginator.onClickSetPageNumber(currentPage - 1)}
                             >
                                 Previous
@@ -205,7 +205,7 @@ const Table = ({
                                     key={key}
                                     className={`
                                         px-2
-                                        text-md
+                                        text-sm
                                         ${paginator.paginationData.current_page === item ? "bg-red-800 text-slate-50" : "bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
                                     `}
                                     onClick={() => paginator.onClickSetPageNumber(Number(item))}
@@ -217,7 +217,7 @@ const Table = ({
 
                         {currentPage < totalPages && (
                             <button
-                                className="px-2 text-md bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                className="px-2 text-sm bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
                                 onClick={() => paginator.onClickSetPageNumber(currentPage + 1)}
                             >
                                 Next

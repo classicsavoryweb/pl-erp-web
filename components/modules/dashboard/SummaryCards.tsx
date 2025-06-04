@@ -58,7 +58,7 @@ const SummaryCards = () => {
         {
             label: 'Employees Hired',
             data: Array.from({ length: 12 }, (_, i) => data.monthly_hires?.[i + 1] ?? 0),
-            borderColor: 'rgba(22, 101, 52, 1)',
+            borderColor: 'rgba(22, 101, 52, .8)',
             backgroundColor: 'rgba(22, 101, 52, 0.4)',
             pointBackgroundColor: 'rgba(22, 101, 52, .8)',
             pointRadius: 4,
@@ -111,7 +111,7 @@ const SummaryCards = () => {
         {
             label: 'Tardy Employees',
             data: Array.from({ length: 12 }, (_, i) => data.monthly_tardy?.[i + 1] ?? 0),
-            borderColor: 'rgba(239, 68, 68, 1)',
+            borderColor: 'rgba(239, 68, 68, .8)',
             backgroundColor: 'rgba(239, 68, 68, 0.4)',
             pointBackgroundColor: 'rgba(239, 68, 68, .8)',
             pointRadius: 4,

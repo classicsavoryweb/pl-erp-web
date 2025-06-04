@@ -18,14 +18,13 @@ const SummaryCardCount = ({
                     <div className="animate-pulse duration-500 space-y-2">
                         <div className="h-4 bg-zinc-200 rounded w-3/4" />
                         <div className="h-8 bg-zinc-200 rounded w-1/3" />
-                    </div>
+                    </div>  
                 </>
                 :
                 <>
-                    <p className="text-md ">{title}</p>
+                    <p className="text-sm">{title}</p>
                     <p className="text-3xl font-medium">{displayReport.toLocaleString('en-US')}</p>   
                 </>
-
             }
         </div>
     )
