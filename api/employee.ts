@@ -1,4 +1,7 @@
 import { axiosHelper } from "./axios-config";
+import axios from "axios";
+
+const api_url = process.env.NEXT_PUBLIC_API_URL;
 
 export const getAllEmployees = async (payload?: {}) => {
     const resData = await axiosHelper({
@@ -330,3 +333,18 @@ export const getEmployeeContractDetails = async (id: number) => {
 
     return resData;
 };
+
+export const exportEmployeeList = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/export-employees-list`,
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+

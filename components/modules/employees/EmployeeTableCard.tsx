@@ -8,7 +8,7 @@ import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
-import { getAllEmployees } from "@/api/employee";
+import { exportEmployeeList, getAllEmployees } from "@/api/employee";
 import { useRouter } from "next/navigation";
 import FilterCard from "../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
@@ -96,6 +96,9 @@ const EmployeeTableCard = () => {
                 withEmploymentStatus
                 withPosition
                 isExpanded
+                hasExport
+                api={exportEmployeeList}
+                exportFileName="employees.xls"
                 defaultColumnSelected="full_name"
                 dateLabel="Date Hired"
                 columnSettings={[

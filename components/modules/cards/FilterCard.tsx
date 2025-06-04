@@ -25,6 +25,9 @@ interface FilterInterface {
     isExpanded?: boolean,
     defaultColumnSelected?: string;
     dateLabel?: string;
+    hasExport?: boolean;
+    api?: (values: any) => any;
+    exportFileName?: string;
 };
 const FilterCard = ({
     isExpanded = false,
@@ -37,7 +40,10 @@ const FilterCard = ({
     withEmploymentStatus = false,
     withEmployeeType = false,
     defaultColumnSelected = "",
-    dateLabel = "Date"
+    dateLabel = "Date",
+    hasExport = false,
+    api,
+    exportFileName = "export.xls"
 }: FilterInterface) => {
 
     const formHandler = useFormik({
@@ -71,6 +77,36 @@ const FilterCard = ({
         onSubmit: (values) => {
             filterHandler.setFilters(values);
             filterHandler.onReload();
+        }
+    });
+
+    const exportHandler = useFormik({
+        initialValues: {
+            key_word: '',
+            column_type: defaultColumnSelected,
+            date_from: '',
+            date_to: '',
+            status: "",
+            branch_id: "",
+            position_id: "",
+            employee_status_id: "",
+            type: "",
+        },
+        validateOnChange: false,
+        onSubmit: (values) => {
+            api && api(values).then((resp: any) => {
+                const blob = new Blob([resp.data], {
+                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                });
+                const downloadUrl = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+
+                a.href = downloadUrl;
+                a.download = exportFileName;
+                document.body.appendChild(a);
+                a.click();
+                a.remove();
+            });
         }
     });
 
@@ -176,6 +212,21 @@ const FilterCard = ({
                         }
                     </Grid>
                     <div className="flex justify-end gap-x-2">
+                        { hasExport &&
+                        <div className="w-[100px]">
+                            <Button
+                                label="Export"
+                                type="button"
+                                onClick={() => {
+                                    exportHandler.setValues({
+                                        ...formHandler.values
+                                    });
+                                    exportHandler.submitForm();
+                                }}
+                                variant="success"
+                            />    
+                        </div>
+                        }
                         <div className="w-[100px]">
                             <Button
                                 label="Reset"

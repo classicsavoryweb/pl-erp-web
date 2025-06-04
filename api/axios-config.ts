@@ -6,6 +6,7 @@ interface dataType {
     method: 'POST' | 'GET';
     payload?: any;
     additionalHeaders?: any;
+    responseType?: "blob" | "json",
 };
 
 const api_url = process.env.NEXT_PUBLIC_API_URL;
@@ -14,7 +15,8 @@ export const axiosHelper = async ({
     func_path,
     method,
     payload,
-    additionalHeaders
+    additionalHeaders,
+    responseType = "json"
 }: dataType) => {
     if (api_url === undefined) {
         return {
@@ -59,13 +61,14 @@ export const axiosHelper = async ({
         method,
         headers,
         data: method === 'POST' && newPayload,
-        params: method === 'GET' && newPayload
+        params: method === 'GET' && newPayload,
+        responseType: responseType
     };
 
     try {
         const response = await axios(axiosConfig);
 
-        return response.data;
+        return responseType === "blob" ? response : response.data;
     } 
     catch (err: any) {
         const { response } = err;
