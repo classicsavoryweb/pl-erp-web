@@ -58,9 +58,9 @@ const SummaryCards = () => {
         {
             label: 'Employees Hired',
             data: Array.from({ length: 12 }, (_, i) => data.monthly_hires?.[i + 1] ?? 0),
-            borderColor: 'rgba(22, 101, 52, .8)',
+            borderColor: 'rgba(22, 101, 52, .6)',
             backgroundColor: 'rgba(22, 101, 52, 0.4)',
-            pointBackgroundColor: 'rgba(22, 101, 52, .8)',
+            pointBackgroundColor: 'rgba(22, 101, 52, .6)',
             pointRadius: 4,
             tension: 0.3,
             fill: true,
@@ -79,7 +79,7 @@ const SummaryCards = () => {
             y: {
             beginAtZero: true,
             ticks: {
-                stepSize: 20,
+                stepSize: 30,
             }
             }
         }
