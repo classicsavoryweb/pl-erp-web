@@ -11,12 +11,13 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { deleteStation, getAllStations } from "@/api/station";
 import { useState } from "react";
-import { getAllPositions } from "@/api/positions";
+import { exportAllPositions, getAllPositions } from "@/api/positions";
 import Badge from "@/components/common/Badge";
 import CreatePositionForm from "./CreatePositionForm";
 import EditPositionForm from "./EditPositionForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const PositionsTableCard = () => {
     const api = useApiCall();
@@ -95,6 +96,9 @@ const PositionsTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllPositions}
+                exportFileName={`POSITIONS-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

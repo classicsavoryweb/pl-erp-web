@@ -11,11 +11,12 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import Badge from "@/components/common/Badge";
-import { getAllOffenses } from "@/api/offenses";
+import { exportAllOffenses, getAllOffenses } from "@/api/offenses";
 import CreateOffenseForm from "./CreateOffenseForm";
 import EditOffenseForm from "./EditOffenseForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const OffensesTableCard = () => {
     const api = useApiCall();
@@ -94,6 +95,9 @@ const OffensesTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllOffenses}
+                exportFileName={`OFFENSES-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <p className="text-red-800 font-semibold">Offenses</p>

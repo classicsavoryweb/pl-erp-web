@@ -1,3 +1,4 @@
+
 "use client";
 
 import Button from "@/components/common/Button";
@@ -10,11 +11,12 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
-import { getAlllRates } from "@/api/rates";
+import { exportAllRates, getAlllRates } from "@/api/rates";
 import CreateRateForm from "./CreateRateForm";
 import EditRateForm from "./EditRateForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const RatesTableCard = () => {
     const api = useApiCall();
@@ -93,6 +95,9 @@ const RatesTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllRates}
+                exportFileName={`RATE-PER-GROUP-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

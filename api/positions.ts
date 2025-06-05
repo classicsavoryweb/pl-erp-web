@@ -10,6 +10,20 @@ export const getAllPositions = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllPositions = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-positions',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getPositions = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-positions',

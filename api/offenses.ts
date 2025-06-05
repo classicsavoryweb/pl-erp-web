@@ -10,6 +10,20 @@ export const getAllOffenses = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllOffenses = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-offenses',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getOffenses = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-offenses',

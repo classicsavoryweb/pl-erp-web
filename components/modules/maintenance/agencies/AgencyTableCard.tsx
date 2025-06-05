@@ -11,11 +11,12 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import Badge from "@/components/common/Badge";
-import { getAllAgencies } from "@/api/agencies";
+import { exportAllAgencies, getAllAgencies } from "@/api/agencies";
 import CreateAgencyForm from "./CreateAgencyForm";
 import EditAgencyForm from "./EditAgencyForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const AgencyTableCard = () => {
     const api = useApiCall();
@@ -94,6 +95,9 @@ const AgencyTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllAgencies}
+                exportFileName={`AGENCIES-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

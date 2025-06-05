@@ -11,11 +11,12 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import Badge from "@/components/common/Badge";
-import { getAllDiagnosis } from "@/api/diagnosis";
+import { exportAllDiagnosis, getAllDiagnosis } from "@/api/diagnosis";
 import CreateDiagnosisForm from "./CreateDiagnosisForm";
 import EditDiagnosisForm from "./EditDiagnosisForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const DiagnosisTableCard = () => {
     const api = useApiCall();
@@ -82,6 +83,9 @@ const DiagnosisTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllDiagnosis}
+                exportFileName={`DIAGNOSIS-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

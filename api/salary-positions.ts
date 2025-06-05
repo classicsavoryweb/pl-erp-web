@@ -10,6 +10,20 @@ export const getAllSalaryPositions = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllSalaryPositions = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-salary-positions',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getSalaryPositions = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-salary-positions',

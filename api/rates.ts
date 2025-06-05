@@ -10,6 +10,20 @@ export const getAlllRates = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllRates = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-rates',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getRates = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-rates',

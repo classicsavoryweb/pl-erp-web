@@ -10,6 +10,20 @@ export const getAllBankAccountTypes = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllBankAccountTypes = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-bank-account-types',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getBankAccountTypes = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-bank-account-types',

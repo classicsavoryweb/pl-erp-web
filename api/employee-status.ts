@@ -10,6 +10,20 @@ export const getAllStatus = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllStatus = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-status',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getStatus = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-status',

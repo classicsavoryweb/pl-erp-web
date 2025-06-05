@@ -10,11 +10,12 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
-import { getAllBankAccountTypes } from "@/api/bank-account-types";
+import { exportAllBankAccountTypes, getAllBankAccountTypes } from "@/api/bank-account-types";
 import CreateBankAccountTypeForm from "./CreateBankAccountTypeForm";
 import EditBankAccountTypeForm from "./EditBankAccountTypeForm";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "../../cards/FilterCard";
+import moment from "moment";
 
 const BankAccountTypeCard = () => {
     const api = useApiCall();
@@ -87,6 +88,9 @@ const BankAccountTypeCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllBankAccountTypes}
+                exportFileName={`BANK-ACCOUNT-TYPES-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

@@ -10,6 +10,20 @@ export const getAllTrainingTitles = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllTrainingTitles = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-training-titles',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getTrainingTitles = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-training-titles',

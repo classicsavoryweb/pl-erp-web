@@ -10,6 +10,20 @@ export const getAllDiagnosis= async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllDiagnosis= async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-diagnosis',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getDiagnosis= async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-diagnosis',

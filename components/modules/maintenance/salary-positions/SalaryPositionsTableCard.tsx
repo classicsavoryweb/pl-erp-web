@@ -9,12 +9,13 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
-import { getAllSalaryPositions } from "@/api/salary-positions";
+import { exportAllSalaryPositions, getAllSalaryPositions } from "@/api/salary-positions";
 import Card from "@/components/common/Card";
 import CreateSalaryPositionForm from "./CreateSalaryPositionForm";
 import EditSalaryPositionForm from "./EditSalaryPositionForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const SalaryPositionsTableCard = () => {
     const api = useApiCall();
@@ -93,6 +94,9 @@ const SalaryPositionsTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllSalaryPositions}
+                exportFileName={`SALARY-POSITIONS-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

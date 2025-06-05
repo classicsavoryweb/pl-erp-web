@@ -12,9 +12,10 @@ import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import CreateVaccineBrandForm from "./CreateVaccineBrandForm";
 import EditVaccineBrandForm from "./EditVaccineBrandForm";
-import { getAllVaccines } from "@/api/vaccines";
+import { exportAllVaccines, getAllVaccines } from "@/api/vaccines";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "../../cards/FilterCard";
+import moment from "moment";
 
 const VaccineBrandTableCard = () => {
     const api = useApiCall();
@@ -81,6 +82,9 @@ const VaccineBrandTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllVaccines}
+                exportFileName={`VACCINE-BRANDS-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

@@ -11,11 +11,12 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import Badge from "@/components/common/Badge";
-import { getAllBranches } from "@/api/branches";
+import { exportAllBranches, getAllBranches } from "@/api/branches";
 import CreateBranchForm from "./CreateBranchForm";
 import EditBranchForm from "./EditBranchForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const BranchesTableCard = () => {
     const api = useApiCall();
@@ -115,6 +116,10 @@ const BranchesTableCard = () => {
                 filterHandler={filter}
                 hasDateRange
                 withStatus
+                dateLabel="Date Opened"
+                hasExport
+                api={exportAllBranches}
+                exportFileName={`BRANCHES-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

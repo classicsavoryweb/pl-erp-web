@@ -10,6 +10,20 @@ export const getAllBranches = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllBranches = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-branches',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getBranches = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-branches',

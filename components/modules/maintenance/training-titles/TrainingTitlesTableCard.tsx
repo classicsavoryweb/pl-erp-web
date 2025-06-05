@@ -1,3 +1,4 @@
+
 "use client";
 
 import Button from "@/components/common/Button";
@@ -11,11 +12,12 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import Badge from "@/components/common/Badge";
-import { getAllTrainingTitles } from "@/api/training-title";
+import { exportAllTrainingTitles, getAllTrainingTitles } from "@/api/training-title";
 import CreateTrainingTitleForm from "./CreateTrainingTitleForm";
 import EditTrainingTitleForm from "./EditTrainingTitleForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const TrainingTitlesTableCard = () => {
     const api = useApiCall();
@@ -100,6 +102,9 @@ const TrainingTitlesTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllTrainingTitles}
+                exportFileName={`TRAINING-TITLES-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

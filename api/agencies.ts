@@ -10,6 +10,20 @@ export const getAllAgencies = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllAgencies = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-agencies',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getAgencies = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-agencies',

@@ -9,13 +9,14 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { deleteStation, getAllStations } from "@/api/station";
+import { deleteStation, exportAllStations, getAllStations } from "@/api/station";
 import { useState } from "react";
 import CreateStationForm from "./CreateStationForm";
 import EditStationForm from "./EditStationForm";
 import Badge from "@/components/common/Badge";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const StationTableCard = () => {
     const stations = useApiCall();
@@ -88,6 +89,9 @@ const StationTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllStations}
+                exportFileName={`STATIONS-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

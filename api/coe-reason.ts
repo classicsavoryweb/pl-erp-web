@@ -10,6 +10,20 @@ export const getAllCoeReasons = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllCoeReasons = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-coe-reasons',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const getCoeReasons = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-coe-reasons',

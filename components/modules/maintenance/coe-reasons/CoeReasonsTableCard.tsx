@@ -13,9 +13,10 @@ import { useState } from "react";
 import { getAllBankAccountTypes } from "@/api/bank-account-types";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "../../cards/FilterCard";
-import { getAllCoeReasons } from "@/api/coe-reason";
+import { exportAllCoeReasons, getAllCoeReasons } from "@/api/coe-reason";
 import CreateCoeReasonForm from "./CreateCoeReasonForm";
 import EditCoeReasonForm from "./EditCoeReasonForm";
+import moment from "moment";
 
 const CoeReasonsTableCard = () => {
     const api = useApiCall();
@@ -83,6 +84,9 @@ const CoeReasonsTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 withStatus
+                hasExport
+                api={exportAllCoeReasons}
+                exportFileName={`COE-REASONS-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end items-center">

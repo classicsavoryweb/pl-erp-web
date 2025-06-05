@@ -44,7 +44,7 @@ const FilterCard = ({
     dateLabel = "Date",
     hasExport = false,
     api,
-    exportFileName = "export.xls"
+    exportFileName = "export.xls",
 }: FilterInterface) => {
 
     const formHandler = useFormik({
