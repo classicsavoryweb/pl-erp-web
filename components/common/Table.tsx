@@ -148,7 +148,7 @@ const Table = ({
                                                             })
                                                         }
                                                         { settings.columnType === COLUMNTYPES.status &&
-                                                            <Badge status={ columnData === "inactive" ? "danger": "success"} label={data.status}/>
+                                                            <Badge status={ String(columnData).toLowerCase() === "inactive" ? "danger": "success"} label={columnData}/>
                                                         }
                                                     </td>
                                                 )
