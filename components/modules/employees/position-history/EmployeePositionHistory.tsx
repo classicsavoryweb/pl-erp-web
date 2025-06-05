@@ -1,6 +1,5 @@
 "use client";
-import { getEmployeePositions } from "@/api/employee";
-import Button from "@/components/common/Button";
+import { exportEmployeePositionHistory, getEmployeePositions } from "@/api/employee";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useApiCall } from "@/hooks/api-call";
@@ -13,6 +12,9 @@ import { toast } from "react-toastify";
 import EmployeePositionForm from "./EmployeePositionForm";
 import { EmployeeContext } from "@/context/EmployeeProvider";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import confirm from "@/components/common/Confirm";
+import DropDownButtons from "@/components/common/DropDownButtons";
+import moment from "moment";
 
 const EmployeePositionHistory = () => {
     const params = useParams();
@@ -121,13 +123,43 @@ const EmployeePositionHistory = () => {
             />
             <div className="flex justify-end">
                 <div>
-                    <Button
-                        label="Add"
-                        onClick={() => {
-                            setData(api.dataSet[0]);
-                            setAction("add");
-                            modal.onOpen();
-                        }}
+                    <DropDownButtons
+                        actions={[
+                            {
+                                label: "Add",
+                                onClick: () => {
+                                    setData(api.dataSet[0]);
+                                    setAction("add");
+                                    modal.onOpen();
+                                }
+                            },
+                            {
+                                label: "Export",
+                                onClick: async () => {
+                                    const isConfirmed = await confirm({
+                                        title: "Export",
+                                        message: "Are you sure you want to export?"
+                                    });
+
+                                    if (isConfirmed) {
+                                        exportEmployeePositionHistory(String(employeeNumber))
+                                        .then((resp) => {
+                                            const blob = new Blob([resp.data], {
+                                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                            });
+                                            const downloadUrl = window.URL.createObjectURL(blob);
+                                            const a = document.createElement('a');
+                            
+                                            a.href = downloadUrl;
+                                            a.download = `${employeeNumber}-EMPLOYEE-POSITIONS-${moment().format("YYYY-MM-DD")}.xls`;
+                                            document.body.appendChild(a);
+                                            a.click();
+                                            a.remove();
+                                        });
+                                    }
+                                }
+                            },
+                        ]}
                     />
                 </div>
             </div>

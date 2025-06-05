@@ -1,5 +1,5 @@
 "use client";
-import { getEmployeeBranchhes } from "@/api/employee";
+import { exportEmployeeBranchHistory, getEmployeeBranchhes } from "@/api/employee";
 import Button from "@/components/common/Button";
 import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
@@ -15,6 +15,8 @@ import { toast } from "react-toastify";
 import EmployeeBranchForm from "./EmployeeBranchForm";
 import { EmployeeContext } from "@/context/EmployeeProvider";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import DropDownButtons from "@/components/common/DropDownButtons";
+import moment from "moment";
 
 const EmployeeBranchHistory = () => {
     const params = useParams();
@@ -111,12 +113,35 @@ const EmployeeBranchHistory = () => {
             />
             <div className="flex justify-end">
                 <div>
-                    <Button
-                        label="Add"
-                        onClick={() => {
-                            setAction("add");
-                            modal.onOpen();
-                        }}
+                    <DropDownButtons
+                        actions={[
+                            {
+                                label: "Add",
+                                onClick: () => {
+                                    setAction("add");
+                                    modal.onOpen();
+                                }
+                            },
+                            {
+                                label: "Export",
+                                onClick: async () => {
+                                    exportEmployeeBranchHistory(String(employeeNumber))
+                                    .then((resp) => {
+                                        const blob = new Blob([resp.data], {
+                                            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                        });
+                                        const downloadUrl = window.URL.createObjectURL(blob);
+                                        const a = document.createElement('a');
+                        
+                                        a.href = downloadUrl;
+                                        a.download = `${employeeNumber}-EMPLOYEE-BRANCHES-${moment().format("YYYY-MM-DD")}.xls`;
+                                        document.body.appendChild(a);
+                                        a.click();
+                                        a.remove();
+                                    });
+                                },
+                            }
+                        ]}
                     />
                 </div>
             </div>

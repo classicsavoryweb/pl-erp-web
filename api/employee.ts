@@ -348,3 +348,55 @@ export const exportEmployeeList = async (payload: {}) => {
     return resData;
 };
 
+export const exportEmployeePositionHistory = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/export-employee-positions/${id}`,
+        method: 'GET',
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
+export const exportEmployeeBranchHistory = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/export-employee-branches/${id}`,
+        method: 'GET',
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
+export const exportEmployeeContractHistory = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/export-employee-contracts/${id}`,
+        method: 'GET',
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
+export const exportEmployeeOffensesHistory = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/export-employee-offenses/${id}`,
+        method: 'GET',
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+

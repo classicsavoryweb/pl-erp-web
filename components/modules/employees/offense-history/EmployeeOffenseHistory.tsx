@@ -1,5 +1,5 @@
 "use client";
-import { getEmployeeOffensesHistory, } from "@/api/employee";
+import { exportEmployeeOffensesHistory, getEmployeeOffensesHistory, } from "@/api/employee";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { EmployeeContext } from "@/context/EmployeeProvider";
@@ -12,6 +12,9 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import Button from "@/components/common/Button";
 import EmployeeOffenseForm from "./EmployeeOffenseForm";
+import DropDownButtons from "@/components/common/DropDownButtons";
+import confirm from "@/components/common/Confirm";
+import moment from "moment";
 
 const EmployeeOffenseHistory = () => {
     const params = useParams();
@@ -113,13 +116,52 @@ const EmployeeOffenseHistory = () => {
                 data={data}
             />
             <div className="flex justify-end">
-                <div>
+                {/* <div>
                     <Button
                         label="Add"
                         onClick={() => {
                             setAction("add");
                             modal.onOpen();
                         }}
+                    />
+                </div> */}
+                <div>
+                    <DropDownButtons
+                        actions={[
+                            {
+                                label: "Add",
+                                onClick: () => {
+                                    setAction("add");
+                                    modal.onOpen();
+                                }
+                            },
+                            {
+                                label: "Export",
+                                onClick: async () => {
+                                    const isConfirmed = await confirm({
+                                        title: "Export",
+                                        message: "Are you sure you wawnt to export?"
+                                    });
+
+                                    if (isConfirmed) {
+                                        exportEmployeeOffensesHistory(String(employeeNumber))
+                                        .then((resp) => {
+                                            const blob = new Blob([resp.data], {
+                                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                            });
+                                            const downloadUrl = window.URL.createObjectURL(blob);
+                                            const a = document.createElement('a');
+                            
+                                            a.href = downloadUrl;
+                                            a.download = `${employeeNumber}-EMPLOYEE-OFFENSES-${moment().format("YYYY-MM-DD")}.xls`;
+                                            document.body.appendChild(a);
+                                            a.click();
+                                            a.remove();
+                                        });
+                                    }
+                                }
+                            },
+                        ]}
                     />
                 </div>
             </div>
