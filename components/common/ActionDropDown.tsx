@@ -1,7 +1,7 @@
 "use client";
 
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 type ActionType = {
     label: string;
@@ -19,9 +19,27 @@ const ActionDropDown = ({
 }: DropdownInterface) => {
 
     const [toggle, setToggle] = useState<boolean>(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setToggle(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
-        <div className="relative w-[115px] py-1">
+        <div ref={dropdownRef} className="relative w-[115px] py-1">
             <button
                 className="bg-gray-200 w-full py-1 px-2 hover:cursor-pointer flex justify-between items-center gap-x-1 text-sm"
                 onClick={() => setToggle(prev => !prev)}

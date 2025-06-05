@@ -12,6 +12,7 @@ import { exportEmployeeList, getAllEmployees } from "@/api/employee";
 import { useRouter } from "next/navigation";
 import FilterCard from "../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
 
 const EmployeeTableCard = () => {
     const api = useApiCall();
@@ -98,7 +99,7 @@ const EmployeeTableCard = () => {
                 isExpanded
                 hasExport
                 api={exportEmployeeList}
-                exportFileName="employees.xls"
+                exportFileName={`EMPLOYEES-${moment().format('YYYY-MM-DD')}.xls`}
                 defaultColumnSelected="full_name"
                 dateLabel="Date Hired"
                 columnSettings={[

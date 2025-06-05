@@ -12,6 +12,7 @@ import PositionDropDown from "../generic/PositionDropDown";
 import BranchDropDown from "../generic/BranchDropDown";
 import EmploymentStatusDropdown from "../generic/EmploymentStatusDropDown";
 import EmployeeTypeDropDown from "../generic/EmployeeTypeDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FilterInterface {
     hasDateRange?: boolean;
@@ -93,20 +94,27 @@ const FilterCard = ({
             type: "",
         },
         validateOnChange: false,
-        onSubmit: (values) => {
-            api && api(values).then((resp: any) => {
-                const blob = new Blob([resp.data], {
-                    type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                });
-                const downloadUrl = window.URL.createObjectURL(blob);
-                const a = document.createElement('a');
-
-                a.href = downloadUrl;
-                a.download = exportFileName;
-                document.body.appendChild(a);
-                a.click();
-                a.remove();
+        onSubmit: async (values) => {
+            const isConfirm = await confirm({
+                title: "Export",
+                message: "Are you sure you want to export?"
             });
+            
+            if (isConfirm) {
+                api && api(values).then((resp: any) => {
+                    const blob = new Blob([resp.data], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    });
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+    
+                    a.href = downloadUrl;
+                    a.download = exportFileName;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+            }
         }
     });
 
@@ -212,32 +220,34 @@ const FilterCard = ({
                         }
                     </Grid>
                     <div className="flex justify-end gap-x-2">
-                        { hasExport &&
-                        <div className="w-[100px]">
-                            <Button
-                                label="Export"
-                                type="button"
-                                onClick={() => {
-                                    exportHandler.setValues({
-                                        ...formHandler.values
-                                    });
-                                    exportHandler.submitForm();
-                                }}
-                                variant="success"
-                            />    
-                        </div>
-                        }
                         <div className="w-[100px]">
                             <Button
                                 label="Reset"
                                 type="button"
                                 onClick={() => {
                                     formHandler.resetForm();
+                                    exportHandler.resetForm();
                                     formHandler.submitForm();
                                 }}
                                 variant="secondary"
                             />    
                         </div>
+
+                        { hasExport &&
+                            <div className="w-[100px]">
+                                <Button
+                                    label="Export"
+                                    type="button"
+                                    onClick={() => {
+                                        exportHandler.setValues({
+                                            ...formHandler.values
+                                        });
+                                        exportHandler.submitForm();
+                                    }}
+                                    variant="success"
+                                />    
+                            </div>
+                        }
                         <div className="w-[100px]">
                             <Button
                                 type="submit"

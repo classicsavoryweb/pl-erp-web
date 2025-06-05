@@ -20,38 +20,34 @@ const Accordion = ({
     const [toggle, setToggle] = useState<boolean>(isExpanded);
 
     return (
-        <div
-            className="w-full my-1"
-        >
-            <Card>
-                <div
-                    className={`w-full flex justify-between items-center hover:cursor-pointer ${toggle ? "text-red-800" : ""}`}
-                    onClick={() => setToggle(prev => !prev)}
+        <Card>
+            <div
+                className={`w-full flex justify-between items-center hover:cursor-pointer ${toggle ? "text-red-800" : ""}`}
+                onClick={() => setToggle(prev => !prev)}
+            >
+                <p
+                    className={`${toggle ? "font-semibold" : ""}`}
                 >
-                    <p
-                        className={`${toggle ? "font-semibold" : ""}`}
-                    >
-                        {title}
-                    </p>
+                    {title}
+                </p>
 
-                    { toggle
-                        ?
-                        <ExpandLessOutlinedIcon
-                            style={{ width: '20px', height: '20px' }}
-                        />
-                        :
-                        <ExpandMoreOutlinedIcon
-                            style={{ width: '20px', height: '20px' }}
-                        />
-                    }
-                </div>
-                { toggle &&
-                    <div className="w-full">
-                        {children}
-                    </div>
+                { toggle
+                    ?
+                    <ExpandLessOutlinedIcon
+                        style={{ width: '20px', height: '20px' }}
+                    />
+                    :
+                    <ExpandMoreOutlinedIcon
+                        style={{ width: '20px', height: '20px' }}
+                    />
                 }
-            </Card>
-        </div>
+            </div>
+            { toggle &&
+                <div className="w-full">
+                    {children}
+                </div>
+            }
+        </Card>
     );
 };
 
