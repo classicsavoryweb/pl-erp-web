@@ -36,9 +36,12 @@ const Modal = ({
             }
         };
 
-        if (isShowing) {
+        document.addEventListener("keydown", handleKeyDown);
+
+        return () => {
             document.addEventListener("keydown", handleKeyDown);
         }
+            
     }, [isShowing, onClose]);
 
     return (

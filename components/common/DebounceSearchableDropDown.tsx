@@ -1,5 +1,5 @@
 "use client";
-import { useMemo, useState, useEffect } from "react";
+import { useMemo, useState, useEffect, useRef } from "react";
 import ExpandMoreOutlinedIcon from "@mui/icons-material/ExpandMoreOutlined";
 import ExpandLessOutlinedIcon from "@mui/icons-material/ExpandLessOutlined";
 
@@ -34,6 +34,7 @@ const DebounceSearchableDropDown = ({
     const [options, setOptions] = useState<Option[]>([]);
     const [highlightedIndex, setHighlightedIndex] = useState(0);
     const [loading, setLoading] = useState<boolean>(false);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const selectedLabel = useMemo(() => {
         return options.find((opt) => opt.label === value?.first_name + " " + value?.last_name)?.label || placeholder;
@@ -121,8 +122,26 @@ const DebounceSearchableDropDown = ({
         .finally(() => setLoading(false));
     }, []);
 
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setToggle(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+
+    }, []);
+
     return (
-        <div className="relative py-1">
+        <div className="relative py-1" ref={dropdownRef}>
         <p className="mb-[-2px]">
             {label}
             {required && <span className="text-red-400">*</span>}
