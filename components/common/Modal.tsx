@@ -1,6 +1,7 @@
 "use client";
 
 import LoadingState from "./LoadingState";
+import { useEffect } from "react";
 
 interface ModalInterface {
     size?: "sm" | "md" | "lg" | "xl" | "xxl";
@@ -27,6 +28,19 @@ const Modal = ({
     children,
     loading = false,
 }: ModalInterface) => {
+
+    useEffect(() => {
+        const handleKeyDown = (e: KeyboardEvent) => {
+            if (e.key === "Escape") {
+                onClose();
+            }
+        };
+
+        if (isShowing) {
+            document.addEventListener("keydown", handleKeyDown);
+        }
+    }, [isShowing, onClose]);
+
     return (
         isShowing &&
         <div className="h-screen w-screen fixed inset-0 z-50 flex justify-center items-start py-5 bg-black/70 overflow-auto">
