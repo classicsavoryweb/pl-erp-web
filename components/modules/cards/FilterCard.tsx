@@ -29,6 +29,7 @@ interface FilterInterface {
     hasExport?: boolean;
     api?: (values: any) => any;
     exportFileName?: string;
+    statusOption?: {label: string, value: string}[];
 };
 const FilterCard = ({
     isExpanded = false,
@@ -45,6 +46,16 @@ const FilterCard = ({
     hasExport = false,
     api,
     exportFileName = "export.xls",
+    statusOption = [
+        {
+            label: "Active",
+            value: "active"
+        },
+        {
+            label: "Inactive",
+            value: "inactive"
+        }
+    ]
 }: FilterInterface) => {
 
     const formHandler = useFormik({
@@ -168,12 +179,13 @@ const FilterCard = ({
                             />
                         }
                         { withStatus &&
-                            <ActiveInactiveDropDown
+                            <Dropdown
                                 placeholder="select status"
                                 label="Status"
                                 name="status"
                                 value={formHandler.values.status}
                                 onChange={formHandler.handleChange}
+                                options={statusOption}
                             />
                         }
                         { withEmploymentStatus &&
