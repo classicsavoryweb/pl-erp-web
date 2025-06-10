@@ -37,10 +37,9 @@ const Header = () => {
     }, []);
 
     return (
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
             { Object.values(userDetails).some((value) => value !== "") &&
                 <div
-                    ref={dropdownRef}
                     className={`flex items-center py-2 px-3 bg-red-800 ${toggle ? "rounded-t-3xl" : "rounded-3xl"} cursor-pointer focus:outline-none`}
                     onClick={() => {
                         setToggle(prev => !prev);
