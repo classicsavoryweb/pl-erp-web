@@ -32,6 +32,7 @@ ChartJS.register(
 const SummaryCards = () => {
     const [data, setData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(true);
+
     useAsyncEffect(() => {
         setLoading(true);
         getAllSummaryDetails()
@@ -121,19 +122,50 @@ const SummaryCards = () => {
         ]
     };
 
+    const promotionGraphOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+            display: false,
+            },
+        },
+        scales: {
+            y: {
+            beginAtZero: true,
+            ticks: {
+                stepSize: 10,
+            }
+            }
+        }
+    };
+
+    const promotionLineGraphData = {
+        labels: [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ],
+        datasets: [
+        {
+            label: 'Promoted Employees',
+            data: Array.from({ length: 12 }, (_, i) => data.monthly_promotions?.[i + 1] ?? 0),
+            borderColor: 'rgba(59, 130, 246, 0.7)',
+            backgroundColor: 'rgba(59, 130, 246, 0.4)',
+            pointBackgroundColor: 'rgba(59, 130, 246, 0.7)',
+            pointRadius: 4,
+            tension: 0.3,
+            fill: true,
+        }
+        ]
+    };
+
     return (
         <>
             <Grid
-                cols={4}
+                cols={5}
             >
                 <SummaryCardCount
-                    title="Contractual Employees"
-                    displayReport={data.contractual_employees || 0}
-                    loading={loading}
-                />
-                <SummaryCardCount
-                    title="Regular Employees"
-                    displayReport={data.regular_employees || 0}
+                    title="Pending Employees"
+                    displayReport={data.pending_employees || 0}
                     loading={loading}
                 />
                 <SummaryCardCount
@@ -142,31 +174,51 @@ const SummaryCards = () => {
                     loading={loading}
                 />
                 <SummaryCardCount
+                    title="Regular Employees"
+                    displayReport={data.regular_employees || 0}
+                    loading={loading}
+                />
+                <SummaryCardCount
+                    title="Contractual Employees"
+                    displayReport={data.contractual_employees || 0}
+                    loading={loading}
+                />
+                <SummaryCardCount
                     title="Branches"
                     displayReport={data.branches || 0}
                     loading={loading}
                 />
-        </Grid>
+            </Grid>
         
-            <Grid cols={2}>
+            <Grid cols={3}>
 				<Card
-                    size="medium"
+                    size="graph"
                     loading={loading}
                 >
 					<p>Monthly Hires</p>
-                    <div className="p-3">
+                    <div className="pt-3">
                         <Line
                             data={lineGraphData} options={lineGraphOptions}
                         />
                     </div>
 				</Card>
-
+                <Card
+                    size="graph"
+                    loading={loading}
+                >
+					<p>Monthly Promotions</p>
+                    <div className="pt-3">
+                        <Line
+                            data={promotionLineGraphData} options={promotionGraphOptions}
+                        />
+                    </div>
+				</Card>
 				<Card
-                    size="medium"
+                    size="graph"
                     loading={loading}
                 >
 					<p>Monthly Tardiness</p>
-                    <div className="p-3">
+                    <div className="pt-3">
                         <Line
                             data={tardyLineGraphData} options={tardyGraphOptions}
                         />

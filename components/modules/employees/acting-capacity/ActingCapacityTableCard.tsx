@@ -1,0 +1,219 @@
+"use client";
+
+import Button from "@/components/common/Button";
+import Card from "@/components/common/Card";
+import Table from "@/components/common/Table";
+import { COLUMNTYPES } from "@/constants/column";
+import { useApiCall } from "@/hooks/api-call";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import usePagination from "@/hooks/pagination";
+import { toast } from "react-toastify";
+import { useModal } from "@/hooks/modal";
+import { useState } from "react";
+import Badge from "@/components/common/Badge";
+import FilterCard from "../../cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
+import moment from "moment";
+import { exportAllActingCapacity, getAllActingCapacity } from "@/api/acting-capacity";
+import ActionDropDown from "@/components/common/ActionDropDown";
+import CreateActingCapacityForm from "./CreateActingCapacityForm";
+import ViewActingCapacity from "./ViewActingCapacity";
+
+const ActingCapacityTableCard = () => {
+    const api = useApiCall();
+    const [id, setId] = useState<number>(0);
+    const viewModal = useModal();
+    const createModal = useModal();
+    const paginator = usePagination();
+    const filter = useFilter();
+
+    useAsyncEffect(() => {
+        api.setLoading(true);
+        getAllActingCapacity({
+            page: paginator.page,
+            per_page: paginator.per_page,
+            ...filter.filters
+        })
+        .then((resp) => {
+            if (resp.error) {
+                toast.error("Error fetching acting capacities");
+            } else {
+                api.setDataSet(resp.data.data);
+                paginator.setPage(resp.data.current_page);
+                paginator.setPaginationData(resp.data);
+            }
+        })
+        .catch(() => {
+            toast.error("Error encountered");
+        })
+        .finally(() => {
+            api.setLoading(false);
+        });
+    }, [paginator.reload, api.reload, filter.reload]);
+
+    const columnSettings = [
+        {
+            columnHead: "Added Date",
+            path: "created_at",
+            columnType: COLUMNTYPES.timestamp
+        },
+        {
+            columnHead: "Employee Name",
+            path: "employee.full_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Branch",
+            path: "employee.current_branch.name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Current Position",
+            path: "current_position.description",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Recommended Position",
+            path: "recommended_position.description",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Status",
+            path: "status",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let status: "default" | "success" | "warning" | "danger" = "default";
+
+                if (data.status === "Pending") {
+                    status = "warning";
+                } else if (data.status === "Confirmed") {
+                    status = "success";
+                } else if (data.status === "Rejected") {
+                    status = "danger";
+                }
+
+                return <Badge
+                    label={data.status}
+                    status={status}
+                />
+            }
+        },
+        {
+            columnHead: "Action",
+            path: "status",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let status: "default" | "success" | "warning" | "danger" = "default";
+                let tableActions = actions;
+
+                if (data.status === "Pending") {
+                    status = "warning";
+                } else if (data.status === "Confirmed") {
+                    status = "success";
+                } else if (data.status === "Rejected") {
+                    status = "danger";
+                }
+
+                return (
+                    <ActionDropDown
+                        data={data}
+                        actions={tableActions}
+                    />
+                )
+            }
+        },
+    ];
+
+    const actions = [
+        {
+            label: "View",
+            onClick: (data: any) => {
+                viewModal.onOpen();
+                setId(data.id);
+            }
+        },
+        {
+            label: "Edit",
+            onClick: (data: any) => {
+                console.log("EDIT >>> ",data);
+            }
+        },
+    ];
+
+    return (
+        <>
+            <FilterCard
+                filterHandler={filter}
+                withStatus
+                hasExport
+                hasDateRange
+                dateLabel="Date Confirmed"
+                statusOption={[
+                    {
+                        label: "Pending",
+                        value: "Pending"
+                    },
+                    {
+                        label: "For Signature",
+                        value: "For Signature"
+                    },
+                    {
+                        label: "Confirmed",
+                        value: "Confirmed"
+                    },
+                    {
+                        label: "Rejected",
+                        value: "Rejected"
+                    },
+                ]}
+                columnSettings={[
+                    {
+                        columnHead: "Employee Name",
+                        path: "employee.full_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Current Position",
+                        path: "current_position.description",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
+                withBranch
+                api={exportAllActingCapacity}
+                defaultColumnSelected="employee.full_name"
+                exportFileName={`ACTING-CAPACITY-${moment().format("YYYY-MM-DD")}.xls`}
+            />
+            <Card>
+                <div className="flex justify-end items-center">
+                    <div>
+                        <Button
+                            label="Create new record"
+                            onClick={createModal.onOpen}
+                        />
+                    </div>
+                </div>
+                <Table
+                    dataSet={api.dataSet}
+                    columnSettings={columnSettings}
+                    loading={api.loading}
+                    paginator={paginator}
+                />
+            </Card>
+
+            <CreateActingCapacityForm
+                modal={createModal}
+                onSubmitCallback={() => {
+                    createModal.onClose();
+                    api.triggerReload();
+                }}
+            />
+
+            <ViewActingCapacity
+                modal={viewModal}
+                id={String(id)}
+            />
+        </>
+    );
+};
+
+export default ActingCapacityTableCard;

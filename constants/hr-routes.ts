@@ -43,6 +43,11 @@ export const hrRoutes: Route[] = [
                 pathname: "/employees/add-employee",
                 permission: "can_perform_employee_tracking"
             },
+            {
+                name: "Acting Capacity",
+                pathname: "/employees/acting-capacity",
+                permission: "can_view_acting_capacity"
+            },
         ]
     },
     {
