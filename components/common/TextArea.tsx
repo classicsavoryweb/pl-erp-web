@@ -7,8 +7,8 @@ import VisibilityOffIcon from "@mui/icons-material/VisibilityOff";
 interface TextfieldInterface {
     label: string;
     placeholder?: string;
-    name: string;
-    onChange: (e: any) => void;
+    name?: string;
+    onChange?: (e: any) => void;
     error?: string;
     value?: string;
     required?: boolean;
@@ -42,7 +42,7 @@ const TextArea = ({
                     disabled={disabled}
                     className={`
                         w-full h-[100px] rounded-md focus:outline-none border-2 ${error ? "border-red-400" : "border-slate-300 focus:border-slate-400"} p-2 pr-10
-                        ${disabled ? "hover:cursor-not-allowed" : "cursor-text"}
+                        ${disabled ? "hover:cursor-not-allowed bg-gray-100" : "cursor-text"}
                     `}
                 ></textarea>
             </div>
