@@ -183,7 +183,7 @@ const Table = ({
                 <div
                     className="w-full text-sm flex justify-between items-center pt-2"
                 >
-                    <p>Showing records {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
+                    <p>Showing {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
 
                     <div className="flex gap-x-1 justify-end items-center">
                         {currentPage > 1 && (

@@ -5,7 +5,7 @@ interface CardInterface {
 	children: React.ReactNode;
 	handleSubmit?: () => void;
 	loading?: boolean;
-	size?: "big" | "small" | "medium";
+	size?: "big" | "small" | "medium" | "graph";
 }
 
 const Card = ({
@@ -56,6 +56,13 @@ const Card = ({
 					<div className="h-4 bg-zinc-200 rounded w-full" />
 					<div className="h-4 bg-zinc-200 rounded w-5/6" />
 					<div className="h-10 bg-zinc-200 rounded w-1/3 mt-4" />
+				</div>
+			}
+
+			{ size === "graph" &&
+				<div className="animate-pulse duration-500 space-y-4">
+					<div className="h-4 bg-zinc-200 rounded w-1/4" />
+					<div className="h-55 bg-zinc-200 rounded w-full mt-4" />
 				</div>
 			}
 			</>    

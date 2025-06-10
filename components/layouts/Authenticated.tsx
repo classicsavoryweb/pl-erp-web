@@ -18,7 +18,7 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                 </div>
 
 
-                <div className="flex-1 overflow-auto px-2 pb-5 shadow">
+                <div className="flex-1 overflow-auto pb-5 shadow">
                     <Sidebar />
                 </div>
             </div>

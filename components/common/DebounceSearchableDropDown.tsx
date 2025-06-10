@@ -37,15 +37,8 @@ const DebounceSearchableDropDown = ({
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const selectedLabel = useMemo(() => {
-        return options.find((opt) => opt.label === value?.first_name + " " + value?.last_name)?.label || placeholder;
+        return options.find((opt) => opt.label === value?.last_name + ", "+value?.first_name + " " + value?.middle_name)?.label || placeholder;
     }, [value, options, placeholder, loading]);
-
-    const filteredOptions = useMemo(() => {
-        const keywordLower = keyWord.toLowerCase();
-        return options.filter((opt) =>
-        opt.label.toLowerCase().includes(keywordLower)
-        );
-    }, [keyWord, options]);
 
     useEffect(() => {
         if (toggle) setHighlightedIndex(-1);
@@ -58,21 +51,21 @@ const DebounceSearchableDropDown = ({
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (!toggle || filteredOptions.length === 0) return;
+        if (!toggle || options.length === 0) return;
 
         if (e.key === "ArrowDown") {
         e.preventDefault();
         setHighlightedIndex((prev) =>
-            prev < filteredOptions.length - 1 ? prev + 1 : 0
+            prev < options.length - 1 ? prev + 1 : 0
         );
         } else if (e.key === "ArrowUp") {
         e.preventDefault();
         setHighlightedIndex((prev) =>
-            prev > 0 ? prev - 1 : filteredOptions.length - 1
+            prev > 0 ? prev - 1 : options.length - 1
         );
         } else if (e.key === "Enter" && highlightedIndex >= 0) {
         e.preventDefault();
-        handleSelect(filteredOptions[highlightedIndex]);
+        handleSelect(options[highlightedIndex]);
         } else if (e.key === "Escape") {
         setToggle(false);
         }
@@ -82,22 +75,22 @@ const DebounceSearchableDropDown = ({
         if (!toggle) return;
 
         const delayDebounce = setTimeout(() => {
-        setLoading(true);
-        api({
-            keyWord: keyWord
-        }).then((resp:any) => {
-            const data = resp.data;
-            const newDataSet = data.map((emp: any) => {
-                return (
-                    {
-                        label: emp.first_name + " " + emp.last_name,
-                        value: emp
-                    }
-                );
-            })
+            setLoading(true);
+            api({
+                keyWord: keyWord
+            }).then((resp:any) => {
+                const data = resp.data;
+                const newDataSet = data.map((emp: any) => {
+                    return (
+                        {
+                            label: emp.last_name + ", " + emp.first_name + " " + emp.middle_name,
+                            value: emp
+                        }
+                    );
+                })
 
-            setOptions(newDataSet);
-        }).finally(() => setLoading(false));
+                setOptions(newDataSet);
+            }).finally(() => setLoading(false));
         }, 500);
 
         return () => clearTimeout(delayDebounce);
@@ -111,7 +104,7 @@ const DebounceSearchableDropDown = ({
             const newDataSet = data.map((emp: any) => {
                 return (
                     {
-                        label: emp.first_name + " " + emp.last_name,
+                        label: emp.last_name + ", " + emp.first_name + " " + emp.middle_name,
                         value: emp
                     }
                 );
@@ -179,8 +172,8 @@ const DebounceSearchableDropDown = ({
 
                 {loading ? (
                 <div className="w-full px-2 p-[6px] text-slate-400">Loading...</div>
-                ) : filteredOptions.length > 0 ? (
-                filteredOptions.map((opt, idx) => (
+                ) : options.length > 0 ? (
+                options.map((opt, idx) => (
                     <div
                     key={idx}
                     className={`w-full border-b border-b-slate-200 px-2 p-[6px] hover:bg-slate-100 hover:cursor-pointer ${

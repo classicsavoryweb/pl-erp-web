@@ -12,7 +12,7 @@ const SummaryCardCount = ({
     loading = false,
 }: CardInterface ) => {
     return (
-        <div className="bg-zinc-50 w-full my-2 p-4 rounded-md border-l-5 border-red-700">
+        <div className="bg-zinc-50 w-full my-2 p-3 rounded-md border-l-5 border-red-700">
             { loading ?
                 <>
                     <div className="animate-pulse duration-500 space-y-2">
@@ -23,7 +23,7 @@ const SummaryCardCount = ({
                 :
                 <>
                     <p className="text-sm">{title}</p>
-                    <p className="text-3xl font-medium">{displayReport.toLocaleString('en-US')}</p>   
+                    <p className="text-2xl font-medium">{displayReport.toLocaleString('en-US')}</p>   
                 </>
             }
         </div>
