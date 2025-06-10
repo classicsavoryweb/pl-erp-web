@@ -5,7 +5,7 @@ import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
-import { useState, useContext } from 'react';
+import { useState, useContext, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/api/authentication';
 import Cookies from 'js-cookie';
@@ -16,11 +16,31 @@ const Header = () => {
     const [toggle, setToggle] = useState<boolean>(false);
     const router = useRouter();
     const { userDetails } = useContext(AuthContext);
+    const dropdownRef = useRef<HTMLDivElement>(null);
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (
+                dropdownRef.current &&
+                !dropdownRef.current.contains(event.target as Node)
+            ) {
+                setToggle(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+
+    }, []);
 
     return (
         <div className="relative">
             { Object.values(userDetails).some((value) => value !== "") &&
                 <div
+                    ref={dropdownRef}
                     className={`flex items-center py-2 px-3 bg-red-800 ${toggle ? "rounded-t-3xl" : "rounded-3xl"} cursor-pointer focus:outline-none`}
                     onClick={() => {
                         setToggle(prev => !prev);
