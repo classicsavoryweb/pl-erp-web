@@ -54,3 +54,18 @@ export const getACF = async (id: string) => {
 
     return resData;
 };
+
+// /edit-acting-capacity
+
+export const editActingCapacity = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/edit-acting-capacity',
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+
+    return resData;
+};
