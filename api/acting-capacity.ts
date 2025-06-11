@@ -45,3 +45,12 @@ export const getActingCapacity = async (id: string) => {
 
     return resData;
 };
+
+export const getACF = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/get-acf/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};

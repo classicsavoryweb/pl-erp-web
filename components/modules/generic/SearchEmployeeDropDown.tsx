@@ -11,6 +11,7 @@ interface SelectInterface {
     error?: string;
     value?: string | number;
     required?: boolean;
+    status?: "all" | "active" | "inactive"
 }
 
 const SearchEmployeeDropDown = ({
@@ -20,7 +21,8 @@ const SearchEmployeeDropDown = ({
     onChange,
     error,
     value,
-    required = false
+    required = false,
+    status= "all",
 }: SelectInterface) => {
 
     return (
@@ -33,6 +35,7 @@ const SearchEmployeeDropDown = ({
             value={value}
             required={required}
             api={getEmployeesList}
+            status={status}
         />
     );
 };

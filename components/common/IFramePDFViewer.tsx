@@ -23,7 +23,7 @@ const IFramePDFViewer = ({
                     onClick={() => {
                         modal.onOpen();
                     }}
-                    label={label}
+                    label="View"
                 />
             </div>
             <Modal

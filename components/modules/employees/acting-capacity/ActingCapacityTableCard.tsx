@@ -18,11 +18,13 @@ import { exportAllActingCapacity, getAllActingCapacity } from "@/api/acting-capa
 import ActionDropDown from "@/components/common/ActionDropDown";
 import CreateActingCapacityForm from "./CreateActingCapacityForm";
 import ViewActingCapacity from "./ViewActingCapacity";
+import ViewACFModal from "./ViewACFModal";
 
 const ActingCapacityTableCard = () => {
     const api = useApiCall();
     const [id, setId] = useState<number>(0);
     const viewModal = useModal();
+    const viewACF = useModal();
     const createModal = useModal();
     const paginator = usePagination();
     const filter = useFilter();
@@ -133,9 +135,10 @@ const ActingCapacityTableCard = () => {
             }
         },
         {
-            label: "Edit",
+            label: "View ACF",
             onClick: (data: any) => {
-                console.log("EDIT >>> ",data);
+                viewACF.onOpen();
+                setId(data.id);
             }
         },
     ];
@@ -210,6 +213,11 @@ const ActingCapacityTableCard = () => {
 
             <ViewActingCapacity
                 modal={viewModal}
+                id={String(id)}
+            />
+
+            <ViewACFModal
+                modal={viewACF}
                 id={String(id)}
             />
         </>

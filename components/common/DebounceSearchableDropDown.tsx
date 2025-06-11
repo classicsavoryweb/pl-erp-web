@@ -17,6 +17,7 @@ interface SelectInterface {
     value?: any;
     required?: boolean;
     api: (payload: any) => Promise<any>;
+    status?: "active" | "inactive" | "all";
 }
 
 const DebounceSearchableDropDown = ({
@@ -28,6 +29,7 @@ const DebounceSearchableDropDown = ({
     value,
     required,
     api,
+    status = "all"
 }: SelectInterface) => {
     const [toggle, setToggle] = useState(false);
     const [keyWord, setKeyWord] = useState("");
@@ -77,6 +79,7 @@ const DebounceSearchableDropDown = ({
         const delayDebounce = setTimeout(() => {
             setLoading(true);
             api({
+                status: status,
                 keyWord: keyWord
             }).then((resp:any) => {
                 const data = resp.data;
@@ -98,7 +101,9 @@ const DebounceSearchableDropDown = ({
 
     useEffect(() => {
         setLoading(true);
-        api({})
+        api({
+            status: status,
+        })
         .then((resp:any) => {
             const data = resp.data;
             const newDataSet = data.map((emp: any) => {

@@ -7,18 +7,15 @@ import Button from "@/components/common/Button"
 import { useFormik } from "formik"
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
-import BranchDropDown from "../../generic/BranchDropDown";
+import { useState } from "react";
 import confirm from "@/components/common/Confirm";
-import moment from "moment";
 import Grid from "@/components/common/Grid";
 import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
-import EmployeeOffenseHistory from "../offense-history/EmployeeOffenseHistory";
 import ActingCapacityOffenseTable from "./ActingCapacityOffenseTable";
 import PositionDropDown from "../../generic/PositionDropDown";
-import EmployeeBasicInfo from "../EmployeeBasicInfo";
-import Badge from "@/components/common/Badge";
 import { addActingCapacity } from "@/api/acting-capacity";
+import BranchDropDown from "../../generic/BranchDropDown";
+import EmployeeDropDown from "../../generic/EmployeeDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -39,7 +36,9 @@ const CreateActingCapacityForm = ({
             start_date: "",
             end_date: "",
             recommendation_letter: "",
-            remarks: ""
+            remarks: "",
+            oic_employee_number: "",
+            branch_assignment_id: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -48,6 +47,8 @@ const CreateActingCapacityForm = ({
             start_date: Yup.string().required("Start date is required"),
             end_date: Yup.string().required("End date is required"),
             recommendation_letter: Yup.string().required("Recommendation letter is required"),
+            oic_employee_number: Yup.string().required("OIC is required"),
+            branch_assignment_id: Yup.string().required("Branch assignment is required"),
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
             const isConfirmed = await confirm({
@@ -92,12 +93,21 @@ const CreateActingCapacityForm = ({
                             placeholder="select employee"
                             name="employee"
                             onChange={(e) => {
+                                console.log(e.target.value);
                                 setEmployee(e.target.value);
+                                formHandler.setFieldValue("branch_assignment_id", e.target.value.branch_id);
                                 formHandler.setFieldValue("employee_number", e.target.value.employee_number);
+                                const station = String(e.target.value.current_position.station.name).toLowerCase();
+                                const oicEmpNumber = (station === "back of the house")
+                                    ? e.target.value.current_branch.kitchen_oic_employee_number
+                                    : e.target.value.current_branch.branch_head_employee_number;
+                                
+                                formHandler.setFieldValue("oic_employee_number", oicEmpNumber);
                             }}
                             value={employee}
                             error={formHandler.errors.employee_number}
                             required
+                            status="active"
                         />
 
                         <PositionDropDown
@@ -130,6 +140,26 @@ const CreateActingCapacityForm = ({
                             required
                         />
 
+                        <BranchDropDown
+                            label="Branch Assignment"
+                            name="branch_assignment_id"
+                            placeholder="select branch"
+                            onChange={formHandler.handleChange}
+                            value={Number(formHandler.values.branch_assignment_id)}
+                            error={formHandler.errors.branch_assignment_id}
+                            required
+                        />
+
+                        <EmployeeDropDown
+                            label="Branch/Kitchen OIC"
+                            name="oic_employee_number"
+                            placeholder="select oic"
+                            onChange={formHandler.handleChange}
+                            value={formHandler.values.oic_employee_number ?? ""}
+                            error={formHandler.errors.oic_employee_number}
+                            required
+                        />
+
                         <Textfield
                             type="file"
                             label="Recommendation Letter"
@@ -157,45 +187,45 @@ const CreateActingCapacityForm = ({
                 </Grid>
 
                 { Object.entries(employee).length > 0 &&
-                    <div className="pt-5">
-                        <p className="text-sm  font-semibold text-gray-500 pb-3">
-                            Employee Details:
+                    <div className="pt-3">
+                        <p className="text-sm font-semibold text-gray-500">
+                            Employee Details
                         </p>
-
-                        <div className="flex gap-x-5 items-center">
-                            <EmployeeBasicInfo
+                        <Grid cols={2}>
+                            <Textfield
                                 label="Full Name"
-                                detail={employee.full_name}
+                                value={employee.full_name}
+                                disabled
                             />
-                            <div className="flex gap-x-1 items-center">
-                                <Badge
-                                    status={employee.status === "active" ? "success" : "danger"}
-                                    label={employee.status}
-                                />
-                                <p>- {employee.employee_status?.description}</p>
-                            </div>
-                        </div>
-
-                        <EmployeeBasicInfo
-                            label="Employee Number"
-                            detail={employee.employee_number}
-                        />
-
-                        <EmployeeBasicInfo
-                            label="Current Position"
-                            detail={employee.current_position.description}
-                        />
-
-                        <EmployeeBasicInfo
-                            label="Current Branch"
-                            detail={employee.current_branch.name}
-                        />
+                            <Textfield
+                                label="Status"
+                                value={employee.employee_status.description}
+                                disabled
+                            />
+                            <Textfield
+                                label="Employee Number"
+                                value={employee.employee_number}
+                                disabled
+                            />
+                            <Textfield
+                                label="Current Position"
+                                value={employee.current_position.description}
+                                disabled
+                            />
+                            <Textfield
+                                label="Branch"
+                                value={employee.current_branch.name}
+                                disabled
+                            />
+                        </Grid>
                     </div>
                 }
                 
                 { Object.entries(employee).length > 0 &&
                     <>
-                        <p className="pt-5">Offenses:</p>
+                        <p className="text-sm pt-3 font-semibold text-gray-500">
+                            Employee Offenses
+                        </p>
                         <ActingCapacityOffenseTable
                             employeeNumber={employee.employee_number}
                         />

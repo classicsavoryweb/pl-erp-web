@@ -120,12 +120,6 @@ const ViewActingCapacity = ({
                     />
                 </div>
                 
-                { api.data?.recommendation_letter &&
-                    <IFramePDFViewer
-                        label="Recommendation Letter"
-                        src={api.data?.recommendation_letter}
-                    />
-                }
             </Grid>
 
             { api.data?.extensions && api.data?.extensions.length > 0 &&
@@ -156,11 +150,28 @@ const ViewActingCapacity = ({
                 </>
             }
 
-            { api.data?.attachments && api.data?.attachments.length > 0 &&
+            { (api.data?.recommendation_letter || (api.data?.attachments && api.data?.attachments.length > 0)) &&
                 <>
                     <p className="text-sm  font-semibold text-gray-500 pt-3">
                         Attachments
                     </p>
+
+                    { api.data?.recommendation_letter &&
+                        <Grid cols={2}>
+                            <Textfield
+                                label="File Type"
+                                value="Recommendation Letter"
+                                disabled
+                            />
+                            <div className="mt-[14px]">
+                                <IFramePDFViewer
+                                    label="Recommendation Letter"
+                                    src={api.data?.recommendation_letter}
+                                />
+                            </div>
+                        </Grid>
+                    }
+
                     { api.data.attachments.map((attachment: any, id: number) => 
                         <Grid cols={2} key={id}>
                             <Textfield
