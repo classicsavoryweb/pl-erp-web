@@ -9,6 +9,7 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import Link from "next/link";
 import { getEmployeeBirthMonth } from "@/api/dashboard";
+import moment from "moment";
 
 const EmployeeBirthmonthTableCard = () => {
     const api = useApiCall();
@@ -70,14 +71,17 @@ const EmployeeBirthmonthTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Date Hired",
-            path: "date_hired",
+            columnHead: "Age",
+            path: "age",
             columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Birthday",
             path: "birthday",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                return moment(data.birthday).format("MMMM DD");
+            }
         },
         {
             columnHead: "Status",
