@@ -29,6 +29,7 @@ const CreateActingCapacityForm = ({
 }: FormModalInterface) => {
 
     const [employee, setEmployee] = useState<any>({});
+    const [current_station, setStation] = useState<string>("");
 
     const formHandler = useFormik({
         initialValues: {
@@ -68,6 +69,13 @@ const CreateActingCapacityForm = ({
 
                     return isSame;
                 }),
+            recommendation_letter: Yup.string().when('date_from', (dateFrom, schema) => {
+                const station = current_station;
+                return station.toLowerCase() == "head office"
+                    ? schema.notRequired()
+                    : schema.required('Recommendation letter is required')
+            }
+            ),
             oic_employee_number: Yup.string().required("OIC is required"),
             branch_assignment_id: Yup.string().required("Branch assignment is required"),
         }),
@@ -119,6 +127,7 @@ const CreateActingCapacityForm = ({
                                 formHandler.setFieldValue("branch_assignment_id", e.target.value.branch_id);
                                 formHandler.setFieldValue("employee_number", e.target.value.employee_number);
                                 const station = String(e.target.value.current_position.station.name).toLowerCase();
+                                setStation(station);
                                 const oicEmpNumber = (station === "back of the house")
                                     ? e.target.value.current_branch.kitchen_oic_employee_number
                                     : e.target.value.current_branch.branch_head_employee_number;
@@ -190,6 +199,7 @@ const CreateActingCapacityForm = ({
                                     formHandler.setFieldValue("recommendation_letter", file);
                                 }
                             }}
+                            error={formHandler.errors.recommendation_letter}
                         />
 
                         <div className="col-span-2">
