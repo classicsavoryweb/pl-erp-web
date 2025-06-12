@@ -22,6 +22,13 @@ export function numberToWords(n: number): string {
         return remainder ? `${hundreds} ${numberToWords(remainder)}` : hundreds;
     }
 
+    if (n < 1_000_000) {
+        const thousands = Math.floor(n / 1000);
+        const remainder = n % 1000;
+        const thousandsPart = `${numberToWords(thousands)} Thousand`;
+        return remainder ? `${thousandsPart} ${numberToWords(remainder)}` : thousandsPart;
+    }
+
     return ''; // Extend this logic if you need to support thousands or more
 }
 

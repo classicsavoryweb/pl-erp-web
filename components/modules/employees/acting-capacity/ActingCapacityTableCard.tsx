@@ -20,6 +20,8 @@ import CreateActingCapacityForm from "./CreateActingCapacityForm";
 import ViewActingCapacity from "./ViewActingCapacity";
 import ViewACFModal from "./ViewACFModal";
 import EditActingCapacityForm from "./EditActingCapacityForm";
+import GeneratePromotionConfirmationForm from "./GeneratePromotionConfirmationForm";
+import ViewConfirmationDocumentModal from "./ViewConfirmationDocumentsModal";
 
 const ActingCapacityTableCard = () => {
     const api = useApiCall();
@@ -28,6 +30,8 @@ const ActingCapacityTableCard = () => {
     const viewACF = useModal();
     const editModal = useModal();
     const createModal = useModal();
+    const generateConfirmationModal = useModal();
+    const viewConfirmationDocumentModal = useModal();
     const paginator = usePagination();
     const filter = useFilter();
 
@@ -117,11 +121,14 @@ const ActingCapacityTableCard = () => {
                 } else if (data.status === "Confirmed") {
                     tableActions = [
                         actions[0],
+                        actions[1],
+                        actions[6],
                     ];
                 } else if (data.status === "For Signature") {
                     tableActions = [
-                        actions[0],
+                        actions[0], 
                         actions[1],
+                        actions[6],
                         actions[4],
                         actions[5],
                     ];
@@ -164,8 +171,8 @@ const ActingCapacityTableCard = () => {
         {
             label: "Generate Confirmation Documents",
             onClick: (data: any) => {
-                // viewACF.onOpen();
-                // setId(data.id);
+                generateConfirmationModal.onOpen();
+                setId(data.id);
             }
         },
         {
@@ -176,10 +183,17 @@ const ActingCapacityTableCard = () => {
             }
         },
         {
-            label: "Reject",
+            label: "Reject Promotion",
             onClick: (data: any) => {
                 // viewACF.onOpen();
                 // setId(data.id);
+            }
+        },
+        {
+            label: "View Documents",
+            onClick: (data: any) => {
+                viewConfirmationDocumentModal.onOpen();
+                setId(data.id);
             }
         },
     ];
@@ -269,6 +283,21 @@ const ActingCapacityTableCard = () => {
                     editModal.onClose();
                     api.triggerReload();
                 }}
+            />
+
+            <GeneratePromotionConfirmationForm
+                modal={generateConfirmationModal}
+                id={String(id)}
+                onSubmitCallBack={() => {
+                    api.triggerReload();
+                    viewConfirmationDocumentModal.onOpen();
+                    generateConfirmationModal.onClose();
+                }}
+            />
+
+            <ViewConfirmationDocumentModal
+                modal={viewConfirmationDocumentModal}
+                id={String(id)}
             />
         </>
     );
