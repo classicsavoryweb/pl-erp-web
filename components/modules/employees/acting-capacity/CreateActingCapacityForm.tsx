@@ -16,6 +16,7 @@ import PositionDropDown from "../../generic/PositionDropDown";
 import { addActingCapacity } from "@/api/acting-capacity";
 import BranchDropDown from "../../generic/BranchDropDown";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
+import moment from "moment";
 
 interface FormModalInterface {
     modal: any;
@@ -44,8 +45,29 @@ const CreateActingCapacityForm = ({
         validationSchema: Yup.object().shape({
             employee_number: Yup.string().required("Employee is required"),
             recommended_position_id: Yup.string().required("Recommended position is required"),
-            start_date: Yup.string().required("Start date is required"),
-            end_date: Yup.string().required("End date is required"),
+            start_date: Yup.string()
+                .required('Contract start date is required'),
+            end_date: Yup.string()
+                .required('Contract end date is required')
+                .test(
+                'future-date',
+                'Contract end date must be later than start date',
+                function (value) {
+                    const { start_date } = this.parent;
+                    if (!value || !start_date) return true;
+
+                    return moment(value).isAfter(moment(start_date));
+                })
+                .test(
+                'same-day',
+                'Contract end date must be the same day as the start date',
+                function (value) {
+                    const { start_date } = this.parent;
+                    if (!value || !start_date) return true;
+                    const isSame = moment(value).format("DD") === moment(start_date).format("DD"); 
+
+                    return isSame;
+                }),
             oic_employee_number: Yup.string().required("OIC is required"),
             branch_assignment_id: Yup.string().required("Branch assignment is required"),
         }),

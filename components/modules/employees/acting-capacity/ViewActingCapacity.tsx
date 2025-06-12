@@ -101,11 +101,24 @@ const ViewActingCapacity = ({
                     value={api.data?.end_date}
                     disabled={true}
                 />
+
                 <Textfield
                     label="Period"
                     value={api.data?.period}
                     disabled={true}
                 />
+                <Textfield
+                    label="Branch Assignment"
+                    value={api.data?.branch_assignment?.name}
+                    disabled={true}
+                />
+                { api.data?.status === "Confirmed" &&
+                    <Textfield
+                        label="Effectivity Date"
+                        value={ moment(api.data?.effectivity_date).format("MMMM DD, YYYY")}
+                        disabled={true}
+                    />
+                }
                 <div className="col-span-2">
                     <TextArea
                         label="Remarks"
