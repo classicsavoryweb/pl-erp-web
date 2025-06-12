@@ -141,7 +141,11 @@ const EmployeeTrainingForm = ({
                         value: "No"
                     },
                 ]}
-                onChange={formHandler.handleChange}
+                onChange={(e) => {
+                    formHandler.resetForm();
+                    setTraining({});
+                    formHandler.handleChange(e);
+                }}
             />
 
             <SearchableDropDown
@@ -202,22 +206,23 @@ const EmployeeTrainingForm = ({
             <Textfield
                 label="Speaker"
                 name="speaker"
+                placeholder="enter speaker"
                 value={formHandler.values.speaker || ""}
                 error={formHandler.errors.speaker}
                 onChange={formHandler.handleChange}
-                disabled={formHandler.values.others === "No"}
             />
             <Textfield
                 label="Venue"
                 name="venue"
+                placeholder="enter venue"
                 value={formHandler.values.venue || ""}
                 error={formHandler.errors.venue}
                 onChange={formHandler.handleChange}
-                disabled={formHandler.values.others === "No"}
             />
             <TextArea
                 label="Covered Dates"
                 name="covered_date"
+                placeholder="enter covered dates"
                 value={formHandler.values.covered_date || ""}
                 error={formHandler.errors.covered_date}
                 onChange={formHandler.handleChange}
