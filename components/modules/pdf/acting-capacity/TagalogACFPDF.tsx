@@ -148,13 +148,13 @@ const TagalogACFPDF = ({
                 <View
                     style={styles.section}
                 >
-                    <Text>Ito ay para ikumpirma ang iyong pagkakatalaga bilang <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> na sa loob ng <Text style={{ textDecoration: "underline" }}>{translateToTagalog(data.period)}</Text>, epektibo ng {moment(data.end_date).format("MMMM DD, YYYY")}.</Text>
+                    <Text>Ito ay para ikumpirma ang iyong pagkakatalaga bilang <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> na sa loob ng <Text style={{ textDecoration: "underline" }}>{translateToTagalog(data.period)}</Text>, epektibo ng {moment(data.start_date).format("MMMM DD, YYYY")}.</Text>
                 </View>
 
                 <View
                     style={styles.section}
                 >
-                    <Text>Ikaw ay itinilaga sa sangay ng <Text style={{ textDecoration: "underline" }}>{data.branch_assignment.name}</Text> at dapat mag-ulat kay <Text style={{ textDecoration: "underline" }}>{data.oic.formal_full_name}</Text></Text>
+                    <Text>Ikaw ay itinilaga sa sangay ng <Text style={{ textDecoration: "underline" }}>{data.branch_assignment.name}</Text> at dapat mag-ulat kay <Text style={{ textDecoration: "underline" }}>{data.oic.formal_full_name}</Text>.</Text>
                 </View>
 
                 <View

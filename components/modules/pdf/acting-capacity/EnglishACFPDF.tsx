@@ -148,13 +148,13 @@ const EnglishACFPDF = ({
                     <View
                         style={styles.section}
                     >
-                        <Text>This is to confirm your appointment as <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> in an acting capacity of not less than <Text style={{ textDecoration: "underline" }}>{data.period}</Text>, effective {moment(data.end_date).format("MMMM DD, YYYY")}.</Text>
+                        <Text>This is to confirm your appointment as <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> in an acting capacity of not less than <Text style={{ textDecoration: "underline" }}>{data.period}</Text>, effective {moment(data.start_date).format("MMMM DD, YYYY")}.</Text>
                     </View>
 
                     <View
                         style={styles.section}
                     >
-                        <Text>You shall be assigned at <Text style={{ textDecoration: "underline" }}>{data.branch_assignment.name}</Text> and shall report to <Text style={{ textDecoration: "underline" }}>{data.oic.formal_full_name}</Text></Text>
+                        <Text>You shall be assigned at <Text style={{ textDecoration: "underline" }}>{data.branch_assignment.name}</Text> and shall report to <Text style={{ textDecoration: "underline" }}>{data.oic.formal_full_name}</Text>.</Text>
                     </View>
 
                     <View
