@@ -1,0 +1,174 @@
+"use client";
+
+import Modal from "@/components/common/Modal"
+import { toast } from "react-toastify";
+import { confirmPromotion, getACF, rejectPromotion } from "@/api/acting-capacity";
+import { useApiCall } from "@/hooks/api-call";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import EnglishACFPDF from "../../pdf/acting-capacity/EnglishACFPDF";
+import TagalogACFPDF from "../../pdf/acting-capacity/TagalogACFPDF";
+import { useState } from "react";
+import Button from "@/components/common/Button";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import confirm from "@/components/common/Confirm";
+import TextArea from "@/components/common/TextArea";
+import Grid from "@/components/common/Grid";
+import Textfield from "@/components/common/Textfield";
+
+interface FormModalInterface {
+    modal: any;
+    id: string;
+    onSubmitCallBack: () => void;
+};
+
+const ConfirmPromotionModal = ({
+    modal,
+    id,
+    onSubmitCallBack
+}: FormModalInterface) => {
+
+    const formHandler = useFormik({
+        initialValues: {
+            attachments: [
+                {
+                    "file": "",
+                    "file_type": ""
+                }
+            ],
+        },
+        validateOnChange: false,
+        validationSchema: Yup.object().shape({
+            attachments: Yup.array().of(
+                Yup.object().shape({
+                    file_type: Yup.string().required("File type is required"),
+                    file: Yup.mixed().required("File is required")
+                })
+            )
+        }),
+        onSubmit: async (values, {setSubmitting, resetForm}) => {
+            const isConfirmed = await confirm({
+                title: "Confirm Promotion",
+                message: "Are you sure?"
+            });
+
+            if (isConfirmed) {
+                confirmPromotion(id, values).then((resp) =>  {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        resetForm();
+                        onSubmitCallBack();
+                    } else {
+                        toast.error(resp.data.messaage);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally(() => {
+                    setSubmitting(false);
+                });
+            }
+        }
+    });
+
+    return (
+        <Modal
+            isShowing={modal.isShowing}
+            onClose={() => {
+                modal.onClose();
+            }}
+            title="Confirm Promotion"
+            size="md"
+        >
+            <form onSubmit={formHandler.handleSubmit}>
+                
+                <div className="flex justify-between items-start">
+                    <p className="text-sm font-semibold text-gray-500">
+                        Attachments
+                    </p>
+                    <div>
+
+                        <Button
+                            label="Add"
+                            onClick={() =>
+                                formHandler.setFieldValue("attachments", [
+                                        ...formHandler.values.attachments,
+                                        {   file: "",
+                                            file_type: "" 
+                                        },
+                                    ]
+                                )
+                            }
+                        />
+                    </div>
+                </div>
+
+                { formHandler.values.attachments.map((ex, id) => {
+                    const errorItem =
+                    typeof formHandler.errors.attachments?.[id] === "object"
+                    ? formHandler.errors.attachments[id]
+                    : undefined;
+
+                    const touchedItem = formHandler.touched.attachments?.[id];
+
+                    return (
+                        <Grid cols={2} key={id}>
+                            <Textfield
+                                label="File Type"
+                                name={`attachments[${id}].file_type`}
+                                placeholder="enter file type"
+                                value={formHandler.values.attachments[id]?.file_type || ""}
+                                error={
+                                    touchedItem?.file_type && typeof errorItem?.file_type === "string"
+                                    ? errorItem.file_type
+                                    : ""
+                                }
+                                onChange={formHandler.handleChange}
+                                required
+                            />
+                            <Textfield
+                                type="file"
+                                label="Attachment"
+                                name={`attachments[${id}].file`}
+                                required
+                                onChange={(event) => {
+                                    const file = event.target.files?.[0];
+                                    if (file) {
+                                        formHandler.setFieldValue(`attachments[${id}].file`, file);
+                                    }
+                                }}
+                                error={
+                                    touchedItem?.file && typeof errorItem?.file === "string"
+                                    ? errorItem.file
+                                    : ""
+                                }
+                            />
+                        </Grid>
+                    );
+                })}
+
+                <hr className="mt-6 pb-2 text-slate-300"/>
+                <div className="flex justify-end gap-x-2">
+                    <div>
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={() => {
+                                modal.onClose();
+                                formHandler.resetForm();
+                            }}
+                        />
+                    </div>     
+                    <div>
+                        <Button
+                            type="submit"
+                            label="Submit"
+                            onClick={() => {}}
+                        />         
+                    </div>
+                </div>
+            </form>
+        </Modal>
+    );
+};
+
+export default ConfirmPromotionModal;

@@ -201,7 +201,6 @@ const EditActingCapacityForm = ({
                             }
                         }}
                         error={formHandler.errors.recommendation_letter}
-                        required
                     />
 
                     <div className="col-span-2">

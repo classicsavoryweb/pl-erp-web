@@ -77,3 +77,26 @@ export const generateConfirmationPromotion = async (id: string, payload?: {}) =>
 
     return resData;
 };
+
+export const confirmPromotion = async (id: string, payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/confirm-promotion/${id}`,
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+
+    return resData;
+};
+
+export const rejectPromotion = async (id: string, payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/reject-promotion/${id}`,
+        method: 'POST',
+        payload: payload,
+    });
+
+    return resData;
+};

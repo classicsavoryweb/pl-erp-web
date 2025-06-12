@@ -46,7 +46,6 @@ const CreateActingCapacityForm = ({
             recommended_position_id: Yup.string().required("Recommended position is required"),
             start_date: Yup.string().required("Start date is required"),
             end_date: Yup.string().required("End date is required"),
-            recommendation_letter: Yup.string().required("Recommendation letter is required"),
             oic_employee_number: Yup.string().required("OIC is required"),
             branch_assignment_id: Yup.string().required("Branch assignment is required"),
         }),
@@ -163,15 +162,12 @@ const CreateActingCapacityForm = ({
                         <Textfield
                             type="file"
                             label="Recommendation Letter"
-                            name="recommenndation_letter"
                             onChange={(event) => {
                                 const file = event.target.files?.[0];
                                 if (file) {
                                     formHandler.setFieldValue("recommendation_letter", file);
                                 }
                             }}
-                            error={formHandler.errors.recommendation_letter}
-                            required
                         />
 
                         <div className="col-span-2">
