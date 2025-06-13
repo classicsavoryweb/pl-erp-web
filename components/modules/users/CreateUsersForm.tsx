@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import RolesDropDown from "../generic/RolesDropDown";
+import SearchEmployeeDropDown from "../generic/SearchEmployeeDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -71,6 +72,25 @@ const CreateUsersForm = ({
             loading={modal.loading}
             size="md"
         >
+            <SearchEmployeeDropDown
+                label="Employee"
+                name="employee"
+                onChange={(event) => {
+                    const emp = event.target.value;
+                    createUserForm.setValues({
+                        first_name: emp.first_name,
+                        middle_name: emp.middle_name ?? "",
+                        last_name: emp.last_name,
+                        email: emp.email,
+                        role_id: "",
+                        employee_number: emp.employee_number,
+                        password: "",
+                        confirm_password: "",
+                    })
+                }}
+                placeholder="select employee"
+                status="active"
+            />
             <form onSubmit={createUserForm.handleSubmit}>
                 <Textfield
                     label="First name"
