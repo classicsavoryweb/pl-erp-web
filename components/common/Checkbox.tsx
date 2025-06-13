@@ -18,7 +18,7 @@ const Checkbox = ({
         <div className="py-1">
             <div className="flex items-center gap-x-2">
                 <input type="checkbox" checked={checked} value={value} onChange={onChange} className="w-4 h-4 accent-red-500"/>
-                { label && <p className={`text-sm ${highlight ? "font-semibold" : ""}`}>{label}</p> }
+                { label && <p className={`${highlight ? "font-semibold text-sm " : "text-xs"}`}>{label}</p> }
             </div>
         </div>
     );
