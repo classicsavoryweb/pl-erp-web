@@ -10,6 +10,20 @@ export const getAllReportsTardiness = async (payload?: {}) => {
     return resData;
 };
 
+export const exportReportTardiness = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-reports-tardiness',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const voidTardiness = async ( id: number, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/void-reports-tardiness/${id}`,

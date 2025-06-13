@@ -9,7 +9,7 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
-import { approveBulkTardiness, approveTardiness, getAllReportsTardiness, getNTEDetaills, sendTardinessNTE } from "@/api/reports/reports-tardiness";
+import { approveBulkTardiness, approveTardiness, exportReportTardiness, getAllReportsTardiness, getNTEDetaills, sendTardinessNTE } from "@/api/reports/reports-tardiness";
 import Link from "next/link";
 import Badge from "@/components/common/Badge";
 import ActionDropDown from "@/components/common/ActionDropDown";
@@ -340,6 +340,25 @@ const TardinessTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 hasDateRange
+                defaultColumnSelected="employee.full_name"
+                withStatus
+                statusOption={[
+                    {
+                        label: "Pending",
+                        value: "Pending"
+                    },
+                    {
+                        label: "Approved",
+                        value: "Approved"
+                    },
+                    {
+                        label: "Voided",
+                        value: "Voided"
+                    },
+                ]}
+                // hasExport
+                // api={exportReportTardiness}
+                // exportFileName={`TARDINESS-${moment().format('YYYY-MM-DD')}.xls`}
             />
             <Card>
                 <div className="flex justify-end gap-x-3">
