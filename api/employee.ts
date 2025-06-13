@@ -266,6 +266,16 @@ export const addEmployeeTrainingTitle = async ( employeeNumber: string, payload:
     return resData;
 };
 
+export const editEmployeeTrainingTitle = async ( employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-employee-training-title/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
 
 export const getEmployeeVaccination = async (employeeNumber: string, payload: {}) => {
     const resData = await axiosHelper({

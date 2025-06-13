@@ -75,6 +75,28 @@ const EmployeeTraingingHistory = () => {
         },
     ];
     
+    const actionSettings = [
+        {
+            label: "Edit",
+            onClick: (data:any) => {
+                setAction("edit");
+                setData({
+                    id: data.id,
+                    training_title : data.training_title,
+                    speaker : data.speaker,
+                    venue : data.venue,
+                    batch : data.batch,
+                    others : data.others,
+                    date : data.date,
+                    option : data.option,
+                    covered_date : data.covered_date,
+                    score : data.score,
+                });
+                modal.onOpen();
+            }
+        }
+    ];
+
     return (
         <>
             <EmployeeTrainingForm
@@ -103,6 +125,8 @@ const EmployeeTraingingHistory = () => {
                 columnSettings={columnSettings}
                 loading={api.loading}
                 paginator={paginator}
+                withActions
+                actions={actionSettings}
             />
         </>
     );

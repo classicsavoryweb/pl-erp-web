@@ -6,7 +6,7 @@ import Dropdown from "@/components/common/Dropdown"
 import Button from "@/components/common/Button"
 import { useFormik } from "formik"
 import * as Yup from "yup";
-import { addEmployeeTrainingTitle } from "@/api/employee"
+import { addEmployeeTrainingTitle, editEmployeeTrainingTitle } from "@/api/employee"
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
@@ -33,7 +33,7 @@ const EmployeeTrainingForm = ({
 }: FormModalInterface) => {
     const params = useParams();
     const employeeNumber = params["employee-number"];
-    const api = addEmployeeTrainingTitle;
+    const api = action === "add" ? addEmployeeTrainingTitle : editEmployeeTrainingTitle;
     const titleApi = useApiCall();
     const [training, setTraining] = useState<any>({});
 
