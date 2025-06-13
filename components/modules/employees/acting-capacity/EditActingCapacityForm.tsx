@@ -18,6 +18,7 @@ import EmployeeDropDown from "../../generic/EmployeeDropDown";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
 import Dropdown from "@/components/common/Dropdown";
+import ActingCapacityReasonsDropDown from "../../generic/ActingCapacityReasonsDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -68,7 +69,6 @@ const EditActingCapacityForm = ({
                 }).finally(() => {
                     setSubmitting(false);
                 });
-                console.log(values);
             }
         }
     });
@@ -109,7 +109,6 @@ const EditActingCapacityForm = ({
             isShowing={modal.isShowing}
             onClose={() => {
                 modal.onClose();
-                setEmployee({});
                 formHandler.resetForm();
             }}
             title="Edit Acting Capacity"
@@ -123,7 +122,6 @@ const EditActingCapacityForm = ({
                         placeholder="select employee"
                         name="employee"
                         onChange={(e) => {
-                            console.log(e.target.value);
                             setEmployee(e.target.value);
                             formHandler.setFieldValue("branch_assignment_id", e.target.value.branch_id);
                             formHandler.setFieldValue("employee_number", e.target.value.employee_number);
@@ -264,22 +262,12 @@ const EditActingCapacityForm = ({
                                 value={formHandler.values.extensions[0]?.end_date || ""}
                                 onChange={formHandler.handleChange}
                             />
-                            <Dropdown
+                            <ActingCapacityReasonsDropDown
                                 label="Reason"
                                 name={`extensions[0].reason`}
                                 value={formHandler.values.extensions[0]?.reason || ""}
                                 placeholder="select reason"
                                 onChange={formHandler.handleChange}
-                                options={[
-                                    {
-                                        label: "Extended",
-                                        value: "Extended"
-                                    },
-                                    {
-                                        label: "Fast Tracked",
-                                        value: "Fast Tracked"
-                                    }
-                                ]}
                             />
                             <Textfield
                                 label="Remarks"
@@ -324,22 +312,12 @@ const EditActingCapacityForm = ({
                                         value={formHandler.values.extensions[id]?.end_date || ""}
                                         onChange={formHandler.handleChange}
                                     />
-                                    <Dropdown
+                                    <ActingCapacityReasonsDropDown
                                         label="Reason"
                                         name={`extensions[${id}].reason`}
                                         value={formHandler.values.extensions[id]?.reason || ""}
                                         placeholder="select reason"
                                         onChange={formHandler.handleChange}
-                                        options={[
-                                            {
-                                                label: "Extended",
-                                                value: "Extended"
-                                            },
-                                            {
-                                                label: "Fast Tracked",
-                                                value: "Fast Tracked"
-                                            }
-                                        ]}
                                     />
                                     <Textfield
                                         label="Remarks"
@@ -363,7 +341,6 @@ const EditActingCapacityForm = ({
                             onClick={() => {
                                 modal.onClose();
                                 formHandler.resetForm();
-                                setEmployee({});
                             }}
                         />
                     </div>     

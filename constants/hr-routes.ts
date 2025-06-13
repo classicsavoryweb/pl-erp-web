@@ -164,6 +164,11 @@ export const hrRoutes: Route[] = [
                 pathname: "/maintenance/coe-reasons",
                 permission: "can_view_coe_reasons"
             },
+            {
+                name: "Acting Capacity Reasons",
+                pathname: "/maintenance/acting-capacity-reasons",
+                permission: "can_view_acting_capacity_reasons"
+            },
         ]
     },
 ];

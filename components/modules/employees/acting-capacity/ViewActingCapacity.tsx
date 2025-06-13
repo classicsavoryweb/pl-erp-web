@@ -126,7 +126,15 @@ const ViewActingCapacity = ({
                         disabled
                     />
                 </div>
-                
+                { api.data?.rejected_reason &&
+                    <div className="col-span-2">
+                        <TextArea
+                            label="Reason for Rejecting"
+                            value={api.data?.rejected_reason ?? ""}
+                            disabled
+                        />
+                    </div>
+                }
             </Grid>
 
             { api.data?.status === "Confirmed" &&

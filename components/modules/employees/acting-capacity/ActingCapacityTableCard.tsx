@@ -115,7 +115,6 @@ const ActingCapacityTableCard = () => {
             path: "status",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
-                let status: "default" | "success" | "warning" | "danger" = "default";
                 let tableActions = actions;
 
                 if (data.status === "Pending") {
@@ -141,10 +140,13 @@ const ActingCapacityTableCard = () => {
                         actions[5],
                     ];
                 } else {
-                    return "—";
+                    tableActions =  [
+                        actions[0], 
+                    ];
                 }
 
                 return (
+
                     <ActionDropDown
                         data={data}
                         actions={tableActions}
