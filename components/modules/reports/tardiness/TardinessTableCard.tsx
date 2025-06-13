@@ -68,11 +68,6 @@ const TardinessTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Employee",
-            path: "employee.full_name",
-            columnType: COLUMNTYPES.string
-        },
-        {
             columnHead: "Employee Number",
             path: "employee.employee_number",
             columnType: COLUMNTYPES.function,
@@ -80,12 +75,18 @@ const TardinessTableCard = () => {
                 return (
                     <Link
                         href={`/employees/${data.employee.employee_number}`}
+                        target="_blank"
                         className="text-blue-700 underline"
                     >
                         {data.employee.employee_number}
                     </Link>
                 )
             }
+        },
+        {
+            columnHead: "Employee",
+            path: "employee.full_name",
+            columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Count",

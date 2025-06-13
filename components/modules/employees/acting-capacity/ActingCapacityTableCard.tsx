@@ -24,6 +24,7 @@ import GeneratePromotionConfirmationForm from "./GeneratePromotionConfirmationFo
 import ViewConfirmationDocumentModal from "./ViewConfirmationDocumentsModal";
 import RejectPromotionModal from "./RejectPromotionForm";
 import ConfirmPromotionModal from "./ConfirmPromotionModal";
+import Link from "next/link";
 
 const ActingCapacityTableCard = () => {
     const api = useApiCall();
@@ -65,9 +66,20 @@ const ActingCapacityTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Added Date",
-            path: "created_at",
-            columnType: COLUMNTYPES.timestamp
+            columnHead: "Employee Number",
+            path: "employee.employee_number",
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                return (
+                    <Link
+                        href={`/employees/${data.employee.employee_number}`}
+                        target="_blank"
+                        className="text-blue-700 underline"
+                    >
+                        {data.employee.employee_number}
+                    </Link>
+                )
+            }
         },
         {
             columnHead: "Employee Name",

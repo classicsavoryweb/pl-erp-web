@@ -82,7 +82,7 @@ const CreateRolesAndPermissionsForm = ({
                 createRole.resetForm();
             }}
             loading={modal.loading}
-            size="lg"
+            size="entireScreen"
         >
             <form onSubmit={createRole.handleSubmit}>
                 <Textfield
@@ -99,11 +99,11 @@ const CreateRolesAndPermissionsForm = ({
                 <p className="text-red-400">{createRole.errors.permissions}</p>
 
                 <Grid
-                    cols={2}
+                    cols={4}
                 >
                     { permissions.map((permission: any, key:number) => {
                         return (
-                            <div key={key} className={` ${ String(permission.name).includes("module") ? "col-span-2 pt-[5px]" : ""}`}>
+                            <div key={key} className={` ${ String(permission.name).includes("module") ? "col-span-4 pt-[5px]" : ""}`}>
                                 <Checkbox
                                     highlight={String(permission.name).includes("module")}
                                     label={permission.name}
@@ -129,8 +129,8 @@ const CreateRolesAndPermissionsForm = ({
                 </Grid>
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
-                <div className="flex justify-end">
-                    <div className="w-1/2 flex justify-end items-center gap-x-2">
+                <div className="flex justify-end gap-x-2">
+                    <div>
                         <Button
                             label="Cancel"
                             variant="secondary"
@@ -139,14 +139,15 @@ const CreateRolesAndPermissionsForm = ({
                                 createRole.resetForm();
                             }}
                         />
-
+                    </div>
+                    <div>
                         <Button
                             type="submit"
                             label="Submit"
                             loading={createRole.isSubmitting}
                             onClick={() => {}}
-                        />
-                    </div>              
+                        />           
+                    </div>
                 </div>
             </form>
         </Modal>

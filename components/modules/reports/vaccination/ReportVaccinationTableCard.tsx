@@ -56,6 +56,7 @@ const ReportVaccinationTableCard = () => {
                 return (
                     <Link
                         href={`/employees/${data.employee.employee_number}`}
+                        target="_blank"
                         className="text-blue-700 underline"
                     >
                         {data.employee.employee_number}
