@@ -13,7 +13,7 @@ const Sidebar = () => {
     const { permissions } = useContext(AuthContext);
 
     return (
-        <div className="relative mt-5 px-3">
+        <div className="relative mt-3 px-3">
             {routes.map((route, index) => {
                 const IconComponent = Icons[route.icon as keyof typeof Icons];
                 if (route.type === "link") {
