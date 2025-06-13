@@ -87,8 +87,13 @@ const ActingCapacityTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Branch",
-            path: "employee.current_branch.name",
+            columnHead: "Current Branch",
+            path: "branch.name",
+            columnType: COLUMNTYPES.string
+        },
+                {
+            columnHead: "Branch Assignment",
+            path: "branch_assignment.name",
             columnType: COLUMNTYPES.string
         },
         {
