@@ -92,7 +92,7 @@ const EditRolesAndPermissionsForm = ({
                 createRole.resetForm();
             }}
             loading={modal.loading}
-            size="xl"
+            size="entireScreen"
         >
             <form onSubmit={createRole.handleSubmit}>
                 <Textfield
@@ -110,11 +110,11 @@ const EditRolesAndPermissionsForm = ({
                 <p className="text-red-400">{createRole.errors.permissions}</p>
 
                 <Grid
-                    cols={2}
+                    cols={4}
                 >
                     { permissions.map((permission: any, key:number) => {
                         return (
-                            <div key={key} className={` ${ String(permission.name).includes("module") ? "col-span-2 pt-[5px]" : ""}`}>
+                            <div key={key} className={` ${ String(permission.name).includes("module") ? "col-span-4 pt-[5px]" : ""}`}>
                                 <Checkbox
                                     highlight={String(permission.name).includes("module")}
                                     label={permission.name}
