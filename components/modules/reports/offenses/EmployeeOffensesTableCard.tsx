@@ -9,8 +9,9 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
-import { getAllReportsOffenses } from "@/api/reports/reports-offenses";
+import { exportAllReportsOffenses, getAllReportsOffenses } from "@/api/reports/reports-offenses";
 import Link from "next/link";
+import moment from "moment";
 
 const EmployeeOffensesTableCard = () => {
     const api = useApiCall();
@@ -85,6 +86,10 @@ const EmployeeOffensesTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 hasDateRange
+                hasExport
+                api={exportAllReportsOffenses}
+                exportFileName={`EMPLOYEE-OFFENSES-${moment().format('YYYY-MM-DD')}.xls`}
+                exportPermission="can_export_all_records_offenses"
             />
             <Card>
                 <Table
