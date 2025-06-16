@@ -6,13 +6,14 @@ import Dropdown from "@/components/common/Dropdown";
 import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
-import ActiveInactiveDropDown from "../generic/ActiveInactiveDropDown";
 import * as Yup from "yup";
 import PositionDropDown from "../generic/PositionDropDown";
 import BranchDropDown from "../generic/BranchDropDown";
 import EmploymentStatusDropdown from "../generic/EmploymentStatusDropDown";
 import EmployeeTypeDropDown from "../generic/EmployeeTypeDropDown";
 import confirm from "@/components/common/Confirm";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthProvider";
 
 interface FilterInterface {
     hasDateRange?: boolean;
@@ -30,6 +31,7 @@ interface FilterInterface {
     api?: (values: any) => any;
     exportFileName?: string;
     statusOption?: {label: string, value: string}[];
+    exportPermission?: string;
 };
 const FilterCard = ({
     isExpanded = false,
@@ -55,9 +57,11 @@ const FilterCard = ({
             label: "Inactive",
             value: "inactive"
         }
-    ]
+    ],
+    exportPermission = "",
 }: FilterInterface) => {
 
+    const { permissions } = useContext(AuthContext);
     const formHandler = useFormik({
         initialValues: {
             key_word: '',
@@ -244,21 +248,25 @@ const FilterCard = ({
                                 variant="secondary"
                             />    
                         </div>
-
-                        { hasExport &&
-                            <div className="w-[100px]">
-                                <Button
-                                    label="Export"
-                                    type="button"
-                                    onClick={() => {
-                                        exportHandler.setValues({
-                                            ...formHandler.values
-                                        });
-                                        exportHandler.submitForm();
-                                    }}
-                                    variant="success"
-                                />    
-                            </div>
+                        
+                        { (exportPermission === "" || permissions.includes(exportPermission)) &&
+                            <>
+                                { hasExport &&
+                                    <div className="w-[100px]">
+                                        <Button
+                                            label="Export"
+                                            type="button"
+                                            onClick={() => {
+                                                exportHandler.setValues({
+                                                    ...formHandler.values
+                                                });
+                                                exportHandler.submitForm();
+                                            }}
+                                            variant="success"
+                                        />    
+                                    </div>
+                                }
+                            </>
                         }
                         <div className="w-[100px]">
                             <Button
