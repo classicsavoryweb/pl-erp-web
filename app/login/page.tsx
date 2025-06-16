@@ -8,6 +8,7 @@ const LoginPage = () => {
         <Guest>
             <div className="w-[400px]">
                 <Card>
+                    <p className="text-lg font-semibold text-red-800 text-center">{process.env.NEXT_PUBLIC_COMPANY}</p>
                     <div className="w-full flex justify-center p-7">
                         <Image
                             src="/images/classic-savory.png"
@@ -20,8 +21,8 @@ const LoginPage = () => {
                     <hr className="text-slate-300"/>
 
                     <div className="py-5">
-                        <p className="text-2xl font-semibold text-red-800">Welcome!</p>
-                        <p className="mt-[-5px]">Please sign in to continue.</p>
+                        <p className="text-lg font-semibold text-red-800">Welcome!</p>
+                        <p className="mt-[-5px] text-sm">Please sign in to continue.</p>
                     </div>
 
                     <LoginForm/>
