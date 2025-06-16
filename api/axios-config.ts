@@ -72,6 +72,13 @@ export const axiosHelper = async ({
     } 
     catch (err: any) {
         const { response } = err;
+        if (token && response.status === 401) {
+            Cookies.remove('authToken');
+            Cookies.remove('permissions');
+            Cookies.remove('userDetails');
+            window.location.href = "/login";
+        }
+
         if (response) {
             const errors = [502, 504, 500, 403, 409];
             if (errors.includes(response.status)) {
