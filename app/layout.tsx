@@ -19,7 +19,7 @@ export default function RootLayout({
 			<body>
 				<ToastContainer/>
 				<HolyLoader
-					color="#fefefe"
+					color="#fda4af"
 					height="3px"
 					speed={250}
 					easing="linear"
