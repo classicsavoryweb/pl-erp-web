@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import RolesDropDown from "../generic/RolesDropDown";
 import SearchEmployeeDropDown from "../generic/SearchEmployeeDropDown";
+import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
     modal: any;
@@ -41,23 +42,30 @@ const CreateUsersForm = ({
             confirm_password: Yup.string().required("Confirm password is required.")
                 .oneOf([Yup.ref('password')], "Passwords must match.")
         }),
-        onSubmit: (values, {resetForm, setSubmitting}) => {
-            setSubmitting(true);
-            createUser(values)
-            .then((resp) => {
-                if(!resp.error) {
-                    toast.success("User created successfully");
-                    onSubmitCallback();
-                    modal.onClose();
-                    resetForm();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally((() => {
-                setSubmitting(false);
-            }));
+        onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const isConfirmed = await confirm({
+                title: "Create User",
+                message: "Are you sure you want to save?"
+            });
+
+            if (isConfirmed) {
+                setSubmitting(true);
+                createUser(values)
+                .then((resp) => {
+                    if(!resp.error) {
+                        toast.success("User created successfully");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally((() => {
+                    setSubmitting(false);
+                }));
+            }
         }
     });
 

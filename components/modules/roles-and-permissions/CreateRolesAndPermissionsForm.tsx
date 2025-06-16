@@ -1,6 +1,7 @@
 import { getAllPermissions, updateOrCreateRolesAndPermissions } from "@/api/roles-and-permissions";
 import Button from "@/components/common/Button";
 import Checkbox from "@/components/common/Checkbox";
+import confirm from "@/components/common/Confirm";
 import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
@@ -50,26 +51,33 @@ const CreateRolesAndPermissionsForm = ({
             name: Yup.string().required("Role name is required."),
             permissions: Yup.array().min(1, "At least one permission is required.")
         }),
-        onSubmit: (values, {setSubmitting, resetForm}) => {
-            setSubmitting(true);
-
-            updateOrCreateRolesAndPermissions(values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success("Role and permissions saved successfully");
-                    onSubmitCallback();
-                    resetForm();
-                    modal.onClose();
-                } else {
-                    toast.error(resp.data.message);
-                }
-            })
-            .catch(() => {
-                toast.error("Error encountered");
-            })
-            .finally(() => {
-                setSubmitting(false);
+        onSubmit: async (values, {setSubmitting, resetForm}) => {
+            const isConfirmed = await confirm({
+                title: "Create Roles and Permissions",
+                message: "Are you sure you want to save?"
             });
+
+            if (isConfirmed) {                
+                setSubmitting(true);
+    
+                updateOrCreateRolesAndPermissions(values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success("Role and permissions saved successfully");
+                        onSubmitCallback();
+                        resetForm();
+                        modal.onClose();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                })
+                .catch(() => {
+                    toast.error("Error encountered");
+                })
+                .finally(() => {
+                    setSubmitting(false);
+                });
+            }
         }
     });
 
