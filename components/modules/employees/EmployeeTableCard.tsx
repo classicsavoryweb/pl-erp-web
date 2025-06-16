@@ -130,6 +130,7 @@ const EmployeeTableCard = () => {
                     },
 
                 ]}
+                exportPermission="can_export_employee_tracking"
             />
             <Card>
                 <Table
