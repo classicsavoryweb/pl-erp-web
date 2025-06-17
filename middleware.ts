@@ -4,7 +4,7 @@ import { PAGE_PERMISSION } from './constants/page-permissions';
 
 function convertToRegex(pathname: string): RegExp {
     const pattern = "^" + pathname
-        .replace(/\[.*?\]/g, "[^/]+") // replace [param] with wildcard
+        .replace(/\[.*?\]/g, "[^/]+")
         .replace(/\//g, "\\/") + "$";
     return new RegExp(pattern);
 }

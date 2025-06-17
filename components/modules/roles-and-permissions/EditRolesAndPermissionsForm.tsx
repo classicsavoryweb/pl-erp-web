@@ -146,11 +146,9 @@ const EditRolesAndPermissionsForm = ({
                     }                    
                 </Grid>
 
-
-
                 <hr className="mt-6 pb-2 text-slate-300"/>
-                <div className="flex justify-end">
-                    <div className="w-1/2 flex justify-end items-center gap-x-2">
+                <div className="flex justify-end gap-x-2">
+                    <div>
                         <Button
                             label="Cancel"
                             variant="secondary"
@@ -159,14 +157,15 @@ const EditRolesAndPermissionsForm = ({
                                 createRole.resetForm();
                             }}
                         />
-
+                    </div>
+                    <div>
                         <Button
                             type="submit"
                             label="Submit"
                             loading={createRole.isSubmitting}
                             onClick={() => {}}
-                        />
-                    </div>              
+                        />            
+                    </div>
                 </div>
             </form>
         </Modal>

@@ -7,12 +7,12 @@ import Sidebar from "./Sidebar";
 const Authenticated = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="w-full h-screen">
-            <div className="w-full bg-red-900 border-b border-slate-400/30 h-[9vh] max-h-[9vh] px-5 flex items-center justify-between shadow">
+            <div className="w-full bg-red-900 border-b border-slate-400/30 h-[8vh] max-h-[8vh] px-5 flex items-center justify-between shadow">
                 <div className="flex justify-start items-center gap-x-3">
                     <Image
                         alt="classic savory logo"
                         src="/images/classic-savory.png"
-                        width={120}
+                        width={150}
                         height={100}
                         className="invert brightness-0"
                     />
@@ -20,8 +20,8 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                 </div>
                 <Header />
             </div>
-            <div className="flex h-[91vh]">
-                <div className="overflow-auto pb-5 shadow bg-zinc-50 min-w-[260px] max-w-[260px]">
+            <div className="flex h-[92vh]">
+                <div className="overflow-auto pb-5 shadow bg-zinc-50 min-w-[250px] max-w-[250px]">
                     <Sidebar />
                 </div>
                 <div className="flex-1 overflow-auto pb-7 shadow w-full p-5">

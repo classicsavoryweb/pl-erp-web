@@ -133,13 +133,25 @@ const Table = ({
                                                         className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm max-w-[400px]`}
                                                     >
                                                         { settings.columnType === COLUMNTYPES.string &&
-                                                           columnData
+                                                            columnData
                                                         }
-                                                        { settings.columnType === COLUMNTYPES.timestamp &&
-                                                           moment(columnData).format("MMMM DD, YYYY HH:mm:ss A")
+                                                        { (settings.columnType === COLUMNTYPES.timestamp) &&
+                                                            <>
+                                                                {
+                                                                    columnData === "—" 
+                                                                    ? "—" 
+                                                                    : moment(columnData).format("MMMM DD, YYYY HH:mm:ss A")
+                                                                }
+                                                            </>
                                                         }
-                                                        { settings.columnType === COLUMNTYPES.date &&
-                                                           moment(columnData).format("MMMM DD, YYYY")
+                                                        { (settings.columnType === COLUMNTYPES.date) &&
+                                                            <>
+                                                                {
+                                                                    columnData === "—" 
+                                                                    ? "—" 
+                                                                    : moment(columnData).format("MMMM DD, YYYY")     
+                                                                }
+                                                            </>
                                                         }
                                                         { settings.columnType === COLUMNTYPES.function &&
                                                             settings.function && settings.function(data)
