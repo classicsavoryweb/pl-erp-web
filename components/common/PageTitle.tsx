@@ -8,7 +8,7 @@ const PageTitle = ({
 }: TitleInterface) => {
     return (
         <>
-            <p className="text-lg font-semibold text-gray-500 pb-3">
+            <p className="text-lg font-semibold text-gray-500 pb-2">
                 {title}
             </p>
         </>
