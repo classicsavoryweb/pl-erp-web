@@ -98,6 +98,7 @@ const OffensesTableCard = () => {
                 hasExport
                 api={exportAllOffenses}
                 exportFileName={`OFFENSES-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="description"
             />
             <Card>
                 <p className="text-red-800 font-semibold">Offenses</p>

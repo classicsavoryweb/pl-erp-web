@@ -122,7 +122,6 @@ const CreateActingCapacityForm = ({
                             placeholder="select employee"
                             name="employee"
                             onChange={(e) => {
-                                console.log(e.target.value);
                                 setEmployee(e.target.value);
                                 formHandler.setFieldValue("branch_assignment_id", e.target.value.branch_id);
                                 formHandler.setFieldValue("employee_number", e.target.value.employee_number);

@@ -99,6 +99,7 @@ const PositionsTableCard = () => {
                 hasExport
                 api={exportAllPositions}
                 exportFileName={`POSITIONS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="description"
             />
             <Card>
                 <div className="flex justify-end items-center">

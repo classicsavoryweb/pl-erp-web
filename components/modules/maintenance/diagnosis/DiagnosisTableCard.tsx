@@ -86,6 +86,7 @@ const DiagnosisTableCard = () => {
                 hasExport
                 api={exportAllDiagnosis}
                 exportFileName={`DIAGNOSIS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="description"
             />
             <Card>
                 <div className="flex justify-end items-center">

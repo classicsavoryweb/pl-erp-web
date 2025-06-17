@@ -92,6 +92,7 @@ const StationTableCard = () => {
                 hasExport
                 api={exportAllStations}
                 exportFileName={`STATIONS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="name"
             />
             <Card>
                 <div className="flex justify-end items-center">

@@ -85,6 +85,7 @@ const ActingCapacityReasonsTableCard = () => {
                 hasExport
                 api={exportAllActingCapacityReasons}
                 exportFileName={`ACTING-CAPACITY-REASON-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="reason"
             />
             <Card>
                 <div className="flex justify-end items-center">

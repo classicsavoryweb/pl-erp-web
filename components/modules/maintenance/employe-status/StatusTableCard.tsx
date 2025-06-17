@@ -92,6 +92,7 @@ const EmployeeStatusCard = () => {
                 hasExport
                 api={exportAllStatus}
                 exportFileName={`EMPLOYEE-STATUS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="description"
             />
             <Card>
                 <div className="flex justify-end items-center">

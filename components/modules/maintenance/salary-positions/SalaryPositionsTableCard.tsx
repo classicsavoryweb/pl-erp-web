@@ -97,6 +97,7 @@ const SalaryPositionsTableCard = () => {
                 hasExport
                 api={exportAllSalaryPositions}
                 exportFileName={`SALARY-POSITIONS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="position.description"
             />
             <Card>
                 <div className="flex justify-end items-center">

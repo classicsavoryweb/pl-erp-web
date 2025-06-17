@@ -85,6 +85,7 @@ const VaccineBrandTableCard = () => {
                 hasExport
                 api={exportAllVaccines}
                 exportFileName={`VACCINE-BRANDS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="description"
             />
             <Card>
                 <div className="flex justify-end items-center">

@@ -120,6 +120,7 @@ const BranchesTableCard = () => {
                 hasExport
                 api={exportAllBranches}
                 exportFileName={`BRANCHES-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="name"
             />
             <Card>
                 <div className="flex justify-end items-center">

@@ -105,6 +105,7 @@ const TrainingTitlesTableCard = () => {
                 hasExport
                 api={exportAllTrainingTitles}
                 exportFileName={`TRAINING-TITLES-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="title"
             />
             <Card>
                 <div className="flex justify-end items-center">

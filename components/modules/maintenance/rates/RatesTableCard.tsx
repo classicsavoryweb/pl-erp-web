@@ -98,6 +98,7 @@ const RatesTableCard = () => {
                 hasExport
                 api={exportAllRates}
                 exportFileName={`RATE-PER-GROUP-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="code"
             />
             <Card>
                 <div className="flex justify-end items-center">

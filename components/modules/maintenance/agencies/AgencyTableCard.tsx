@@ -98,6 +98,7 @@ const AgencyTableCard = () => {
                 hasExport
                 api={exportAllAgencies}
                 exportFileName={`AGENCIES-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="name"
             />
             <Card>
                 <div className="flex justify-end items-center">

@@ -91,6 +91,7 @@ const BankAccountTypeCard = () => {
                 hasExport
                 api={exportAllBankAccountTypes}
                 exportFileName={`BANK-ACCOUNT-TYPES-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="description"
             />
             <Card>
                 <div className="flex justify-end items-center">

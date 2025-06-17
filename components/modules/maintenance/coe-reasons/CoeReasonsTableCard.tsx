@@ -87,6 +87,7 @@ const CoeReasonsTableCard = () => {
                 hasExport
                 api={exportAllCoeReasons}
                 exportFileName={`COE-REASONS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="reason"
             />
             <Card>
                 <div className="flex justify-end items-center">
