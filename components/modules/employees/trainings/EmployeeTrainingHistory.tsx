@@ -66,7 +66,7 @@ const EmployeeTraingingHistory = () => {
         {
             columnHead: "Date",
             path: "date",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Score",

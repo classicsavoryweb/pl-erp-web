@@ -77,7 +77,7 @@ const ReportCoeRequestsTableCard = () => {
         {
             columnHead: "Date Requested",
             path: "date_requested",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.timestamp
         },
         {
             columnHead: "COE Purpose",

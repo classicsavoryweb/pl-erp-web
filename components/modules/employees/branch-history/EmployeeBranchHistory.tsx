@@ -65,7 +65,7 @@ const EmployeeBranchHistory = () => {
         {
             columnHead: "Date Assigned",
             path: "date_assigned",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Action",

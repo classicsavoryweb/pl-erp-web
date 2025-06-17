@@ -68,7 +68,7 @@ const EmployeeTableCard = () => {
         {
             columnHead: "Date Hired",
             path: "date_hired",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Status",

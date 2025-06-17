@@ -66,7 +66,7 @@ const EmployeeOffensesTableCard = () => {
         {
             columnHead: "Date Committed",
             path: "date_committed",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Offense Category",

@@ -136,7 +136,10 @@ const Table = ({
                                                            columnData
                                                         }
                                                         { settings.columnType === COLUMNTYPES.timestamp &&
-                                                           moment(columnData).format("YYYY-MM-DD HH:mm:ss A")
+                                                           moment(columnData).format("MMMM DD, YYYY HH:mm:ss A")
+                                                        }
+                                                        { settings.columnType === COLUMNTYPES.date &&
+                                                           moment(columnData).format("MMMM DD, YYYY")
                                                         }
                                                         { settings.columnType === COLUMNTYPES.function &&
                                                             settings.function && settings.function(data)

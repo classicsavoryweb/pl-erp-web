@@ -58,7 +58,7 @@ const EmployeePositionHistory = () => {
         {
             columnHead: "Date Started",
             path: "date_started",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "OIC",
@@ -68,7 +68,7 @@ const EmployeePositionHistory = () => {
         {
             columnHead: "Date Appointed",
             path: "date_appointed",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Remarks",

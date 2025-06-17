@@ -61,7 +61,7 @@ const EmployeeVaccinationHistory = () => {
         {
             columnHead: "Date",
             path: "date",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Status",

@@ -40,7 +40,7 @@ const ActingCapacityOffenseTable = ({
         {
             columnHead: "Date Committed",
             path: "date_committed",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Category",
