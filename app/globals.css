@@ -8,6 +8,11 @@ body {
     font-size: 14px;
 }
 
+.Toastify__toast {
+    font-size: 14px;
+    font-family: "Poppins", sans-serif;
+}
+
 .Toastify__toast--success .Toastify__progress-bar {
     background: #166534;
 }
