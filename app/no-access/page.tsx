@@ -20,7 +20,11 @@ const Page = () => {
                 <Button
                     label="Go back"
                     onClick={() => {
-                        router.back();
+                        if(window.history.length > 1) {
+                            router.back();
+                        } else {
+                            router.push("/");
+                        }
                     }}
                 />
             </div>
