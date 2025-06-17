@@ -23,5 +23,5 @@ export const getTenure = (dateHired: string, separationDate?:string) => {
   
     const days = date.diff(hired, 'days');
   
-    return `${years} years, ${months} months, ${days} days`;
+    return `${years} ${Number(years) > 1 ? "years" : "year"}, ${months} ${Number(months) > 1 ? "months" : "month"}, ${days} ${Number(days) > 1 ? "days" : "day"}`;
 };
