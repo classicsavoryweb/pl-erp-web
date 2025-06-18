@@ -75,6 +75,11 @@ const EmployeeOffenseHistory = () => {
             path: "repetition",
             columnType: COLUMNTYPES.string
         },
+        {
+            columnHead: "Offense Action Status",
+            path: "offense_action",
+            columnType: COLUMNTYPES.string
+        },
     ];
 
     const actionSettings = [

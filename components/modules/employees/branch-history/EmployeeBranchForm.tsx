@@ -43,10 +43,17 @@ const EmployeeBranchForm = ({
             branch_id: Yup.string().required("Branch is required."),
             date_assigned: Yup.date()
             .required("Date assigned is required.")
-            .when([], {
-                is: () => String(action) === 'add',
-                then: schema => schema.min(moment().startOf('day').toDate(), 'Date must be today or later.'),
-                otherwise: schema => schema,
+            .test(
+            'future-date',
+            `Date assigned date must be after ${data.date_assigned}`,
+            function (value) {
+                if (!value || !data.date_assigned) return true;
+
+                if (action === "edit") {
+                    return true;
+                }
+
+                return moment(value).isAfter(moment(data.date_assigned));
             }),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {

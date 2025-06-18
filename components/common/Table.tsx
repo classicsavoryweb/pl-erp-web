@@ -46,6 +46,7 @@ const Table = ({
 
     const currentPage = paginator && paginator.paginationData.current_page;
     const totalPages = paginator && paginator.paginationData.last_page;
+    moment.locale('eng');
 
     const getCustomLinks = () => {
         let pages: (string | number)[] = [];

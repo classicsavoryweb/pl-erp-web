@@ -120,6 +120,7 @@ const EmployeeBranchHistory = () => {
                                 onClick: () => {
                                     setAction("add");
                                     modal.onOpen();
+                                    setData(api.dataSet[0]);
                                 }
                             },
                             {
