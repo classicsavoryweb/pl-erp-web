@@ -112,6 +112,20 @@ const ConfirmPromotionModal = ({
 
                     return (
                         <Grid cols={2} key={id}>
+                            { id > 0 &&
+                                <div className="flex pt-2 mb-[-5px] justify-end col-span-2">
+                                    <p
+                                        className="hover:text-gray-800 text-sm hover:cursor-pointer"
+                                        onClick={() => {
+                                            const updatedAttachments = [...formHandler.values.attachments];
+                                            updatedAttachments.splice(id, 1);
+                                            formHandler.setFieldValue("attachments", updatedAttachments);
+                                        }}
+                                    >
+                                        Remove
+                                    </p>
+                                </div>
+                            }
                             <Textfield
                                 label="File Type"
                                 name={`attachments[${id}].file_type`}
