@@ -32,6 +32,7 @@ interface FilterInterface {
     exportFileName?: string;
     statusOption?: {label: string, value: string}[];
     exportPermission?: string;
+    callBack?: () => void;
 };
 const FilterCard = ({
     isExpanded = false,
@@ -59,6 +60,7 @@ const FilterCard = ({
         }
     ],
     exportPermission = "",
+    callBack
 }: FilterInterface) => {
 
     const { permissions } = useContext(AuthContext);
@@ -91,6 +93,7 @@ const FilterCard = ({
             status: Yup.string()
         }),
         onSubmit: (values) => {
+            callBack && callBack();
             filterHandler.setFilters(values);
             filterHandler.onReload();
         }

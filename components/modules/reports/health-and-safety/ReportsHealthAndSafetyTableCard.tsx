@@ -97,6 +97,9 @@ const ReportsHealthAndSafetyTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 hasDateRange
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <Table

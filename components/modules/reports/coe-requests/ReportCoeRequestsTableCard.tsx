@@ -203,6 +203,9 @@ const ReportCoeRequestsTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 hasDateRange
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <CreateReportCoeRequestForm
                 modal={createModal}

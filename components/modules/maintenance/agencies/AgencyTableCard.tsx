@@ -99,6 +99,9 @@ const AgencyTableCard = () => {
                 api={exportAllAgencies}
                 exportFileName={`AGENCIES-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="name"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end items-center">

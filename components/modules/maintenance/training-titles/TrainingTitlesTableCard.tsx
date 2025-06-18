@@ -106,6 +106,9 @@ const TrainingTitlesTableCard = () => {
                 api={exportAllTrainingTitles}
                 exportFileName={`TRAINING-TITLES-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="title"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end items-center">

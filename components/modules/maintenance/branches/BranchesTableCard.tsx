@@ -121,6 +121,9 @@ const BranchesTableCard = () => {
                 api={exportAllBranches}
                 exportFileName={`BRANCHES-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="name"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end items-center">

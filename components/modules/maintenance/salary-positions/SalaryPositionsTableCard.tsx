@@ -98,6 +98,9 @@ const SalaryPositionsTableCard = () => {
                 api={exportAllSalaryPositions}
                 exportFileName={`SALARY-POSITIONS-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="position.description"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end items-center">

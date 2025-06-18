@@ -356,6 +356,9 @@ const TardinessTableCard = () => {
                         value: "Voided"
                     },
                 ]}
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
                 // hasExport
                 // api={exportReportTardiness}
                 // exportFileName={`TARDINESS-${moment().format('YYYY-MM-DD')}.xls`}

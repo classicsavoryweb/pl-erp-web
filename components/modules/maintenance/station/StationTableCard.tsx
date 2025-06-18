@@ -93,6 +93,9 @@ const StationTableCard = () => {
                 api={exportAllStations}
                 exportFileName={`STATIONS-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="name"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end items-center">

@@ -99,6 +99,9 @@ const RatesTableCard = () => {
                 api={exportAllRates}
                 exportFileName={`RATE-PER-GROUP-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="code"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end items-center">

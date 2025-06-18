@@ -131,6 +131,9 @@ const EmployeeTableCard = () => {
 
                 ]}
                 exportPermission="can_export_employee_tracking"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <Table

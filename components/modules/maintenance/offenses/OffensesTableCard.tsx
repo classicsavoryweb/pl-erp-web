@@ -99,6 +99,9 @@ const OffensesTableCard = () => {
                 api={exportAllOffenses}
                 exportFileName={`OFFENSES-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="description"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <p className="text-red-800 font-semibold">Offenses</p>

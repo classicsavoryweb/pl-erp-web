@@ -268,6 +268,9 @@ const ActingCapacityTableCard = () => {
                 defaultColumnSelected="employee.full_name"
                 exportFileName={`ACTING-CAPACITY-${moment().format("YYYY-MM-DD")}.xls`}
                 exportPermission="can_export_acting_capacity"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end items-center">

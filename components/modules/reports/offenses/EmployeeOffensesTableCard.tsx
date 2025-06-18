@@ -90,6 +90,9 @@ const EmployeeOffensesTableCard = () => {
                 api={exportAllReportsOffenses}
                 exportFileName={`EMPLOYEE-OFFENSES-${moment().format('YYYY-MM-DD')}.xls`}
                 exportPermission="can_export_all_records_offenses"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <Table

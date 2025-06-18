@@ -100,6 +100,9 @@ const PositionsTableCard = () => {
                 api={exportAllPositions}
                 exportFileName={`POSITIONS-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="description"
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end items-center">
