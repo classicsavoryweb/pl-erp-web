@@ -359,6 +359,7 @@ const TardinessTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
+                withBranch
                 // hasExport
                 // api={exportReportTardiness}
                 // exportFileName={`TARDINESS-${moment().format('YYYY-MM-DD')}.xls`}
