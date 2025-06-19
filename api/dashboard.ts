@@ -19,3 +19,13 @@ export const getEmployeeBirthMonth = async (payload?: {}) => {
 
     return resData;
 };
+
+export const getEmployeeExpiringContracts = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-employees-expiring-contracts',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};

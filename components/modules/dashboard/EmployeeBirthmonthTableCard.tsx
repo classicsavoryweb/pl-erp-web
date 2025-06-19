@@ -40,34 +40,13 @@ const EmployeeBirthmonthTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Employee Number",
-            path: "employee_number",
-            columnType: COLUMNTYPES.function,
-            function: (data: any) => {
-                return (
-                    <Link
-                        href={`/employees/${data.employee_number}`}
-                        target="_blank"
-                        className="text-blue-700 underline"
-                    >
-                        {data.employee_number}
-                    </Link>
-                )
-            }
-        },
-        {
             columnHead: "Full Name",
             path: "full_name",
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Position",
-            path: "current_position.description",
-            columnType: COLUMNTYPES.string
-        },
-        {
             columnHead: "Branch",
-            path: "current_branch.name",
+            path: "current_branch.short_name",
             columnType: COLUMNTYPES.string
         },
         {
@@ -83,11 +62,6 @@ const EmployeeBirthmonthTableCard = () => {
                 return moment(data.birthday).format("MMMM DD");
             }
         },
-        {
-            columnHead: "Status",
-            path: "status",
-            columnType: COLUMNTYPES.status,
-        }
     ];
 
     return (
