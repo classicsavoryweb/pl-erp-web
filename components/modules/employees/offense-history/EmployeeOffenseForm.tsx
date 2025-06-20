@@ -231,19 +231,17 @@ const EmployeeOffenseForm = ({
                 onChange={formHandler.handleChange}
                 required
             />
-            { action === "edit" &&
-                <Textfield
-                    type="file"
-                    label="Attachment"
-                    name="attachment"
-                    onChange={(event) => {
-                        const file = event.target.files?.[0];
-                        if (file) {
-                            formHandler.setFieldValue("attachment", file);
-                        }
-                    }}
-                />
-            }
+            <Textfield
+                type="file"
+                label="Attachment"
+                name="attachment"
+                onChange={(event) => {
+                    const file = event.target.files?.[0];
+                    if (file) {
+                        formHandler.setFieldValue("attachment", file);
+                    }
+                }}
+            />
             { formHandler.values.attachment &&
                 <a
                     href={`${formHandler.values.attached_file}`}

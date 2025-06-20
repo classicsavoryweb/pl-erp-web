@@ -16,6 +16,7 @@ import { updateEmployee } from "@/api/employee";
 import { toast } from "react-toastify";
 import confirm from "@/components/common/Confirm";
 import { useRouter } from "next/navigation";
+import * as Yup from "yup";
 
 const EditEmployeeFormCard = () => {
 
@@ -49,6 +50,9 @@ const EditEmployeeFormCard = () => {
             referred_by: "",
             remarks: "",
             date_hired: "",
+            regularization_date: "",
+            separation_reason: "",
+            separation_date: "",
             type: "",
             emergency_contact_name: "",
             emergency_contact_number: "",
@@ -88,6 +92,25 @@ const EditEmployeeFormCard = () => {
             contracts: []
         },
         validateOnChange: false,
+        validationSchema: Yup.object().shape({
+            employee_status_id: Yup.string(),
+            status: Yup.string(),
+            regularization_date: Yup.string().when('employee_status_id', (status, schema) => 
+                Number(status) === 2
+                    ? schema.required('Regularization date is required')
+                    : schema.notRequired()
+            ),
+            separation_reason: Yup.string().when('status', (status, schema) => 
+                String(status) === "inactive"
+                    ? schema.required('Separation reason is required')
+                    : schema.notRequired()
+            ),
+            separation_date: Yup.string().when('status', (status, schema) => 
+                String(status) === "inactive"
+                    ? schema.required('Date separated is required')
+                    : schema.notRequired()
+            ),
+        }),
         onSubmit:async (values, {setSubmitting}) => {
             const isConfirmed = await confirm({
                 title: "Edit Employee Details",

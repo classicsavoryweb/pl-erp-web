@@ -209,7 +209,10 @@ export const addEmployeeOffense = async ( employeeNumber: string, payload: {}) =
     const resData = await axiosHelper({
         func_path: `/add-employee-offense/${employeeNumber}`,
         method: 'POST',
-        payload: payload
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
     });
 
     return resData;

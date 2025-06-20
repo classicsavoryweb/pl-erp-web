@@ -94,6 +94,7 @@ const EditEmploymentDetails = ({
                     name="regularization_date"
                     value={formHandler.values.regularization_date || ""}
                     disabled={formHandler.values.employee_status_id != 2}
+                    error={formHandler.errors.regularization_date?.toString() || ""}
                 />
                 <ActiveInactiveDropDown
                     onChange={formHandler.handleChange}
@@ -112,6 +113,7 @@ const EditEmploymentDetails = ({
                             value={formHandler.values.separation_reason || ""}
                             placeholder='select employee status'
                             type="inactive"
+                            error={formHandler.errors.separation_reason?.toString() || ""}
                         />
 
                         <Textfield
@@ -120,6 +122,7 @@ const EditEmploymentDetails = ({
                             label='Separation Date'
                             name="separation_date"
                             value={formHandler.values.separation_date || ""}
+                            error={formHandler.errors.separation_date?.toString() ||  ""}
                         />
                     </>
                 }
