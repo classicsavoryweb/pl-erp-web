@@ -5,7 +5,7 @@ const Page = () => {
     return (
         <>
             <PageTitle
-                title="Employment Status"
+                title="Employment Status Report"
             />
             <EmploymentStatusTableCard/>
         </>
