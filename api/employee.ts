@@ -410,3 +410,24 @@ export const exportEmployeeOffensesHistory = async (id: string) => {
     return resData;
 };
 
+export const getRequirementAttachment = async (employee_number: string) => {
+    const resData = await axiosHelper({
+        func_path: `/get-requirements-attachments/${employee_number}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
+export const addRequirementAttachment = async (employee_number: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/upload-requirements-attachments/${employee_number}`,
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+
+    return resData;
+};

@@ -4,18 +4,24 @@ import { getEmployeeRequirements, updateOrCreateEmployeeRequirements } from "@/a
 import Button from "@/components/common/Button";
 import Checkbox from "@/components/common/Checkbox";
 import confirm from "@/components/common/Confirm";
+import DropDownButtons from "@/components/common/DropDownButtons";
 import Grid from "@/components/common/Grid";
 import TableLoader from "@/components/common/TableLoader";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { useModal } from "@/hooks/modal";
 import { useFormik } from "formik";
 import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
+import AddRequirementAttachmentModal from "./AddRequirementAttachmentModal";
+import ViewRequirementsAttachmentModal from "./ViewRequirementAttachmentModal";
 
 const EmployeeRequirementsList = () => {
     const params = useParams();
     const employeeNumber = params["employee-number"];
     const api = useApiCall();
+    const createModal = useModal();
+    const viewModal = useModal();
 
     const handler = useFormik({
         initialValues: {
@@ -85,6 +91,26 @@ const EmployeeRequirementsList = () => {
                 <TableLoader/>
                 :
                 <>
+                    <div className="flex justify-end">
+                        <div>
+                            <DropDownButtons
+                                actions={[
+                                    {
+                                        label: "Upload Files",
+                                        onClick: () => {
+                                            createModal.onOpen();
+                                        }
+                                    },
+                                    {
+                                        label: "View Files",
+                                        onClick: () => {
+                                            viewModal.onOpen();
+                                        }
+                                    },
+                                ]}
+                            />
+                        </div>
+                    </div>
                     <form onSubmit={handler.handleSubmit}>
                         <Grid cols={2}>
                             <Checkbox
@@ -366,6 +392,17 @@ const EmployeeRequirementsList = () => {
                             </div>
                         </div>
                     </form>
+
+                    <AddRequirementAttachmentModal
+                        modal={createModal}
+                        onSubmitCallBack={() => {
+                            createModal.onClose();
+                        }}
+                    />
+
+                    <ViewRequirementsAttachmentModal
+                        modal={viewModal}
+                    />
                 </>
             }
         </>

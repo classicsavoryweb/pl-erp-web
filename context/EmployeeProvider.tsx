@@ -10,6 +10,7 @@ interface EmployeeContextType {
     employee: {
         id: string,
         employee_number: string,
+        employee_number_2: string,
         biometric_number: string,
         image: string,
         first_name: string,
@@ -70,6 +71,7 @@ interface EmployeeContextType {
 const EmployeeInitialValue = {
     id: "",
     employee_number: "",
+    employee_number_2: "",
     biometric_number: "",
     image: "",
     first_name: "",

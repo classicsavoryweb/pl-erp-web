@@ -93,6 +93,10 @@ const EmployeeDetailsCard = () => {
                                     />
                                 </>
                             }
+                            <EmployeeBasicInfo
+                                label="2nd Employee Number"
+                                detail={employee.employee_number_2}
+                            />
                     </div>
 
                     <hr className=" text-slate-300" />
@@ -245,7 +249,7 @@ const EmployeeDetailsCard = () => {
                         <Card
                             loading={loading}
                         >
-                            <p className="font-semibold text-red-800">Education:</p>
+                            <p className="font-semibold text-red-800">Education</p>
                             { employee.education && employee.education?.college &&
                                 <>
                                     <EmployeeBasicInfo

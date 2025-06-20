@@ -5,6 +5,7 @@ export const useApiCall = () => {
     const [data, setData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(true);
     const [reload, setReload] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
 
     const triggerReload = () => {
         setReload(prev => !prev);
@@ -17,6 +18,8 @@ export const useApiCall = () => {
         reload,
         triggerReload,
         data,
-        setData
+        setData,
+        setError,
+        error
     };
 };
