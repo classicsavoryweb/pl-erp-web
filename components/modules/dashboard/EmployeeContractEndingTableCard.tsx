@@ -57,22 +57,22 @@ const EmployeeContractEndingTableCard = () => {
         },
         {
             columnHead: "Full Name",
-            path: "full_name",
+            path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Branch",
-            path: "current_branch.short_name",
+            path: "employee.current_branch.short_name",
             columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Position",
-            path: "current_position.description",
+            path: "employee.current_position.description",
             columnType: COLUMNTYPES.string
         },
                 {
             columnHead: "Contract End Date",
-            path: "latest_contract.contract_end_date",
+            path: "contract_end_date",
             columnType: COLUMNTYPES.date
         },
     ];
