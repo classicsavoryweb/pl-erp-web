@@ -8,10 +8,15 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { getAllActivityLogs } from "@/api/activity-logs";
+import { useState } from "react";
+import { useModal } from "@/hooks/modal";
+import Modal from "@/components/common/Modal";
 
 const ActivityLogsTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
+    const [data, setData] = useState<any>({});
+    const modal = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -59,6 +64,16 @@ const ActivityLogsTableCard = () => {
         },
     ];
 
+    const actions = [
+        {
+            label: "View",
+            onClick: (data: any) => {
+                setData(data.properties);
+                modal.onOpen();
+            }
+        }
+    ];
+
     return (
         <>
             <Card>
@@ -67,8 +82,35 @@ const ActivityLogsTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
+                    withActions
+                    actions={actions}
                 />
             </Card>
+
+            <Modal
+                isShowing={modal.isShowing}
+                onClose={modal.onClose}
+                title="Properties"
+                size="xl"
+            >    
+                { data.old &&
+                    <div>
+                        <p>Old Data:</p>
+                        <pre className="text-[12px]">
+                            {JSON.stringify(data.old, null, 2)}
+                        </pre>
+                    </div>
+                }
+                { data.attributes &&
+                    <div>
+                        <p>{data.old ? "New Data" : "Data:"}</p>
+                        <pre className="text-[12px]">
+                            {JSON.stringify(data.attributes, null, 2)}
+                        </pre>
+                    </div>
+
+                }
+            </Modal>
         </>
     );
 };
