@@ -137,7 +137,12 @@ const EmployeePositionForm = ({
                 ]}
                 value={formHandler.values.oic_assignment || ""}
                 error={formHandler.errors.oic_assignment}
-                onChange={formHandler.handleChange}
+                onChange={(e) => {
+                    formHandler.handleChange(e);
+                    if (e.target.value === "No") {
+                        formHandler.setFieldValue("date_appointed", "");
+                    }
+                }}
             />
             <Textfield
                 type="date"
