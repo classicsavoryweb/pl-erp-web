@@ -69,7 +69,7 @@ const ViewActingCapacity = ({
                 />
 
                 <Textfield
-                    label="Branch"
+                    label="Current Branch"
                     value={api.data?.branch?.name}
                     disabled={true}
                 />

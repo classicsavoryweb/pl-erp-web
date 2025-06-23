@@ -116,7 +116,7 @@ const GeneratePromotionConfirmationForm = ({
                 />
 
                 <Textfield
-                    label="Branch"
+                    label="Current Branch"
                     value={api.data?.branch?.name}
                     disabled={true}
                 />
@@ -151,6 +151,11 @@ const GeneratePromotionConfirmationForm = ({
                 <Textfield
                     label="Period"
                     value={api.data?.period}
+                    disabled={true}
+                />
+                <Textfield
+                    label="Branch Assignment"
+                    value={api.data?.branch_assignment?.name}
                     disabled={true}
                 />
                 <div className="col-span-2">
