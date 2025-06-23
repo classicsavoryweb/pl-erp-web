@@ -80,6 +80,20 @@ const EmployeeOffenseHistory = () => {
             path: "offense_action",
             columnType: COLUMNTYPES.string
         },
+        {
+            columnHead: "Voided",
+            path: "voided",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let status = "—";
+
+                if (data.voided == "Yes") {
+                    status = data.voided;
+                }
+
+                return status;
+            }
+        },
     ];
 
     const actionSettings = [
@@ -102,7 +116,10 @@ const EmployeeOffenseHistory = () => {
                     remarks : data.remarks,
                     attachment : data.attachment,
                     attachment_file_name : data.attachment_file_name,
-                    attached_file: data.attached_file
+                    attached_file: data.attached_file,
+                    voided: data.voided,
+                    void_reason: data.void_reason,
+                    tardiness_id: data.tardiness_id,
                 });
                 modal.onOpen();
             }

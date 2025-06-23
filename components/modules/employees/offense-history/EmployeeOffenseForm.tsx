@@ -37,6 +37,7 @@ const EmployeeOffenseForm = ({
     const formHandler = useFormik({
         initialValues: {
             id: "",
+            tardiness_id: "",
             offense_id : "",
             sanction_id : "",
             transgression : "",
@@ -51,6 +52,8 @@ const EmployeeOffenseForm = ({
             attachment : "",
             attachment_file_name : "",
             attached_file : "",
+            voided: "No",
+            void_reason: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -65,6 +68,12 @@ const EmployeeOffenseForm = ({
             suspension_dates : Yup.string().required("Suspension dates is required."),
             date_served_da : Yup.string().required("Date served of DA is required."),
             remarks : Yup.string().required("Remarks is required."),
+            voided: Yup.string(),
+            void_reason: Yup.string().when('voided', (voided, schema) =>
+                String(voided) === "Yes"
+                    ? schema.required('Void reason is required')
+                    : schema.notRequired()
+            )
         }),
         onSubmit:async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -231,6 +240,47 @@ const EmployeeOffenseForm = ({
                 onChange={formHandler.handleChange}
                 required
             />
+
+            { action === "edit" && !formHandler.values.tardiness_id &&
+                <>
+                    <Dropdown
+                        label="Void"
+                        required
+                        name="voided"
+                        placeholder="select option"
+                        value={formHandler.values.voided}
+                        options={[
+                            {
+                                label: "Yes",
+                                value: "Yes"
+                            },
+                            {
+                                label: "No",
+                                value: "No"
+                            },
+                        ]}
+                        onChange={(e) => {
+                            formHandler.handleChange(e);
+                            if (e.target.value === "No") {
+                                formHandler.setFieldValue("voided_reason", "");
+                            }
+                        }}
+                    />
+
+                    {  formHandler.values.voided === "Yes" &&
+                        <TextArea
+                            label="Void Reason"
+                            required
+                            name="void_reason"
+                            placeholder="enter reason for voiding"
+                            onChange={formHandler.handleChange}
+                            value={formHandler.values.void_reason || ""}
+                            error={formHandler.errors.void_reason}
+                        />
+                    }
+                </>
+            }
+
             <Textfield
                 type="file"
                 label="Attachment"
@@ -242,6 +292,7 @@ const EmployeeOffenseForm = ({
                     }
                 }}
             />
+
             { formHandler.values.attachment &&
                 <a
                     href={`${formHandler.values.attached_file}`}
