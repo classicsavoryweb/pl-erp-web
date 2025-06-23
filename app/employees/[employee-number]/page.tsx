@@ -11,14 +11,18 @@ import EmployeeRequirementsList from "@/components/modules/employees/requirement
 import EmployeeTraingingHistory from "@/components/modules/employees/trainings/EmployeeTrainingHistory";
 import EmployeeVaccinationHistory from "@/components/modules/employees/vaccinnation/EmployeeVaccinationHistory";
 import { AuthContext } from "@/context/AuthProvider";
+import { useParams } from "next/navigation";
 import { useContext } from "react";
 
 const Page = () => {
 
     const { permissions } = useContext(AuthContext);
+    const params = useParams();
+    const employeeNumber = params["employee-number"];
 
     return (
         <>
+            <title>{`${employeeNumber} | Classic Savory ERP`}</title>
             <div className="w-11/12">
                 <EmployeeDetailsCard/>
             </div>

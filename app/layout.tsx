@@ -5,7 +5,6 @@ import HolyLoader from "holy-loader";
 import AuthProvider from "@/context/AuthProvider";
 
 export const metadata: Metadata = {
-  	title: "Classic Savory ERP",
   	description: "A web-based entity resource planning application for classic savory",
 };
 
