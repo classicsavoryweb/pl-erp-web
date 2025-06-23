@@ -6,7 +6,7 @@ const Page = () => {
     return (
         <Authenticated>
             <PageTitle
-                title="Change password"
+                title="Change Password"
             />
             <div className="w-3/10">
                 <ChangePasswordForm/>
