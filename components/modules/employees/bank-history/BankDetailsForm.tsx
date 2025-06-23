@@ -131,6 +131,7 @@ const BankDetailsForm = ({
                 error={formHandler.errors.bank_account_type_id}
                 onChange={formHandler.handleChange}
                 placeholder="select bank account type"
+                disabled={action === "edit"}
             />
             <Textfield
                 label="Bank Number"
