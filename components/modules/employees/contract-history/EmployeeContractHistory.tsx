@@ -1,5 +1,5 @@
 "use client";
-import { exportEmployeeContractHistory, getEmployeeContractHistory, getEmployeePositions } from "@/api/employee";
+import { exportEmployeeContractHistory, getEmployeeContractHistory } from "@/api/employee";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
@@ -12,7 +12,6 @@ import { useParams } from "next/navigation";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import EmployeeContractForm from "./EmployeeContractForm";
-import Button from "@/components/common/Button";
 import PrintInitialContractModal from "./PrintInitialContractModal";
 import PrintExtensionContractModal from "./PrintExtensionContractModal";
 import DropDownButtons from "@/components/common/DropDownButtons";

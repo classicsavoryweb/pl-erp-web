@@ -13,6 +13,7 @@ import { useEffect } from "react";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import confirm from "@/components/common/Confirm";
 import moment from "moment";
+import EmploymentStatusDropdown from "../../generic/EmploymentStatusDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -39,6 +40,11 @@ const EmployeeContractForm = ({
             contract_start_date: "",
             contract_end_date: "",
             remarks: "",
+            employee_status: "",
+            employment_status: "",
+            separation_reason: "",
+            separation_date: "",
+            regularization_date: ""
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -78,6 +84,31 @@ const EmployeeContractForm = ({
                     return isSame;
                 }),
             status: Yup.string().required("Status is required"),
+            employee_status: Yup.string().when("status", (status, schema) => 
+                String(status) === "inactive" && action === "edit" && data.status === "active"
+                    ? schema.required('Employee Status is required')
+                    : schema.notRequired()
+            ),
+            employment_status:Yup.string().when("employee_status", (status, schema) => 
+                String(status) === "active" && action === "edit" && data.status === "active"
+                    ? schema.required('Employment Status is required')
+                    : schema.notRequired()
+            ),
+            regularization_date:Yup.string().when(["employee_status", "employment_status"], ([employee_status, employment_status], schema) => 
+                String(employee_status) === "active" && action === "edit" && Number(employment_status) === 2 && data.status === "active"
+                    ? schema.required('Regularization Date is required')
+                    : schema.notRequired()
+            ),
+            separation_reason:Yup.string().when("employee_status", (status, schema) => 
+                String(status) === "inactive" && action === "edit" && data.status === "active"
+                    ? schema.required('Separation Reason is required')
+                    : schema.notRequired()
+            ),
+            separation_date:Yup.string().when("employee_status", (status, schema) => 
+                String(status) === "inactive" && action === "edit" && data.status === "active"
+                    ? schema.required('Separation Date is required')
+                    : schema.notRequired()
+            ),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -156,12 +187,107 @@ const EmployeeContractForm = ({
                 onChange={formHandler.handleChange}
                 required
             />
-            <Button
-                loading={formHandler.isSubmitting}
-                onClick={() => {}}
-                label="Submit"
-                type="submit"
-            />
+
+            { ( data.status === "active" && action === "edit" && formHandler.values.status === "inactive" ) &&
+                <>
+                    <p className="text-sm pt-3 font-semibold text-gray-500">Update Employee Details</p>
+                    <ActiveInactiveDropDown
+                        label="Employee Status"
+                        name="employee_status"
+                        placeholder="enter status"
+                        value={formHandler.values.employee_status || ""}
+                        error={formHandler.errors.employee_status}
+                        onChange={(e) => {
+                            formHandler.handleChange(e);
+                            if (e.target.value === "active") {
+                                formHandler.setFieldValue("separation_reason", "");
+                                formHandler.setFieldValue("separation_date", "");
+                            } else {
+                                formHandler.setFieldValue("employment_status", "");
+                                formHandler.setFieldValue("regularization_date", "");                      
+                            }
+                        }}
+                        required
+                    />
+                    { formHandler.values.employee_status === "active" &&
+                        <>
+                            <EmploymentStatusDropdown
+                                label="Employment Status"
+                                name="employment_status"
+                                placeholder="enter status"
+                                value={formHandler.values.employment_status || ""}
+                                error={formHandler.errors.employment_status}
+                                onChange={(e) => {
+                                    formHandler.handleChange(e);
+                                    if (Number(e.target.value) !== 2) {
+                                        formHandler.setFieldValue("regularization_date", ""); 
+                                    }
+                                }}
+                                required
+                                type="active"
+                            />
+
+                            { Number(formHandler.values.employment_status) === 2 &&
+                                <Textfield
+                                    type="date"
+                                    label="Regularization Date"
+                                    required
+                                    name="regularization_date"
+                                    value={formHandler.values.regularization_date || ""}
+                                    error={formHandler.errors.regularization_date}
+                                    onChange={formHandler.handleChange}
+                                />
+                                
+                            }
+                        </>
+                    }
+                    { formHandler.values.employee_status === "inactive" &&
+                        <>
+                            <EmploymentStatusDropdown
+                                label="Separation Reason"
+                                name="separation_reason"
+                                placeholder="enter status"
+                                value={formHandler.values.separation_reason || ""}
+                                error={formHandler.errors.separation_reason}
+                                onChange={formHandler.handleChange}
+                                required
+                                type="inactive"
+                            />
+
+                            <Textfield
+                                type="date"
+                                label="Separation Date"
+                                required
+                                name="separation_date"
+                                value={formHandler.values.separation_date || ""}
+                                error={formHandler.errors.separation_date}
+                                onChange={formHandler.handleChange}
+                            />
+                        </>
+                    }
+                </>
+            }
+
+            <hr className="mt-6 pb-2 text-slate-300"/>
+            <div className="flex justify-end gap-x-2">
+                <div>
+                    <Button
+                        label="Cancel"
+                        variant="secondary"
+                        onClick={() => {
+                            modal.onClose();
+                            formHandler.resetForm();
+                        }}
+                    />
+                </div>     
+                <div>
+                    <Button
+                        type="submit"
+                        label="Submit"
+                        onClick={() => {}}
+                    />         
+                </div>
+            </div>
         </form>
         </Modal>
     );
