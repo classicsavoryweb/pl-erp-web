@@ -45,8 +45,12 @@ const Textfield = ({
                     placeholder={placeholder}
                     value={value}
                     onChange={(e) => {
-                        const newValue = isUpperCase ? e.target.value.toUpperCase() : e.target.value;
-                        onChange?.({ target: { name, value: newValue } });
+                        if (isUpperCase) {
+                            const newValue = isUpperCase ? e.target.value.toUpperCase() : e.target.value;
+                            onChange?.({ target: { name, value: newValue } });
+                        } else {
+                            onChange?.(e);
+                        }
                     }}
                     disabled={disabled}
                     className={`
