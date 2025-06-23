@@ -116,6 +116,7 @@ const AddEmployeeForm = () => {
                     value={addEmployeeHandler.values.first_name}
                     error={addEmployeeHandler.errors.first_name}
                     required
+                    isUpperCase
                 />
                 <Textfield
                     label="Middle name"
@@ -124,6 +125,7 @@ const AddEmployeeForm = () => {
                     onChange={addEmployeeHandler.handleChange}
                     value={addEmployeeHandler.values.middle_name}
                     error={addEmployeeHandler.errors.middle_name}
+                    isUpperCase
                 />
                 <Textfield
                     label="Last name"
@@ -132,6 +134,7 @@ const AddEmployeeForm = () => {
                     onChange={addEmployeeHandler.handleChange}
                     value={addEmployeeHandler.values.last_name}
                     error={addEmployeeHandler.errors.last_name}
+                    isUpperCase
                     required
                 />
                 <Grid cols={2}>

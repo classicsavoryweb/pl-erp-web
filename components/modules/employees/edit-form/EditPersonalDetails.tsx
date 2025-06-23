@@ -30,12 +30,14 @@ const EditPersonalDetails = ({
                     name="first_name"
                     value={formHandler.values.first_name || ""}
                     required
+                    isUpperCase
                 />
                 <Textfield
                     onChange={formHandler.handleChange}
                     label='Middle Name'
                     name="middle_name"
                     value={formHandler.values.middle_name || ""}
+                    isUpperCase
                 />
                 <Textfield
                     onChange={formHandler.handleChange}
@@ -43,6 +45,7 @@ const EditPersonalDetails = ({
                     name="last_name"
                     value={formHandler.values.last_name || ""}
                     required
+                    isUpperCase
                 />
                 <Textfield
                     type='date'
@@ -75,6 +78,7 @@ const EditPersonalDetails = ({
                     value={formHandler.values.birthplace || ""}
                     required
                     placeholder='enter birthplace'
+                    isUpperCase
                 />
                 <CivilStatusDropDown
                     onChange={formHandler.handleChange}
