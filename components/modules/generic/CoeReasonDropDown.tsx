@@ -13,6 +13,7 @@ interface SelectInterface {
     error?: string;
     value?: string | number;
     required?: boolean;
+    disabled?:boolean;
 }
 
 const CoeReasonDropDown = ({
@@ -22,7 +23,8 @@ const CoeReasonDropDown = ({
     onChange,
     error,
     value,
-    required = false
+    required = false,
+    disabled = false
 }: SelectInterface) => {
 
     const api = useApiCall();
@@ -57,6 +59,7 @@ const CoeReasonDropDown = ({
             loading={api.loading}
             options={api.dataSet}
             required={required}
+            disabled={disabled}
         />
     );
 };
