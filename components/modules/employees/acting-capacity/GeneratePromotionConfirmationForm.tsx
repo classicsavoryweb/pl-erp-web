@@ -39,9 +39,17 @@ const GeneratePromotionConfirmationForm = ({
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            effectivity_date: Yup.string().required("Effectivity date is required"),
             bond_amount: Yup.string().required("Bond amount is required"),
-            bond_year: Yup.string().required("Bond year is required")
+            bond_year: Yup.string().required("Bond year is required"),
+            effectivity_date: Yup.string().required("Effectivity date is required")
+            .test(
+            'future-date',
+            `Effectivity date must be after ${api.data.latest_end_date}`,
+            function (value) {
+                if (!value || !api.data.latest_end_date) return true;
+
+                return moment(value).isAfter(moment(api.data.latest_end_date));
+            }),
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
             const isConfirmed = await confirm({
@@ -76,7 +84,7 @@ const GeneratePromotionConfirmationForm = ({
             .then((resp) => {
                 if (!resp.error) {
                     api.setData(resp.data.acting_capacity);
-                    formHandler.setFieldValue("effectivity_date", resp.data.acting_capacity.end_date);
+                    formHandler.setFieldValue("effectivity_date", resp.data.acting_capacity.latest_end_date);
                 } else {
                     toast.error(resp.data.message);
                 }
@@ -166,6 +174,38 @@ const GeneratePromotionConfirmationForm = ({
                     />
                 </div>
             </Grid>
+
+            { api.data?.extensions && api.data?.extensions.length > 0 &&
+                <>
+                    <p className="text-sm  font-semibold text-gray-500 pt-3">
+                        Extensions
+                    </p>
+                    { api.data.extensions.map((extension: any, id: number) => 
+                        <Grid cols={3} key={id}>
+                            <Textfield
+                                label="End Date"
+                                value={extension.end_date}
+                                disabled
+                            />
+                            <Textfield
+                                label="Reason"
+                                value={extension.reason}
+                                disabled
+                            />
+                            <Textfield
+                                label="Remarks"
+                                value={extension.remarks}
+                                disabled
+                            />
+                        </Grid>
+                    )
+                    }
+                </>
+            }
+
+            <p className="text-sm  font-semibold text-gray-500 pt-3">
+                Promotion Confirmation
+            </p>
 
             <form onSubmit={formHandler.handleSubmit}>
                 <Grid cols={3}>

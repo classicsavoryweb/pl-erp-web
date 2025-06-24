@@ -12,7 +12,7 @@ import confirm from "@/components/common/Confirm";
 import Grid from "@/components/common/Grid";
 import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
 import PositionDropDown from "../../generic/PositionDropDown";
-import { editActingCapacity, getACF } from "@/api/acting-capacity";
+import { editActingCapacity, getACF, getActingCapacity } from "@/api/acting-capacity";
 import BranchDropDown from "../../generic/BranchDropDown";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
 import { useAsyncEffect } from "@/hooks/async-effect";
@@ -76,7 +76,7 @@ const EditActingCapacityForm = ({
     useAsyncEffect(() => {
         if (modal.isShowing) {
             api.setLoading(true);
-            getACF(id).then((resp) => {
+            getActingCapacity(id).then((resp) => {
                 if (!resp.error) {
                     const acting = resp.data.acting_capacity;
                     setEmployee(resp.data.acting_capacity.employee);
