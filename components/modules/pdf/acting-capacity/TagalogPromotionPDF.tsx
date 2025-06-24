@@ -105,7 +105,7 @@ const TagalogPromotionPDF = ({
                                 }}
                             >
                                 <Text>Pangalan: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text>
+                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text>
                             </View>
 
                             <View
@@ -116,7 +116,7 @@ const TagalogPromotionPDF = ({
                                 }}
                             >
                                 <Text>Sangay: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.branch.name}</Text>
+                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch.name}</Text>
                             </View>                        
                         </View>
                     </View>
@@ -124,13 +124,13 @@ const TagalogPromotionPDF = ({
                     <View
                         style={styles.section}
                     >
-                        <Text>Ito ay para ikumpirma ang pagkakataas ng iyong posisyon bilang <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> epektibo ng {moment(data.end_date).format("MMMM DD, YYYY")}.</Text>
+                        <Text>Ito ay para ikumpirma ang pagkakataas ng iyong posisyon bilang <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> epektibo ng {moment(data.acting_capacity.end_date).format("MMMM DD, YYYY")}.</Text>
                     </View>
 
                     <View
                         style={styles.section}
                     >
-                        <Text>Ikaw ay itinilaga sa sangay ng <Text style={{ textDecoration: "underline" }}>{data.branch_assignment.name}</Text> at dapat mag-ulat kay <Text style={{ textDecoration: "underline" }}>{data.oic.formal_full_name}.</Text> Nais ka naming batiin sa pagtugon sa mga kinakailangan ng iyong bagong posisyon.</Text>
+                        <Text>Ikaw ay itinilaga sa sangay ng <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch_assignment.name}</Text> at dapat mag-ulat kay <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.oic.formal_full_name}.</Text> Nais ka naming batiin sa pagtugon sa mga kinakailangan ng iyong bagong posisyon.</Text>
                     </View>
 
 
@@ -156,7 +156,7 @@ const TagalogPromotionPDF = ({
                             gap: 75,
                         }}
                     >
-                        <Text>Pangalan at Lagda ng Empleyado: <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text></Text>
+                        <Text>Pangalan at Lagda ng Empleyado: <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text></Text>
                         <Text>Petsa ng Paglagda:</Text>
                     </View>
 
@@ -168,9 +168,9 @@ const TagalogPromotionPDF = ({
                                 textDecoration: "underline"
                             }}
                         >
-                            {data.branch.group_head.formal_full_name}
+                            {data.approved_by.formal_full_name}
                         </Text>
-                        <Text>{data.branch.group_head.current_position.description}</Text>
+                        <Text>{data.approved_by.current_position.description}</Text>
                     </View>
                 </Page>
 
@@ -217,7 +217,7 @@ const TagalogPromotionPDF = ({
                             }}
                         >
                             <Text>Pangalan: </Text>
-                            <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text>
+                            <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text>
                         </View>
                         <View
                             style={{
@@ -227,17 +227,17 @@ const TagalogPromotionPDF = ({
                             }}
                         >
                             <Text>Sangay: </Text>
-                            <Text style={{ textDecoration: "underline" }}>{data.branch.name}</Text>
+                            <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch.name}</Text>
                         </View>
                     </View>
 
                     <View style={styles.section}>
-                        <Text>Ito ay para kumpirmahin ang pagkakataas ng aking posisyon bilang <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> simula {moment(data.effectivity_date).format("MMMM DD, YYYY")}.</Text>
+                        <Text>Ito ay para kumpirmahin ang pagkakataas ng aking posisyon bilang <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> simula {moment(data.acting_capacity.effectivity_date).format("MMMM DD, YYYY")}.</Text>
                     </View>
 
                     <View style={styles.section}>
                         <Text>
-                            Dahil sa pagkakatalaga sa mas mataas na posisyon, naiintindihan ko na magkakaroon ako ng karagdagang mga kasanayan at mga natutunan sa pamamahala ng isang restaurant, karagdagang impormasyon tungkol sa kumpanya, mga operasyon nito, at mga direktor, opisyal, empleyado, kliyente, at mahahasa ang aking kakayahan sa pamumuno at mga kasanayan sa paggawa ng desisyon sa tulong ng pamamahala at ng aking mga nakatataas. Dahil sa mga nabanggit, boluntaryo akong sumasang-ayon na ibigkis ang aking sarili na maging empleyado ng Savory Fastfood Inc. ng hindi bababa sa ({data.bond_year}) taon mula sa petsa ng aking pagkakatalaga bilang {data.recommended_position.description}. Para sa layuning ito, sumang-ayon akong maisailalim sa service bond sa halagang {convertToPesosAndCentavos(Number(data.bond_amount))} (Php {Number(data.bond_amount).toFixed(2)}), upang masakop ang anuman at lahat ng pinsala na maaaring maranasan ng Savory Fastfood, Inc. sakaling magbitiw ako bago ang napagkasunduang panahon o tinanggal ako sa trabaho nang may dahilan. bago ang napagkasunduang panahon, gayundin bilang resulta ng anumang paglabag sa aking kasunduan sa kumpanya. Dagdag pa, sumasang-ayon ako na hindi ko sa anumang oras, nang walang nakasulat na pahintulot mula sa Savory Fastfood, Inc., alinman sa panahon ng aking pagtatrabaho o pagkatapos noon, na ibunyag o isapubliko ang anumang kumpidensyal na impormasyong nakuha ko direkta man o hindi direkta sa aking pagtatrabaho.
+                            Dahil sa pagkakatalaga sa mas mataas na posisyon, naiintindihan ko na magkakaroon ako ng karagdagang mga kasanayan at mga natutunan sa pamamahala ng isang restaurant, karagdagang impormasyon tungkol sa kumpanya, mga operasyon nito, at mga direktor, opisyal, empleyado, kliyente, at mahahasa ang aking kakayahan sa pamumuno at mga kasanayan sa paggawa ng desisyon sa tulong ng pamamahala at ng aking mga nakatataas. Dahil sa mga nabanggit, boluntaryo akong sumasang-ayon na ibigkis ang aking sarili na maging empleyado ng Savory Fastfood Inc. ng hindi bababa sa ({data.acting_capacity.bond_year}) taon mula sa petsa ng aking pagkakatalaga bilang {data.acting_capacity.recommended_position.description}. Para sa layuning ito, sumang-ayon akong maisailalim sa service bond sa halagang {convertToPesosAndCentavos(Number(data.acting_capacity.bond_amount))} (Php {Number(data.acting_capacity.bond_amount).toFixed(2)}), upang masakop ang anuman at lahat ng pinsala na maaaring maranasan ng Savory Fastfood, Inc. sakaling magbitiw ako bago ang napagkasunduang panahon o tinanggal ako sa trabaho nang may dahilan. bago ang napagkasunduang panahon, gayundin bilang resulta ng anumang paglabag sa aking kasunduan sa kumpanya. Dagdag pa, sumasang-ayon ako na hindi ko sa anumang oras, nang walang nakasulat na pahintulot mula sa Savory Fastfood, Inc., alinman sa panahon ng aking pagtatrabaho o pagkatapos noon, na ibunyag o isapubliko ang anumang kumpidensyal na impormasyong nakuha ko direkta man o hindi direkta sa aking pagtatrabaho.
                         </Text>
                     </View>
 
@@ -263,7 +263,7 @@ const TagalogPromotionPDF = ({
 
                     <View style={styles.section}>
                         <Text>
-                            Kung sakaling lumabag sa mga tuntunin ng kasunduang ito, nangangako akong babayaran ang mga ng liquidated at/o aktwal na pinsala sa halagang {convertToPesosAndCentavos(Number(data.bond_amount))} (Php {Number(data.bond_amount).toFixed(2)}) upang mabayaran ang halaga ng anumang pinsalang maaaring makuha ng Savory Fastfood, Inc. na natamo bilang resulta ng aking paglabag sa anumang probisyon ng Kasunduang ito, bilang karagdagan sa anuman at lahat ng pinsala na maaaring maranasan ng Savory Fastfood, Inc., nang walang pagkiling sa Savory Fastfood, Inc. na gumagamit ng anumang iba pang legal na aksyon o remedyo na maaaring available sa Savory Fastfood, Inc. anumang mga legal na gastos na gagawin ng Savory Fastfood, Inc. ay sisingilin din sa akin. Ako ay pumapayag na payagan ang Savory Fastfood, Inc. na i-offset ang aking pananagutan para sa aktwal at/o liquidated na mga pinsala sa Savory Fastfood, Inc. sa pamamagitan ng paglalapat ng aking mga suweldo, mga insentibo, kabilang ang aking 13th month pay at iba pang mga benepisyo na maaaring kailanganin ko upang masakop ang halaga ng aking service bond para sa lahat at anumang pinsala. Nauunawaan ko na ang anumang natitirang balanse mula sa aking bono sa serbisyo at para sa mga pinsala ay kailangang bayaran sa Savory Fastfood, Inc. nang walang pagkiling sa paggamit nito ng anumang iba pang legal na aksyon o remedyo na maaaring available sa kumpanya.
+                            Kung sakaling lumabag sa mga tuntunin ng kasunduang ito, nangangako akong babayaran ang mga ng liquidated at/o aktwal na pinsala sa halagang {convertToPesosAndCentavos(Number(data.acting_capacity.bond_amount))} (Php {Number(data.acting_capacity.bond_amount).toFixed(2)}) upang mabayaran ang halaga ng anumang pinsalang maaaring makuha ng Savory Fastfood, Inc. na natamo bilang resulta ng aking paglabag sa anumang probisyon ng Kasunduang ito, bilang karagdagan sa anuman at lahat ng pinsala na maaaring maranasan ng Savory Fastfood, Inc., nang walang pagkiling sa Savory Fastfood, Inc. na gumagamit ng anumang iba pang legal na aksyon o remedyo na maaaring available sa Savory Fastfood, Inc. anumang mga legal na gastos na gagawin ng Savory Fastfood, Inc. ay sisingilin din sa akin. Ako ay pumapayag na payagan ang Savory Fastfood, Inc. na i-offset ang aking pananagutan para sa aktwal at/o liquidated na mga pinsala sa Savory Fastfood, Inc. sa pamamagitan ng paglalapat ng aking mga suweldo, mga insentibo, kabilang ang aking 13th month pay at iba pang mga benepisyo na maaaring kailanganin ko upang masakop ang halaga ng aking service bond para sa lahat at anumang pinsala. Nauunawaan ko na ang anumang natitirang balanse mula sa aking bono sa serbisyo at para sa mga pinsala ay kailangang bayaran sa Savory Fastfood, Inc. nang walang pagkiling sa paggamit nito ng anumang iba pang legal na aksyon o remedyo na maaaring available sa kumpanya.
                         </Text>
                     </View>
 
@@ -282,11 +282,10 @@ const TagalogPromotionPDF = ({
                             gap: 75,
                         }}
                     >
-                        <Text>Pangalan at Lagda ng Empleyado: <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text></Text>
+                        <Text>Pangalan at Lagda ng Empleyado: <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text></Text>
                         <Text>Petsa ng Paglagda:</Text>
                     </View>
                 </Page>
-
             </Document>
         </PDFViewer>
     );
