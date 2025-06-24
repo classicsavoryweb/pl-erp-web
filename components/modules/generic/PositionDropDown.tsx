@@ -34,7 +34,8 @@ const PositionDropDown = ({
                 const newDataset = resp.data.positions.map((position: any) => {
                     return {
                         label: position.description,
-                        value: position.id
+                        value: position.id,
+                        obj: position
                     };
                 });
                 api.setDataSet(newDataset);

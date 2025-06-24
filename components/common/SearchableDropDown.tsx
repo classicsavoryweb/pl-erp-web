@@ -7,13 +7,14 @@ interface SelectInterface {
     label: string;
     placeholder?: string;
     name: string;
-    onChange: (e: { target: { name: string; value: string } }) => void;
+    onChange: (e: { target: { name: string; value: string, obj?: any } }) => void;
     error?: string;
     value?: string | number;
     required?: boolean;
     options: {
         label: string;
         value: string;
+        obj?: any;
     }[];
     loading?: boolean;
 }
@@ -68,8 +69,8 @@ const SearchableDropDown = ({
 
     }, []);
 
-    const handleSelect = (selected: { label: string; value: string }) => {
-        onChange({ target: { name, value: selected.value } });
+    const handleSelect = (selected: { label: string; value: string, obj?: any }) => {
+        onChange({ target: { name, value: selected.value, obj:selected.obj   } });
         setToggle(false);
         setKeyWord("");
     };
