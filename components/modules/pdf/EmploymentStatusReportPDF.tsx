@@ -254,7 +254,7 @@ const EmploymentStatusReportPDF = ({
                                 fontWeight: "bold"
                             }}
                         >
-                            Employment Status Report ({moment(data.date).format('MMMM YYYY')})
+                            Employment Status Report ({data.month + " " + data.year})
                         </Text>
                     </View>
                 </View>
@@ -358,16 +358,17 @@ const EmploymentStatusReportPDF = ({
                             fontWeight: "bold"
                         }}
                     >
-                        {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "}{_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
+                        {data.recommended_by.gender === "Male" ? "Mr. " : "Ms. "}{_.words(data.recommended_by.first_name).map(_.capitalize).join(' ')} {data.recommended_by.middle_name && _.toUpper(data.recommended_by.middle_name.charAt(0)) + '.'} {_.words(data.recommended_by.last_name).map(_.capitalize).join(' ')}
                     </Text>
                     <Text>
-                        {data.branch_oic.current_position.description}/ {data.branch.name}
+                        {data.recommended_by.current_position.description}
                     </Text>
                 </View>
 
                 <View
                     style={{
                         paddingTop: 30,
+
                     }}
                 >
                     <Text style={{
@@ -376,16 +377,54 @@ const EmploymentStatusReportPDF = ({
                     }}>
                         Noted by:
                     </Text>
-                    <Text
+                    <View
                         style={{
-                            fontWeight: "bold"
+                            display: "flex",
+                            flexDirection: "row",
+                            justifyContent: "flex-start",
+                            gap: 20
                         }}
                     >
-                        {data.group_head.gender === "Male" ? "Mr. " : "Ms. "}{_.words(data.group_head.first_name).map(_.capitalize).join(' ')} {data.group_head.middle_name && _.toUpper(data.group_head.middle_name.charAt(0)) + '.'} {_.words(data.group_head.last_name).map(_.capitalize).join(' ')}
-                    </Text>
-                    <Text>
-                        {data.group_head.current_position.description}
-                    </Text>
+                        <View>
+                            <Text
+                                style={{
+                                    fontWeight: "bold"
+                                }}
+                            >
+                                {data.noted_by.gender === "Male" ? "Mr. " : "Ms. "}{_.words(data.noted_by.first_name).map(_.capitalize).join(' ')} {data.noted_by.middle_name && _.toUpper(data.noted_by.middle_name.charAt(0)) + '.'} {_.words(data.noted_by.last_name).map(_.capitalize).join(' ')}
+                            </Text>
+                            <Text>
+                                {data.noted_by.current_position.description}
+                            </Text>
+                        </View>
+
+                        { data.noted_by_1 &&
+                            <>
+                                <Text
+                                    style={{
+                                        fontWeight: "bold"
+                                    }}
+                                >
+                                    /
+                                </Text>
+                                <View>
+                                    <Text
+                                        style={{
+                                            fontWeight: "bold"
+                                        }}
+                                    >
+                                        {data.noted_by_1.gender === "Male" ? "Mr. " : "Ms. "}{_.words(data.noted_by_1.first_name).map(_.capitalize).join(' ')} {data.noted_by_1.middle_name && _.toUpper(data.noted_by_1.middle_name.charAt(0)) + '.'} {_.words(data.noted_by_1.last_name).map(_.capitalize).join(' ')}
+                                    </Text>
+                                    <Text>
+                                        {data.noted_by_1.current_position.description}
+                                    </Text>
+                                </View>
+                            </>
+                        }
+                    </View>
+
+
+
                 </View>
 
             </Page>

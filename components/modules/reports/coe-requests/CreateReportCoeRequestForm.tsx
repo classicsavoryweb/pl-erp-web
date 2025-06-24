@@ -155,6 +155,7 @@ const CreateReportCoeRequestForm = ({
                             value: "No",
                         },
                     ]}
+                    disabled={employeeStatus === "inactive"}
                 />
                 <CoeReasonDropDown
                     label="COE Reason"

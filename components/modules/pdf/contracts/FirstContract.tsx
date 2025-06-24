@@ -12,7 +12,6 @@ const styles = StyleSheet.create({
         paddingLeft: 72,
         paddingRight: 72,
         fontSize: 11,
-        lineHeight: 1.25,
         textAlign: 'justify'
     },
     bold: {
@@ -57,7 +56,13 @@ const FirstContract = ({
 }: CoeInterface) => (
     <PDFViewer style={styles.fullPage}>
         <Document>
-            <Page size={[612, 936]} style={styles.page}>
+            <Page
+                size={[612, 936]}
+                style={{
+                    ...styles.page,
+                    lineHeight: 1.15,
+                }}
+            >
                 <View
                     style={styles.sectionCenter}
                 >   
@@ -232,7 +237,8 @@ const FirstContract = ({
 
             <Page size={[612, 936]} style={{    
                 ...styles.page,
-                paddingTop: 50
+                paddingTop: 50,
+                lineHeight: 1.15,
             }}>
                 <View
                     style={styles.section}
@@ -452,7 +458,8 @@ const FirstContract = ({
             
             <Page size={[612, 936]} style={{    
                 ...styles.page,
-                paddingTop: 50
+                paddingTop: 50,
+                lineHeight: 1.5,
             }}>
                 <View
                     style={{
