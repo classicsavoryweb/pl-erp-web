@@ -26,7 +26,7 @@ const PrintExtensionContractModal = ({
                 if (!resp.error) {
                     setData(resp.data);
                 } else {
-                    toast.error("Error fetching contract details");
+                    toast.error(resp.data.message);
                 }
             }).finally(() => {
                 api.setLoading(false);
