@@ -105,7 +105,7 @@ const EnglishACFPDF = ({
                                 }}
                             >
                                 <Text>Name: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text>
+                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text>
                             </View>
 
                             <View
@@ -116,7 +116,7 @@ const EnglishACFPDF = ({
                                 }}
                             >
                                 <Text>Current Position: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.current_position.description}</Text>
+                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.current_position.description}</Text>
                             </View>                        
                         </View>
 
@@ -129,7 +129,7 @@ const EnglishACFPDF = ({
                                 }}
                             >
                                 <Text>Department: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.branch.name}</Text>
+                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch.name}</Text>
                             </View>
 
                             <View
@@ -140,7 +140,7 @@ const EnglishACFPDF = ({
                                 }}
                             >
                                 <Text>Recommended Position: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text>
+                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text>
                             </View>                        
                         </View>
                     </View>
@@ -148,13 +148,13 @@ const EnglishACFPDF = ({
                     <View
                         style={styles.section}
                     >
-                        <Text>This is to confirm your appointment as <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> in an acting capacity of not less than <Text style={{ textDecoration: "underline" }}>{data.period}</Text>, effective {moment(data.start_date).format("MMMM DD, YYYY")}.</Text>
+                        <Text>This is to confirm your appointment as <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> in an acting capacity of not less than <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.period}</Text>, effective {moment(data.acting_capacity.start_date).format("MMMM DD, YYYY")}.</Text>
                     </View>
 
                     <View
                         style={styles.section}
                     >
-                        <Text>You shall be assigned at <Text style={{ textDecoration: "underline" }}>{data.branch_assignment.name}</Text> and shall report to <Text style={{ textDecoration: "underline" }}>{data.oic.formal_full_name}</Text>.</Text>
+                        <Text>You shall be assigned at <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch_assignment.name}</Text> and shall report to <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.oic.formal_full_name}</Text>.</Text>
                     </View>
 
                     <View
@@ -181,19 +181,22 @@ const EnglishACFPDF = ({
                         <Text>Name & Signature of Employee</Text>
                         <Text>Date:</Text>
                     </View>
-
-                    <Text style={{paddingBottom: 40, paddingTop: 30,fontWeight: "bold"}}>Recommended by:</Text>
-                    
-                    <View>
-                        <Text
-                            style={{
-                                textDecoration: "underline"
-                            }}
-                        >
-                            {data.oic.formal_full_name}
-                        </Text>
-                        <Text>{data.oic.current_position.description}</Text>
-                    </View>
+                    { data.with_recommendation &&
+                        <>
+                            <Text style={{paddingBottom: 40, paddingTop: 30,fontWeight: "bold"}}>Recommended by:</Text>
+                            
+                            <View>
+                                <Text
+                                    style={{
+                                        textDecoration: "underline"
+                                    }}
+                                >
+                                    {data.recommended_by.formal_full_name}
+                                </Text>
+                                <Text>{data.recommended_by.current_position.description}</Text>
+                            </View>
+                        </>
+                    }
 
                     <Text style={{paddingBottom: 40, paddingTop: 30, fontWeight: "bold"}}>Approved by:</Text>
                     
@@ -203,10 +206,9 @@ const EnglishACFPDF = ({
                                 textDecoration: "underline"
                             }}
                         >
-                            Ms. Jennifer Joyce T. Blanco
+                            {data.approved_by.formal_full_name}
                         </Text>
-                        <Text>Product Development and</Text>
-                        <Text>Food Quality Head</Text>
+                        <Text>{data.approved_by.current_position.description}</Text>
                     </View>
                 </Page>
             </Document>

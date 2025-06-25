@@ -29,7 +29,7 @@ const ViewACFModal = ({
             getACF(id).then((resp) => {
                 if (!resp.error) {
                     setType(resp.data.type);
-                    api.setData(resp.data.acting_capacity);
+                    api.setData(resp.data);
                 } else {
                     toast.error(resp.data.message);
                 }

@@ -67,7 +67,6 @@ const EmployeeOffenseForm = ({
             date_served_ao : Yup.string().required("Date served of AO is required."),
             suspension_dates : Yup.string().required("Suspension dates is required."),
             date_served_da : Yup.string().required("Date served of DA is required."),
-            remarks : Yup.string().required("Remarks is required."),
             voided: Yup.string(),
             void_reason: Yup.string().when('voided', (voided, schema) =>
                 String(voided) === "Yes"

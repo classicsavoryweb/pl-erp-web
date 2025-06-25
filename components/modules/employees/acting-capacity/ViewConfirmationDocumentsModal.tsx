@@ -33,7 +33,7 @@ const ViewConfirmationDocumentModal = ({
                 if (!resp.error) {
                     setType(resp.data.type);
                     setRecommended(resp.data.with_recommendation);
-                    api.setData(resp.data.acting_capacity);
+                    api.setData(resp.data);
                 } else {
                     toast.error(resp.data.message);
                 }

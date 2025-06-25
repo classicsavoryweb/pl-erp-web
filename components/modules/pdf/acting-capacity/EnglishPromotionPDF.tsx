@@ -107,7 +107,7 @@ const EnglishPromotionPDF = ({
                                 }}
                             >
                                 <Text>Name: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text>
+                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text>
                             </View>
 
                             <View
@@ -119,7 +119,7 @@ const EnglishPromotionPDF = ({
                                 }}
                             >
                                 <Text>Branch: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.branch.name}</Text>
+                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch.name}</Text>
                             </View>                        
                         </View>
                     </View>
@@ -127,13 +127,13 @@ const EnglishPromotionPDF = ({
                     <View
                         style={styles.section}
                     >
-                        <Text>This is to confirm your promotion as <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> effective {moment(data.effectivity_date).format("MMMM DD, YYYY")}.</Text>
+                        <Text>This is to confirm your promotion as <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> effective {moment(data.acting_capacity.effectivity_date).format("MMMM DD, YYYY")}.</Text>
                     </View>
 
                     <View
                         style={styles.section}
                     >
-                        <Text>You shall be assigned at <Text style={{ textDecoration: "underline" }}>{data.branch_assignment.name}</Text> and shall report to <Text style={{ textDecoration: "underline" }}>{data.oic.formal_full_name}.</Text> We would like to congratulate you for meeting the requirements of your new position.</Text>
+                        <Text>You shall be assigned at <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch_assignment.name}</Text> and shall report to <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.oic.formal_full_name}.</Text> We would like to congratulate you for meeting the requirements of your new position.</Text>
                     </View>
 
 
@@ -158,7 +158,7 @@ const EnglishPromotionPDF = ({
                             gap: 75,
                         }}
                     >
-                        <Text>Name & Signature of Employee: <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text></Text>
+                        <Text>Name & Signature of Employee: <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text></Text>
                         <Text>Date:</Text>
                     </View>
                     
@@ -172,9 +172,9 @@ const EnglishPromotionPDF = ({
                                         textDecoration: "underline"
                                     }}
                                 >
-                                    {data.oic.formal_full_name}
+                                    {data.recommended_by.formal_full_name}
                                 </Text>
-                                <Text>{data.oic.current_position.description}</Text>
+                                <Text>{data.recommended_by.current_position.description}</Text>
                             </View>
                         </>
                     }
@@ -187,9 +187,9 @@ const EnglishPromotionPDF = ({
                                 textDecoration: "underline"
                             }}
                         >
-                            {data.branch.group_head.formal_full_name}
+                            {data.approved_by.formal_full_name}
                         </Text>
-                        <Text>{data.branch.group_head.current_position.description}</Text>
+                        <Text>{data.approved_by.current_position.description}</Text>
                     </View>
                 </Page>
 
@@ -236,7 +236,7 @@ const EnglishPromotionPDF = ({
                             }}
                         >
                             <Text>Name: </Text>
-                            <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text>
+                            <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text>
                         </View>
                         <View
                             style={{
@@ -246,17 +246,17 @@ const EnglishPromotionPDF = ({
                             }}
                         >
                             <Text>Department: </Text>
-                            <Text style={{ textDecoration: "underline" }}>{data.branch.name}</Text>
+                            <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch.name}</Text>
                         </View>
                     </View>
 
                     <View style={styles.section}>
-                        <Text>This is to confirm your promotion as <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> effective {moment(data.effectivity_date).format("MMMM DD, YYYY")}.</Text>
+                        <Text>This is to confirm your promotion as <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> effective {moment(data.acting_capacity.effectivity_date).format("MMMM DD, YYYY")}.</Text>
                     </View>
 
                     <View style={styles.section}>
                         <Text>
-                            Due to my appointment to a higher position, I understand that I will be acquiring additional skills and learnings in managing my section/department, acquiring confidential information about the company, its operations, and its directors, officers, employees, clients, and improving my leadership and decision making skills through the help of the management and my superiors. In view of the foregoing, I voluntarily agree to bind myself to be employed with Savory Fastfood Inc. for a minimum period of ({data.bond_year}) year from the date of my appointment as {data.recommended_position.description}. For this purpose, I have agreed to put up a service bond in the amount of {convertToPesosAndCentavos(Number(data.bond_amount))} (Php {Number(data.bond_amount).toFixed(2)}), to cover any and all damages that Savory Fastfood, Inc. may suffer in the event that I resign before the agreed period or am terminated from employment for cause before the agreed period, as well as a result of any breach of my agreement with the company. Further, I agree that I shall not at any time, without the written consent from Savory Fastfood, Inc., either during the term of my employment or thereafter, disclose, divulge or make public any confidential information acquired by me either directly or indirectly in the course of my employment.
+                            Due to my appointment to a higher position, I understand that I will be acquiring additional skills and learnings in managing my section/department, acquiring confidential information about the company, its operations, and its directors, officers, employees, clients, and improving my leadership and decision making skills through the help of the management and my superiors. In view of the foregoing, I voluntarily agree to bind myself to be employed with Savory Fastfood Inc. for a minimum period of ({data.acting_capacity.bond_year}) year from the date of my appointment as {data.acting_capacity.recommended_position.description}. For this purpose, I have agreed to put up a service bond in the amount of {convertToPesosAndCentavos(Number(data.acting_capacity.bond_amount))} (Php {Number(data.acting_capacity.bond_amount).toFixed(2)}), to cover any and all damages that Savory Fastfood, Inc. may suffer in the event that I resign before the agreed period or am terminated from employment for cause before the agreed period, as well as a result of any breach of my agreement with the company. Further, I agree that I shall not at any time, without the written consent from Savory Fastfood, Inc., either during the term of my employment or thereafter, disclose, divulge or make public any confidential information acquired by me either directly or indirectly in the course of my employment.
                         </Text>
                     </View>
 
@@ -282,7 +282,7 @@ const EnglishPromotionPDF = ({
 
                     <View style={styles.section}>
                         <Text>
-                            In the event of the breach of the terms of this agreement, I undertake to pay Savory Fastfood, Inc. liquidated damages in the amount of {convertToPesosAndCentavos(Number(data.bond_amount))} (Php {Number(data.bond_amount).toFixed(2)}) to cover the cost of whatever damages that Savory Fastfood, Inc. may incur as a result of my breach of any provision of this Agreement, in addition to any and all damages that Savory Fastfood, Inc. may suffer, without prejudice to Savory Fastfood, Inc. availing of any other legal action or remedy that may be available to Savory Fastfood, Inc. any legal expenses that will be incurred by Savory Fastfood, Inc. will also be charged to me. I consent to allow Savory Fastfood, Inc. to offset my liability for actual and/or liquidated damages to Savory Fastfood, Inc. by applying my salaries, incentives, including my 13th month pay and other benefits that may be due to me to cover the cost of my service bond for all and any damages.  I understand that any remaining balance from my service bond and for the damages will have to be paid to Savory Fastfood, Inc. without prejudice to its availing of any other legal action or remedy that may be available to the company.
+                            In the event of the breach of the terms of this agreement, I undertake to pay Savory Fastfood, Inc. liquidated damages in the amount of {convertToPesosAndCentavos(Number(data.acting_capacity.bond_amount))} (Php {Number(data.acting_capacity.bond_amount).toFixed(2)}) to cover the cost of whatever damages that Savory Fastfood, Inc. may incur as a result of my breach of any provision of this Agreement, in addition to any and all damages that Savory Fastfood, Inc. may suffer, without prejudice to Savory Fastfood, Inc. availing of any other legal action or remedy that may be available to Savory Fastfood, Inc. any legal expenses that will be incurred by Savory Fastfood, Inc. will also be charged to me. I consent to allow Savory Fastfood, Inc. to offset my liability for actual and/or liquidated damages to Savory Fastfood, Inc. by applying my salaries, incentives, including my 13th month pay and other benefits that may be due to me to cover the cost of my service bond for all and any damages.  I understand that any remaining balance from my service bond and for the damages will have to be paid to Savory Fastfood, Inc. without prejudice to its availing of any other legal action or remedy that may be available to the company.
                         </Text>
                     </View>
 
@@ -302,7 +302,7 @@ const EnglishPromotionPDF = ({
                             gap: 75,
                         }}
                     >
-                        <Text>Name & Signature of Employee: <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text></Text>
+                        <Text>Name & Signature of Employee: <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text></Text>
                         <Text>Date:</Text>
                     </View>
                 </Page>

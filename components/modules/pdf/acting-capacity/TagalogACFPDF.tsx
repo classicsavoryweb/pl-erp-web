@@ -105,7 +105,7 @@ const TagalogACFPDF = ({
                             }}
                         >
                             <Text>Pangalan: </Text>
-                            <Text style={{ textDecoration: "underline" }}>{data.employee.proper_full_name}</Text>
+                            <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text>
                         </View>
 
                         <View
@@ -116,7 +116,7 @@ const TagalogACFPDF = ({
                             }}
                         >
                             <Text>Kasalukuyang Posisyon: </Text>
-                            <Text style={{ textDecoration: "underline" }}>{data.current_position.description}</Text>
+                            <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.current_position.description}</Text>
                         </View>                        
                     </View>
 
@@ -129,7 +129,7 @@ const TagalogACFPDF = ({
                             }}
                         >
                             <Text>Sangay: </Text>
-                            <Text style={{ textDecoration: "underline" }}>{data.branch.name}</Text>
+                            <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch.name}</Text>
                         </View>
 
                         <View
@@ -140,7 +140,7 @@ const TagalogACFPDF = ({
                             }}
                         >
                             <Text>Inirerekomendang Position: </Text>
-                            <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text>
+                            <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text>
                         </View>                        
                     </View>
                 </View>
@@ -148,13 +148,13 @@ const TagalogACFPDF = ({
                 <View
                     style={styles.section}
                 >
-                    <Text>Ito ay para ikumpirma ang iyong pagkakatalaga bilang <Text style={{ textDecoration: "underline" }}>{data.recommended_position.description}</Text> na sa loob ng <Text style={{ textDecoration: "underline" }}>{translateToTagalog(data.period)}</Text>, epektibo ng {moment(data.start_date).format("MMMM DD, YYYY")}.</Text>
+                    <Text>Ito ay para ikumpirma ang iyong pagkakatalaga bilang <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> na sa loob ng <Text style={{ textDecoration: "underline" }}>{translateToTagalog(data.acting_capacity.period)}</Text>, epektibo ng {moment(data.acting_capacity.start_date).format("MMMM DD, YYYY")}.</Text>
                 </View>
 
                 <View
                     style={styles.section}
                 >
-                    <Text>Ikaw ay itinilaga sa sangay ng <Text style={{ textDecoration: "underline" }}>{data.branch_assignment.name}</Text> at dapat mag-ulat kay <Text style={{ textDecoration: "underline" }}>{data.oic.formal_full_name}</Text>.</Text>
+                    <Text>Ikaw ay itinilaga sa sangay ng <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch_assignment.name}</Text> at dapat mag-ulat kay <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.oic.formal_full_name}</Text>.</Text>
                 </View>
 
                 <View
@@ -190,10 +190,9 @@ const TagalogACFPDF = ({
                             textDecoration: "underline"
                         }}
                     >
-                        Ms. Jennifer Joyce T. Blanco
+                        {data.approved_by.proper_full_name}
                     </Text>
-                    <Text>Product Development and</Text>
-                    <Text>Food Quality Head</Text>
+                    <Text style={{ width: 130 }}>{data.approved_by.current_position.description}</Text>
                 </View>
             </Page>
         </Document>

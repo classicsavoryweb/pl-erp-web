@@ -150,13 +150,23 @@ const CoePDF = ({
                             </View>
                         }
 
-                        <View style={styles.section}>
-                            <Text>
-                                {INDENT}
-                                Should you need to verify any information or do background checking, please email us at
-                                sfirecords@classicsavory.com.
-                            </Text>
-                        </View>
+                        { (data.employment_status === "AWOL" || data.employment_status === "Terminated")
+                            ?
+                            <View style={styles.section}>
+                                <Text>
+                                    {INDENT}
+                                    For further verification regarding {data.gender === "Male" ? "his " : "her "} performance and other employment records please feel free to reach us at 09178242418 or email us at sfirecords@classicsavory.com.
+                                </Text>
+                            </View>
+                            :
+                            <View style={styles.section}>
+                                <Text>
+                                    {INDENT}
+                                    Should you need to verify any information or do background checking, please email us at
+                                    sfirecords@classicsavory.com.
+                                </Text>
+                            </View>
+                        }
 
                         <View style={styles.section}>
                             <Text>

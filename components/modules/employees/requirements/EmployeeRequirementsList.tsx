@@ -1,6 +1,6 @@
 "use client";
 
-import { getEmployeeRequirements, updateOrCreateEmployeeRequirements } from "@/api/employee";
+import { exportRequirementsAttachments, getEmployeeRequirements, updateOrCreateEmployeeRequirements } from "@/api/employee";
 import Button from "@/components/common/Button";
 import Checkbox from "@/components/common/Checkbox";
 import confirm from "@/components/common/Confirm";
@@ -105,6 +105,30 @@ const EmployeeRequirementsList = () => {
                                         label: "View Files",
                                         onClick: () => {
                                             viewModal.onOpen();
+                                        }
+                                    },
+                                    {
+                                        label: "Export Files",
+                                        onClick: async () => {
+                                            const isConfirmed = await confirm({
+                                                title: "Requirements Attachments",
+                                                message: "Are you sure you want to export?"
+                                            });
+
+                                            if (isConfirmed) {
+                                                exportRequirementsAttachments(String(employeeNumber))
+                                                .then((resp:any) => {
+                                                    const blob = new Blob([resp.data], { type: 'application/zip' });
+                                                    const downloadUrl = window.URL.createObjectURL(blob);
+                                                    const a = document.createElement('a');
+                                    
+                                                    a.href = downloadUrl;
+                                                    a.download = `${employeeNumber}-ATTACHED-REQUIREMENTS.zip`;
+                                                    document.body.appendChild(a);
+                                                    a.click();
+                                                    a.remove();
+                                                });
+                                            }
                                         }
                                     },
                                 ]}

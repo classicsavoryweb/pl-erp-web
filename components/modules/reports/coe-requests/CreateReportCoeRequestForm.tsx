@@ -23,6 +23,7 @@ const CreateReportCoeRequestForm = ({
     onSubmitCallback
 }: FormModalInterface) => {
     const [employeeStatus, setStatus] = useState<string>("");
+    const [employmentStatus, setEmployment] = useState<string>("");
     const createFormHandler = useFormik({
         initialValues: {
             coe_reason: "",
@@ -104,18 +105,28 @@ const CreateReportCoeRequestForm = ({
                     onChange={(e) => {
                         const employeeDetails = e.target.value;
                         setStatus(employeeDetails.status);
+                        setEmployment(employeeDetails.employee_status.description);
                         createFormHandler.setFieldValue("employee", employeeDetails);
                         createFormHandler.setFieldValue("coe_format", employeeDetails.status === "active" ? "Normal Format" : "Special Format");
                         createFormHandler.setFieldValue("employee_number", employeeDetails.employee_number);
+                        createFormHandler.setFieldValue("coe_reason", "whatever legal purpose it may serve");
                     }}
                     value={createFormHandler.values.employee}
                     error={createFormHandler.errors.employee_number}
                 />
                 { createFormHandler.values.employee &&
-                    <Badge
-                        label={employeeStatus}
-                        status={employeeStatus === "active" ? "success" : "danger"}
-                    />
+                    <div className="flex gap-x-2 items-center">
+                        <Badge
+                            label={employeeStatus}
+                            status={employeeStatus === "active" ? "success" : "danger"}
+                        />
+                        { employeeStatus === "inactive" &&
+                            <>
+                                <p>-</p>
+                                <p>{employmentStatus}</p>
+                            </>
+                        }
+                    </div>
                 }
                 <Dropdown
                     label="COE Format"
@@ -123,7 +134,6 @@ const CreateReportCoeRequestForm = ({
                     name="coe_format"
                     value={createFormHandler.values.coe_format}
                     required
-                    disabled={employeeStatus !== "inactive"}
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.coe_format}
                     options={[
@@ -136,6 +146,7 @@ const CreateReportCoeRequestForm = ({
                             value: "Special Format",
                         },
                     ]}
+                    disabled={employeeStatus === "inactive"}
                 />
                 <Dropdown
                     label="Include Salary"
@@ -155,6 +166,7 @@ const CreateReportCoeRequestForm = ({
                             value: "No",
                         },
                     ]}
+                    disabled={employeeStatus === "inactive"}
                 />
                 <CoeReasonDropDown
                     label="COE Reason"
@@ -164,6 +176,7 @@ const CreateReportCoeRequestForm = ({
                     required
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.coe_reason}
+                    disabled={employeeStatus === "inactive"}
                 />
                 { createFormHandler.values.coe_reason === "Certificate of Leave - Special" &&
                     <Grid

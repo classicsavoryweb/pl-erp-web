@@ -182,7 +182,7 @@ const ActingCapacityTableCard = () => {
             }
         },
         {
-            label: "View ACF",
+            label: "View ACA",
             onClick: (data: any) => {
                 viewACF.onOpen();
                 setId(data.id);

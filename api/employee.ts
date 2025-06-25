@@ -434,3 +434,16 @@ export const addRequirementAttachment = async (employee_number: string, payload:
 
     return resData;
 };
+
+export const exportRequirementsAttachments = async (employee_number: string) => {
+    const resData = await axiosHelper({
+        func_path: `/export-employee-attachments/${employee_number}`,
+        method: 'GET',
+        responseType: "blob",
+        additionalHeaders: {
+            "Content-Type": "application/zip"
+        }
+    });
+
+    return resData;
+};

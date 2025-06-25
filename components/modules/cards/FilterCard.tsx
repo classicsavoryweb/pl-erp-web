@@ -33,6 +33,8 @@ interface FilterInterface {
     statusOption?: {label: string, value: string}[];
     exportPermission?: string;
     callBack?: () => void;
+    withMonth?: boolean;
+    withYear?: boolean;
 };
 const FilterCard = ({
     isExpanded = false,
@@ -60,7 +62,9 @@ const FilterCard = ({
         }
     ],
     exportPermission = "",
-    callBack
+    callBack,
+    withMonth = false,
+    withYear = false,
 }: FilterInterface) => {
 
     const { permissions } = useContext(AuthContext);
@@ -75,6 +79,8 @@ const FilterCard = ({
             position_id: "",
             employee_status_id: "",
             type: "",
+            year: "2025",
+            month: ""
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -235,6 +241,42 @@ const FilterCard = ({
                                 name="type"
                                 value={formHandler.values.type}
                                 onChange={formHandler.handleChange}
+                            />
+                        }
+                        { withMonth &&
+                            <Dropdown
+                                placeholder="select month"
+                                label="Month"
+                                name="month"
+                                value={formHandler.values.month}
+                                onChange={formHandler.handleChange}
+                                options={[
+                                    { label: "January", value: "01" },
+                                    { label: "February", value: "02" },
+                                    { label: "March", value: "03" },
+                                    { label: "April", value: "04" },
+                                    { label: "May", value: "05" },
+                                    { label: "June", value: "06" },
+                                    { label: "July", value: "07" },
+                                    { label: "August", value: "08" },
+                                    { label: "September", value: "09" },
+                                    { label: "October", value: "10" },
+                                    { label: "November", value: "11" },
+                                    { label: "December", value: "12" },
+                                ]}
+                            />
+                        }
+                        { withYear &&
+                            <Dropdown
+                                placeholder="select year"
+                                label="Year"
+                                name="year"
+                                value={String(formHandler.values.year)}
+                                onChange={formHandler.handleChange}
+                                options={Array.from({ length: 100 }, (_, i) => {
+                                    const year = new Date().getFullYear() - i;
+                                    return { label: year.toString(), value: year.toString() };
+                                })}
                             />
                         }
                     </Grid>

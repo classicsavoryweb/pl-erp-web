@@ -89,6 +89,11 @@ const TardinessTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Branch",
+            path: "employee.current_branch.short_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Count",
             path: "tardiness_sanction.count",
             columnType: COLUMNTYPES.string
@@ -114,12 +119,48 @@ const TardinessTableCard = () => {
         {
             columnHead: "NTE Status",
             path: "nte_status",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                if (data.nte_status) {
+                    return (
+                        <>
+                            <p>{data.nte_status}</p>
+
+                            { data.nte_date_sent &&
+                                <>
+                                <p className="text-xs">{ moment(data.nte_date_sent).format("MMMM DD, YYYY")}</p>
+                                <p className="text-xs">{ moment(data.nte_date_sent).format("HH:mm:ss A")}</p>
+                                </>
+                            }
+                        </>
+                    )
+                } else {
+                    return "—";
+                }
+            }
         },
         {
             columnHead: "NOD Status",
             path: "da_status",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                if (data.da_status) {
+                    return (
+                        <>
+                            <p>{data.da_status}</p>
+
+                            { data.da_date_sent &&
+                                <>
+                                <p className="text-xs">{ moment(data.da_date_sent).format("MMMM DD, YYYY")}</p>
+                                <p className="text-xs">{ moment(data.da_date_sent).format("HH:mm:ss A")}</p>
+                                </>
+                            }
+                        </>
+                    )
+                } else {
+                    return "—";
+                }
+            }
         },
         {
             columnHead: "Status",
@@ -339,7 +380,6 @@ const TardinessTableCard = () => {
             <FilterCard
                 columnSettings={columnSettings}
                 filterHandler={filter}
-                hasDateRange
                 defaultColumnSelected="employee.full_name"
                 withStatus
                 statusOption={[
@@ -360,6 +400,8 @@ const TardinessTableCard = () => {
                     paginator.setPage(1);
                 }}
                 withBranch
+                withMonth
+                withYear
                 // hasExport
                 // api={exportReportTardiness}
                 // exportFileName={`TARDINESS-${moment().format('YYYY-MM-DD')}.xls`}

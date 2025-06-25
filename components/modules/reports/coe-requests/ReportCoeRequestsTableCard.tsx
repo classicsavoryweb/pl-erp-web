@@ -19,14 +19,17 @@ import CoePreviewModal from "./CoePreviewModal";
 import { useState } from "react";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import confirm from "@/components/common/Confirm";
+import EditReportCoeRequestForm from "./EditReportCoeRequestForm";
 
 const ReportCoeRequestsTableCard = () => {
     const [selectedRequest, setSelectedRequest] = useState<number>(0);
+    const [data, setData] = useState<any>({});
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
     const createModal = useModal();
     const viewCoeModal = useModal();
+    const editCoeModal = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -120,6 +123,7 @@ const ReportCoeRequestsTableCard = () => {
                 let actions = actionSettings;
                 if (data.status === "Pending") {
                     actions = [
+                        actionSettings[3],
                         actionSettings[1],
                         actionSettings[2],
                     ];
@@ -195,6 +199,23 @@ const ReportCoeRequestsTableCard = () => {
                 });
             }
         },
+        {
+            label: "Edit",
+            onClick: async (data: any) => {
+                setData({
+                    id: data.id,
+                    coe_reason: data.coe_reason,
+                    employee: data.employee,
+                    coe_format: data.coe_format,
+                    include_salary: data.include_salary,
+                    employee_number: data.employee.employee_number,
+                    places: data.places,
+                    leave_from: data.leave_from,
+                    leave_to: data.leave_to,
+                })
+                editCoeModal.onOpen();
+            }
+        },
     ];
 
     return (
@@ -214,6 +235,11 @@ const ReportCoeRequestsTableCard = () => {
             <CoePreviewModal
                 modal={viewCoeModal}
                 requestId={Number(selectedRequest)}
+            />
+            <EditReportCoeRequestForm
+                modal={editCoeModal}
+                onSubmitCallback={api.triggerReload}
+                data={data}
             />
             <Card>
                 <div className="flex justify-end items-center">

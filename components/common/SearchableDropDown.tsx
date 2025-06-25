@@ -17,6 +17,7 @@ interface SelectInterface {
         obj?: any;
     }[];
     loading?: boolean;
+    disabled?: boolean;
 }
 
 const SearchableDropDown = ({
@@ -29,6 +30,7 @@ const SearchableDropDown = ({
     required,
     options,
     loading = false,
+    disabled = false,
 }: SelectInterface) => {
     const [toggle, setToggle] = useState(false);
     const [keyWord, setKeyWord] = useState("");
@@ -106,10 +108,15 @@ const SearchableDropDown = ({
             <div className="relative">
                 <button
                 type="button"
-                className={`w-full h-[40px] rounded-md focus:outline-none hover:cursor-pointer border-2 ${
+                className={`w-full h-[40px] rounded-md focus:outline-none border-2 ${
                     error ? "border-red-400" : "border-slate-300 focus:border-slate-400"
-                } p-2 text-left`}
+                }
+                    p-2 text-left
+                    ${disabled ? "hover:cursor-not-allowed bg-gray-100" : "hover:cursor-pointer"}
+                    `
+                }
                 onClick={() => setToggle((prev) => !prev)}
+                disabled={disabled}
                 >
                 <div className="flex justify-between items-center">
                     <p className="truncate">{selectedLabel}</p>

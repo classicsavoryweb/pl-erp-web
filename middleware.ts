@@ -28,7 +28,7 @@ export function middleware(request: NextRequest) {
         return regex.test(pathname);
     });
 
-    if (authToken && permissionNeeded && !parsedPermissions.includes(permissionNeeded.permission)) {
+    if ( permissionNeeded?.permission !== "" && authToken && permissionNeeded && !parsedPermissions.includes(permissionNeeded.permission)) {
         return NextResponse.redirect(new URL('/no-access', request.url));
     }
 
