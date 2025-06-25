@@ -16,7 +16,7 @@ import moment from "moment";
 
 const EmployeeTableCard = () => {
     const api = useApiCall();
-    const paginator = usePagination();
+    const paginator = usePagination(15);
     const router = useRouter();
     const filter = useFilter();
 

@@ -80,7 +80,7 @@ export const axiosHelper = async ({
         }
 
         if (response) {
-            const errors = [502, 504, 500, 403, 409];
+            const errors = [502, 504, 500, 403, 409, 404];
             if (errors.includes(response.status)) {
                 return {
                     error: true,

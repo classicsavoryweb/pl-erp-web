@@ -82,6 +82,16 @@ export const getEmployeeBranchhes = async (employeeNumber: string, payload: {}) 
     return resData;
 };
 
+// /delete-employee-branches/{id}
+export const deleteEmployeeBranches = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/delete-employee-branches/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
 export const getEmployeeContractHistory = async (employeeNumber: string, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/get-employee-contracts/${employeeNumber}`,

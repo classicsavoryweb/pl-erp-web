@@ -1,5 +1,5 @@
 "use client";
-import { exportEmployeeBranchHistory, getEmployeeBranchhes } from "@/api/employee";
+import { deleteEmployeeBranches, exportEmployeeBranchHistory, getEmployeeBranchhes } from "@/api/employee";
 import Button from "@/components/common/Button";
 import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
@@ -17,6 +17,7 @@ import { EmployeeContext } from "@/context/EmployeeProvider";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import moment from "moment";
+import confirm from "@/components/common/Confirm";
 
 const EmployeeBranchHistory = () => {
     const params = useParams();
@@ -73,28 +74,63 @@ const EmployeeBranchHistory = () => {
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 const dataIndex = api.dataSet.findIndex(item => data.id === item.id);
-                if (employee.branch_id === data.branch_id && dataIndex === 0) {
-                    return (
-                        <ActionDropDown
-                            data={data}
-                            actions={[
-                                {
-                                    label: "Edit",
-                                    onClick: () => {
-                                        setAction("edit");
-                                        modal.onOpen();
-                                        setData({
-                                            id: data.id,
-                                            date_assigned: data.date_assigned,
-                                            branch_id: data.branch_id,
-                                            remarks: data.remarks,
-                                        });
+                const actionsSettings = [
+                    {
+                        label: "Edit",
+                        onClick: () => {
+                            setAction("edit");
+                            modal.onOpen();
+                            setData({
+                                id: data.id,
+                                date_assigned: data.date_assigned,
+                                branch_id: data.branch_id,
+                                remarks: data.remarks,
+                            });
+                        }
+                    },
+                    {
+                        label: "Delete",
+                        onClick: async () => {
+                            const isConfirm = await confirm({
+                                title: "Delete Branch",
+                                message: "Are you sure you want to delete?"
+                            });
+
+                            if (isConfirm) {
+                                deleteEmployeeBranches(data.id)
+                                .then((resp) => {
+                                    if (!resp.error) {
+                                        toast.success("Branch successfully deleted");
+                                        api.triggerReload();
+                                        triggerReload();
+                                    } else {
+                                        toast.error(resp.data.message);
                                     }
-                                }
-                            ]}
-                        />
-                    )
+                                }).catch((() => {
+                                    toast.error("Error encountered");
+                                }));
+                            }
+                        }
+                    }
+                ];
+
+                let actions = actionsSettings;
+                if (employee.branch_id === data.branch_id && dataIndex === 0 && api.dataSet.length === 1) {
+                    actions = [
+                        actionsSettings[0]
+                    ];
+                } else if (employee.branch_id === data.branch_id && dataIndex === 0 && api.dataSet.length > 1) {
+                    actions = actionsSettings;
+                } else {
+                    return "—";
                 }
+
+                return (
+                    <ActionDropDown
+                        data={data}
+                        actions={actions}
+                    />
+                )
             }
         },
     ];
