@@ -169,6 +169,11 @@ export const hrRoutes: Route[] = [
                 pathname: "/maintenance/acting-capacity-reasons",
                 permission: "can_view_acting_capacity_reasons"
             },
+            {
+                name: "Sanction",
+                pathname: "/maintenance/sanctions",
+                permission: "can_view_sanctions"
+            },
         ]
     },
 ];
