@@ -71,9 +71,11 @@ const EmploymentStatusTableCard = () => {
                     setDataSet(resp.data.data);
                     setReport(resp.data);
                 } else {
+                    setDataSet([]);
                     toast.error(resp.data.message);
                 }
             }).catch(() => {
+                setDataSet([]);
                 toast.error("Error encountered");
             }).finally(() => {
                 setSubmitting(false);
