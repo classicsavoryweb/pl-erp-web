@@ -145,7 +145,7 @@ const ExtensionContract = ({
                             paddingBottom: 10
                         }}
                     >
-                        You shall receive the basic salary of {convertToPesosAndCentavos(data.salary_amount)} ({Number(data.salary_amount).toFixed(2)}). The cut off period is on the 10th of the month for every 15th payroll period and 25th of the month for every 30th payroll period.
+                        You shall receive the basic salary of {convertToPesosAndCentavos(data.salary_amount)} ({Number(data.salary_amount).toFixed(2)}) per hour. The cut off period is on the 10th of the month for every 15th payroll period and 25th of the month for every 30th payroll period.
                     </Text>
                 </View>
 
