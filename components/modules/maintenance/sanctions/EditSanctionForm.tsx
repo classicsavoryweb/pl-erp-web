@@ -26,13 +26,15 @@ const EditSanctionForm = ({
     const editFormHandler = useFormik({
         initialValues: {
             description: "",
+            rank: "",
             suspension_days: "",
             status: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             description: Yup.string().required("Sanction is required."),
-            suspension_days: Yup.string().required("Suspension day(s) is required."),
+            rank: Yup.number().required("Rank is required.").typeError("Must be a number."),
+            suspension_days: Yup.number().required("Suspension day(s) is required.").typeError("Must be a number."),
             status: Yup.string().required("Status is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
@@ -90,6 +92,16 @@ const EditSanctionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.description}
+                />
+                <Textfield
+                    label="Rank"
+                    placeholder="enter rank"
+                    name="rank"
+                    type="text"
+                    value={editFormHandler.values.rank}
+                    required
+                    onChange={editFormHandler.handleChange}
+                    error={editFormHandler.errors.rank}
                 />
                 <Textfield
                     label="Suspension Days"

@@ -24,12 +24,14 @@ const CreateSanctionForm = ({
         initialValues: {
             status: "active",
             description: "",
+            rank: "",
             suspension_days: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             description: Yup.string().required("Sanction description is required."),
-            suspension_days: Yup.number().required("Suspension days is required."),
+            rank: Yup.number().required("Rank is required.").typeError("Must be a number."),
+            suspension_days: Yup.number().required("Suspension days is required.").typeError("Must be a number."),
             status: Yup.string().required("Status is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
@@ -79,6 +81,16 @@ const CreateSanctionForm = ({
                     required
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.description}
+                />
+                <Textfield
+                    label="Rank"
+                    placeholder="enter rank"
+                    name="rank"
+                    type="text"
+                    value={createFormHandler.values.rank}
+                    required
+                    onChange={createFormHandler.handleChange}
+                    error={createFormHandler.errors.rank}
                 />
                 <Textfield
                     label="Suspension Days"
