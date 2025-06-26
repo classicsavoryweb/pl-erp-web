@@ -86,6 +86,120 @@ const EmployeeTableCard = () => {
         },
     ];
 
+    const exportOptions = [
+        {
+            label: "Full Name",
+            value: "full_name",
+            checked: true,
+        },
+        {
+            label: "Employee Number",
+            value: "employee_number",
+            checked: true,
+        },
+        {
+            label: "Employee Number 2",
+            value: "employee_number_2",
+            checked: true,
+        },
+        {
+            label: "Biometric ID",
+            value: "biometric_number",
+        },
+        {
+            label: "Position",
+            value: "current_position.description",
+        },
+        {
+            label: "Branch",
+            value: "current_branch.name",
+        },
+        {
+            label: "Home Branch",
+            value: "home_branch.name",
+        },
+        {
+            label: "Date Hired",
+            value: "date_hired",
+        },
+        {
+            label: "Employment Status",
+            value: "employee_status.description",
+        },
+        {
+            label: "Employee Type",
+            value: "type",
+        },
+        {
+            label: "Regularization Date",
+            value: "regularization_date",
+        },
+        {
+            label: "Civil Status",
+            value: "civil_status",
+        },
+        {
+            label: "Gender",
+            value: "gender",
+        },
+        {
+            label: "Height",
+            value: "height",
+        },
+        {
+            label: "Birthplace",
+            value: "birthplace",
+        },
+        {
+            label: "Birthday",
+            value: "birthday",
+        },
+        {
+            label: "Address",
+            value: "address",
+        },
+        {
+            label: "Region",
+            value: "region",
+        },
+        {
+            label: "Contact Number",
+            value: "contact_number",
+        },
+        {
+            label: "Email Address",
+            value: "email",
+        },
+        {
+            label: "Separation Date",
+            value: "separation_date",
+        },
+        {
+            label: "Separation Reason",
+            value: "separation_reason",
+        },
+        {
+            label: "TIN",
+            value: "tin",
+        },
+        {
+            label: "SSS",
+            value: "sss",
+        },
+        {
+            label: "Philhealth",
+            value: "philhealth",
+        },
+        {
+            label: "Pagibig",
+            value: "pagibig",
+        },
+        {
+            label: "Tax Type",
+            value: "tax_type",
+        },
+    ];
+
     return (
         <>
             <FilterCard
@@ -134,6 +248,8 @@ const EmployeeTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
+                withExportOptions
+                exportOptions={exportOptions}
             />
             <Card>
                 <Table

@@ -14,6 +14,9 @@ import EmployeeTypeDropDown from "../generic/EmployeeTypeDropDown";
 import confirm from "@/components/common/Confirm";
 import { useContext } from "react";
 import { AuthContext } from "@/context/AuthProvider";
+import { useModal } from "@/hooks/modal";
+import Modal from "@/components/common/Modal";
+import Checkbox from "@/components/common/Checkbox";
 
 interface FilterInterface {
     hasDateRange?: boolean;
@@ -35,6 +38,8 @@ interface FilterInterface {
     callBack?: () => void;
     withMonth?: boolean;
     withYear?: boolean;
+    withExportOptions?: boolean;
+    exportOptions?: {label: string, value: string, checked?: boolean}[];
 };
 const FilterCard = ({
     isExpanded = false,
@@ -65,8 +70,11 @@ const FilterCard = ({
     callBack,
     withMonth = false,
     withYear = false,
+    withExportOptions = false,
+    exportOptions
 }: FilterInterface) => {
 
+    const optionModal = useModal();
     const { permissions } = useContext(AuthContext);
     const formHandler = useFormik({
         initialValues: {
@@ -116,6 +124,7 @@ const FilterCard = ({
             position_id: "",
             employee_status_id: "",
             type: "",
+            fields: [],
         },
         validateOnChange: false,
         onSubmit: async (values) => {
@@ -143,6 +152,7 @@ const FilterCard = ({
     });
 
     return (
+        <>
         <div className="w-full">
             <Accordion
                 title="Filters"
@@ -302,10 +312,16 @@ const FilterCard = ({
                                             label="Export"
                                             type="button"
                                             onClick={() => {
-                                                exportHandler.setValues({
+                                                exportHandler.setValues(prev => ({
+                                                    ...prev,
                                                     ...formHandler.values
-                                                });
-                                                exportHandler.submitForm();
+                                                }));
+
+                                                if (!withExportOptions) {
+                                                    exportHandler.submitForm();
+                                                } else {
+                                                    optionModal.onOpen();
+                                                }
                                             }}
                                             variant="success"
                                         />    
@@ -324,6 +340,66 @@ const FilterCard = ({
                 </form>
             </Accordion>
         </div>
+        {
+            withExportOptions &&
+            <Modal
+                title="Export Options"
+                isShowing={optionModal.isShowing}
+                onClose={optionModal.onClose}
+                size="lg"
+            >
+                <Grid cols={3}>
+                    { exportOptions && exportOptions.map((option, key) => {
+                        return (
+                            <div className="py-1" key={key}>
+                                <Checkbox
+                                    label={option.label}
+                                    value={option}
+                                    onChange={(e) => {
+                                        if (e.target.checked) {
+                                            exportHandler.setFieldValue("fields", [
+                                                ...exportHandler.values.fields,
+                                                option
+                                            ]);
+                                        } else {
+                                            exportHandler.setFieldValue(
+                                                "fields",
+                                                exportHandler.values.fields.filter((field) => field !== option)
+                                            );
+                                        }
+                                    }}
+                                    checked={option.checked ?? undefined}
+                                />
+                            </div>
+                        );
+                    })
+                    }
+                </Grid>
+                <hr className="mt-6 pb-2 text-slate-300"/>
+                <div className="flex justify-end gap-x-2">
+                    <div>
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={() => {
+                                optionModal.onClose();
+                                exportHandler.resetForm();
+                            }}
+                        />
+                    </div>     
+                    <div>
+                        <Button
+                            type="button"
+                            label="Submit"
+                            onClick={() => {
+                                exportHandler.submitForm();
+                            }}
+                        />         
+                    </div>
+                </div>
+            </Modal>
+        }
+        </>
     );
 };
 
