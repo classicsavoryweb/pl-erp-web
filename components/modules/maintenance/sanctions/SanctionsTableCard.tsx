@@ -56,6 +56,11 @@ const SanctionsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Rank",
+            path: "rank",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Suspension Days",
             path: "suspension_days",
             columnType: COLUMNTYPES.string,
@@ -74,9 +79,10 @@ const SanctionsTableCard = () => {
                 editModal.onOpen();
                 setData({
                     id: data.id,
-                    status: data.status,
                     description: data.description,
+                    rank: data.rank,
                     suspension_days: data.suspension_days,
+                    status: data.status,
                 });
             }
         },
