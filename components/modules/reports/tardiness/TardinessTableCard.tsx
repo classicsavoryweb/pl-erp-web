@@ -264,14 +264,16 @@ const TardinessTableCard = () => {
                 }).catch(() => {
                     toast.error("Error encountered");
                 });
-            }
+            },
+            permission: "can_approve_all_records_tardiness"
         },
         {
             label: "Void",
             onClick: async (data: any) => {
                 setId(data.id);
                 voidModal.onOpen();
-            }
+            },
+            permission: "can_void_all_records_tardiness"
         },
         {
             label: "View NTE",

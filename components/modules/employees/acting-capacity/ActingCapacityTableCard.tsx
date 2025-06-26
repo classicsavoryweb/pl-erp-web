@@ -200,21 +200,24 @@ const ActingCapacityTableCard = () => {
             onClick: (data: any) => {
                 generateConfirmationModal.onOpen();
                 setId(data.id);
-            }
+            },
+            permission: "can_generate_acting_capacity"
         },
         {
             label: "Confirm Promotion",
             onClick: (data: any) => {
                 confirmPromotion.onOpen();
                 setId(data.id);
-            }
+            },
+            permission: "can_approve_acting_capacity"
         },
         {
             label: "Reject Promotion",
             onClick: (data: any) => {
                 rejectPromotion.onOpen();
                 setId(data.id);
-            }
+            },
+            permission: "can_reject_acting_capacity"
         },
         {
             label: "View Documents",
