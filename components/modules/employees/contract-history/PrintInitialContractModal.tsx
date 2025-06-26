@@ -22,6 +22,7 @@ const PrintInitialContractModal = ({
 
     useAsyncEffect(() => {
         if (modal.isShowing) {
+            api.setError(false);
             api.setLoading(true);
             getEmployeeContractDetails(Number(contractId))
             .then((resp) => {
@@ -29,8 +30,12 @@ const PrintInitialContractModal = ({
                     setData(resp.data);
                 } else {
                     toast.error(resp.data.message);
+                    api.setError(true);
                 }
-            }).finally(() => {
+            }).catch(() => {
+                api.setError(true);
+            }).
+            finally(() => {
                 api.setLoading(false);
             })
         }
@@ -45,6 +50,7 @@ const PrintInitialContractModal = ({
             }}
             loading={api.loading}
             size="xxl"
+            error={api.error}
         >
             <FirstContract
                 data={data}

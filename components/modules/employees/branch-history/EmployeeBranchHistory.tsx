@@ -18,6 +18,9 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import moment from "moment";
 import confirm from "@/components/common/Confirm";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import DeleteBranchForm from "./DeleteBranchForm";
 
 const EmployeeBranchHistory = () => {
     const params = useParams();
@@ -26,8 +29,10 @@ const EmployeeBranchHistory = () => {
     const paginator = usePagination(5);
     const [data, setData] = useState<any>({});
     const modal = useModal();
+    const deleteModal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload, employee } = useContext(EmployeeContext);
+    const [id, setId] = useState<string>("0");
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -91,25 +96,8 @@ const EmployeeBranchHistory = () => {
                     {
                         label: "Delete",
                         onClick: async () => {
-                            const isConfirm = await confirm({
-                                title: "Delete Branch",
-                                message: "Are you sure you want to delete?"
-                            });
-
-                            if (isConfirm) {
-                                deleteEmployeeBranches(data.id)
-                                .then((resp) => {
-                                    if (!resp.error) {
-                                        toast.success("Branch successfully deleted");
-                                        api.triggerReload();
-                                        triggerReload();
-                                    } else {
-                                        toast.error(resp.data.message);
-                                    }
-                                }).catch((() => {
-                                    toast.error("Error encountered");
-                                }));
-                            }
+                            deleteModal.onOpen();
+                            setId(data.id);
                         }
                     }
                 ];
@@ -147,6 +135,17 @@ const EmployeeBranchHistory = () => {
                 action={action}
                 data={data}
             />
+
+            <DeleteBranchForm
+                modal={deleteModal}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    deleteModal.onClose();
+                    triggerReload();
+                }}
+                id={id}
+            />
+
             <div className="flex justify-end">
                 <div>
                     <DropDownButtons

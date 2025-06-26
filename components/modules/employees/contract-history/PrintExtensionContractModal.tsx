@@ -20,6 +20,7 @@ const PrintExtensionContractModal = ({
 
     useAsyncEffect(() => {
         if (modal.isShowing) {
+            api.setError(false);
             api.setLoading(true);
             getEmployeeContractDetails(Number(contractId))
             .then((resp) => {
@@ -27,8 +28,12 @@ const PrintExtensionContractModal = ({
                     setData(resp.data);
                 } else {
                     toast.error(resp.data.message);
+                    api.setError(true);
                 }
-            }).finally(() => {
+            }).catch(() => {
+                api.setError(true);
+            })
+            .finally(() => {
                 api.setLoading(false);
             })
         }
@@ -42,6 +47,7 @@ const PrintExtensionContractModal = ({
                 modal.onClose();
             }}
             loading={api.loading}
+            error={api.error}
             size="xxl"
         >
             <ExtensionContract
