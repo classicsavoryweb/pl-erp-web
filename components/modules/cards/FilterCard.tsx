@@ -147,6 +147,12 @@ const FilterCard = ({
                     a.click();
                     a.remove();
                 });
+
+                if (withExportOptions) {
+                    exportHandler.resetForm();
+                    optionModal.onClose();
+                }
+                
             }
         }
     });

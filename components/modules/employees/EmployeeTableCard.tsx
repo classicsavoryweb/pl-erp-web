@@ -123,6 +123,10 @@ const EmployeeTableCard = () => {
             value: "date_hired",
         },
         {
+            label: "Status",
+            value: "status",
+        },
+        {
             label: "Employment Status",
             value: "employee_status.description",
         },
