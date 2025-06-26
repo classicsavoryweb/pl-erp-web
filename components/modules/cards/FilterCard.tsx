@@ -12,7 +12,7 @@ import BranchDropDown from "../generic/BranchDropDown";
 import EmploymentStatusDropdown from "../generic/EmploymentStatusDropDown";
 import EmployeeTypeDropDown from "../generic/EmployeeTypeDropDown";
 import confirm from "@/components/common/Confirm";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import { AuthContext } from "@/context/AuthProvider";
 import { useModal } from "@/hooks/modal";
 import Modal from "@/components/common/Modal";
@@ -156,6 +156,24 @@ const FilterCard = ({
             }
         }
     });
+
+    useEffect(() => {
+        if (optionModal.isShowing && exportOptions) {
+            const currentFields = exportHandler.values.fields || [];
+
+            const newOptions = exportOptions.filter(option => 
+                option.checked &&
+                !currentFields.some((field:any) => field.value === option.value)
+            );
+
+            if (newOptions.length > 0) {
+                exportHandler.setFieldValue("fields", [
+                    ...currentFields,
+                    ...newOptions
+                ]);
+            }
+        }
+    }, [optionModal.isShowing, exportOptions]);
 
     return (
         <>

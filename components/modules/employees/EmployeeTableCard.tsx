@@ -125,10 +125,12 @@ const EmployeeTableCard = () => {
         {
             label: "Status",
             value: "status",
+            checked: true,
         },
         {
             label: "Employment Status",
             value: "employee_status.description",
+            checked: true,
         },
         {
             label: "Employee Type",
@@ -201,6 +203,10 @@ const EmployeeTableCard = () => {
         {
             label: "Tax Type",
             value: "tax_type",
+        },
+        {
+            label: "Proper Format Full Name",
+            value: "proper_full_name",
         },
     ];
 
