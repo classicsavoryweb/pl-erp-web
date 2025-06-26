@@ -88,7 +88,7 @@ const CreateSanctionForm = ({
                     value={createFormHandler.values.suspension_days}
                     required
                     onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.description}
+                    error={createFormHandler.errors.suspension_days}
                 />
                 <ActiveInactiveDropDown
                     label="Status"
