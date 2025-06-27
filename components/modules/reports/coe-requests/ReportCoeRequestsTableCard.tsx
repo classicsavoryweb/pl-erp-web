@@ -226,6 +226,7 @@ const ReportCoeRequestsTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 hasDateRange
+                isExpanded
                 callBack={() => {
                     paginator.setPage(1);
                 }}
