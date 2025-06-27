@@ -7,12 +7,16 @@ import moment from 'moment';
 import Badge from "./Badge";
 import EmptyState from "./EmptyState";
 import Checkbox from "./Checkbox";
+import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
+import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
+import { useEffect, useState } from "react";
 
 interface columnSetting {
     columnHead: string;
     path: string;
     columnType: typeof COLUMNTYPES[keyof typeof COLUMNTYPES],
     function?: (data:any) => any;
+    sort?: boolean;
 };
 
 type ActionType = {
@@ -30,6 +34,8 @@ interface TableInterface {
     actions?: ActionType[];
     withCheckBox?: boolean;
     onCheck?: (e: any) => void;
+    canSortColumns?: boolean;
+    onSort?: (e: any) => void;
 };
 
 const Table = ({
@@ -41,11 +47,14 @@ const Table = ({
     paginator,
     actions,
     withCheckBox = false,
-    onCheck
+    onCheck,
+    canSortColumns,
+    onSort,
 }: TableInterface) => {
 
     const currentPage = paginator && paginator.paginationData.current_page;
     const totalPages = paginator && paginator.paginationData.last_page;
+    const [order, setOrder] = useState<"ASC" | "DESC" | "" >("");
     moment.locale('eng');
 
     const getCustomLinks = () => {
@@ -66,7 +75,6 @@ const Table = ({
         return pages;
     };
 
-
     return (
         <div className="relative my-1 w-full">
             <table className="w-full rounded-md overflow-x-auto">
@@ -83,9 +91,59 @@ const Table = ({
                             columnSettings.map((settings, key) => {
                                 return (
                                     <th key={key}
-                                        className="text-left p-2 border-slate-300 border-1 text-zinc-100"
+                                        className={`
+                                            text-left p-2 border-slate-300 border-1 text-zinc-100
+                                        `}
                                     >
-                                        {settings.columnHead}
+                                        { canSortColumns 
+                                            ?
+                                            <div className="flex justify-between items-center">
+                                                <p>
+                                                    {settings.columnHead}
+                                                </p>
+                                                { (canSortColumns && settings.sort) &&
+                                                    <div className="flex justify-start -space-x-1.5">
+                                                        <button
+                                                            className={`hover:cursor-pointer`}
+                                                            onClick={() => {
+                                                                setOrder("ASC");
+                                                                onSort && onSort({
+                                                                    sortColumn: settings.path,
+                                                                    sort: "ASC",
+                                                                    submit: true,
+                                                                });
+                                                            }}
+                                                        >
+                                                            <ExpandLessOutlinedIcon
+                                                                className={`${order === "ASC" ? "text-slate-100" : "text-slate-400"}`}
+                                                                style={{ width: '25px', height: '25px' }}
+                                                            />
+                                                        </button>
+
+                                                        <button
+                                                            className={`hover:cursor-pointer`}
+                                                            onClick={() => {
+                                                                setOrder("DESC");
+                                                                onSort && onSort({
+                                                                    sortColumn: settings.path,
+                                                                    sort: "DESC",
+                                                                    submit: true,
+                                                                });
+                                                            }}
+                                                        >
+                                                            <ExpandMoreOutlinedIcon
+                                                                className={`${order === "DESC" ? "text-slate-100" : "text-slate-400"}`}
+                                                                style={{ width: '25px', height: '25px' }}
+                                                            />
+                                                        </button>
+                                                    </div>
+                                                }
+                                            </div>
+                                            :
+                                            <p>
+                                                {settings.columnHead}
+                                            </p>
+                                        }
                                     </th>
                                 )
                             })

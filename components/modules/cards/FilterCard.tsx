@@ -17,6 +17,7 @@ import { AuthContext } from "@/context/AuthProvider";
 import { useModal } from "@/hooks/modal";
 import Modal from "@/components/common/Modal";
 import Checkbox from "@/components/common/Checkbox";
+import moment from "moment";
 
 interface FilterInterface {
     hasDateRange?: boolean;
@@ -40,6 +41,9 @@ interface FilterInterface {
     withYear?: boolean;
     withExportOptions?: boolean;
     exportOptions?: {label: string, value: string, checked?: boolean}[];
+    columnSort?: boolean;
+    filterValues?: any;
+    triggerSort?: boolean;
 };
 const FilterCard = ({
     isExpanded = false,
@@ -71,7 +75,9 @@ const FilterCard = ({
     withMonth = false,
     withYear = false,
     withExportOptions = false,
-    exportOptions
+    exportOptions,
+    columnSort = false,
+    filterValues,
 }: FilterInterface) => {
 
     const optionModal = useModal();
@@ -87,8 +93,10 @@ const FilterCard = ({
             position_id: "",
             employee_status_id: "",
             type: "",
-            year: "2025",
-            month: ""
+            year: moment().year(),
+            month: "",
+            sortColumn: "",
+            sort: ""
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -124,6 +132,8 @@ const FilterCard = ({
             position_id: "",
             employee_status_id: "",
             type: "",
+            sortColumn: "",
+            sort: "",
             fields: [],
         },
         validateOnChange: false,
@@ -174,6 +184,20 @@ const FilterCard = ({
             }
         }
     }, [optionModal.isShowing, exportOptions]);
+
+    useEffect(() => {
+        if (columnSort) {
+            formHandler.setValues((prev => ({
+                ...prev,
+                sortColumn: filterValues.sortColumn,
+                sort: filterValues.sort
+            })));
+
+            if (filterValues.submit) {
+                formHandler.submitForm();
+            }
+        }
+    }, [filterValues]);
 
     return (
         <>
