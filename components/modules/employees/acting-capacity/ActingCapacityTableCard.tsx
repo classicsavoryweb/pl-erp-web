@@ -201,7 +201,7 @@ const ActingCapacityTableCard = () => {
                 generateConfirmationModal.onOpen();
                 setId(data.id);
             },
-            permission: "can_generate_acting_capacity"
+            permission: "generate_acting_capacity"
         },
         {
             label: "Confirm Promotion",
@@ -209,7 +209,7 @@ const ActingCapacityTableCard = () => {
                 confirmPromotion.onOpen();
                 setId(data.id);
             },
-            permission: "can_approve_acting_capacity"
+            permission: "approve_acting_capacity"
         },
         {
             label: "Reject Promotion",
@@ -217,7 +217,7 @@ const ActingCapacityTableCard = () => {
                 rejectPromotion.onOpen();
                 setId(data.id);
             },
-            permission: "can_reject_acting_capacity"
+            permission: "reject_acting_capacity"
         },
         {
             label: "View Documents",
@@ -270,7 +270,7 @@ const ActingCapacityTableCard = () => {
                 api={exportAllActingCapacity}
                 defaultColumnSelected="employee.full_name"
                 exportFileName={`ACTING-CAPACITY-${moment().format("YYYY-MM-DD")}.xls`}
-                exportPermission="can_export_acting_capacity"
+                exportPermission="export_acting_capacity"
                 callBack={() => {
                     paginator.setPage(1);
                 }}

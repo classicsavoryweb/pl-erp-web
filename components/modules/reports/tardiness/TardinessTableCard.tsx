@@ -265,7 +265,7 @@ const TardinessTableCard = () => {
                     toast.error("Error encountered");
                 });
             },
-            permission: "can_approve_all_records_tardiness"
+            permission: "approve_all_records_tardiness"
         },
         {
             label: "Void",
@@ -273,7 +273,7 @@ const TardinessTableCard = () => {
                 setId(data.id);
                 voidModal.onOpen();
             },
-            permission: "can_void_all_records_tardiness"
+            permission: "void_all_records_tardiness"
         },
         {
             label: "View NTE",

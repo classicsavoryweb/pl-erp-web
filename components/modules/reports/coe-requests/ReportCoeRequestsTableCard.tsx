@@ -177,7 +177,7 @@ const ReportCoeRequestsTableCard = () => {
                     toast.error("Error encountered");
                 });
             },
-            permission: "can_cancel_all_records_coe_requests"
+            permission: "cancel_all_records_coe_requests"
         },
         {
             label: "Approve",
@@ -199,7 +199,7 @@ const ReportCoeRequestsTableCard = () => {
                     toast.error("Error encountered");
                 });
             },
-            permission: "can_approve_all_records_coe_requests"
+            permission: "approve_all_records_coe_requests"
         },
         {
             label: "Edit",

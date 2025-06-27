@@ -30,23 +30,23 @@ export const hrRoutes: Route[] = [
         name: "Employees",
         icon: "PeopleAltOutlined",
         type: "dropdown",
-        permission: "can_view_employees_module",
+        permission: "view_employees_module",
         basepath: "/employees",
         subLinks: [
             {
                 name: "Employee Tracking",
                 pathname: "/employees/employee-tracking",
-                permission: "can_view_employee_tracking"
+                permission: "view_employee_tracking"
             },
             {
                 name: "Add Employee",
                 pathname: "/employees/add-employee",
-                permission: "can_perform_employee_tracking"
+                permission: "perform_employee_tracking"
             },
             {
                 name: "Acting Capacity",
                 pathname: "/employees/acting-capacity",
-                permission: "can_view_acting_capacity"
+                permission: "view_acting_capacity"
             },
         ]
     },
@@ -54,38 +54,38 @@ export const hrRoutes: Route[] = [
         name: "All Records",
         icon: "FolderCopyOutlined",
         type: "dropdown",
-        permission: "can_view_all_records_module",
+        permission: "view_all_records_module",
         basepath: "/all-records",
         subLinks: [
             {
                 name: "Employment Status Report",
                 pathname: "/all-records/employment-status",
-                permission: "can_view_all_records_employment_status",
+                permission: "view_all_records_employment_status",
             },
             {
                 name: "Tardiness",
                 pathname: "/all-records/tardiness",
-                permission: "can_view_all_records_tardiness",
+                permission: "view_all_records_tardiness",
             },
             {
                 name: "COE Requests",
                 pathname: "/all-records/coe-requests",
-                permission: "can_view_all_records_coe_requests",
+                permission: "view_all_records_coe_requests",
             },
             {
                 name: "Employee Offenses",
                 pathname: "/all-records/employee-offenses",
-                permission: "can_view_all_records_offenses"
+                permission: "view_all_records_offenses"
             },
             {
                 name: "Vaccination",
                 pathname: "/all-records/vaccination",
-                permission: "can_view_all_records_vaccination"
+                permission: "view_all_records_vaccination"
             },
             // {
             //     name: "Health and Safety",
             //     pathname: "/all-records/health-and-safety",
-            //     permission: "can_view_reports_health_and_safety"
+            //     permission: "view_reports_health_and_safety"
             // },
         ]
     },
@@ -93,86 +93,86 @@ export const hrRoutes: Route[] = [
         name: "Maintenance",
         icon: "EngineeringOutlined",
         type: "dropdown",
-        permission: "can_view_maintenance_module",
+        permission: "view_maintenance_module",
         basepath: "/maintenance",
         subLinks: [
             {
                 name: "Branches",
                 pathname: "/maintenance/branches",
-                permission: "can_view_branches"
+                permission: "view_branches"
             },
             {
                 name: "Positions",
                 pathname: "/maintenance/positions",
-                permission: "can_view_positions"
+                permission: "view_positions"
             },
             {
                 name: "Stations",
                 pathname: "/maintenance/stations",
-                permission: "can_view_stations",
+                permission: "view_stations",
                 break: true
             },
             {
                 name: "Employee Status",
                 pathname: "/maintenance/employee-status",
-                permission: "can_view_employee_status"
+                permission: "view_employee_status"
             },
             {
                 name: "Agencies",
                 pathname: "/maintenance/agencies",
-                permission: "can_view_agencies"
+                permission: "view_agencies"
             },
             {
                 name: "Offenses",
                 pathname: "/maintenance/offenses",
-                permission: "can_view_offenses",
+                permission: "view_offenses",
                 break: true
             },
             {
                 name: "Training Titles",
                 pathname: "/maintenance/training-titles",
-                permission: "can_view_training_titles",
+                permission: "view_training_titles",
             },
             {
                 name: "Vaccine Brand",
                 pathname: "/maintenance/vaccine-brand",
-                permission: "can_view_vaccine_brand",
+                permission: "view_vaccine_brand",
             },
             {
                 name: "Diagnosis",
                 pathname: "/maintenance/diagnosis",
-                permission: "can_view_diagnosis",
+                permission: "view_diagnosis",
                 break: true
             },
             {
                 name: "Rate per Group",
                 pathname: "/maintenance/rate-per-group",
-                permission: "can_view_rate_per_group"
+                permission: "view_rate_per_group"
             },
             {
                 name: "Salary Positions",
                 pathname: "/maintenance/salary-positions",
-                permission: "can_view_salary_positions"
+                permission: "view_salary_positions"
             },
             {
                 name: "Bank Account Types",
                 pathname: "/maintenance/bank-account-types",
-                permission: "can_view_salary_positions"
+                permission: "view_salary_positions"
             },
             {
                 name: "COE Reasons",
                 pathname: "/maintenance/coe-reasons",
-                permission: "can_view_coe_reasons"
+                permission: "view_coe_reasons"
             },
             {
                 name: "Acting Capacity Reasons",
                 pathname: "/maintenance/acting-capacity-reasons",
-                permission: "can_view_acting_capacity_reasons"
+                permission: "view_acting_capacity_reasons"
             },
             {
                 name: "Sanctions",
                 pathname: "/maintenance/sanctions",
-                permission: "can_view_sanctions"
+                permission: "view_sanctions"
             },
         ]
     },
