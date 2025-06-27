@@ -310,12 +310,12 @@ const EmploymentStatusReportPDF = ({
                         return (
                             <View style={styles.tableRow} key={idx}>
                                 <View style={styles.tableCol}>
-                                    <Text style={{ color: color }}>{employee.full_name}</Text>
+                                    <Text style={{ color: color }} hyphenationCallback={(word: string) => [word]} >{employee.full_name}</Text>
                                 </View>
                                 <View style={styles.tableCol}><Text>{employee.current_position.description}</Text></View>
                                 <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_start_date).format('MMMM DD, YYYY')}</Text></View>
                                 <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_end_date).format('MMMM DD, YYYY')}</Text></View>
-                                <View style={styles.tableCol}><Text>{employee.latest_contract.remarks}</Text></View>
+                                <View style={styles.tableCol}><Text hyphenationCallback={(word: string) => [word]}>{employee.latest_contract.remarks}</Text></View>
                             </View>
                         );
                     })
