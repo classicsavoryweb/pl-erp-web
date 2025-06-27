@@ -423,10 +423,11 @@ export const exportEmployeeOffensesHistory = async (id: string) => {
     return resData;
 };
 
-export const getRequirementAttachment = async (employee_number: string) => {
+export const getRequirementAttachment = async (employee_number: string, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/get-requirements-attachments/${employee_number}`,
         method: 'GET',
+        payload: payload
     });
 
     return resData;
