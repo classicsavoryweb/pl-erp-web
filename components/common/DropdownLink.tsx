@@ -25,7 +25,7 @@ const DropdownLink = ({
 
     return (
         (route.permission === "" || permissions.includes(route.permission)) &&
-        <div className={`relative ${toggle && "bg-red-200/10" } rounded-md overflow-hidden mt-1`}>
+        <div className={`relative ${toggle && "bg-red-200/20" } rounded-md overflow-hidden mt-1`}>
             <button
                 className={`
                     w-full
@@ -82,7 +82,7 @@ const DropdownLink = ({
                                         p-[7px]
                                         items-center
                                         font-medium
-                                        text-sm
+                                        text-[13.5px]
                                         px-3
                                         focus:outline-none
                                         ${active ? "text-red-800" : "text-gray-500"}

@@ -58,7 +58,7 @@ export const hrRoutes: Route[] = [
         basepath: "/all-records",
         subLinks: [
             {
-                name: "Employment Status",
+                name: "Employment Status Report",
                 pathname: "/all-records/employment-status",
                 permission: "can_view_all_records_employment_status",
             },
