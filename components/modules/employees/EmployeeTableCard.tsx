@@ -13,12 +13,13 @@ import { useRouter } from "next/navigation";
 import FilterCard from "../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
+import { useEffect, useState } from "react";
 
 const EmployeeTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(15);
-    const router = useRouter();
     const filter = useFilter();
+    const [sort, setSort] = useState<any>({});
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -53,7 +54,8 @@ const EmployeeTableCard = () => {
         {
             columnHead: "Full Name",
             path: "full_name",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Position",
@@ -260,6 +262,8 @@ const EmployeeTableCard = () => {
                 }}
                 withExportOptions
                 exportOptions={exportOptions}
+                columnSort
+                filterValues={sort}
             />
             <Card>
                 <Table
@@ -269,6 +273,10 @@ const EmployeeTableCard = () => {
                     paginator={paginator}
                     withActions
                     actions={tableActions}
+                    canSortColumns
+                    onSort={(e) => {
+                        setSort(e);
+                    }}
                 />
             </Card>
         </>
