@@ -384,6 +384,7 @@ const TardinessTableCard = () => {
                 filterHandler={filter}
                 defaultColumnSelected="employee.full_name"
                 withStatus
+                isExpanded
                 statusOption={[
                     {
                         label: "Pending",
