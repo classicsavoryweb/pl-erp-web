@@ -21,13 +21,17 @@ const CoePreviewModal = ({
     useAsyncEffect(() => {
         if (modal.isShowing) {
             api.setLoading(true);
+            api.setError(false);
             getReportsCoeRequest(Number(requestId))
             .then((resp) => {
                 if (!resp.error) {
                     setData(resp.data);
                 } else {
-                    toast.error("Error fetching COE request");
+                    toast.error(resp.data.message);
+                    api.setError(true);
                 }
+            }).catch(() => {
+                api.setError(true);
             }).finally(() => {
                 api.setLoading(false);
             })
@@ -43,6 +47,7 @@ const CoePreviewModal = ({
             }}
             loading={api.loading}
             size="xxl"
+            error={api.error}
         >
             <CoePDF
                 data={data}

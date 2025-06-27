@@ -28,7 +28,10 @@ const EmployeeContractForm = ({
     modal,
     onSubmitCallback,
     action,
-    data,
+    data = {
+        contract_end_date: "1900-01-01",
+        contract_start_date: "1900-01-01",
+    },
     validationData,
     onCloseCallback
 }: FormModalInterface) => {

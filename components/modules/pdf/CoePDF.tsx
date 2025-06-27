@@ -155,7 +155,7 @@ const CoePDF = ({
                             <View style={styles.section}>
                                 <Text>
                                     {INDENT}
-                                    For further verification regarding {data.gender === "Male" ? "his " : "her "} performance and other employment records please feel free to reach us at 09178242418 or email us at sfirecords@classicsavory.com.
+                                    For further verification regarding {data.gender === "Male" ? "his " : "her "} performance and other employment records, please feel free to reach us at 09178242418 or email us at sfirecords@classicsavory.com.
                                 </Text>
                             </View>
                             :
