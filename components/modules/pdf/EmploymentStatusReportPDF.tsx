@@ -78,14 +78,16 @@ const styles = StyleSheet.create({
 const INDENT = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
 
 interface CoeInterface {
-    data: any;
+    reports: any[];
 }
 const EmploymentStatusReportPDF = ({
-    data
+    reports
 }: CoeInterface) => (
     <PDFViewer style={styles.fullPage}>
         <Document>
-            <Page size={[612, 936]} style={styles.page}>
+
+            { reports && reports.map((data, idx) => 
+                <Page size={[612, 936]} style={styles.page} key={idx}>
                 <View
                     style={styles.sectionCenter}
                 >   
@@ -422,12 +424,9 @@ const EmploymentStatusReportPDF = ({
                             </>
                         }
                     </View>
-
-
-
                 </View>
-
             </Page>
+            )}
         </Document>
     </PDFViewer>
 );

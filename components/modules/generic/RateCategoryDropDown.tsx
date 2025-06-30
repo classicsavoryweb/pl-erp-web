@@ -10,7 +10,7 @@ interface SelectInterface {
     value?: string;
     required?: boolean;
 }
-
+    
 const RateCategoryDropDown = ({
     label,
     placeholder,
@@ -32,11 +32,11 @@ const RateCategoryDropDown = ({
             options={[
                 {
                     label: "Minimum",
-                    value: "minimum"
+                    value: "MINIMUM"
                 },
                 {
                     label: "Above Minimum",
-                    value: "above minimum"
+                    value: "ABOVE MINIMUM"
                 }
             ]}
             required={required}

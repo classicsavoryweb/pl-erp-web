@@ -16,7 +16,7 @@ import { useModal } from "@/hooks/modal";
 import EmploymentStatusModal from "./EmploymentStatusModal";
 
 const EmploymentStatusTableCard = () => {
-    const [reportData, setReport] = useState<any>({});
+    const [reportData, setReport] = useState<any[]>([]);
     const [dataSet, setDataSet] = useState<any[]>([]);
 
     const columnSettings = [
@@ -68,8 +68,8 @@ const EmploymentStatusTableCard = () => {
             getEmploymentStatusReport(values)
             .then((resp) => {
                 if (!resp.error) {
-                    setDataSet(resp.data.data);
-                    setReport(resp.data);
+                    setDataSet(resp.data.employees);
+                    setReport(resp.data.data);
                 } else {
                     setDataSet([]);
                     toast.error(resp.data.message);
@@ -89,7 +89,7 @@ const EmploymentStatusTableCard = () => {
         <>
             <EmploymentStatusModal
                 modal={printModal}
-                data={reportData}
+                reports={reportData}
             />
             <Card>
                 <p className="text-sm font-semibold text-red-800">Filters</p>
