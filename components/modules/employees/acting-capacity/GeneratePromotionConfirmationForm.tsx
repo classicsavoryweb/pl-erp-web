@@ -44,11 +44,12 @@ const GeneratePromotionConfirmationForm = ({
             effectivity_date: Yup.string().required("Effectivity date is required")
             .test(
             'future-date',
-            `Effectivity date must be after ${api.data.latest_end_date}`,
+            `Effectivity date must be same or after ${api.data.latest_end_date}`,
             function (value) {
                 if (!value || !api.data.latest_end_date) return true;
 
-                return moment(value).isAfter(moment(api.data.latest_end_date));
+                return moment(value).isSameOrAfter
+                (moment(api.data.latest_end_date));
             }),
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
