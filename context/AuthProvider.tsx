@@ -9,6 +9,8 @@ interface UserDetails {
     last_name: string;
     email: string;
     employee_number: string;
+    role_name: string;
+    current_position: any;
     status: string;
 }
 
@@ -17,13 +19,14 @@ interface AuthContextType {
     permissions: any[];
 }
 
-
 const defaultUserDetails: UserDetails = {
     first_name: "",
     middle_name: "",
     last_name: "",
     email: "",
     employee_number: "",
+    role_name: "",
+    current_position: {},
     status: "",
 };
 
