@@ -165,7 +165,6 @@ const SummaryCards = () => {
         <>
             <Grid cols={2}>
                 <Card
-                size="big"  
                 >
                 <div className="flex justify-between">
                     <div className="flex justify-start items-center gap-x-10">
@@ -176,9 +175,31 @@ const SummaryCards = () => {
                             alt="profile picture"
                         />
                         <div>
-                            <p className="text-2xl font-semibold text-red-700 pb-3">{userDetails.last_name}, {userDetails.first_name} {userDetails.middle_name && String(userDetails.middle_name).charAt(0) + "."}</p>
-                            <p className="text-md font-semibold text-gray-500">{userDetails.current_position?.description}</p>
-                            <p className="text-md font-semibold text-gray-500">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1)}</p>
+                            <p className="text-2xl font-semibold text-red-700 pb-3">{userDetails.last_name && userDetails.last_name + ","} {userDetails.first_name} {userDetails.middle_name && String(userDetails.middle_name).charAt(0) + "."}</p>
+                            
+                            <Grid cols={5}>
+                            <div className="col-span-2 col-start-1">
+                                <div className="flex justify-start gap-x-1">
+                                    <p className="text-sm font-semibold text-gray-500">Position:</p>
+                                    <p className="text-sm">{userDetails.current_position?.description || "—"}</p>
+                                </div>
+                                <div className="flex justify-start gap-x-1">
+                                    <p className="text-sm font-semibold text-gray-500">Role:</p>
+                                    <p className="text-sm">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1) || "—"}</p>
+                                </div>
+
+                            </div>
+                            <div className="col-start-3 col-end-5">
+                                <div className="flex justify-start gap-x-1">
+                                    <p className="text-sm font-semibold text-gray-500">Email:</p>
+                                    <p className="text-sm">{userDetails.email || "—"}</p>
+                                </div>
+                                <div className="flex justify-start gap-x-1">
+                                    <p className="text-sm font-semibold text-gray-500">Contact Number:</p>
+                                    <p className="text-sm">{userDetails.contact_number || "—"}</p>
+                                </div>
+                            </div>
+                            </Grid>
                         </div>
                     </div>
                 </div>
