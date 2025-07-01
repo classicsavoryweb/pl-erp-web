@@ -8,6 +8,7 @@ interface UserDetails {
     middle_name: string;
     last_name: string;
     email: string;
+    contact_number: string;
     employee_number: string;
     role_name: string;
     current_position: any;
@@ -24,6 +25,7 @@ const defaultUserDetails: UserDetails = {
     middle_name: "",
     last_name: "",
     email: "",
+    contact_number: "",
     employee_number: "",
     role_name: "",
     current_position: {},
