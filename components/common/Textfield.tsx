@@ -31,6 +31,7 @@ const Textfield = ({
 }: TextfieldInterface) => {
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === "password";
+    const timeAttributes = type === "time" ? { step: 1, min: "00:00:00", max: "23:59:59" } : {};
 
     return (
         <div className="relative py-1">
@@ -58,9 +59,8 @@ const Textfield = ({
                         ${disabled ? "hover:cursor-not-allowed bg-gray-100" : "cursor-text"}
                         ${isUpperCase ? "uppercase placeholder:normal-case" : ""}
                     `}
-                    step={1}
-                    min={"00:00:00"}
-                    max={"23:59:59"}
+
+                    {...timeAttributes}
                 />
                 {isPassword && (
                     <div
