@@ -11,7 +11,7 @@ interface TextfieldInterface {
     onChange?: (e: any) => void;
     error?: string;
     value?: string;
-    type?: "text" | "email" | "date" | "password" | "file" | "number";
+    type?: "text" | "email" | "date" | "password" | "file" | "number" | "time";
     required?: boolean;
     disabled?: boolean;
     isUpperCase?: boolean;
@@ -58,6 +58,9 @@ const Textfield = ({
                         ${disabled ? "hover:cursor-not-allowed bg-gray-100" : "cursor-text"}
                         ${isUpperCase ? "uppercase placeholder:normal-case" : ""}
                     `}
+                    step={1}
+                    min={"00:00:00"}
+                    max={"23:59:59"}
                 />
                 {isPassword && (
                     <div
