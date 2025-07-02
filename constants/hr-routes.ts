@@ -174,6 +174,11 @@ export const hrRoutes: Route[] = [
                 pathname: "/maintenance/sanctions",
                 permission: "view_sanctions"
             },
+            {
+                name: "Schedule Type",
+                pathname: "/maintenance/schedule-type",
+                permission: "view_schedule_type"
+            },
         ]
     },
 ];
