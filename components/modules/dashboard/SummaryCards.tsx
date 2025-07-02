@@ -4,6 +4,7 @@ import SummaryCardCount from "./SummaryCardCount";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { getAllSummaryDetails } from "@/api/dashboard";
+import { getTenure } from "@/helper/tenure";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { useState, useContext } from "react";
@@ -164,20 +165,19 @@ const SummaryCards = () => {
     return (
         <>
             <Grid cols={2}>
-                <Card
-                >
+                <Card>
                 <div className="flex justify-between">
-                    <div className="flex justify-start items-center gap-x-10">
+                    <div className="flex justify-start items-center gap-x-5">
                         <Image
                             src="/images/profile-pic-male.svg"
-                            width={140}
-                            height={140}
+                            width={120}
+                            height={120}
                             alt="profile picture"
                         />
                         <div>
                             <p className="text-2xl font-semibold text-red-700 pb-3">{userDetails.last_name && userDetails.last_name + ","} {userDetails.first_name} {userDetails.middle_name && String(userDetails.middle_name).charAt(0) + "."}</p>
                             
-                            <div className="flex gap-x-20">
+                            <div className="flex gap-x-10">
                                 <div>
                                     <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Position:</p>
@@ -188,10 +188,10 @@ const SummaryCards = () => {
                                         <p className="text-sm">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1) || "—"}</p>
                                     </div>
                                 </div>
-                                <div>
+                                <div className="hidden 2xl:block">
                                     <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Email:</p>
-                                        <p className="text-sm">{userDetails.email || "—"}</p>
+                                        <p className="text-sm wrap-anywhere">{userDetails.email || "—"}</p>
                                     </div>
                                     <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Contact Number:</p>
