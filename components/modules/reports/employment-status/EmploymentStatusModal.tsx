@@ -1,15 +1,14 @@
 import Modal from "@/components/common/Modal";
-import { PDFViewer } from "@react-pdf/renderer";
 import EmploymentStatusReportPDF from "../../pdf/EmploymentStatusReportPDF";
 
 interface FormModalInterface {
     modal: any;
-    data: any;
+    reports: any[];
 };
 
 const EmploymentStatusModal = ({
     modal,
-    data
+    reports
 }: FormModalInterface) => {
 
     return (
@@ -22,7 +21,7 @@ const EmploymentStatusModal = ({
             size="xxl"
         >
             <EmploymentStatusReportPDF
-                data={data}
+                reports={reports}
             />
         </Modal>
     );

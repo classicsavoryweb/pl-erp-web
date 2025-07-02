@@ -74,7 +74,7 @@ const CoePDF = ({
                         ?
                         <>
                             <View style={styles.section}>
-                                <Text style={styles.paragraph}>
+                                <Text style={styles.paragraph} hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
                                     This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + data.last_name}</Text> will be on Vacation leave from {data.leave_from} to {data.leave_to+" "}
                                      for {data.gender === "Male" ? "his" : "her"} {data.purpose}.
@@ -84,10 +84,9 @@ const CoePDF = ({
                         :
                         <>
                             <View style={styles.section}>
-                                <Text style={styles.paragraph}>
+                                <Text style={styles.paragraph} hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
-                                    This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + data.last_name}</Text> is an employee of <Text style={styles.bold}>Savory Fastfood
-                                    Incorporated</Text> since {data.date_of_stay}. {data.gender === "Male" ? "He" : "She."} is currently holding the position
+                                    This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + data.last_name}</Text> is an employee of <Text style={styles.bold}>Savory Fastfood Incorporated</Text> since {data.date_of_stay}. {data.gender === "Male" ? "He" : "She."} is currently holding the position
                                     of <Text style={styles.bold}>{data.current_position}</Text>.
                                 </Text>
                             </View>
@@ -96,7 +95,7 @@ const CoePDF = ({
                     }                    
                     { data.include_salary === "Yes" &&
                         <View style={styles.section}>
-                            <Text>
+                            <Text hyphenationCallback={(word: string) => [word]}>
                                 {INDENT}
                                 {data.gender === "Male" ? "Mr." : "Ms."} {data.last_name} is receiving a monthly basic salary amounting to Pesos: {data.salary} exclusive of performance incentive.
                             </Text>
@@ -104,7 +103,7 @@ const CoePDF = ({
                     }
 
                     <View style={styles.section}>
-                        <Text>
+                        <Text hyphenationCallback={(word: string) => [word]}>
                             {INDENT}
                             Should you need to verify any information or do background checking, please email us at
                             sfirecords@classicsavory.com.
@@ -112,7 +111,7 @@ const CoePDF = ({
                     </View>
 
                     <View style={styles.section}>
-                        <Text>
+                        <Text hyphenationCallback={(word: string) => [word]}>
                             {INDENT}
                             This certification is being issued upon the request of {data.gender === "Male" ? "Mr." : "Ms."} {data.last_name} {data.purpose === "whatever legal purpose it may serve" ? "for" : "in relation to"}{data.purpose !== "whatever legal purpose it may serve" && (data.gender === "Male" ? " his" : " her")}
                             {" " + data.purpose}.
@@ -123,10 +122,9 @@ const CoePDF = ({
                 { data.employee_status === "inactive" &&
                     <>
                         <View style={styles.section}>
-                            <Text style={styles.paragraph}>
+                            <Text style={styles.paragraph} hyphenationCallback={(word: string) => [word]}>
                                 {INDENT}
-                                This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + data.last_name}</Text> was formerly employed by <Text style={styles.bold}>Savory Fastfood
-                                Incorporated</Text> as {data.positions.length === 1 && <><Text style={styles.bold}>{data.current_position} from {data.date_of_stay}. </Text></>}
+                                This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + data.last_name}</Text> was formerly employed by <Text style={styles.bold}>Savory Fastfood Incorporated</Text> as {data.positions.length === 1 && <><Text style={styles.bold}>{data.current_position} from {data.date_of_stay}. </Text></>}
                             </Text>
                         </View>
                         
@@ -143,7 +141,7 @@ const CoePDF = ({
 
                         { data.include_salary === "Yes" &&
                             <View style={styles.section}>
-                                <Text>
+                                <Text hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
                                     {data.gender === "Male" ? "Mr." : "Ms."} {data.last_name} is receiving a monthly basic salary amounting to Pesos: {data.salary} exclusive of performance incentive.
                                 </Text>
@@ -153,14 +151,14 @@ const CoePDF = ({
                         { (data.employment_status === "AWOL" || data.employment_status === "Terminated")
                             ?
                             <View style={styles.section}>
-                                <Text>
+                                <Text hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
-                                    For further verification regarding {data.gender === "Male" ? "his " : "her "} performance and other employment records please feel free to reach us at 09178242418 or email us at sfirecords@classicsavory.com.
+                                    For further verification regarding {data.gender === "Male" ? "his " : "her "}performance and other employment records, please feel free to reach us at 09178242418 or email us at sfirecords@classicsavory.com.
                                 </Text>
                             </View>
                             :
                             <View style={styles.section}>
-                                <Text>
+                                <Text hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
                                     Should you need to verify any information or do background checking, please email us at
                                     sfirecords@classicsavory.com.
@@ -169,7 +167,7 @@ const CoePDF = ({
                         }
 
                         <View style={styles.section}>
-                            <Text>
+                            <Text hyphenationCallback={(word: string) => [word]}>
                                 {INDENT}
                                 This certification is being issued upon the request of {data.gender === "Male" ? "Mr." : "Ms."} {data.last_name} {data.purpose === "whatever legal purpose it may serve" ? "for" : "in relation to"}{data.purpose !== "whatever legal purpose it may serve" && (data.gender === "Male" ? " his" : " her")}
                                 {" " + data.purpose}.

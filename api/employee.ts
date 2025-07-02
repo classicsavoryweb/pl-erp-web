@@ -82,6 +82,16 @@ export const getEmployeeBranchhes = async (employeeNumber: string, payload: {}) 
     return resData;
 };
 
+export const deleteEmployeeBranches = async (id: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/delete-employee-branches/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const getEmployeeContractHistory = async (employeeNumber: string, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/get-employee-contracts/${employeeNumber}`,
@@ -413,10 +423,11 @@ export const exportEmployeeOffensesHistory = async (id: string) => {
     return resData;
 };
 
-export const getRequirementAttachment = async (employee_number: string) => {
+export const getRequirementAttachment = async (employee_number: string, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/get-requirements-attachments/${employee_number}`,
         method: 'GET',
+        payload: payload
     });
 
     return resData;

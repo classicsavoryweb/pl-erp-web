@@ -176,7 +176,8 @@ const ReportCoeRequestsTableCard = () => {
                 }).catch(() => {
                     toast.error("Error encountered");
                 });
-            }
+            },
+            permission: "cancel_all_records_coe_requests"
         },
         {
             label: "Approve",
@@ -197,7 +198,8 @@ const ReportCoeRequestsTableCard = () => {
                 }).catch(() => {
                     toast.error("Error encountered");
                 });
-            }
+            },
+            permission: "approve_all_records_coe_requests"
         },
         {
             label: "Edit",
@@ -224,6 +226,7 @@ const ReportCoeRequestsTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 hasDateRange
+                isExpanded
                 callBack={() => {
                     paginator.setPage(1);
                 }}

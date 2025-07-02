@@ -1,8 +1,7 @@
 "use client";
 
+import Image from "next/image";
 import LoadingState from "./LoadingState";
-import { useEffect } from "react";
-
 interface ModalInterface {
     size?: "sm" | "md" | "lg" | "xl" | "xxl" | "entireScreen";
     isShowing: boolean;
@@ -10,6 +9,7 @@ interface ModalInterface {
     onClose: () => void;
     children: React.ReactNode;
     loading?: boolean;
+    error?: boolean;
 };
 
 const sizeClasses = {
@@ -28,6 +28,7 @@ const Modal = ({
     onClose,
     children,
     loading = false,
+    error = false
 }: ModalInterface) => {
 
     return (
@@ -51,7 +52,27 @@ const Modal = ({
                         ? <div className="flex justify-center">
                             <LoadingState/>
                         </div>
-                        : children}
+                        : 
+                        error
+                        ?
+                            <div className="flex justify-center items-center h-[30vh]">
+                                <div>
+                                    <Image
+                                        width={200}
+                                        height={200}
+                                        alt="error image"
+                                        src="/images/error_state.svg"
+                                    />
+                                    <p className="text-center mt-5">
+                                        Something went wrong...
+                                    </p>
+                                </div>
+                            </div>
+                        :
+                            <>
+                                {children}
+                            </>
+                    }
                 </div>
             </div>
         </div>

@@ -27,7 +27,7 @@ const Page = () => {
                 <EmployeeDetailsCard/>
             </div>
             <p className="pt-5 font-semibold text-red-800">Employee History Logs</p>
-            { permissions.includes("can_view_employee_position") &&
+            { permissions.includes("view_employee_position") &&
                 <div className="w-full">
                     <Accordion
                         title="Positions"
@@ -37,7 +37,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("can_view_employee_branches") && 
+            { permissions.includes("view_employee_branches") && 
                 <div className="w-full">
                     <Accordion
                         title="Branches"
@@ -47,7 +47,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("can_view_employee_contracts") &&
+            { permissions.includes("view_employee_contracts") &&
                 <div className="w-full">
                     <Accordion
                         title="Contracts"
@@ -57,7 +57,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("can_view_employee_offenses") &&
+            { permissions.includes("view_employee_offenses") &&
                 <div className="w-full">
                     <Accordion
                         title="Offenses"
@@ -67,7 +67,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("can_view_employee_bank_details") &&
+            { permissions.includes("view_employee_bank_details") &&
                 <div className="w-full">
                     <Accordion
                         title="Bank Details"
@@ -77,7 +77,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("can_view_employee_requirements") &&
+            { permissions.includes("view_employee_requirements") &&
                 <div className="w-full">
                     <Accordion
                         title="Requirements"
@@ -87,7 +87,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("can_view_employee_training_titles") &&
+            { permissions.includes("view_employee_training_titles") &&
                 <div className="w-full">
                     <Accordion
                         title="Trainings"
@@ -97,7 +97,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("can_view_employee_vaccination") &&
+            { permissions.includes("view_employee_vaccination") &&
                 <div className="w-full">
                     <Accordion
                         title="Vaccination"
@@ -107,7 +107,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("can_view_employee_audit_logs") &&
+            { permissions.includes("view_employee_audit_logs") &&
                 <div className="w-full">
                     <Accordion
                         title="Audit Logs"

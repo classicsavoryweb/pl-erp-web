@@ -1,5 +1,5 @@
 "use client";
-import { exportEmployeeBranchHistory, getEmployeeBranchhes } from "@/api/employee";
+import { deleteEmployeeBranches, exportEmployeeBranchHistory, getEmployeeBranchhes } from "@/api/employee";
 import Button from "@/components/common/Button";
 import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
@@ -17,6 +17,10 @@ import { EmployeeContext } from "@/context/EmployeeProvider";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import moment from "moment";
+import confirm from "@/components/common/Confirm";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import DeleteBranchForm from "./DeleteBranchForm";
 
 const EmployeeBranchHistory = () => {
     const params = useParams();
@@ -25,8 +29,10 @@ const EmployeeBranchHistory = () => {
     const paginator = usePagination(5);
     const [data, setData] = useState<any>({});
     const modal = useModal();
+    const deleteModal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload, employee } = useContext(EmployeeContext);
+    const [id, setId] = useState<string>("0");
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -73,28 +79,46 @@ const EmployeeBranchHistory = () => {
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 const dataIndex = api.dataSet.findIndex(item => data.id === item.id);
-                if (employee.branch_id === data.branch_id && dataIndex === 0) {
-                    return (
-                        <ActionDropDown
-                            data={data}
-                            actions={[
-                                {
-                                    label: "Edit",
-                                    onClick: () => {
-                                        setAction("edit");
-                                        modal.onOpen();
-                                        setData({
-                                            id: data.id,
-                                            date_assigned: data.date_assigned,
-                                            branch_id: data.branch_id,
-                                            remarks: data.remarks,
-                                        });
-                                    }
-                                }
-                            ]}
-                        />
-                    )
+                const actionsSettings = [
+                    {
+                        label: "Edit",
+                        onClick: () => {
+                            setAction("edit");
+                            modal.onOpen();
+                            setData({
+                                id: data.id,
+                                date_assigned: data.date_assigned,
+                                branch_id: data.branch_id,
+                                remarks: data.remarks,
+                            });
+                        }
+                    },
+                    {
+                        label: "Delete",
+                        onClick: async () => {
+                            deleteModal.onOpen();
+                            setId(data.id);
+                        }
+                    }
+                ];
+
+                let actions = actionsSettings;
+                if (employee.branch_id === data.branch_id && dataIndex === 0 && api.dataSet.length === 1) {
+                    actions = [
+                        actionsSettings[0]
+                    ];
+                } else if (employee.branch_id === data.branch_id && dataIndex === 0 && api.dataSet.length > 1) {
+                    actions = actionsSettings;
+                } else {
+                    return "—";
                 }
+
+                return (
+                    <ActionDropDown
+                        data={data}
+                        actions={actions}
+                    />
+                )
             }
         },
     ];
@@ -111,6 +135,17 @@ const EmployeeBranchHistory = () => {
                 action={action}
                 data={data}
             />
+
+            <DeleteBranchForm
+                modal={deleteModal}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    deleteModal.onClose();
+                    triggerReload();
+                }}
+                id={id}
+            />
+
             <div className="flex justify-end">
                 <div>
                     <DropDownButtons

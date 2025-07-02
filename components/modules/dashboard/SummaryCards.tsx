@@ -4,10 +4,13 @@ import SummaryCardCount from "./SummaryCardCount";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { getAllSummaryDetails } from "@/api/dashboard";
+import { getTenure } from "@/helper/tenure";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import Image from "next/image";
+import { useState, useContext } from "react";
 import Card from "@/components/common/Card";
 import { Line } from 'react-chartjs-2';
+import { AuthContext } from "@/context/AuthProvider";
 import {
   Chart as ChartJS,
   LineElement,
@@ -32,6 +35,7 @@ ChartJS.register(
 const SummaryCards = () => {
     const [data, setData] = useState<any>({});
     const [loading, setLoading] = useState<boolean>(true);
+    const {userDetails} = useContext(AuthContext);
 
     useAsyncEffect(() => {
         setLoading(true);
@@ -160,34 +164,75 @@ const SummaryCards = () => {
 
     return (
         <>
-            <Grid
-                cols={5}
-            >
-                <SummaryCardCount
-                    title="Pending Employees"
-                    displayReport={data.pending_employees || 0}
-                    loading={loading}
-                />
-                <SummaryCardCount
-                    title="Probationary Employees"
-                    displayReport={data.probationary_employees || 0}
-                    loading={loading}
-                />
-                <SummaryCardCount
-                    title="Regular Employees"
-                    displayReport={data.regular_employees || 0}
-                    loading={loading}
-                />
-                <SummaryCardCount
-                    title="Contractual Employees"
-                    displayReport={data.contractual_employees || 0}
-                    loading={loading}
-                />
-                <SummaryCardCount
-                    title="Branches"
-                    displayReport={data.branches || 0}
-                    loading={loading}
-                />
+            <Grid cols={2}>
+                <Card>
+                <div className="flex justify-between">
+                    <div className="flex justify-start items-center gap-x-5">
+                        <Image
+                            src="/images/profile-pic-male.svg"
+                            width={120}
+                            height={120}
+                            alt="profile picture"
+                        />
+                        <div>
+                            <p className="text-2xl font-semibold text-red-700 pb-3">{userDetails.last_name && userDetails.last_name + ","} {userDetails.first_name} {userDetails.middle_name && String(userDetails.middle_name).charAt(0) + "."}</p>
+                            
+                            <div className="flex gap-x-10">
+                                <div>
+                                    <div className="flex justify-start gap-x-1">
+                                        <p className="text-sm font-semibold text-gray-500">Position:</p>
+                                        <p className="text-sm">{userDetails.current_position?.description || "—"}</p>
+                                    </div>
+                                    <div className="flex justify-start gap-x-1">
+                                        <p className="text-sm font-semibold text-gray-500">Role:</p>
+                                        <p className="text-sm">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1) || "—"}</p>
+                                    </div>
+                                </div>
+                                <div className="hidden 2xl:block">
+                                    <div className="flex justify-start gap-x-1">
+                                        <p className="text-sm font-semibold text-gray-500">Email:</p>
+                                        <p className="text-sm wrap-anywhere">{userDetails.email || "—"}</p>
+                                    </div>
+                                    <div className="flex justify-start gap-x-1">
+                                        <p className="text-sm font-semibold text-gray-500">Contact Number:</p>
+                                        <p className="text-sm">{userDetails.contact_number || "—"}</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                </Card>
+                
+                <Grid
+                    cols={2}
+                >
+                    <SummaryCardCount
+                        title="Pending Employees"
+                        displayReport={data.pending_employees || 0}
+                        loading={loading}
+                    />
+                    <SummaryCardCount
+                        title="Probationary Employees"
+                        displayReport={data.probationary_employees || 0}
+                        loading={loading}
+                    />
+                    <SummaryCardCount
+                        title="Regular Employees"
+                        displayReport={data.regular_employees || 0}
+                        loading={loading}
+                    />
+                    <SummaryCardCount
+                        title="Contractual Employees"
+                        displayReport={data.contractual_employees || 0}
+                        loading={loading}
+                    />
+                    {/* <SummaryCardCount
+                        title="Branches"
+                        displayReport={data.branches || 0}
+                        loading={loading}
+                    /> */}
+                </Grid>
             </Grid>
         
             <Grid cols={3}>

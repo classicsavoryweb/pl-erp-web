@@ -8,6 +8,7 @@ import EmployeeBasicInfo from "./EmployeeBasicInfo";
 import Badge from "@/components/common/Badge";
 import { getTenure } from "@/helper/tenure";
 import { EmployeeContext } from "@/context/EmployeeProvider";
+import moment from "moment";
 
 const EmployeeDetailsCard = () => {
     const params = useParams();
@@ -71,7 +72,7 @@ const EmployeeDetailsCard = () => {
                             />
                             <EmployeeBasicInfo
                                 label="Date Hired"
-                                detail={employee.date_hired}
+                                detail={ moment(employee.date_hired).format("MMMM DD, YYYY")}
                             />
                             <EmployeeBasicInfo
                                 label="Employment Type"
@@ -79,13 +80,13 @@ const EmployeeDetailsCard = () => {
                             />
                             <EmployeeBasicInfo
                                 label="Regularization Date"
-                                detail={employee.regularization_date}
+                                detail={ employee.regularization_date ? moment(employee.regularization_date).format("MMMM DD, YYYY") : "—" }
                             />
                             { employee.status === "inactive" &&
                                 <>
                                     <EmployeeBasicInfo
                                         label="Date Separated"
-                                        detail={employee.separation_date}
+                                        detail={employee.separation_date ? moment(employee.separation_date).format("MMMM DD, YYYY") : "—" }
                                     />
                                     <EmployeeBasicInfo
                                         label="Separation Reason"
@@ -120,7 +121,7 @@ const EmployeeDetailsCard = () => {
                             />
                             <EmployeeBasicInfo
                                 label="Birthday"
-                                detail={employee.birthday}
+                                detail={employee.birthday ? moment(employee.birthday).format("MMMM DD, YYYY") : "—" }
                             />
                             <EmployeeBasicInfo
                                 label="Age"
@@ -203,7 +204,7 @@ const EmployeeDetailsCard = () => {
                     />
                     <EmployeeBasicInfo
                         label="Date Started"
-                        detail={employee.positions && employee.positions[employee.positions.length - 1]?.pivot.date_started}
+                        detail={employee.positions && moment(employee.positions[employee.positions.length - 1]?.pivot.date_started).format("MMMM DD, YYYY")}
                     />
                     <EmployeeBasicInfo
                         label="Station"
@@ -225,7 +226,7 @@ const EmployeeDetailsCard = () => {
                     />
                     <EmployeeBasicInfo
                         label="Date Assigned"
-                        detail={employee.branches && employee.branches[employee.branches.length - 1]?.pivot.date_assigned}
+                        detail={employee.branches && moment(employee.branches[employee.branches.length - 1]?.pivot.date_assigned).format("MMMM DD, YYYY")}
                     />
                     <EmployeeBasicInfo
                         label="Home Branch"
@@ -315,7 +316,7 @@ const EmployeeDetailsCard = () => {
                                             />
                                             <EmployeeBasicInfo
                                                 label="Birthday"
-                                                detail={dependent.birthday}
+                                                detail={moment(dependent.birthday).format("MMMM DD, YYYY")}
                                             />
                                         </div>
                                     )

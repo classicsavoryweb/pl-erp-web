@@ -31,23 +31,23 @@ export const adminRoutes: Route[] = [
         name: "Administrators",
         icon: "AdminPanelSettingsOutlined",
         type: "dropdown",
-        permission: "can_view_administrators_module",
+        permission: "view_administrators_module",
         basepath: "/administrator",
         subLinks: [
             {
                 name: "Users",
                 pathname: "/administrators/users",
-                permission: "can_view_users"
+                permission: "view_users"
             },
             {
                 name: "Roles and Permissions",
                 pathname: "/administrators/roles-and-permissions",
-                permission: "can_view_roles_and_permissions"
+                permission: "view_roles_and_permissions"
             },
             {
                 name: "Activity Logs",
                 pathname: "/administrators/activity-logs",
-                permission: "can_view_activity_logs"
+                permission: "view_activity_logs"
             },
         ]
     },

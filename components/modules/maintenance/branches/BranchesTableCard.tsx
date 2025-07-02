@@ -74,7 +74,7 @@ const BranchesTableCard = () => {
         {
             columnHead: "Date Opened",
             path: "date_open",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Status",

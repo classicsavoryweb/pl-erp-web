@@ -20,17 +20,25 @@ interface FormModalInterface {
     onSubmitCallback: () => void;
     action: "edit" | "add";
     data: any;
+    validationData: any;
+    onCloseCallback: () => void;
 };
 
 const EmployeeContractForm = ({
     modal,
     onSubmitCallback,
     action,
-    data
+    data = {
+        contract_end_date: "1900-01-01",
+        contract_start_date: "1900-01-01",
+    },
+    validationData,
+    onCloseCallback
 }: FormModalInterface) => {
     const params = useParams();
     const employeeNumber = params["employee-number"];
-    const api = action === "add" ? addEmployeeContract : updateEmployeeContract; 
+    const api = action === "add" ? addEmployeeContract : updateEmployeeContract;
+    const valData = action === "edit" && validationData ? validationData : {}
 
     const formHandler = useFormik({
         initialValues: {
@@ -98,7 +106,22 @@ const EmployeeContractForm = ({
                 String(employee_status) === "active" && action === "edit" && Number(employment_status) === 2 && data.status === "active"
                     ? schema.required('Regularization Date is required')
                     : schema.notRequired()
-            ),
+            )
+            .test(
+                'future-date',
+                `Regularization date must be after ${valData.contract_end_date}`,
+                function (value) {
+                    if (!value || !valData.contract_end_date) return true;
+
+                    if (action === "add") {
+                        return true;
+                    }
+
+                    if (Object.entries(valData).length === 0) {
+                        return true;
+                    }
+                    return moment(value).isAfter(moment(valData.contract_end_date));
+                }),
             separation_reason:Yup.string().when("employee_status", (status, schema) => 
                 String(status) === "inactive" && action === "edit" && data.status === "active"
                     ? schema.required('Separation Reason is required')
@@ -147,6 +170,7 @@ const EmployeeContractForm = ({
             onClose={() => {
                 modal.onClose();
                 formHandler.resetForm();
+                onCloseCallback();
             }}
             title={ action === "add" ? "Add Contract" : "Edit Contract"}
             size="md"
@@ -179,7 +203,7 @@ const EmployeeContractForm = ({
                 onChange={formHandler.handleChange}
             />
             <ActiveInactiveDropDown
-                label="Status"
+                label="Contract Status"
                 name="status"
                 placeholder="enter status"
                 value={formHandler.values.status || ""}

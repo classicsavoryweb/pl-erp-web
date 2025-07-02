@@ -264,14 +264,16 @@ const TardinessTableCard = () => {
                 }).catch(() => {
                     toast.error("Error encountered");
                 });
-            }
+            },
+            permission: "approve_all_records_tardiness"
         },
         {
             label: "Void",
             onClick: async (data: any) => {
                 setId(data.id);
                 voidModal.onOpen();
-            }
+            },
+            permission: "void_all_records_tardiness"
         },
         {
             label: "View NTE",
@@ -382,6 +384,7 @@ const TardinessTableCard = () => {
                 filterHandler={filter}
                 defaultColumnSelected="employee.full_name"
                 withStatus
+                isExpanded
                 statusOption={[
                     {
                         label: "Pending",

@@ -16,11 +16,11 @@ export const PAGE_PERMISSION = [
     {
         name: "Employee",
         pathname: "/employees/[employee-number]",
-        permission: "can_view_employee_tracking"
+        permission: "view_employee_tracking"
     },
     {
         name: "Employee Edit",
         pathname: "/employees/edit/[employee-number]",
-        permission: "can_perform_employee_tracking"
+        permission: "perform_employee_tracking"
     },
 ];

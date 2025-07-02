@@ -24,6 +24,7 @@ const EmployeeContractHistory = () => {
     const api = useApiCall();
     const paginator = usePagination(5);
     const [data, setData] = useState<any>({});
+    const [validationData, setValidationData] = useState<any>({});
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload } = useContext(EmployeeContext);
@@ -105,6 +106,10 @@ const EmployeeContractHistory = () => {
                                 status: data.status,
                                 remarks: data.remarks,
                             });
+
+                            if (dataIndex === 0 && api.dataSet.length > 1 ) {
+                                setValidationData(api.dataSet[1]);
+                            }
                         }
                     },
                     {
@@ -131,10 +136,16 @@ const EmployeeContractHistory = () => {
                         contractAction[1]
                     ];
                 } else if (dataIndex === 0 && api.dataSet.length > 1) {
-                    actions=[
-                        contractAction[0],
-                        contractAction[2]
-                    ];
+                    if (data.status === "inactive") {
+                        actions=[
+                            contractAction[2]
+                        ];
+                    } else {
+                        actions=[
+                            contractAction[0],
+                            contractAction[2]
+                        ];
+                    }
                 } else if (dataIndex !== api.dataSet.length-1) {
                     actions=[
                         contractAction[2]
@@ -164,9 +175,15 @@ const EmployeeContractHistory = () => {
                     api.triggerReload();
                     modal.onClose();
                     triggerReload();
+                    setValidationData({});
                 }}
                 action={action}
                 data={data}
+                validationData={validationData}
+                onCloseCallback={() => {
+                    setData({});
+                    setValidationData({});
+                }}
             />
 
             <PrintInitialContractModal
