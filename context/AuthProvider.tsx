@@ -11,7 +11,11 @@ interface UserDetails {
     contact_number: string;
     employee_number: string;
     role_name: string;
+    date_hired: string;
+    separation_date: string;
     current_position: any;
+    employee_status: any;
+    employment_status: string;
     status: string;
 }
 
@@ -28,7 +32,11 @@ const defaultUserDetails: UserDetails = {
     contact_number: "",
     employee_number: "",
     role_name: "",
+    date_hired: "",
+    separation_date: "",
     current_position: {},
+    employee_status: {},
+    employment_status: "",
     status: "",
 };
 

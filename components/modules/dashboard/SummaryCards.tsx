@@ -4,6 +4,7 @@ import SummaryCardCount from "./SummaryCardCount";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { getAllSummaryDetails } from "@/api/dashboard";
+import { getTenure } from "@/helper/tenure";
 import { toast } from "react-toastify";
 import Image from "next/image";
 import { useState, useContext } from "react";
@@ -178,21 +179,21 @@ const SummaryCards = () => {
                             
                             <div className="flex gap-x-10">
                                 <div>
-                                    <div className="flex-col justify-start gap-x-1">
+                                    <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Position:</p>
                                         <p className="text-sm">{userDetails.current_position?.description || "—"}</p>
                                     </div>
-                                    <div className="flex-col justify-start gap-x-1">
+                                    <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Role:</p>
                                         <p className="text-sm">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1) || "—"}</p>
                                     </div>
                                 </div>
-                                <div>
-                                    <div className="flex-col justify-start gap-x-1">
+                                <div className="hidden 2xl:block">
+                                    <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Email:</p>
                                         <p className="text-sm wrap-anywhere">{userDetails.email || "—"}</p>
                                     </div>
-                                    <div className="flex-col justify-start gap-x-1">
+                                    <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Contact Number:</p>
                                         <p className="text-sm">{userDetails.contact_number || "—"}</p>
                                     </div>
