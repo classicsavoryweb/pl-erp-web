@@ -17,6 +17,7 @@ import { toast } from "react-toastify";
 import confirm from "@/components/common/Confirm";
 import { useRouter } from "next/navigation";
 import * as Yup from "yup";
+import EditScheduleDetails from "./EditScheduleDetails";
 
 const EditEmployeeFormCard = () => {
 
@@ -89,7 +90,10 @@ const EditEmployeeFormCard = () => {
                 remarks: null
             },
             dependents: [],
-            contracts: []
+            contracts: [],
+            schedule_type: "",
+            incentive_leave: "",
+            flexible_schedule: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -113,7 +117,7 @@ const EditEmployeeFormCard = () => {
         }),
         onSubmit:async (values, {setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Edit Employee Details",
+            title: "Edit Employee Details",
                 message: "Are you sure you want to save changes?"
             });
 
@@ -169,6 +173,11 @@ const EditEmployeeFormCard = () => {
                         />
                     </div>
                     <div className="w-5/12">
+                        <EditScheduleDetails
+                            loading={loading}
+                            formHandler={editEmployeeForm}
+                        />
+                        <div className="py-[2px]"/>
                         <EditGovernmentIdentification
                             loading={loading}
                             formHandler={editEmployeeForm}

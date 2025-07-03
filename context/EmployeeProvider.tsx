@@ -63,6 +63,7 @@ interface EmployeeContextType {
         separation_reason: string,
         profile_picture: any;
         age: string;
+        schedule: any
     };
     loading: boolean;
     triggerReload: () => void;
@@ -136,7 +137,8 @@ const EmployeeInitialValue = {
     separation_date: "",
     separation_reason: "",
     profile_picture: "",
-    age: ""
+    age: "",
+    schedule: {}
 };
 
 export const EmployeeContext = createContext<EmployeeContextType>({

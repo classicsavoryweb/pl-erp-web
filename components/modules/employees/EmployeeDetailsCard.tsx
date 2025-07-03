@@ -347,6 +347,28 @@ const EmployeeDetailsCard = () => {
                         detail={employee.emergency_contact_relationship}
                     />
                 </Card>
+                { employee.schedule &&
+                    <>
+                        <div className="py-[2px]"/>
+                        <Card
+                            loading={loading}
+                        >
+                            <p className="font-semibold text-red-800">Schedule Details</p>
+                            <EmployeeBasicInfo
+                                label="Schedule Type"
+                                detail={employee.schedule.schedule_type?.name}
+                            />
+                            <EmployeeBasicInfo
+                                label="Flexible Schedule"
+                                detail={employee.schedule.flexible_schedule}
+                            />
+                            <EmployeeBasicInfo
+                                label="Incentive Leave"
+                                detail={employee.schedule.incentive_leave}
+                            />
+                        </Card>
+                    </>
+                }
             </div>
         </div>
     );

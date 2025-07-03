@@ -52,6 +52,11 @@ const EmployeeTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Biometric Number",
+            path: "biometric_number",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Full Name",
             path: "full_name",
             columnType: COLUMNTYPES.string,
@@ -232,6 +237,11 @@ const EmployeeTableCard = () => {
                     {
                         columnHead: "Employee Number",
                         path: "employee_number",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Biometric Number",
+                        path: "biometric_number",
                         columnType: COLUMNTYPES.string
                     },
                     {

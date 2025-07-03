@@ -15,6 +15,7 @@ import { addEmployee } from "@/api/employee";
 import { toast } from "react-toastify";
 import Dropdown from "@/components/common/Dropdown";
 import confirm from "@/components/common/Confirm";
+import ScheduleTypeDropDown from "../generic/ScheduleTypeDropDown";
 
 const AddEmployeeForm = () => {
 
@@ -33,6 +34,9 @@ const AddEmployeeForm = () => {
             birthday: "",
             contact_number: "",
             contract_duration: "",
+            flexible_schedule: "No",
+            schedule_type: "",
+            incentive_leave: "No",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -52,7 +56,10 @@ const AddEmployeeForm = () => {
             agency_id: Yup.string().when('type', (type, schema) =>
                 String(type) === "agency"
                     ? schema.required('Agency is required')
-                    : schema.notRequired())
+                    : schema.notRequired()),
+            flexible_schedule: Yup.string().required("Flexible schedule is required"),
+            schedule_type: Yup.string().required("Schedule type is required"),
+            incentive_leave: Yup.string().required("Incentive leave is required"),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -84,6 +91,67 @@ const AddEmployeeForm = () => {
             <form
                 onSubmit={addEmployeeHandler.handleSubmit}
             >
+                <p>Employee Details</p>
+                <Grid cols={2}>
+                    <Textfield
+                        label="First Name"
+                        name="first_name"
+                        placeholder="enter first name"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.first_name}
+                        error={addEmployeeHandler.errors.first_name}
+                        required
+                        isUpperCase
+                    />
+                    <Textfield
+                        label="Middle Name"
+                        name="middle_name"
+                        placeholder="enter middle name"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.middle_name}
+                        error={addEmployeeHandler.errors.middle_name}
+                        isUpperCase
+                    />
+                    <Textfield
+                        label="Last Name"
+                        name="last_name"
+                        placeholder="enter last name"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.last_name}
+                        error={addEmployeeHandler.errors.last_name}
+                        isUpperCase
+                        required
+                    />
+                    <GenderDropDown
+                        label="Gender"
+                        name="gender"
+                        placeholder="select gender"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.gender}
+                        error={addEmployeeHandler.errors.gender}
+                        required
+                    />
+                    <Textfield
+                        label="Birthday"
+                        name="birthday"
+                        type="date"
+                        placeholder="enter date hired"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.birthday}
+                        error={addEmployeeHandler.errors.birthday}
+                        required
+                    />
+                    <Textfield
+                        label="Contact Number"
+                        name="contact_number"
+                        placeholder="enter contact number"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.contact_number}
+                        error={addEmployeeHandler.errors.contact_number}
+                        required
+                    />
+                </Grid>
+                <p className="mt-3">Employment Details</p>
                 <Grid
                     cols={2}
                 >
@@ -107,69 +175,13 @@ const AddEmployeeForm = () => {
                             required
                         />
                     }
+                    
                 </Grid>
-                <Textfield
-                    label="First name"
-                    name="first_name"
-                    placeholder="enter first name"
-                    onChange={addEmployeeHandler.handleChange}
-                    value={addEmployeeHandler.values.first_name}
-                    error={addEmployeeHandler.errors.first_name}
-                    required
-                    isUpperCase
-                />
-                <Textfield
-                    label="Middle name"
-                    name="middle_name"
-                    placeholder="enter middle name"
-                    onChange={addEmployeeHandler.handleChange}
-                    value={addEmployeeHandler.values.middle_name}
-                    error={addEmployeeHandler.errors.middle_name}
-                    isUpperCase
-                />
-                <Textfield
-                    label="Last name"
-                    name="last_name"
-                    placeholder="enter last name"
-                    onChange={addEmployeeHandler.handleChange}
-                    value={addEmployeeHandler.values.last_name}
-                    error={addEmployeeHandler.errors.last_name}
-                    isUpperCase
-                    required
-                />
-                <Grid cols={2}>
-                    <GenderDropDown
-                        label="Gender"
-                        name="gender"
-                        placeholder="select gender"
-                        onChange={addEmployeeHandler.handleChange}
-                        value={addEmployeeHandler.values.gender}
-                        error={addEmployeeHandler.errors.gender}
-                        required
-                    />
+                <Grid
+                    cols={2}
+                >
                     <Textfield
-                        label="Birthday"
-                        name="birthday"
-                        type="date"
-                        placeholder="enter date hired"
-                        onChange={addEmployeeHandler.handleChange}
-                        value={addEmployeeHandler.values.birthday}
-                        error={addEmployeeHandler.errors.birthday}
-                        required
-                    />
-                </Grid>
-                <Grid cols={2}>
-                    <Textfield
-                        label="Contact number"
-                        name="contact_number"
-                        placeholder="enter contact number"
-                        onChange={addEmployeeHandler.handleChange}
-                        value={addEmployeeHandler.values.contact_number}
-                        error={addEmployeeHandler.errors.contact_number}
-                        required
-                    />
-                    <Textfield
-                        label="Date hired"
+                        label="Date Hired"
                         name="date_hired"
                         type="date"
                         placeholder="enter date hired"
@@ -178,10 +190,6 @@ const AddEmployeeForm = () => {
                         error={addEmployeeHandler.errors.date_hired}
                         required
                     />
-                </Grid>
-                <Grid
-                    cols={2}
-                >
                     <BranchDropDown
                         label="Branch"
                         name="branch_id"
@@ -200,10 +208,6 @@ const AddEmployeeForm = () => {
                         error={addEmployeeHandler.errors.home_branch_id}
                         required
                     />
-                </Grid>
-                <Grid
-                    cols={2}
-                >
                     <PositionDropDown
                         label="Position"
                         name="position_id"
@@ -233,6 +237,41 @@ const AddEmployeeForm = () => {
                             {label: "10", value: "10"},
                             {label: "11", value: "11"},
                             {label: "12", value: "12"},
+                        ]}
+                        required
+                    />
+                    <ScheduleTypeDropDown
+                        label="Schedule Type"
+                        name="schedule_type"
+                        placeholder="select schedule type"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.schedule_type}
+                        error={addEmployeeHandler.errors.schedule_type}
+                        required
+                    />
+                    <Dropdown
+                        label="Flex Schedule"
+                        name="flexible_schedule"
+                        placeholder="select flex schedule"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.flexible_schedule}
+                        error={addEmployeeHandler.errors.flexible_schedule}
+                        options={[
+                            {label: "Yes", value: "Yes"},
+                            {label: "No", value: "No"},
+                        ]}
+                        required
+                    />
+                    <Dropdown
+                        label="Incentive Leave"
+                        name="incentive_leave"
+                        placeholder="select incentive leave"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.incentive_leave}
+                        error={addEmployeeHandler.errors.incentive_leave}
+                        options={[
+                            {label: "Yes", value: "Yes"},
+                            {label: "No", value: "No"},
                         ]}
                         required
                     />
