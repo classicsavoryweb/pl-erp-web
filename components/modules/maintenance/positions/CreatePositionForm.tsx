@@ -11,6 +11,7 @@ import { createPosition } from "@/api/positions";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import RankDropDown from "../../generic/RankDropDown";
 import confirm from "@/components/common/Confirm";
+import ScheduleTypeDropDown from "../../generic/ScheduleTypeDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -27,6 +28,7 @@ const CreatePositionForm = ({
             station_id: "",
             description: "",
             rank: "",
+            schedule_type: "",
             status: "active"
         },
         validateOnChange: false,
@@ -35,6 +37,7 @@ const CreatePositionForm = ({
             description: Yup.string().required("Description is required."),
             rank: Yup.string().required("Rank is required."),
             status: Yup.string().required("Status is required."),
+            schedule_type: Yup.string().required("Schedule type is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -111,6 +114,15 @@ const CreatePositionForm = ({
                     required
                     onChange={createPositionFormHandler.handleChange}
                     error={createPositionFormHandler.errors.station_id}
+                />
+                <ScheduleTypeDropDown
+                    label="Schedule Type"
+                    name="schedule_type"
+                    placeholder="select schedule type"
+                    onChange={createPositionFormHandler.handleChange}
+                    value={createPositionFormHandler.values.schedule_type}
+                    error={createPositionFormHandler.errors.schedule_type}
+                    required
                 />
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">

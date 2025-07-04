@@ -84,7 +84,8 @@ const PositionsTableCard = () => {
                     description: data.description,
                     status: data.status,
                     rank: data.rank,
-                    station_id: data.station_id
+                    station_id: data.station_id,
+                    schedule_type: data.schedule_type,
                 });
             }
         },

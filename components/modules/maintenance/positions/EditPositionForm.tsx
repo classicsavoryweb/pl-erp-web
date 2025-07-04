@@ -12,6 +12,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import RankDropDown from "../../generic/RankDropDown";
 import { useEffect } from "react";
 import confirm from "@/components/common/Confirm";
+import ScheduleTypeDropDown from "../../generic/ScheduleTypeDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -30,7 +31,8 @@ const EditPositionForm = ({
             station_id: "",
             description: "",
             rank: "",
-            status: ""
+            status: "",
+            schedule_type: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -38,6 +40,7 @@ const EditPositionForm = ({
             description: Yup.string().required("Description is required."),
             rank: Yup.string().required("Rank is required."),
             status: Yup.string().required("Status is required."),
+            schedule_type: Yup.string().required("Schedule type is required."),
         }),
         onSubmit:async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -120,6 +123,15 @@ const EditPositionForm = ({
                     required
                     onChange={editPositionFormHandler.handleChange}
                     error={editPositionFormHandler.errors.station_id}
+                />
+                <ScheduleTypeDropDown
+                    label="Schedule Type"
+                    name="schedule_type"
+                    placeholder="select schedule type"
+                    onChange={editPositionFormHandler.handleChange}
+                    value={editPositionFormHandler.values.schedule_type}
+                    error={editPositionFormHandler.errors.schedule_type}
+                    required
                 />
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
