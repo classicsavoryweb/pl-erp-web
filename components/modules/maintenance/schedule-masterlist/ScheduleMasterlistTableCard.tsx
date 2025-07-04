@@ -76,8 +76,8 @@ const ScheduleMasterlistTableCard = () => {
             columnType: COLUMNTYPES.string,
         },
         {
-            columnHead: "Scheduled Hours",
-            path: "reg_hours",
+            columnHead: "Total Hours",
+            path: "total_hours",
             columnType: COLUMNTYPES.string,
         },
         {
@@ -99,7 +99,7 @@ const ScheduleMasterlistTableCard = () => {
                     selection: data.selection,
                     classification: data.classification,
                     time_break: data.time_break,
-                    reg_hours: data. reg_hours,
+                    total_hours: data.total_hours,
                     days: data.days,
                     required: data.required
                 });
