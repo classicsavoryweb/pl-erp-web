@@ -184,7 +184,7 @@ const SummaryCards = () => {
                                         <p className="text-sm">{userDetails.current_position?.description || "—"}</p>
                                     </div>
                                     <div className="flex justify-start gap-x-1">
-                                        <p className="text-sm font-semibold text-gray-500">Role:</p>
+                                        <p className="text-sm font-semibold text-gray-500">Access Role:</p>
                                         <p className="text-sm">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1) || "—"}</p>
                                     </div>
                                 </div>

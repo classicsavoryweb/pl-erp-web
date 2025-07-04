@@ -54,12 +54,21 @@ const AddEmployeeForm = () => {
                 .min(11, "Minimum of 11 characters")
                 .max(13, "Maximum of 13 characters"),
             agency_id: Yup.string().when('type', (type, schema) =>
-                String(type) === "agency"
+                String(type) === "Agency"
                     ? schema.required('Agency is required')
                     : schema.notRequired()),
-            flexible_schedule: Yup.string().required("Flexible schedule is required"),
-            schedule_type: Yup.string().required("Schedule type is required"),
-            incentive_leave: Yup.string().required("Incentive leave is required"),
+            flexible_schedule: Yup.string().when('type', (type, schema) =>
+                String(type) === "Direct"
+                    ? schema.required('Flexible schedule is required')
+                    : schema.notRequired()),
+            schedule_type: Yup.string().when('type', (type, schema) =>
+                String(type) === "Direct"
+                    ? schema.required('Schedule type is required')
+                    : schema.notRequired()),
+            incentive_leave: Yup.string().when('type', (type, schema) =>
+                String(type) === "Direct"
+                    ? schema.required('Incentive leave is required')
+                    : schema.notRequired()),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -159,7 +168,13 @@ const AddEmployeeForm = () => {
                         label="Type"
                         name="type"
                         placeholder="select type"
-                        onChange={addEmployeeHandler.handleChange}
+                        onChange={(e) => {
+                            addEmployeeHandler.handleChange(e);
+                            addEmployeeHandler.setFieldValue("schedule_type", "");
+                            addEmployeeHandler.setFieldValue("flexible_schedule", "");
+                            addEmployeeHandler.setFieldValue("incentive_leave", "");
+                            addEmployeeHandler.setFieldValue("agency_id", "");
+                        }}
                         value={addEmployeeHandler.values.type}
                         error={addEmployeeHandler.errors.type}
                         required
@@ -212,7 +227,10 @@ const AddEmployeeForm = () => {
                         label="Position"
                         name="position_id"
                         placeholder="select position"
-                        onChange={addEmployeeHandler.handleChange}
+                        onChange={(e) => {
+                            addEmployeeHandler.handleChange(e);
+                            addEmployeeHandler.setFieldValue("schedule_type", e.target.obj.schedule_type);
+                        }}
                         value={addEmployeeHandler.values.position_id}
                         error={addEmployeeHandler.errors.position_id}
                         required
@@ -240,41 +258,45 @@ const AddEmployeeForm = () => {
                         ]}
                         required
                     />
-                    <ScheduleTypeDropDown
-                        label="Schedule Type"
-                        name="schedule_type"
-                        placeholder="select schedule type"
-                        onChange={addEmployeeHandler.handleChange}
-                        value={addEmployeeHandler.values.schedule_type}
-                        error={addEmployeeHandler.errors.schedule_type}
-                        required
-                    />
-                    <Dropdown
-                        label="Flex Schedule"
-                        name="flexible_schedule"
-                        placeholder="select flex schedule"
-                        onChange={addEmployeeHandler.handleChange}
-                        value={addEmployeeHandler.values.flexible_schedule}
-                        error={addEmployeeHandler.errors.flexible_schedule}
-                        options={[
-                            {label: "Yes", value: "Yes"},
-                            {label: "No", value: "No"},
-                        ]}
-                        required
-                    />
-                    <Dropdown
-                        label="Incentive Leave"
-                        name="incentive_leave"
-                        placeholder="select incentive leave"
-                        onChange={addEmployeeHandler.handleChange}
-                        value={addEmployeeHandler.values.incentive_leave}
-                        error={addEmployeeHandler.errors.incentive_leave}
-                        options={[
-                            {label: "Yes", value: "Yes"},
-                            {label: "No", value: "No"},
-                        ]}
-                        required
-                    />
+                    { addEmployeeHandler.values.type === "Direct" &&
+                        <>
+                            <ScheduleTypeDropDown
+                                label="Schedule Type"
+                                name="schedule_type"
+                                placeholder="select schedule type"
+                                onChange={addEmployeeHandler.handleChange}
+                                value={addEmployeeHandler.values.schedule_type}
+                                error={addEmployeeHandler.errors.schedule_type}
+                                required
+                            />
+                            <Dropdown
+                                label="Flex Schedule"
+                                name="flexible_schedule"
+                                placeholder="select flex schedule"
+                                onChange={addEmployeeHandler.handleChange}
+                                value={addEmployeeHandler.values.flexible_schedule}
+                                error={addEmployeeHandler.errors.flexible_schedule}
+                                options={[
+                                    {label: "Yes", value: "Yes"},
+                                    {label: "No", value: "No"},
+                                ]}
+                                required
+                            />
+                            <Dropdown
+                                label="Incentive Leave"
+                                name="incentive_leave"
+                                placeholder="select incentive leave"
+                                onChange={addEmployeeHandler.handleChange}
+                                value={addEmployeeHandler.values.incentive_leave}
+                                error={addEmployeeHandler.errors.incentive_leave}
+                                options={[
+                                    {label: "Yes", value: "Yes"},
+                                    {label: "No", value: "No"},
+                                ]}
+                                required
+                            />
+                        </>
+                    }
                 </Grid>
                 <Grid
                     cols={2}
