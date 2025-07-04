@@ -31,7 +31,7 @@ const Textfield = ({
 }: TextfieldInterface) => {
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === "password";
-    const timeAttributes = type === "time" ? { step: 1, min: "00:00:00", max: "23:59:59" } : {};
+    const timeAttributes = type === "time" ? { step: 60, min: "00:00", max: "23:59" } : {};
 
     return (
         <div className="relative py-1">
