@@ -68,6 +68,11 @@ const PositionsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Schedule Type",
+            path: "schedule_type",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status,
