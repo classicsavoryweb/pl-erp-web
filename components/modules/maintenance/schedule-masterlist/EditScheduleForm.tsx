@@ -30,7 +30,7 @@ const EditScheduleMasterlistForm = ({
             selection: "",
             classification: "",
             time_break: "",
-            reg_hours: "",
+            total_hours: "",
             days: "",
             required: "",
         },
@@ -41,7 +41,7 @@ const EditScheduleMasterlistForm = ({
             selection: Yup.string().required("Selection is required."),
             classification: Yup.string().required("Classification is required."),
             time_break: Yup.string().required("Break hours is required."),
-            reg_hours: Yup.string().required("Scheduled hours is required."),
+            total_hours: Yup.string().required("Total hours is required."),
             days: Yup.string().required("Days is required."),
             required: Yup.string().required("Required is required."),
         }),
@@ -174,12 +174,12 @@ const EditScheduleMasterlistForm = ({
                 <Textfield
                     label="Scheduled Hours"
                     placeholder="enter scheduled hours"
-                    name="reg_hours"
+                    name="total_hours"
                     type="text"
-                    value={editFormHandler.values.reg_hours}
+                    value={editFormHandler.values.total_hours}
                     required
                     onChange={editFormHandler.handleChange}
-                    error={editFormHandler.errors.reg_hours}
+                    error={editFormHandler.errors.total_hours}
                 />
                 <Textfield
                     label="Days"

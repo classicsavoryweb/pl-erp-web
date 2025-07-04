@@ -20,6 +20,22 @@ const CreateScheduleForm = ({
     onSubmitCallback
 }: FormModalInterface) => {
 
+    const calculateTotalHours = (start: string, end: string) => {
+        const startTime = new Date(`1970-01-01T${start}Z`);
+        const endTime = new Date(`1970-01-01T${end}Z`);
+
+        let diff = endTime.getTime() - startTime.getTime();
+
+        if (diff < 0) {
+            diff += 24 * 60 * 60 * 1000; 
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        
+        return (hours + minutes / 60).toFixed(1);
+    };
+
     const createFormHandler = useFormik({
         initialValues: {
             start_time: "",
@@ -27,8 +43,8 @@ const CreateScheduleForm = ({
             selection: "",
             classification: "",
             time_break: "",
-            reg_hours: "",
-            days: "",
+            total_hours: "",
+            days: "1",
             required: "",
         },
         validateOnChange: false,
@@ -38,7 +54,7 @@ const CreateScheduleForm = ({
             selection: Yup.string().required("Selection is required."),
             classification: Yup.string().required("Classification is required."),
             time_break: Yup.string().required("Break hours is required."),
-            reg_hours: Yup.string().required("Scheduled hours is required."),
+            total_hours: Yup.string().required("Total hours is required."),
             days: Yup.string().required("Days is required."),
             required: Yup.string().required("Required is required."),
         }),
@@ -87,7 +103,21 @@ const CreateScheduleForm = ({
                     type="time"
                     value={createFormHandler.values.start_time}
                     required
-                    onChange={createFormHandler.handleChange}
+                    onChange={(e) => {
+                        createFormHandler.handleChange(e);
+                        const updatedStart = e.target.value;
+                        const endTime = createFormHandler.values.end_time;
+                        
+                        if (updatedStart && endTime) {
+                            const totalHours = calculateTotalHours(updatedStart, endTime);
+                            createFormHandler.setFieldValue('total_hours', totalHours);
+                        }
+
+                        createFormHandler.setFieldValue(
+                            'selection',
+                            `${updatedStart} TO ${endTime}`,
+                        );
+                    }}
                     error={createFormHandler.errors.start_time}
                 />
                 <Textfield
@@ -97,7 +127,21 @@ const CreateScheduleForm = ({
                     type="time"
                     value={createFormHandler.values.end_time}
                     required
-                    onChange={createFormHandler.handleChange}
+                    onChange={(e) => {
+                        createFormHandler.handleChange(e);
+                        const updatedEnd = e.target.value;
+                        const startTime = createFormHandler.values.start_time;
+
+                        if (startTime && updatedEnd) {
+                            const totalHours = calculateTotalHours(startTime, updatedEnd);
+                            createFormHandler.setFieldValue('total_hours', totalHours);
+                        }
+
+                        createFormHandler.setFieldValue(
+                            'selection',
+                            `${startTime} TO ${updatedEnd}`
+                        );
+                    }}
                     error={createFormHandler.errors.end_time}
                 />
                 <Textfield
@@ -161,14 +205,14 @@ const CreateScheduleForm = ({
                     ]}
                 />
                 <Textfield
-                    label="Scheduled Hours"
-                    placeholder="enter scheduled hours"
-                    name="reg_hours"
+                    label="Total Hours"
+                    placeholder="enter total hours"
+                    name="total_hours"
                     type="text"
-                    value={createFormHandler.values.reg_hours}
+                    value={createFormHandler.values.total_hours}
                     required
                     onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.reg_hours}
+                    error={createFormHandler.errors.total_hours}
                 />
                 <Textfield
                     label="Days"
@@ -220,6 +264,7 @@ const CreateScheduleForm = ({
                 </div>
             </form>
         </Modal>
+        
     );
 };
 
