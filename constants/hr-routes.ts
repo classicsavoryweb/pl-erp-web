@@ -184,6 +184,11 @@ export const hrRoutes: Route[] = [
                 pathname: "/maintenance/schedule-masterlist",
                 permission: "view_schedule_masterlist"
             },
+            {
+                name: "Holidays",
+                pathname: "/maintenance/holidays",
+                permission: "view_holidays"
+            },
         ]
     },
 ];
