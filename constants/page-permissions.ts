@@ -1,5 +1,5 @@
-import { adminRoutes } from "./admin-routes";
-import { hrRoutes } from "./hr-routes";
+import { adminRoutes } from "./module-routes/admin-routes";
+import { hrRoutes } from "./module-routes/hr-routes";
 
 const HR_ROUTES = hrRoutes.flatMap(route =>
     route.type === "dropdown" ? route.subLinks : []

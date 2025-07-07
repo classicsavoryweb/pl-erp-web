@@ -1,5 +1,7 @@
-import { adminRoutes } from "./admin-routes";
-import { hrRoutes } from "./hr-routes";
+import { adminRoutes } from "./module-routes/admin-routes";
+import { hrRoutes } from "./module-routes/hr-routes";
+import { maintenanceRoutes } from "./module-routes/maintenance-routes";
+import { transactionRoutes } from "./module-routes/transaction-routes";
 
 interface SubLink {
     name: string;
@@ -37,5 +39,7 @@ export const routes: Route[] = [
         permission: ""
     },
     ...hrRoutes,
-    ...adminRoutes
+    ...transactionRoutes,
+    ...maintenanceRoutes,
+    ...adminRoutes,
 ];
