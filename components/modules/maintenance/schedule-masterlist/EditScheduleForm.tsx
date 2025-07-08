@@ -172,8 +172,8 @@ const EditScheduleMasterlistForm = ({
                     ]}
                 />
                 <Textfield
-                    label="Scheduled Hours"
-                    placeholder="enter scheduled hours"
+                    label="Total Hours"
+                    placeholder="enter total hours"
                     name="total_hours"
                     type="text"
                     value={editFormHandler.values.total_hours}
