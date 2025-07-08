@@ -7,6 +7,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import Dropdown from "@/components/common/Dropdown";
+import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { useEffect } from "react";
 import confirm from "@/components/common/Confirm";
 import { editScheduleMasterlist } from "@/api/schedule-masterlist";
@@ -33,6 +34,7 @@ const EditScheduleMasterlistForm = ({
             total_hours: "",
             days: "",
             required: "",
+            status: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -44,6 +46,7 @@ const EditScheduleMasterlistForm = ({
             total_hours: Yup.string().required("Total hours is required."),
             days: Yup.string().required("Days is required."),
             required: Yup.string().required("Required is required."),
+            status: Yup.string().required("Status is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
@@ -209,6 +212,15 @@ const EditScheduleMasterlistForm = ({
                             value: "No"
                         }
                     ]}
+                />
+                <ActiveInactiveDropDown
+                    label="Status"
+                    placeholder="select status"
+                    name="status"
+                    value={editFormHandler.values.status}
+                    required
+                    onChange={editFormHandler.handleChange}
+                    error={editFormHandler.errors.status}
                 />
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">

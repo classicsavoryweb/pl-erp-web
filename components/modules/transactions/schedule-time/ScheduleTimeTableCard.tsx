@@ -51,13 +51,13 @@ const ScheduleTimeTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Employee ID",
-            path: "employee_id",
+            columnHead: "Name",
+            path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Name",
-            path: "employee.full_name",
+            columnHead: "Biometric Number",
+            path: "employee.biometric_number",
             columnType: COLUMNTYPES.string
         },
         {

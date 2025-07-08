@@ -84,6 +84,11 @@ const ScheduleMasterlistTableCard = () => {
             columnHead: "Days",
             path: "days",
             columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Status",
+            path: "status",
+            columnType: COLUMNTYPES.status,
         }
     ];
 
@@ -101,7 +106,8 @@ const ScheduleMasterlistTableCard = () => {
                     time_break: data.time_break,
                     total_hours: data.total_hours,
                     days: data.days,
-                    required: data.required
+                    required: data.required,
+                    status: data.status
                 });
             }
         },
@@ -113,6 +119,7 @@ const ScheduleMasterlistTableCard = () => {
                 columnSettings={columnSettings}
                 filterHandler={filter}
                 hasExport
+                withStatus
                 api={exportAllScheduleMasterlist}
                 exportFileName={`SCHEDULE-MASTERLIST-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="selection"
