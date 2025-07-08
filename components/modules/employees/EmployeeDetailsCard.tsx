@@ -25,16 +25,17 @@ const EmployeeDetailsCard = () => {
                 >
                     <div className="flex justify-between pb-5">
                         <div className="flex justify-start items-center gap-x-10">
-                            <Image
+                            <img
                                 src={ employee.profile_picture 
                                     ? employee.profile_picture 
                                     : employee.gender === "Male" 
                                         ? "/images/profile-pic-male.svg"
                                         : "/images/profile-pic-female.svg"
                                 }
-                                width={140}
-                                height={140}
+                                // width={140}
+                                // height={140}
                                 alt="profile picture"
+                                className="rounded-full object-fit h-[140px] w-[150px]"
                             />
                             <div>
                                 <p className="text-2xl font-semibold">{employee.last_name}, {employee.first_name} {employee.middle_name && String(employee.middle_name).charAt(0) + "."}</p>
