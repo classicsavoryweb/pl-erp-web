@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import confirm from "@/components/common/Confirm";
 import Dropdown from "@/components/common/Dropdown";
+import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { createScheduleMasterlist } from "@/api/schedule-masterlist";
 
 interface FormModalInterface {
@@ -46,6 +47,7 @@ const CreateScheduleForm = ({
             total_hours: "",
             days: "1",
             required: "",
+            status: "active",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -57,6 +59,7 @@ const CreateScheduleForm = ({
             total_hours: Yup.string().required("Total hours is required."),
             days: Yup.string().required("Days is required."),
             required: Yup.string().required("Required is required."),
+            status: Yup.string().required("Status is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -242,6 +245,15 @@ const CreateScheduleForm = ({
                             value: "No"
                         },
                     ]}
+                />
+                <ActiveInactiveDropDown
+                    label="Status"
+                    placeholder="select status"
+                    name="status"
+                    value={createFormHandler.values.status}
+                    required
+                    onChange={createFormHandler.handleChange}
+                    error={createFormHandler.errors.status}
                 />
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
