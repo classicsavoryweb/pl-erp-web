@@ -1,4 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
+import ScheduleTimeTableCard from "@/components/modules/transactions/schedule-time/ScheduleTimeTableCard";
 
 const Page = () => {
     return (
@@ -6,6 +7,7 @@ const Page = () => {
             <PageTitle
                 title="Schedule Time"
             />
+            <ScheduleTimeTableCard/>
         </>
     );
 };

@@ -34,12 +34,12 @@ export const transactionRoutes: Route[] = [
         basepath: "/transactions",
         subLinks: [
             {
-                name: "Schedule Time",
+                name: "Actual Schedule",
                 pathname: "/transactions/schedule-time",
                 permission: "view_transactions_schedule_time"
             },
             {
-                name: "Actual Time",
+                name: "Actual Logs",
                 pathname: "/transactions/actual-time",
                 permission: "view_transactions_actual_time"
             },
