@@ -137,11 +137,11 @@ const CreateHolidayForm = ({
                     options={[
                         {
                             label: "Legal Holiday",
-                            value: "Legal Holiday"
+                            value: "LH"
                         },
                         {
                             label: "Special Holiday",
-                            value: "Special Holiday"
+                            value: "SH"
                         }
                     ]}
                 />
@@ -171,7 +171,6 @@ const CreateHolidayForm = ({
                                     label={data.name}
                                     key={key}
                                     value={data.id}
-                                    checked={createFormHandler.values.branch_id.includes(data.id)}
                                     onChange={(e) => handleCheckboxChange(e, data.id)}
                                 />
                             ))}

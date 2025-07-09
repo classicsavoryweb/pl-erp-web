@@ -153,11 +153,11 @@ const EditHolidayForm = ({
                     options={[
                         {
                             label: "Legal Holiday",
-                            value: "Legal Holiday"
+                            value: "LH"
                         },
                         {
                             label: "Special Holiday",
-                            value: "Special Holiday"
+                            value: "SH"
                         }
                     ]}
                 />

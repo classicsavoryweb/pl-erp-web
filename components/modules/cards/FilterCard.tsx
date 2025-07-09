@@ -22,6 +22,7 @@ import moment from "moment";
 interface FilterInterface {
     hasDateRange?: boolean;
     withStatus?: boolean;
+    withHolidayType?: boolean;
     columnSettings?: any;
     filterHandler: any;
     withBranch?: boolean;
@@ -35,6 +36,7 @@ interface FilterInterface {
     api?: (values: any) => any;
     exportFileName?: string;
     statusOption?: {label: string, value: string}[];
+    holidayTypeOption?: {label: string, value: string}[];
     exportPermission?: string;
     callBack?: () => void;
     withMonth?: boolean;
@@ -51,6 +53,7 @@ const FilterCard = ({
     columnSettings,
     filterHandler,
     withStatus = false,
+    withHolidayType = false,
     withBranch = false,
     withPosition = false,
     withEmploymentStatus = false,
@@ -68,6 +71,16 @@ const FilterCard = ({
         {
             label: "Inactive",
             value: "inactive"
+        }
+    ],
+    holidayTypeOption = [
+        {
+            label: "Legal Holiday",
+            value: "LH"
+        },
+        {
+            label: "Special Holiday",
+            value: "SH"
         }
     ],
     exportPermission = "",
@@ -89,6 +102,7 @@ const FilterCard = ({
             date_from: '',
             date_to: '',
             status: "",
+            holiday_type: "",
             branch_id: "",
             position_id: "",
             employee_status_id: "",
@@ -112,7 +126,8 @@ const FilterCard = ({
                     ? schema.required('Date to is required')
                     : schema.notRequired()
             ),
-            status: Yup.string()
+            status: Yup.string(),
+            holiday_type: Yup.string()
         }),
         onSubmit: (values) => {
             callBack && callBack();
@@ -128,6 +143,7 @@ const FilterCard = ({
             date_from: '',
             date_to: '',
             status: "",
+            holiday_type: "",
             branch_id: "",
             position_id: "",
             employee_status_id: "",
@@ -257,6 +273,16 @@ const FilterCard = ({
                                 value={formHandler.values.status}
                                 onChange={formHandler.handleChange}
                                 options={statusOption}
+                            />
+                        }
+                        { withHolidayType &&
+                            <Dropdown
+                                placeholder="select holiday type"
+                                label="Holiday Type"
+                                name="holiday_type"
+                                value={formHandler.values.holiday_type}
+                                onChange={formHandler.handleChange}
+                                options={holidayTypeOption}
                             />
                         }
                         { withEmploymentStatus &&

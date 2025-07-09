@@ -16,7 +16,7 @@ import moment from "moment";
 import CreateHolidayForm from "./CreateHolidayForm";
 import EditHolidayForm from "./EditHolidayForm";
 import { exportAllHolidays, getAllHolidays } from "@/api/holidays";
-
+    
 const HolidayTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
@@ -58,7 +58,12 @@ const HolidayTableCard = () => {
         {
             columnHead: "Holiday Type",
             path: "holiday_type",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                if (data.holiday_type === 'LH') return 'Legal Holiday';
+                if (data.holiday_type === 'SH') return 'Special Holiday';
+                return data.holiday_type; 
+            }
         },
         {
             columnHead: "Description",
@@ -106,6 +111,7 @@ const HolidayTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
+                withHolidayType
             />
             <Card>
                 <div className="flex justify-end items-center">
