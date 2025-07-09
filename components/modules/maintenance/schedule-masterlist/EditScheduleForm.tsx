@@ -24,6 +24,22 @@ const EditScheduleMasterlistForm = ({
     formValue
 }: FormModalInterface) => {
 
+    const calculateTotalHours = (start: string, end: string) => {
+        const startTime = new Date(`1970-01-01T${start}Z`);
+        const endTime = new Date(`1970-01-01T${end}Z`);
+
+        let diff = endTime.getTime() - startTime.getTime();
+
+        if (diff < 0) {
+            diff += 24 * 60 * 60 * 1000; 
+        }
+
+        const hours = Math.floor(diff / (1000 * 60 * 60));
+        const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+        
+        return (hours + minutes / 60).toFixed(1);
+    };
+
     const editFormHandler = useFormik({
         initialValues: {
             start_time: "",
@@ -101,7 +117,18 @@ const EditScheduleMasterlistForm = ({
                     type="time"
                     value={editFormHandler.values.start_time}
                     required
-                    onChange={editFormHandler.handleChange}
+                    onChange={(e) => {
+                        const updatedStart = e.target.value;
+                        const endTime = editFormHandler.values.end_time;
+
+                        editFormHandler.handleChange(e); 
+
+                        if (updatedStart && endTime) {
+                            const totalHours = calculateTotalHours(updatedStart, endTime);
+                            editFormHandler.setFieldValue('total_hours', totalHours);
+                            editFormHandler.setFieldValue('selection', `${updatedStart} TO ${endTime}`);
+                        }
+                    }}
                     error={editFormHandler.errors.start_time}
                 />
                 <Textfield
@@ -111,7 +138,18 @@ const EditScheduleMasterlistForm = ({
                     type="time"
                     value={editFormHandler.values.end_time}
                     required
-                    onChange={editFormHandler.handleChange}
+                    onChange={(e) => {
+                        const updatedEnd = e.target.value;
+                        const startTime = editFormHandler.values.start_time;
+
+                        editFormHandler.handleChange(e); 
+
+                        if (startTime && updatedEnd) {
+                            const totalHours = calculateTotalHours(startTime, updatedEnd);
+                            editFormHandler.setFieldValue('total_hours', totalHours);
+                            editFormHandler.setFieldValue('selection', `${startTime} TO ${updatedEnd}`);
+                        }
+                    }}
                     error={editFormHandler.errors.end_time}
                 />
                 <Textfield
