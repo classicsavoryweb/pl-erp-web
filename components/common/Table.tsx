@@ -77,7 +77,8 @@ const Table = ({
 
     return (
         <div className="relative my-1 w-full">
-            <table className="w-full rounded-md overflow-x-auto">
+            <div className="overflow-hidden overflow-x-auto">
+            <table className="min-w-auto w-full rounded-md overflow-x-auto">
                 <thead className="bg-red-800">
                     <tr>
                         { withCheckBox &&
@@ -252,7 +253,8 @@ const Table = ({
 
                         }
                 </tbody>
-            </table>
+            </table>          
+            </div>
             { !loading && paginator && dataSet.length > 0 &&
                 <div
                     className="w-full text-sm flex justify-between items-center pt-2"
