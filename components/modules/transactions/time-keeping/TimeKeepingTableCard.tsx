@@ -1,0 +1,226 @@
+"use client";
+
+import Card from "@/components/common/Card";
+import Table from "@/components/common/Table";
+import { COLUMNTYPES } from "@/constants/column";
+import { useState } from "react";
+import Button from "@/components/common/Button";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { toast } from "react-toastify";
+import Grid from "@/components/common/Grid";
+import BranchDropDown from "../../generic/BranchDropDown";
+import { generateTimeKeeping, getAllTimeKeeping } from "@/api/transactions/time-keeping";
+import confirm from "@/components/common/Confirm";
+import usePagination from "@/hooks/pagination";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import { useApiCall } from "@/hooks/api-call";
+
+const TimeKeepingTableCard = () => {
+    const paginator = usePagination();
+    const api = useApiCall();
+
+    const columnSettings = [
+        {
+            columnHead: "Employee Name",
+            path: "employee.full_name",
+            columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Biometric Number",
+            path: "employee.biometric_number",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Date",
+            path: "date",
+            columnType: COLUMNTYPES.date
+        },
+        {
+            columnHead: "Worked Hours",
+            path: "worked_hours",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Tardiness",
+            path: "tardiness",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Undertime",
+            path: "undertime",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Overtime",
+            path: "regular_overtime",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Holiday",
+            path: "tardiness",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let holiday = "—";
+                if (data.legal_holiday === "Yes") {
+                    holiday = "Legal";
+                }
+                if (data.special_holiday === "Yes") {
+                    holiday = "Special";
+                }
+                return holiday;
+            }
+        },
+        {
+            columnHead: "Night Diff Hours",
+            path: "night_diff_hours",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Night Diff Overtime",
+            path: "night_diff_overtime",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Legal Holiday Hours",
+            path: "legal_holiday_hours",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Legal Holiday Overtime",
+            path: "legal_holiday_overtime",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Special Holiday Hours",
+            path: "special_holiday_hours",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Special Holiday Overtime",
+            path: "special_holiday_overtime",
+            columnType: COLUMNTYPES.amount
+        },
+
+    ];
+
+    const formHandler = useFormik({
+        initialValues: {
+            branch_id : "",
+            action: "",
+        },
+        validateOnChange: false,
+        validationSchema: Yup.object().shape({
+            branch_id: Yup.string().required("Branch is required"),
+        }),
+        onSubmit: async (values, {setSubmitting}) => {
+            if (values.action === "generate") {
+                const isConfirmed = await confirm({
+                    title: "Timekeeping",
+                    message: "Are you sure you want to generate timekeeping?"
+                });
+    
+                if (isConfirmed) {
+                    generateTimeKeeping(values)
+                    .then((resp) => {
+                        if (!resp.error) {
+                            toast.success(resp.data.message);
+                        } else {
+                            toast.error(resp.data.message);
+                        }
+                    }).catch(() => {
+                        toast.error("Error encountered");
+                    }).finally(() => {
+                        setSubmitting(false);
+                    });
+                }
+            }
+        }
+    });
+
+    useAsyncEffect(() => {
+        api.setLoading(false);
+        if (formHandler.values.branch_id) {
+            api.setLoading(true);
+            getAllTimeKeeping({
+                page: paginator.page,
+                per_page: paginator.per_page,
+                branch_id: formHandler.values.branch_id
+            }).then((resp) => {
+                if (!resp.error) {
+                    api.setDataSet(resp.data.data);
+                    paginator.setPage(resp.data.current_page);
+                    paginator.setPaginationData(resp.data);
+                } else {
+                    toast.error("Error fetching timekeeping");
+                }
+            }).finally(() => {
+                api.setLoading(false);
+            });
+        }
+    }, [paginator.reload, api.reload])
+    
+
+    return (
+        <>
+            <Card>
+                <p className="text-sm font-semibold text-red-800">Filters</p>
+                <form onSubmit={formHandler.handleSubmit}>
+                    <Grid cols={4}>
+                        <BranchDropDown
+                            placeholder="select branch"
+                            label="Branch"
+                            name="branch_id"
+                            value={formHandler.values.branch_id}
+                            onChange={formHandler.handleChange}
+                            error={formHandler.errors.branch_id}
+                        />
+                    </Grid>
+                    <div className="flex justify-end gap-x-2">
+                        <div className="w-[100px]">
+                            <Button
+                                label="Search"
+                                onClick={() => {
+                                    formHandler.setFieldValue("action", "search");
+                                    formHandler.submitForm();
+                                    api.triggerReload();
+                                }}
+                            />    
+                        </div>
+                        <div className="w-[100px]">
+                            <Button
+                                label="Generate"
+                                onClick={() => {
+                                    formHandler.setFieldValue("action", "generate");
+                                    formHandler.submitForm();
+                                }}
+                            />    
+                        </div>
+                        <div className="w-[100px]">
+                            <Button
+                                label="Reset"
+                                type="button"
+                                onClick={() => {
+                                    api.setDataSet([]);
+                                    formHandler.resetForm();
+                                }}
+                                variant="secondary"
+                            />    
+                        </div>
+                    </div>
+                </form>
+            </Card>
+            <Card>
+                <p className="text-sm font-semibold text-red-800">Timekeeping</p>
+                <Table
+                    dataSet={api.dataSet}
+                    columnSettings={columnSettings}
+                    loading={api.loading}
+                    paginator={paginator}
+                />
+            </Card>
+        </>
+    );
+};
+
+export default TimeKeepingTableCard;

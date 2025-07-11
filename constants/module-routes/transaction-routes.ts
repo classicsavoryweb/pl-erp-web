@@ -41,6 +41,12 @@ export const transactionRoutes: Route[] = [
             {
                 name: "Actual Logs",
                 pathname: "/transactions/actual-time",
+                permission: "view_transactions_actual_time",
+                break: true
+            },
+            {
+                name: "Timekeeping",
+                pathname: "/transactions/timekeeping",
                 permission: "view_transactions_actual_time"
             },
         ]
