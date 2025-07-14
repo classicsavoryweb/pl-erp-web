@@ -33,6 +33,8 @@ const EditBranchForm = ({
             branch_number : "" ,
             branch_email : "" ,
             status : "" ,
+            travel_time : "",
+            device_name : "",
             short_name : "" ,
             address : "" ,
             location : "" ,
@@ -50,6 +52,8 @@ const EditBranchForm = ({
             branch_number: Yup.string().required("Branch number is required."),
             branch_email: Yup.string().required("Branch email is required."),
             status: Yup.string().required("Status is required."),
+            travel_time: Yup.string().required("Travel time is required."),
+            device_name: Yup.string().required("Device name is required."),
             short_name: Yup.string().required("Short name is required."),
             address: Yup.string().required("Address is required."),
             location: Yup.string().required("Location is required."),
@@ -226,6 +230,26 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.mancom_employee_number}
+                    />
+
+                    <Textfield
+                        type="number"
+                        label="Travel Time"
+                        placeholder="enter travel time"
+                        name="travel_time"
+                        value={editBranchFormHandler.values.travel_time ?? ""}
+                        required
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.travel_time}
+                    />
+                    <Textfield
+                        label="Device Name"
+                        placeholder="enter device name"
+                        name="device_name"
+                        value={editBranchFormHandler.values.device_name ?? ""}
+                        required
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.device_name}
                     />
 
                     <ActiveInactiveDropDown

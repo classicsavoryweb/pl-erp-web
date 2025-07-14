@@ -87,24 +87,6 @@ const ScheduleTimeTableCard = () => {
         }
     ];
 
-    // const tableActions = [
-    //     {
-    //         label: "Edit",
-    //         onClick: (data: any) => {
-    //             editModal.onOpen();
-    //             setData({
-    //                 id: data.id,
-    //                 employee_id: data.employee_id,
-    //                 name: data.name,
-    //                 date: data.date,
-    //                 timetable: data.timetable,
-    //                 check_in: data.check_in,
-    //                 check_out: data.check_out,
-    //             });
-    //         }
-    //     },
-    // ];
-
     const globalActionSettings = [
         {
             label: "Import Schedule Time",
@@ -117,12 +99,38 @@ const ScheduleTimeTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Name",
+                        path: "employee.full_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Biometric Number",
+                        path: "employee.biometric_number",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Timetable",
+                        path: "timetable",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
+                        columnHead: "Check In",
+                        path: "check_in",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
+                        columnHead: "Check Out",
+                        path: "check_out",
+                        columnType: COLUMNTYPES.string,
+                    }
+                ]}
                 filterHandler={filter}
                 hasExport
                 api={exportAllTransactionsScheduleTime}
                 exportFileName={`SCHEDULE-TIME-${moment().format("YYYY-MM-DD")}.xls`}
-                defaultColumnSelected="name"
+                defaultColumnSelected="employee.full_name"
                 callBack={() => {
                     paginator.setPage(1);
                 }}
@@ -140,8 +148,6 @@ const ScheduleTimeTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    // withActions
-                    // actions={tableActions}
                 />
             </Card>
 

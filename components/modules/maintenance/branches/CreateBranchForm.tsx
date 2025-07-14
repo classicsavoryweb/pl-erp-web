@@ -30,6 +30,8 @@ const CreateBranchForm = ({
             name : "" ,
             branch_email : "" ,
             status : "active" ,
+            travel_time : "",
+            device_name : "",
             short_name : "" ,
             address : "" ,
             location : "" ,
@@ -46,6 +48,8 @@ const CreateBranchForm = ({
             name: Yup.string().required("Branch name is required."),
             branch_email: Yup.string().required("Branch email is required."),
             status: Yup.string().required("Status is required."),
+            travel_time: Yup.string().required("Travel time is required."),
+            device_name: Yup.string().required("Device name is required."),
             short_name: Yup.string().required("Short name is required."),
             address: Yup.string().required("Address is required."),
             location: Yup.string().required("Location is required."),
@@ -221,6 +225,30 @@ const CreateBranchForm = ({
                         required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.mancom_employee_number}
+                    />
+                </Grid>
+
+                <Grid
+                    cols={2}
+                >
+                    <Textfield
+                        type="number"
+                        label="Travel Time"
+                        placeholder="enter travel time"
+                        name="travel_time"
+                        value={createBranchFormHandler.values.travel_time}
+                        required
+                        onChange={createBranchFormHandler.handleChange}
+                        error={createBranchFormHandler.errors.travel_time}
+                    />
+                    <Textfield
+                        label="Device Name"
+                        placeholder="enter device name"
+                        name="device_name"
+                        value={createBranchFormHandler.values.device_name}
+                        required
+                        onChange={createBranchFormHandler.handleChange}
+                        error={createBranchFormHandler.errors.device_name}
                     />
                 </Grid>
 

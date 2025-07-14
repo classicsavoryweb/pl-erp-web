@@ -101,7 +101,18 @@ const HolidayTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Description",
+                        path: "description",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
+                        columnHead: "Required Days",
+                        path: "required_days",
+                        columnType: COLUMNTYPES.string,
+                    }
+                ]}
                 filterHandler={filter}
                 hasExport
                 hasDateRange

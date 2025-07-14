@@ -116,7 +116,43 @@ const ScheduleMasterlistTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Start Time",
+                        path: "start_time",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "End Time",
+                        path: "end_time",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Selection",
+                        path: "selection",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
+                        columnHead: "Classification",
+                        path: "classification",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
+                        columnHead: "Break Hours",
+                        path: "time_break",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
+                        columnHead: "Total Hours",
+                        path: "total_hours",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
+                        columnHead: "Days",
+                        path: "days",
+                        columnType: COLUMNTYPES.string,
+                    },
+                ]}
                 filterHandler={filter}
                 hasExport
                 withStatus
