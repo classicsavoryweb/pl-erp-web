@@ -91,7 +91,23 @@ const SanctionsTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Sanction",
+                        path: "description",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Rank",
+                        path: "rank",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Suspension Days",
+                        path: "suspension_days",
+                        columnType: COLUMNTYPES.string,
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport

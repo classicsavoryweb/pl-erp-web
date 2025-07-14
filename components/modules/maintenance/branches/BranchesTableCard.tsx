@@ -77,6 +77,16 @@ const BranchesTableCard = () => {
             columnType: COLUMNTYPES.date
         },
         {
+            columnHead: "Travel Time",
+            path: "travel_time",
+            columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Device Name",
+            path: "device_name",
+            columnType: COLUMNTYPES.string,
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status,
@@ -93,6 +103,8 @@ const BranchesTableCard = () => {
                     name : data.name,
                     branch_number : data.branch_number,
                     branch_email : data.branch_email,
+                    travel_time : data.travel_time,
+                    device_name : data.device_name,
                     status : data.status,
                     short_name : data.short_name,
                     address : data.address,
@@ -112,7 +124,38 @@ const BranchesTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Branch Name",
+                        path: "name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Branch Number",
+                        path: "branch_number",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Short Name",
+                        path: "short_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Address",
+                        path: "address",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Travel Time",
+                        path: "travel_time",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
+                        columnHead: "Device Name",
+                        path: "device_name",
+                        columnType: COLUMNTYPES.string,
+                    },
+                ]}
                 filterHandler={filter}
                 hasDateRange
                 withStatus
