@@ -77,8 +77,8 @@ const Table = ({
 
     return (
         <div className="relative my-1 w-full">
-            <div className="overflow-hidden overflow-x-auto">
-            <table className="min-w-auto w-full rounded-md overflow-x-auto">
+            <div>
+            <table className="min-w-auto w-full rounded-md">
                 <thead className="bg-red-800">
                     <tr>
                         { withCheckBox &&
@@ -210,6 +210,24 @@ const Table = ({
                                                                     columnData === "—" 
                                                                     ? "—" 
                                                                     : moment(columnData).format("MMMM DD, YYYY")     
+                                                                }
+                                                            </>
+                                                        }
+                                                        { (settings.columnType === COLUMNTYPES.timekeeping) &&
+                                                            <>
+                                                                {
+                                                                    columnData == "0"  
+                                                                    ? "—" 
+                                                                    : Math.floor(columnData * 2) / 2    
+                                                                }
+                                                            </>
+                                                        }
+                                                        { (settings.columnType === COLUMNTYPES.minutes) &&
+                                                            <>
+                                                                {
+                                                                    columnData == "0"  
+                                                                    ? "—" 
+                                                                    : Math.floor(Number(columnData)) 
                                                                 }
                                                             </>
                                                         }

@@ -6,5 +6,8 @@ export const COLUMNTYPES = {
     timestamp: "timestamp",
     function: "function",
     status: "status",
-    amount: "amount"
+    amount: "amount",
+    timekeeping: "timekeeping",
+    minutes: "minutes",
+    duration: "duration"
 };

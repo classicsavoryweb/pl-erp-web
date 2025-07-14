@@ -39,67 +39,81 @@ const TimeKeepingTableCard = () => {
         {
             columnHead: "Worked Hours",
             path: "worked_hours",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return (
+                    <p className="font-semibold">
+                        {Math.floor(data.worked_hours * 2) / 2 }
+                    </p>
+                );
+            }
         },
         {
             columnHead: "Tardiness",
             path: "tardiness",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                if (data.tardiness == 0) {
+                    return "—";
+                }
+
+                return (
+                    <p className="font-semibold text-red-500">
+                        {Math.floor(Number(data.tardiness)) }
+                    </p>
+                );
+            }
         },
         {
             columnHead: "Undertime",
             path: "undertime",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                if (data.undertime == 0) {
+                    return "—";
+                }
+
+                return (
+                    <p className="font-semibold text-red-500">
+                        {Math.floor(Number(data.undertime)) }
+                    </p>
+                );
+            }
         },
         {
             columnHead: "Overtime",
             path: "regular_overtime",
-            columnType: COLUMNTYPES.amount
-        },
-        {
-            columnHead: "Holiday",
-            path: "tardiness",
-            columnType: COLUMNTYPES.function,
-            function: (data: any) => {
-                let holiday = "—";
-                if (data.legal_holiday === "Yes") {
-                    holiday = "Legal";
-                }
-                if (data.special_holiday === "Yes") {
-                    holiday = "Special";
-                }
-                return holiday;
-            }
+            columnType: COLUMNTYPES.timekeeping
         },
         {
             columnHead: "Night Diff Hours",
             path: "night_diff_hours",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.timekeeping
         },
         {
             columnHead: "Night Diff Overtime",
             path: "night_diff_overtime",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.timekeeping
         },
         {
             columnHead: "Legal Holiday Hours",
             path: "legal_holiday_hours",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.timekeeping
         },
         {
             columnHead: "Legal Holiday Overtime",
             path: "legal_holiday_overtime",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.timekeeping
         },
         {
             columnHead: "Special Holiday Hours",
             path: "special_holiday_hours",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.timekeeping
         },
         {
             columnHead: "Special Holiday Overtime",
             path: "special_holiday_overtime",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.timekeeping
         },
 
     ];
