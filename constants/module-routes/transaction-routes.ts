@@ -47,7 +47,12 @@ export const transactionRoutes: Route[] = [
             {
                 name: "Timekeeping",
                 pathname: "/transactions/timekeeping",
-                permission: "view_transactions_actual_time"
+                permission: "view_transactions_time_keeping"
+            },
+            {
+                name: "Timekeeping Summary",
+                pathname: "/transactions/timekeeping-summary",
+                permission: "view_transactions_time_keeping_summary"
             },
         ]
     }

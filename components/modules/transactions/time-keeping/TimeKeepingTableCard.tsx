@@ -15,6 +15,11 @@ import confirm from "@/components/common/Confirm";
 import usePagination from "@/hooks/pagination";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
+import moment from "moment";
+import Dropdown from "@/components/common/Dropdown";
+import SearchableDropDown from "@/components/common/SearchableDropDown";
+import CutOffDropDown from "../../generic/CutOffDropDown";
+import { getCurrentCutoff } from "@/helper/cutoff";
 
 const TimeKeepingTableCard = () => {
     const paginator = usePagination();
@@ -122,10 +127,16 @@ const TimeKeepingTableCard = () => {
         initialValues: {
             branch_id : "",
             action: "",
+            cutoff: {
+                ...getCurrentCutoff()
+            },
+            selected_cutoff: getCurrentCutoff().range,
+            year: moment().year(),
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             branch_id: Yup.string().required("Branch is required"),
+            year: Yup.string().required("Year is required"),
         }),
         onSubmit: async (values, {setSubmitting}) => {
             if (values.action === "generate") {
@@ -159,7 +170,7 @@ const TimeKeepingTableCard = () => {
             getAllTimeKeeping({
                 page: paginator.page,
                 per_page: paginator.per_page,
-                branch_id: formHandler.values.branch_id
+                ...formHandler.values
             }).then((resp) => {
                 if (!resp.error) {
                     api.setDataSet(resp.data.data);
@@ -189,6 +200,25 @@ const TimeKeepingTableCard = () => {
                             onChange={formHandler.handleChange}
                             error={formHandler.errors.branch_id}
                         />
+                        <CutOffDropDown
+                            value={formHandler.values.selected_cutoff}
+                            onChange={(e) => {
+                                formHandler.setFieldValue("selected_cutoff", e.target.value);
+                                formHandler.setFieldValue("cutoff", e.target.obj);
+                            }}
+                        />
+                        <Dropdown
+                            placeholder="select year"
+                            label="Year"
+                            name="year"
+                            value={String(formHandler.values.year)}
+                            onChange={formHandler.handleChange}
+                            options={Array.from({ length: 100 }, (_, i) => {
+                                const year = new Date().getFullYear() - i;
+                                return { label: year.toString(), value: year.toString() };
+                            })}
+                        />
+
                     </Grid>
                     <div className="flex justify-end gap-x-2">
                         <div className="w-[100px]">
