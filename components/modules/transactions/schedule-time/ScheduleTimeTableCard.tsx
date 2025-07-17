@@ -62,7 +62,7 @@ const ScheduleTimeTableCard = () => {
         },
         {
             columnHead: "Branch",
-            path: "employee.current_branch.name",
+            path: "branch.short_name",
             columnType: COLUMNTYPES.string
         },
         {
