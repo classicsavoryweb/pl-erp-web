@@ -34,7 +34,7 @@ const SanctionsTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching agencies");
+                toast.error("Error fetching sanctions");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);

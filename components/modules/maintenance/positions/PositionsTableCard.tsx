@@ -73,6 +73,11 @@ const PositionsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Timekeeping Type",
+            path: "timekeeping_type",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status,
@@ -91,6 +96,7 @@ const PositionsTableCard = () => {
                     rank: data.rank,
                     station_id: data.station_id,
                     schedule_type: data.schedule_type,
+                    timekeeping_type: data.timekeeping_type
                 });
             }
         },

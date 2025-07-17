@@ -10,6 +10,7 @@ import StationDropDown from "../../generic/StationDropDown";
 import { createPosition } from "@/api/positions";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import RankDropDown from "../../generic/RankDropDown";
+import Dropdown from "@/components/common/Dropdown";
 import confirm from "@/components/common/Confirm";
 import ScheduleTypeDropDown from "../../generic/ScheduleTypeDropDown";
 
@@ -29,6 +30,7 @@ const CreatePositionForm = ({
             description: "",
             rank: "",
             schedule_type: "",
+            timekeeping_type: "",
             status: "active"
         },
         validateOnChange: false,
@@ -38,6 +40,7 @@ const CreatePositionForm = ({
             rank: Yup.string().required("Rank is required."),
             status: Yup.string().required("Status is required."),
             schedule_type: Yup.string().required("Schedule type is required."),
+            timekeeping_type: Yup.string().required("Timekeeping type is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -123,6 +126,25 @@ const CreatePositionForm = ({
                     value={createPositionFormHandler.values.schedule_type}
                     error={createPositionFormHandler.errors.schedule_type}
                     required
+                />
+                <Dropdown
+                    label="Timekeeping Type"
+                    placeholder="select timekeeping type"
+                    name="timekeeping_type"
+                    value={createPositionFormHandler.values.timekeeping_type}
+                    required
+                    onChange={createPositionFormHandler.handleChange}
+                    error={createPositionFormHandler.errors.timekeeping_type}
+                    options={[
+                        {
+                            label: "Daily",
+                            value: "Daily"
+                        },
+                        {
+                            label: "Monthly",
+                            value: "Monthly"
+                        }
+                    ]}
                 />
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">

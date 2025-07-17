@@ -89,7 +89,7 @@ const ScheduleTimeTableCard = () => {
 
     const globalActionSettings = [
         {
-            label: "Import Schedule Time",
+            label: "Import Actual Schedule",
             onClick: () => {
                 importModal.onOpen();
             }
