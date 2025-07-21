@@ -22,7 +22,7 @@ const ScheduleTimeTableCard = () => {
     const editModal = useModal();
     const importModal = useModal();
     const [data, setData] = useState({});
-    const paginator = usePagination();
+    const paginator = usePagination(20);
     const filter = useFilter();
 
     useAsyncEffect(() => {
@@ -51,7 +51,7 @@ const ScheduleTimeTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Name",
+            columnHead: "Employee Name",
             path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
@@ -62,7 +62,7 @@ const ScheduleTimeTableCard = () => {
         },
         {
             columnHead: "Branch",
-            path: "branch.short_name",
+            path: "employee.current_branch.short_name",
             columnType: COLUMNTYPES.string
         },
         {

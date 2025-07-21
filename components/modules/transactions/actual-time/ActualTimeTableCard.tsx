@@ -21,7 +21,7 @@ const ActualTimeTableCard = () => {
     const viewModal = useModal();
     const editModal = useModal();
     const [data, setData] = useState<any[]>([]);
-    const paginator = usePagination();
+    const paginator = usePagination(20);
     const filter = useFilter();
 
     useAsyncEffect(() => {
@@ -55,7 +55,7 @@ const ActualTimeTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Biometrics Number",
+            columnHead: "Biometric Number",
             path: "employee.biometric_number",
             columnType: COLUMNTYPES.string
         },
