@@ -60,11 +60,6 @@ export const transactionRoutes: Route[] = [
                 permission: "view_transactions_time_keeping_summary",
                 break: true
             },
-            {
-                name: "Incorrect Logs",
-                pathname: "/transactions/incorrect-logs",
-                permission: "view_transactions_incorrect_logs"
-            },
         ]
     }
 ];

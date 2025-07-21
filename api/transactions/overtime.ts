@@ -24,9 +24,9 @@ export const exportAllOvertime = async (payload?: {}) => {
     return resData;
 };
 
-export const approveBulkOvertime = async (payload: {}) => {
+export const payBulkOvertime = async (payload: {}) => {
     const resData = await axiosHelper({
-        func_path: "/approve-all-overtime",
+        func_path: "/pay-all-overtime",
         method: 'POST',
         payload: payload,
     });
@@ -44,18 +44,18 @@ export const getOvertime = async (payload?: {}) => {
     return resData;
 };
 
-export const approveOvertime = async ( id: number) => {
+export const payOvertime = async ( id: number) => {
     const resData = await axiosHelper({
-        func_path: `/approve-overtime/${id}`,
+        func_path: `/pay-overtime/${id}`,
         method: 'GET',
     });
 
     return resData;
 };
 
-export const unapproveOvertime = async ( id: number) => {
+export const unpayOvertime = async ( id: number) => {
     const resData = await axiosHelper({
-        func_path: `/unapprove-overtime/${id}`,
+        func_path: `/unpay-overtime/${id}`,
         method: 'GET',
     });
 
