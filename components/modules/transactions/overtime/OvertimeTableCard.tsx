@@ -20,7 +20,7 @@ import CreateOvertimeForm from "./CreateOvertimeForm";
 import EditOvertimeForm from "./EditOvertimeForm";
 import ImportModal from "./ImportModal";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime } from "@/api/transactions/overtime";
+import { payBulkOvertime, exportAllOvertime, getAllOvertime, payOvertime, unpayOvertime } from "@/api/transactions/overtime";
 
 const OvertimeTableCard = () => {
     const api = useApiCall();
@@ -57,13 +57,13 @@ const OvertimeTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Employee Name",
-            path: "employee.full_name",
-            columnType: COLUMNTYPES.string,
+            columnHead: "Date Filed",
+            path: "date_filed",
+            columnType: COLUMNTYPES.date,
         },
         {
-            columnHead: "Biometric Number",
-            path: "employee.biometric_number",
+            columnHead: "Name",
+            path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
         {
@@ -72,70 +72,63 @@ const OvertimeTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Date",
-            path: "date",
+            columnHead: "Position",
+            path: "employee.current_position.description",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Overtime Date",
+            path: "overtime_date",
             columnType: COLUMNTYPES.date
         },
         {
-            columnHead: "Overtime",
-            path: "regular_overtime",
+            columnHead: "Total Hours",
+            path: "total_hours",
             columnType: COLUMNTYPES.amount
         },
         {
-            columnHead: "Night Diff Overtime",
-            path: "night_diff_overtime",
-            columnType: COLUMNTYPES.amount
+            columnHead: "Purpose",
+            path: "purpose",
+            columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Legal Holiday Overtime",
-            path: "legal_holiday_overtime",
-            columnType: COLUMNTYPES.amount
-        },
-        {
-            columnHead: "Special Holiday Overtime",
-            path: "special_holiday_overtime",
-            columnType: COLUMNTYPES.amount
-        },
-        {
-            columnHead: "Overtime Status",
-            path: "overtime_status",
+            columnHead: "Status",
+            path: "status",
             columnType: COLUMNTYPES.function,
             function: (data:any) => {
                 let status: "default" | "success" | "danger" = "default";
 
-                switch(data.overtime_status) {
-                    case "Approved": 
+                switch (data.status) {
+                    case "Paid":
                         status = "success";
                         break;
-                    case "Unapproved":
+                    case "Unpaid":
                         status = "danger";
                         break;
                     default:
                         status = "default";
                         break;
-                };
-
+                }
+;
                 return <Badge
-                    label={data.overtime_status}
+                    label={data.status}
                     status={status}
                 />
             }
         },
         {
             columnHead: "Action",
-            path: "overtime_status",
+            path: "status",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let actions = tableActions;
-                if (data.overtime_status === "Unapproved") {
+                if (data.status === "Unpaid") {
                     actions = [
                         tableActions[0],
-                        tableActions[1],
                     ];
-                } else if (data.overtime_status === "Approved") {
+                } else if (data.status === "Paid") {
                     actions = [
-                        tableActions[0],
-                        tableActions[2],
+                        tableActions[1],
                     ];
                 } else {
                     actions = [tableActions[0]]; 
@@ -152,34 +145,33 @@ const OvertimeTableCard = () => {
     ];
 
     const tableActions = [
+        // {
+        //     label: "Edit",
+        //     onClick: (data: any) => {
+        //         editModal.onOpen();
+        //         setData({
+        //             id: data.id,
+        //             employee: data.employee?.full_name,
+        //             branch: data.employee?.current_branch?.name,
+        //             date : data.date,
+        //             regular_overtime : data.regular_overtime,
+        //             legal_holiday_overtime : data.legal_holiday_overtime,
+        //             special_holiday_overtime : data.special_holiday_overtime,
+        //             night_diff_overtime : data.night_diff_overtime,
+        //             status : data.status,
+        //         });
+        //     }
+        // },
         {
-            label: "Edit",
-            onClick: (data: any) => {
-                editModal.onOpen();
-                setData({
-                    id: data.id,
-                    employee_id: data.employee?.id,
-                    employee: data.employee?.full_name,
-                    branch: data.employee?.current_branch?.name,
-                    date : data.date,
-                    regular_overtime : data.regular_overtime,
-                    legal_holiday_overtime : data.legal_holiday_overtime,
-                    special_holiday_overtime : data.special_holiday_overtime,
-                    night_diff_overtime : data.night_diff_overtime,
-                    overtime_status : data.overtime_status,
-                });
-            }
-        },
-        {
-            label: "Approve",
+            label: "Pay",
             onClick: async (data: any) => {
                 const isConfirmed = await confirm({
-                    title: "Approve Overtime",
-                    message: "Are you sure you want to approve this overtime?",
+                    title: "Pay Overtime",
+                    message: "Are you sure you want to pay this overtime?",
                 });
 
                 isConfirmed &&
-                approveOvertime(data.id).then((resp) => {
+                payOvertime(data.id).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
                         api.triggerReload();
@@ -190,18 +182,18 @@ const OvertimeTableCard = () => {
                     toast.error("Error encountered");
                 });
             },
-            permission: "approve_all_transactions_overtime"
+            permission: "pay_all_transactions_overtime"
         },
         {
-            label: "Unapprove",
+            label: "Unpay",
             onClick: async (data: any) => {
                 const isConfirmed = await confirm({
-                    title: "Unapprove Overtime",
-                    message: "Are you sure you want to unapprove this overtime?",
+                    title: "Unpay Overtime",
+                    message: "Are you sure you want to unpay this overtime?",
                 });
 
                 isConfirmed &&
-                unapproveOvertime(data.id).then((resp) => {
+                unpayOvertime(data.id).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
                         api.triggerReload();
@@ -212,11 +204,11 @@ const OvertimeTableCard = () => {
                     toast.error("Error encountered");
                 });
             },
-            permission: "unapprove_all_transactions_overtime"
+            permission: "unpay_all_transactions_overtime"
         },
     ];
 
-    const approveBulk = useFormik({
+    const payBulk = useFormik({
         initialValues: {
             overtime_id: []
         },
@@ -225,7 +217,7 @@ const OvertimeTableCard = () => {
             if (values.overtime_id.length === 0) {
                 toast.error("Must select atleast 1 record");
             } else {
-                approveBulkOvertime(values)
+                payBulkOvertime(values)
                 .then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
@@ -244,20 +236,20 @@ const OvertimeTableCard = () => {
 
     const globalActionSettings = [
         {
-            label: "Import Actual Schedule",
+            label: "Import Overtime",
             onClick: () => {
                 importModal.onOpen();
             }
         },
         {
-            label: "Approve Selected",
+            label: "Pay Selected",
             onClick: async () => {
                 const isConfirm = await confirm({
-                    title: "Approve Bulk Overtime",
-                    message: "Are you sure you want to approve this overtime?"
+                    title: "Pay Bulk Overtime",
+                    message: "Are you sure you want to pay this overtime?"
                 });
                 if (isConfirm) {
-                    await approveBulk.submitForm();
+                    await payBulk.submitForm();
                 }
             }
         }
@@ -268,45 +260,40 @@ const OvertimeTableCard = () => {
             <FilterCard
                 columnSettings={[
                     {
-                        columnHead: "Employee Name",
+                        columnHead: "Name",
                         path: "employee.full_name",
-                        columnType: COLUMNTYPES.string,
-                    },
-                    {
-                        columnHead: "Biometric Number",
-                        path: "employee.biometric_number",
                         columnType: COLUMNTYPES.string
                     },
                     {
-                        columnHead: "Overtime",
-                        path: "regular_overtime",
+                        columnHead: "Position",
+                        path: "employee.current_position.description",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Overtime Date",
+                        path: "overtime_date",
+                        columnType: COLUMNTYPES.date
+                    },
+                    {
+                        columnHead: "Total Hours",
+                        path: "total_hours",
                         columnType: COLUMNTYPES.amount
                     },
                     {
-                        columnHead: "Night Diff Overtime",
-                        path: "night_diff_overtime",
-                        columnType: COLUMNTYPES.amount
-                    },
-                    {
-                        columnHead: "Legal Holiday Overtime",
-                        path: "legal_holiday_overtime",
-                        columnType: COLUMNTYPES.amount
-                    },
-                    {
-                        columnHead: "Special Holiday Overtime",
-                        path: "special_holiday_overtime",
-                        columnType: COLUMNTYPES.amount
+                        columnHead: "Purpose",
+                        path: "purpose",
+                        columnType: COLUMNTYPES.string
                     },
                 ]}
                 withStatus
                 statusOption={[
                     {
-                        label: "Approved",
-                        value: "Approved"
+                        label: "Paid",
+                        value: "Paid"
                     },
                     {
-                        label: "Unapproved",
-                        value: "Unapproved"
+                        label: "Unpaid",
+                        value: "Unpaid"
                     }
                 ]}
                 filterHandler={filter}
@@ -342,14 +329,14 @@ const OvertimeTableCard = () => {
                     withCheckBox
                     onCheck={(e: any) => {
                         if (e.target.checked) {
-                            approveBulk.setFieldValue("overtime_id",
-                                [...approveBulk.values.overtime_id,
+                            payBulk.setFieldValue("overtime_id",
+                                [...payBulk.values.overtime_id,
                                     e.target.value
                             ]);
                         } else {
-                            const overtime_ids = approveBulk.values.overtime_id;
-                            overtime_ids.filter((tardiness) => tardiness !== e.target.value);
-                            approveBulk.setFieldValue("overtime_id", overtime_ids);
+                            const overtime_ids = payBulk.values.overtime_id;
+                            overtime_ids.filter((overtime) => overtime !== e.target.value);
+                            payBulk.setFieldValue("overtime_id", overtime_ids);
                         }
                     }}
                 />
@@ -360,11 +347,11 @@ const OvertimeTableCard = () => {
                 onSubmitCallback={api.triggerReload}
             /> */}
 
-            <EditOvertimeForm
+            {/* <EditOvertimeForm
                 modal={editModal}
                 onSubmitCallback={api.triggerReload}
                 formValue={data}
-            />
+            /> */}
 
             <ImportModal
                 modal={importModal}
