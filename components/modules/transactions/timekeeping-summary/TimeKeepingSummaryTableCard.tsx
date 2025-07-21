@@ -27,7 +27,21 @@ const TimeKeepingSummaryTableCard = () => {
         {
             columnHead: "Employee Name",
             path: "employee.full_name",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return (
+                    <p
+                        className = {`${data.employee.current_position.timekeeping_type === "Monthly" ? "text-red-500" : ""}`}
+                    >
+                        {data.employee.full_name}
+                    </p>
+                );
+            }
+        },
+        {
+            columnHead: "Position",
+            path: "employee.current_position.description",
+            columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Biometric Number",
