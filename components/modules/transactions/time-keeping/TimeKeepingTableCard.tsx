@@ -120,6 +120,11 @@ const TimeKeepingTableCard = () => {
             path: "special_holiday_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
+        {
+            columnHead: "Travel Time",
+            path: "travel_time",
+            columnType: COLUMNTYPES.timekeeping
+        },
 
     ];
 

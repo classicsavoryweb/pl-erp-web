@@ -25,7 +25,7 @@ const ActualTimeModal = ({
         >
             { data.map((log, key) => {
                 return (
-                    <p key={key}>{log.date+ " " +log.punch_time}</p>
+                    <p key={key}>{log.branch ? log.branch.name : "Head Office"}{" - " + log.punch_time}</p>
                 )
             })
             }

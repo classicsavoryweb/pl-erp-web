@@ -57,14 +57,20 @@ const RolesAndPermissionTableCard = () => {
             path: "",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
-                return data.permissions.map((permission: any, idx: number) => {
-                    return (
-                        <Badge
-                            key={idx}
-                            label={permission.name}
-                        />
-                    )
-                })
+                return (
+                    <div className="max-h-[200px] overflow-y-auto">
+                        {
+                        data.permissions.map((permission: any, idx: number) => {
+                            return (
+                                <Badge
+                                    key={idx}
+                                    label={permission.name}
+                                />
+                            )
+                        })
+                        }
+                    </div>
+                )
             }
         }
     ];
