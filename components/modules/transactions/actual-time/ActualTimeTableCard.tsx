@@ -15,12 +15,14 @@ import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import { getAllTransactionsActualTime } from "@/api/transactions/actual-time";
 import ActualTimeModal from "./ActualTimeModal";
+import EditActualTimeModal from "./EditActualTImeModal";
 
 const ActualTimeTableCard = () => {
     const api = useApiCall();
     const viewModal = useModal();
     const editModal = useModal();
     const [data, setData] = useState<any[]>([]);
+    const [selectedLog, setSelectedLog] = useState<string>("0");
     const paginator = usePagination();
     const filter = useFilter();
 
@@ -94,6 +96,7 @@ const ActualTimeTableCard = () => {
         {
             label: "View",
             onClick: (data: any) => {
+                setSelectedLog(data.id);
                 setData(data.punches);
                 viewModal.onOpen();
             }
@@ -101,7 +104,9 @@ const ActualTimeTableCard = () => {
         {
             label: "Edit",
             onClick: (data: any) => {
-                
+                setSelectedLog(data.id);
+                setData(data.punches);
+                editModal.onOpen();
             }
         },
     ];
@@ -137,6 +142,15 @@ const ActualTimeTableCard = () => {
             <ActualTimeModal
                 modal={viewModal}
                 data={data}
+            />
+
+            <EditActualTimeModal
+                modal={editModal}
+                data={data}
+                selectedLog={selectedLog}
+                onSubmitCallBack={() => {
+                    api.triggerReload();
+                }}
             />
         </>
     );

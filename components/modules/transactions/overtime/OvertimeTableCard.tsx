@@ -99,10 +99,10 @@ const OvertimeTableCard = () => {
                 let status: "default" | "success" | "danger" = "default";
 
                 switch (data.status) {
-                    case "Paid":
+                    case "Approved":
                         status = "success";
                         break;
-                    case "Unpaid":
+                    case "Unapproved":
                         status = "danger";
                         break;
                     default:
