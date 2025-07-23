@@ -18,7 +18,7 @@ import { exportAllTransactionsScheduleTime, getAllTransactionsScheduleTime } fro
 const ScheduleTimeTableCard = () => {
     const api = useApiCall();
     const importModal = useModal();
-    const paginator = usePagination(20);
+    const paginator = usePagination(15);
     const filter = useFilter();
 
     useAsyncEffect(() => {
