@@ -16,18 +16,13 @@ import { useApiCall } from "@/hooks/api-call";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
-import CreateOvertimeForm from "./CreateOvertimeForm";
-import EditOvertimeForm from "./EditOvertimeForm";
 import ImportModal from "./ImportModal";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime } from "@/api/transactions/overtime";
 
 const OvertimeTableCard = () => {
     const api = useApiCall();
-    const createModal = useModal();
-    const editModal = useModal();
     const importModal = useModal();
-    const [data, setData] = useState({});
     const paginator = usePagination(20);
     const filter = useFilter();
 
@@ -150,23 +145,6 @@ const OvertimeTableCard = () => {
     ];
 
     const tableActions = [
-        // {
-        //     label: "Edit",
-        //     onClick: (data: any) => {
-        //         editModal.onOpen();
-        //         setData({
-        //             id: data.id,
-        //             employee: data.employee?.full_name,
-        //             branch: data.employee?.current_branch?.name,
-        //             date : data.date,
-        //             regular_overtime : data.regular_overtime,
-        //             legal_holiday_overtime : data.legal_holiday_overtime,
-        //             special_holiday_overtime : data.special_holiday_overtime,
-        //             night_diff_overtime : data.night_diff_overtime,
-        //             status : data.status,
-        //         });
-        //     }
-        // },
         {
             label: "Approve",
             onClick: async (data: any) => {
@@ -313,14 +291,6 @@ const OvertimeTableCard = () => {
                 }}
             />
             <Card>
-                {/* <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new overtime"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
-                </div> */}
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
                         actions={globalActionSettings}
@@ -346,17 +316,6 @@ const OvertimeTableCard = () => {
                     }}
                 />
             </Card>
-
-            {/* <CreateOvertimeForm
-                modal={createModal}
-                onSubmitCallback={api.triggerReload}
-            /> */}
-
-            {/* <EditOvertimeForm
-                modal={editModal}
-                onSubmitCallback={api.triggerReload}
-                formValue={data}
-            /> */}
 
             <ImportModal
                 modal={importModal}
