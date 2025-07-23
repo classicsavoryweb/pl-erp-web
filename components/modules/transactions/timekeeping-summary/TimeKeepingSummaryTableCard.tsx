@@ -4,6 +4,7 @@ import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import Button from "@/components/common/Button";
+import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
@@ -131,6 +132,8 @@ const TimeKeepingSummaryTableCard = () => {
 
     const formHandler = useFormik({
         initialValues: {
+            key_word: "",
+            column_type: "",
             branch_id : "",
             action: "",
             cutoff: {
@@ -141,6 +144,12 @@ const TimeKeepingSummaryTableCard = () => {
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
+            key_word: Yup.string(),
+            column_type: Yup.string().when('key_word', (keyWord, schema) => 
+                String(keyWord) !== ""
+                    ? schema.required('Column type is required')
+                    : schema.notRequired()
+            ),
             branch_id: Yup.string().required("Branch is required"),
             year: Yup.string().required("Year is required"),
         }),
@@ -198,6 +207,27 @@ const TimeKeepingSummaryTableCard = () => {
                 <p className="text-sm font-semibold text-red-800">Filters</p>
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
+                        <Dropdown
+                            placeholder="select column"
+                            label="Column"
+                            name="column_type"
+                            value={formHandler.values.column_type}
+                            error={formHandler.errors.column_type}
+                            onChange={formHandler.handleChange}
+                            options={columnSettings.map((column:any) => {
+                                return {
+                                    label: column.columnHead,
+                                    value: column.path
+                                }
+                            })}
+                        />
+                        <Textfield
+                            name="key_word"
+                            label="Keyword"
+                            placeholder="enter keyword"
+                            value={formHandler.values.key_word}
+                            onChange={formHandler.handleChange}
+                        />
                         <BranchDropDown
                             placeholder="select branch"
                             label="Branch"
