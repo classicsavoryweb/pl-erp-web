@@ -9,3 +9,13 @@ export const getAllTransactionsActualTime = async (payload?: {}) => {
 
     return resData;
 };
+
+export const editBiotimePunches = async (payload: {}, id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-biotime-punch/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+}

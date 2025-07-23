@@ -42,12 +42,12 @@ export const transactionRoutes: Route[] = [
                 name: "Actual Logs",
                 pathname: "/transactions/actual-time",
                 permission: "view_transactions_actual_time",
-                break: true
             },
             {
                 name: "Overtime",
                 pathname: "/transactions/overtime",
-                permission: "view_transactions_overtime"
+                permission: "view_transactions_overtime",
+                break: true
             },
             {
                 name: "Timekeeping",
@@ -58,7 +58,11 @@ export const transactionRoutes: Route[] = [
                 name: "Timekeeping Summary",
                 pathname: "/transactions/timekeeping-summary",
                 permission: "view_transactions_time_keeping_summary",
-                break: true
+            },
+            {
+                name: "Adjustments",
+                pathname: "/transactions/adjustments",
+                permission: "view_transactions_adjustments"
             },
         ]
     }

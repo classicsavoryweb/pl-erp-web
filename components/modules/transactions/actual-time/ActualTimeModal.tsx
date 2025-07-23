@@ -2,6 +2,7 @@
 
 import Button from "@/components/common/Button";
 import Modal from "@/components/common/Modal";
+import Textfield from "@/components/common/Textfield";
 
 interface FormModalInterface {
     modal: any;
@@ -25,7 +26,11 @@ const ActualTimeModal = ({
         >
             { data.map((log, key) => {
                 return (
-                    <p key={key}>{log.branch ? log.branch.name : "Head Office"}{" - " + log.punch_time}</p>
+                    <Textfield
+                        disabled
+                        label={`${log.branch ? log.branch.name : "Head Office"} ${log.remarks ? " - " + log.remarks : ""}`}
+                        value={log.punch_time}
+                    />
                 )
             })
             }
