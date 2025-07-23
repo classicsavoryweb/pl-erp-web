@@ -31,10 +31,11 @@ const EmployeeDropDown = ({
         getEmployees()
         .then((resp) => {
             if (!resp.error) {
-                const newDataset = resp.data.employees.map((position: any) => {
+                const newDataset = resp.data.employees.map((employee: any) => {
                     return {
-                        label: position.full_name,
-                        value: position.employee_number
+                        label: employee.full_name,
+                        value: employee.employee_number,
+                        obj: employee
                     };
                 });
                 api.setDataSet(newDataset);

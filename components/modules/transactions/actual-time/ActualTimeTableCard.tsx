@@ -1,6 +1,5 @@
 "use client";
 
-import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
@@ -16,10 +15,13 @@ import { useFilter } from "@/hooks/use-filter";
 import { getAllTransactionsActualTime } from "@/api/transactions/actual-time";
 import ActualTimeModal from "./ActualTimeModal";
 import EditActualTimeModal from "./EditActualTImeModal";
+import DropDownButtons from "@/components/common/DropDownButtons";
+import CreateLogModal from "./CreateLogModal";
 
 const ActualTimeTableCard = () => {
     const api = useApiCall();
     const viewModal = useModal();
+    const createLogModal = useModal();
     const editModal = useModal();
     const [data, setData] = useState<any[]>([]);
     const [selectedLog, setSelectedLog] = useState<string>("0");
@@ -111,6 +113,15 @@ const ActualTimeTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create Log",
+            onClick: () => {
+                createLogModal.onOpen();
+            }
+        },
+    ];
+
     return (
         <>
             <FilterCard
@@ -129,6 +140,11 @@ const ActualTimeTableCard = () => {
                 withBranch
             />
             <Card>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
+                </div>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
@@ -149,6 +165,13 @@ const ActualTimeTableCard = () => {
                 data={data}
                 selectedLog={selectedLog}
                 onSubmitCallBack={() => {
+                    api.triggerReload();
+                }}
+            />
+
+            <CreateLogModal
+                modal={createLogModal}
+                onSubmitCallback={() => {
                     api.triggerReload();
                 }}
             />

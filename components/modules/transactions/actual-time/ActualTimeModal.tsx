@@ -27,6 +27,7 @@ const ActualTimeModal = ({
             { data.map((log, key) => {
                 return (
                     <Textfield
+                        key={key}
                         disabled
                         label={`${log.branch ? log.branch.name : "Head Office"} ${log.remarks ? " - " + log.remarks : ""}`}
                         value={log.punch_time}

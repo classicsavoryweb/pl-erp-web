@@ -18,4 +18,14 @@ export const editBiotimePunches = async (payload: {}, id: string) => {
     });
 
     return resData;
-}
+};
+
+export const createBiotimeLog = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/create-biotime-punch",
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};

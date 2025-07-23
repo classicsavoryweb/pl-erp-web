@@ -32,10 +32,10 @@ const BranchDropDown = ({
         getBranches()
         .then((resp) => {
             if (!resp.error) {
-                const newDataset = resp.data.branches.map((position: any) => {
+                const newDataset = resp.data.branches.map((branch: any) => {
                     return {
-                        label: position.name,
-                        value: position.id
+                        label: branch.name,
+                        value: branch.id
                     };
                 });
                 api.setDataSet(newDataset);
