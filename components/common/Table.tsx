@@ -77,7 +77,7 @@ const Table = ({
 
     return (
         <div className="relative my-1 w-full">
-            <div>
+            <div className="overflow-x-auto">
             <table className="min-w-auto w-full rounded-md">
                 <thead className="bg-red-800">
                     <tr>

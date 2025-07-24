@@ -17,6 +17,7 @@ interface UserDetails {
     employee_status: any;
     employment_status: string;
     status: string;
+    position: string;
 }
 
 interface AuthContextType {
@@ -38,6 +39,7 @@ const defaultUserDetails: UserDetails = {
     employee_status: {},
     employment_status: "",
     status: "",
+    position: ""
 };
 
 export const AuthContext = createContext<AuthContextType>({

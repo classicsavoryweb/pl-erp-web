@@ -100,6 +100,7 @@ const EditActualTimeModal = ({
                         onChange={(e) => {
                             const updatedPunches:any = [...formHandler.values.punches];
                             updatedPunches[index] = {
+                                ...updatedPunches[index],
                                 punch_time: e.target.value.replace("T", " ") + ":00"
                             };
                             formHandler.setFieldValue('punches', updatedPunches);

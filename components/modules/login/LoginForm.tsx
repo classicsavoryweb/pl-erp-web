@@ -10,7 +10,6 @@ import * as Yup from "yup";
 import { useRouter } from "next/navigation";
 
 const LoginForm = () => {
-
     const router = useRouter();
 
     const loginHandler = useFormik({
@@ -31,13 +30,23 @@ const LoginForm = () => {
                     toast.error(resp.data.message);
                 } else {
                     const expiresInHours = 12 / 24;
+                    const user = resp.data.user;
+                    const {
+                        employee_status,
+                        home_branch,
+                        schedule,
+                        current_position,
+                        ...filteredData
+                    } = user;
                     Cookies.set('authToken', resp.data.token, {path: '/' ,expires: expiresInHours});
                     Cookies.set('permissions', JSON.stringify(resp.data.permissions), {path: '/' ,expires: expiresInHours});
-                    Cookies.set('userDetails', JSON.stringify(resp.data.user), {path: '/ ', expires: expiresInHours});
+                    Cookies.set('userDetails', JSON.stringify(filteredData), {path: '/', expires: expiresInHours});
+
                     router.push("/");
                 }
             })
             .catch((err) => {
+                console.log(err);
                 toast.error("Error encountered")
             })
             .finally(() => {

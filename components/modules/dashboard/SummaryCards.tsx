@@ -181,7 +181,7 @@ const SummaryCards = () => {
                                 <div>
                                     <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Position:</p>
-                                        <p className="text-sm">{userDetails.current_position?.description || "—"}</p>
+                                        <p className="text-sm">{userDetails.position || "—"}</p>
                                     </div>
                                     <div className="flex justify-start gap-x-1">
                                         <p className="text-sm font-semibold text-gray-500">Access Role:</p>

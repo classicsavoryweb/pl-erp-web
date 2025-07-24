@@ -1,8 +1,10 @@
-import type { Metadata } from "next";
+// "use client";
 import "./globals.css";
 import { ToastContainer } from 'react-toastify';
 import HolyLoader from "holy-loader";
 import AuthProvider from "@/context/AuthProvider";
+import { Metadata } from "next";
+// import { CookiesProvider } from "react-cookie"
 
 export const metadata: Metadata = {
   	description: "A web-based entity resource planning application for classic savory",
@@ -24,9 +26,9 @@ export default function RootLayout({
 					easing="linear"
 					showSpinner
 				/>
-				<AuthProvider>
-					{children}
-				</AuthProvider>
+					<AuthProvider>
+						{children}
+					</AuthProvider>
 			</body>
 		</html>
 	);
