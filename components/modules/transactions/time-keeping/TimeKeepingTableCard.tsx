@@ -32,7 +32,7 @@ const TimeKeepingTableCard = () => {
             function: (data: any) => {
                 return (
                     <p
-                        className = {`${data.employee.current_position.timekeeping_type === "Daily" ? "text-red-500" : ""}`}
+                        className = {`${data.employee.current_position.timekeeping_type === "Monthly" ? "text-blue-600" : ""}`}
                     >
                         {data.employee.full_name}
                     </p>
@@ -55,13 +55,25 @@ const TimeKeepingTableCard = () => {
             columnType: COLUMNTYPES.date
         },
         {
-            columnHead: "Worked Hours",
+            columnHead: "Actual Worked Hours",
             path: "worked_hours",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 return (
                     <p className="font-semibold">
                         {Math.floor(data.worked_hours * 2) / 2 }
+                    </p>
+                );
+            }
+        },
+        {
+            columnHead: "Final Worked Hours",
+            path: "final_worked_hours",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return (
+                    <p className="font-semibold">
+                        {Math.floor(data.final_worked_hours * 2) / 2 }
                     </p>
                 );
             }
@@ -134,11 +146,15 @@ const TimeKeepingTableCard = () => {
             columnType: COLUMNTYPES.timekeeping
         },
         {
+            columnHead: "Approved Overtime",
+            path: "approved_overtime",
+            columnType: COLUMNTYPES.timekeeping
+        },
+        {
             columnHead: "Travel Time",
             path: "travel_time",
             columnType: COLUMNTYPES.timekeeping
         },
-
     ];
 
     const formHandler = useFormik({
