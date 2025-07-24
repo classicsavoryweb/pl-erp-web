@@ -33,6 +33,7 @@ const CreateBranchForm = ({
             travel_time : "",
             device_name : "",
             short_name : "" ,
+            type : "",
             address : "" ,
             location : "" ,
             date_open : "" ,
@@ -51,6 +52,7 @@ const CreateBranchForm = ({
             travel_time: Yup.string().required("Travel time is required."),
             device_name: Yup.string().required("Device name is required."),
             short_name: Yup.string().required("Short name is required."),
+            type: Yup.string().required("Type is required."),
             address: Yup.string().required("Address is required."),
             location: Yup.string().required("Location is required."),
             date_open: Yup.string().required("Date opened is required."),
@@ -253,6 +255,25 @@ const CreateBranchForm = ({
                 </Grid>
 
                 <Grid cols={2}>
+                    <Dropdown
+                        label="Type"
+                        placeholder="select type"
+                        name="type"
+                        value={createBranchFormHandler.values.type}
+                        required
+                        onChange={createBranchFormHandler.handleChange}
+                        error={createBranchFormHandler.errors.type}
+                        options={[
+                            {
+                                label: "Head Office",
+                                value: "Head Office"
+                            },
+                            {
+                                label: "Branch",
+                                value: "Branch"
+                            }
+                        ]}
+                    />                  
                     <ActiveInactiveDropDown
                         label="Status"
                         placeholder="select status"

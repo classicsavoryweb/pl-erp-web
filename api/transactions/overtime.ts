@@ -62,26 +62,6 @@ export const unapproveOvertime = async ( id: number) => {
     return resData;
 };
 
-export const createOvertime = async (payload: {}) => {
-    const resData = await axiosHelper({
-        func_path: '/create-overtime',
-        method: 'POST',
-        payload: payload
-    });
-
-    return resData;
-};
-
-export const editOvertime = async (payload: {}, id: number) => {
-    const resData = await axiosHelper({
-        func_path: `/edit-overtime/${id}`,
-        method: 'POST',
-        payload: payload
-    });
-
-    return resData;
-};
-
 export const importOvertime = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/import-overtime`,

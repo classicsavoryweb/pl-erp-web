@@ -10,6 +10,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { editBranch } from "@/api/branches";
 import { useEffect } from "react";
 import Grid from "@/components/common/Grid";
+import Dropdown from "@/components/common/Dropdown";
 import CompanyDropDown from "../../generic/CompanyDropDown";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
@@ -36,6 +37,7 @@ const EditBranchForm = ({
             travel_time : "",
             device_name : "",
             short_name : "" ,
+            type : "" ,
             address : "" ,
             location : "" ,
             date_open : "" ,
@@ -55,6 +57,7 @@ const EditBranchForm = ({
             travel_time: Yup.string().required("Travel time is required."),
             device_name: Yup.string().required("Device name is required."),
             short_name: Yup.string().required("Short name is required."),
+            type: Yup.string().required("Type is required."),
             address: Yup.string().required("Address is required."),
             location: Yup.string().required("Location is required."),
             date_open: Yup.string().required("Date opened is required."),
@@ -252,6 +255,25 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.device_name}
                     />
 
+                    <Dropdown
+                        label="Type"
+                        placeholder="select type"
+                        name="type"
+                        value={editBranchFormHandler.values.type}
+                        required
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.type}
+                        options={[
+                            {
+                                label: "Head Office",
+                                value: "Head Office"
+                            },
+                            {
+                                label: "Branch",
+                                value: "Branch"
+                            }
+                        ]}
+                    />
                     <ActiveInactiveDropDown
                         label="Status"
                         placeholder="select status"
