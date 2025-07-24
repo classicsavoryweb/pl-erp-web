@@ -10,7 +10,6 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
-import Badge from "@/components/common/Badge";
 import { exportAllBranches, getAllBranches } from "@/api/branches";
 import CreateBranchForm from "./CreateBranchForm";
 import EditBranchForm from "./EditBranchForm";
@@ -67,6 +66,11 @@ const BranchesTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Type",
+            path: "type",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Address",
             path: "address",
             columnType: COLUMNTYPES.string
@@ -107,6 +111,7 @@ const BranchesTableCard = () => {
                     device_name : data.device_name,
                     status : data.status,
                     short_name : data.short_name,
+                    type : data.type,
                     address : data.address,
                     location : data.location,
                     date_open : data.date_open,
