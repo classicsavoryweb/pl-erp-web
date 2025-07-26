@@ -36,6 +36,14 @@ const EditGovernmentIdentification = ({
             />
             <Textfield
                 onChange={formHandler.handleChange}
+                label='PHILHEALTH'
+                name="philhealth"
+                value={formHandler.values.philhealth || ""}
+                placeholder='enter philhealth'
+                required
+            />
+            <Textfield
+                onChange={formHandler.handleChange}
                 label='TIN'
                 name="tin"
                 placeholder='enter tin'

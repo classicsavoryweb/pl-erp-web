@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 
 interface UserDetails {
+    gender: string,
     first_name: string;
     middle_name: string;
     last_name: string;
@@ -26,6 +27,7 @@ interface AuthContextType {
 }
 
 const defaultUserDetails: UserDetails = {
+    gender: "",
     first_name: "",
     middle_name: "",
     last_name: "",
