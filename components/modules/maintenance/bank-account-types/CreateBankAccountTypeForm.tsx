@@ -81,7 +81,7 @@ const CreateBankAccountTypeForm = ({
                 />
                 <Textfield
                     label="Number Length"
-                    placeholder="enter number_length"
+                    placeholder="enter number length"
                     name="number_length"
                     value={createFormHandler.values.number_length}
                     required

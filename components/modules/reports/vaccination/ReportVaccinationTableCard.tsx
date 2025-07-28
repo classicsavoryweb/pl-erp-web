@@ -86,7 +86,7 @@ const ReportVaccinationTableCard = () => {
             function: (data:any) => {
                 return <Badge
                     label={data.status}
-                    status={ data.status === "Done" ? "success" : "warning"}
+                    status={ data.status === "DONE" ? "success" : "warning"}
                 />
             }
         },
@@ -97,6 +97,17 @@ const ReportVaccinationTableCard = () => {
             <FilterCard
                 columnSettings={columnSettings}
                 filterHandler={filter}
+                withStatus
+                statusOption={[
+                    {
+                        label: "Done",
+                        value: "DONE"
+                    },
+                    {
+                        label: "Pending",
+                        value: "PENDING"
+                    }
+                ]}
                 hasDateRange
                 isExpanded
                 callBack={() => {

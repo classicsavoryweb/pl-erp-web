@@ -225,6 +225,21 @@ const ReportCoeRequestsTableCard = () => {
             <FilterCard
                 columnSettings={columnSettings}
                 filterHandler={filter}
+                withStatus
+                statusOption={[
+                    {
+                        label: "Pending",
+                        value: "Pending"
+                    },
+                    {
+                        label: "Approved",
+                        value: "Approved"
+                    },
+                    {
+                        label: "Cancelled",
+                        value: "Cancelled"
+                    }
+                ]}
                 hasDateRange
                 isExpanded
                 callBack={() => {
