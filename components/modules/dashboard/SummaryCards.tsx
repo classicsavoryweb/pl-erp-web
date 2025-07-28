@@ -169,7 +169,10 @@ const SummaryCards = () => {
                 <div className="flex justify-between">
                     <div className="flex justify-start items-center gap-x-5">
                         <Image
-                            src="/images/profile-pic-male.svg"
+                            src={userDetails.gender === "Male" 
+                                ? "/images/profile-pic-male.svg"
+                                : "/images/profile-pic-female.svg"
+                            }
                             width={120}
                             height={120}
                             alt="profile picture"
@@ -227,11 +230,6 @@ const SummaryCards = () => {
                         displayReport={data.contractual_employees || 0}
                         loading={loading}
                     />
-                    {/* <SummaryCardCount
-                        title="Branches"
-                        displayReport={data.branches || 0}
-                        loading={loading}
-                    /> */}
                 </Grid>
             </Grid>
         

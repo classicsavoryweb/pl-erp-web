@@ -90,7 +90,7 @@ const EditBankAccountTypeForm = ({
                 />
                 <Textfield
                     label="Number Length"
-                    placeholder="enter number_length"
+                    placeholder="enter number length"
                     name="number_length"
                     value={editFormHandler.values.number_length}
                     required

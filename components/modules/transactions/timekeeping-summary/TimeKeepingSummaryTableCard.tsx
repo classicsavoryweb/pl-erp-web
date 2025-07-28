@@ -10,9 +10,11 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import Grid from "@/components/common/Grid";
 import BranchDropDown from "../../generic/BranchDropDown";
-import {generateTimeKeepingSummary, getAllTimeKeepingSummary } from "@/api/transactions/time-keeping";
+import {generateTimeKeepingSummary, getAllTimeKeepingSummary, exportAllTimeKeepingSummary } from "@/api/transactions/time-keeping";
 import confirm from "@/components/common/Confirm";
 import usePagination from "@/hooks/pagination";
+import { useContext } from "react";
+import { AuthContext } from "@/context/AuthProvider";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
 import Dropdown from "@/components/common/Dropdown";
@@ -20,9 +22,20 @@ import moment from "moment";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 
-const TimeKeepingSummaryTableCard = () => {
+interface FilterInterface {
+    hasExport?: boolean;
+    exportPermission?: string;
+    unique_api?: (values: any) => any;
+};
+
+const TimeKeepingSummaryTableCard = ({
+    unique_api = exportAllTimeKeepingSummary,
+    hasExport = true,
+    exportPermission = "export_all_transactions_time_keeping_summary",
+}: FilterInterface) => {
     const paginator = usePagination();
     const api = useApiCall();
+    const { permissions } = useContext(AuthContext);
 
     const columnSettings = [
         {
@@ -177,6 +190,38 @@ const TimeKeepingSummaryTableCard = () => {
             }
         }
     });
+    
+    const exportHandler = useFormik({
+        initialValues: {
+            key_word: '',
+            column_type: '',
+            fields: [],
+        },
+        validateOnChange: false,
+        onSubmit: async (values) => {
+            const isConfirm = await confirm({
+                title: "Export",
+                message: "Are you sure you want to export?"
+            });
+            
+            if (isConfirm) {
+                unique_api && unique_api(values).then((resp: any) => {
+                    const blob = new Blob([resp.data], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    });
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+    
+                    a.href = downloadUrl;
+                    a.download = `TIMEKEEPING_SUMMARY-${moment().format('YYYY-MM-DD')}.xls`
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+                
+            }
+        }
+    });
 
     useAsyncEffect(() => {
         api.setLoading(false);
@@ -282,10 +327,32 @@ const TimeKeepingSummaryTableCard = () => {
                                 onClick={() => {
                                     api.setDataSet([]);
                                     formHandler.resetForm();
+                                    exportHandler.resetForm();
                                 }}
                                 variant="secondary"
                             />    
                         </div>
+                        {(exportPermission === "" || permissions.includes(exportPermission)) &&
+                            <>
+                                { hasExport &&
+                                    <div className="w-[100px]">
+                                        <Button
+                                            label="Export"
+                                            type="button"
+                                            onClick={() => {
+                                                exportHandler.setValues(prev => ({
+                                                    ...prev,
+                                                    ...formHandler.values
+                                                }));
+
+                                                exportHandler.submitForm();
+                                            }}
+                                            variant="success"
+                                        />    
+                                    </div>
+                                }
+                            </>
+                        }
                     </div>
                 </form>
             </Card>

@@ -20,6 +20,20 @@ export const getAllTimeKeeping = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllTimeKeeping = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/export-all-time-keeping",
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    })
+
+    return resData;
+};
+
 export const getTimeKeeping = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: "/get-time-keeping",
@@ -45,6 +59,20 @@ export const getAllTimeKeepingSummary = async (payload?: {}) => {
         func_path: "/get-all-time-keeping-summary",
         method: 'GET',
         payload: payload
+    })
+
+    return resData;
+};
+
+export const exportAllTimeKeepingSummary = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/export-all-time-keeping-summary",
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
     })
 
     return resData;
