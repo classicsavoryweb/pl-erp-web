@@ -20,6 +20,16 @@ export const getAllTimeKeeping = async (payload?: {}) => {
     return resData;
 };
 
+export const getTimeKeeping = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/get-time-keeping",
+        method: 'GET',
+        payload: payload
+    })
+
+    return resData;
+};
+
 export const generateTimeKeepingSummary = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: "/generate-time-keeping-summary",
