@@ -243,7 +243,7 @@ const OvertimeTableCard = () => {
             <FilterCard
                 columnSettings={[
                     {
-                        columnHead: "Name",
+                        columnHead: "Employee Name",
                         path: "employee.full_name",
                         columnType: COLUMNTYPES.string
                     },
