@@ -146,7 +146,7 @@ const TimeKeepingSummaryTableCard = ({
     const formHandler = useFormik({
         initialValues: {
             key_word: "",
-            column_type: "Employee Name",
+            column_type: "employee.full_name",
             branch_id : "",
             action: "",
             cutoff: {

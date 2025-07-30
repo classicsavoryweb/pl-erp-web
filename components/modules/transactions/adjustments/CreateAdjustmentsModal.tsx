@@ -79,9 +79,11 @@ const CreateAdjustmentsModal = ({
                 date: formHandler.values.date
             }).then((resp) => {
                 if (!resp.error) {
-                    setData(resp.data);
-                    formHandler.setFieldValue("punches", resp.data.biotime_log.punches);
-                    formHandler.setFieldValue("schedule", resp.data.schedule.timetable);
+                    if (resp.data) {
+                        setData(resp.data);
+                        formHandler.setFieldValue("punches", resp.data.biotime_log.punches);
+                        formHandler.setFieldValue("schedule", resp.data.schedule.timetable);
+                    }
                 } else {
                     toast.error("Error fetching timekeeping details.");
                 }

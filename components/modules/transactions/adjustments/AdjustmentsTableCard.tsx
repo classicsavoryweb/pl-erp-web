@@ -34,7 +34,7 @@ const AdjustmentsTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching overtime");
+                toast.error("Error fetching adjustments");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
@@ -109,18 +109,13 @@ const AdjustmentsTableCard = () => {
             path: "status",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
-                let actions = tableActions;
-                if (data.status === "Unapproved") {
-                    actions = [
-                        tableActions[0],
-                        tableActions[2]
-                    ];
-                } else if (data.status === "Approved") {
-                    // actions = [
-                    //     tableActions[1],
-                    // ];
-                } else {
-                    actions = [tableActions[0]]; 
+                let actions = [
+                    tableActions[0],
+                    tableActions[1],
+                ];
+
+                if (data.status !== "Pending") {
+                    return "—";
                 }
                 
                 return (
@@ -177,13 +172,6 @@ const AdjustmentsTableCard = () => {
                 });
             },
             permission: "unapprove_transactions_adjustments"
-        },
-        {
-            label: "Edit",
-            onClick: async (data: any) => {
-                console.log("WEWEW");
-            },
-            permission: "perform_transactions_adjustments"
         },
     ];
 
