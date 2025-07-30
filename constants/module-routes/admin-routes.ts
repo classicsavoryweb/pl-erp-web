@@ -49,6 +49,11 @@ export const adminRoutes: Route[] = [
                 pathname: "/administrators/activity-logs",
                 permission: "view_activity_logs"
             },
+            {
+                name: "Database Backups",
+                pathname: "/administrators/database-backups",
+                permission: "view_database_backups"
+            },
         ]
     },
 ];
