@@ -57,7 +57,7 @@ const EmployeeTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Full Name",
+            columnHead: "Employee Name",
             path: "full_name",
             columnType: COLUMNTYPES.string,
             sort: true
@@ -95,7 +95,7 @@ const EmployeeTableCard = () => {
 
     const exportOptions = [
         {
-            label: "Full Name",
+            label: "Employee Name",
             value: "full_name",
             checked: true,
         },
@@ -245,7 +245,7 @@ const EmployeeTableCard = () => {
                         columnType: COLUMNTYPES.string
                     },
                     {
-                        columnHead: "Full Name",
+                        columnHead: "Employee Name",
                         path: "full_name",
                         columnType: COLUMNTYPES.string
                     },

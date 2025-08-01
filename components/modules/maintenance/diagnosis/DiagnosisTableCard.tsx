@@ -80,7 +80,13 @@ const DiagnosisTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Description",
+                        path: "description",
+                        columnType: COLUMNTYPES.string
+                    }
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport

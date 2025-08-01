@@ -125,7 +125,18 @@ const ActualTimeTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Employee Name",
+                        path: "employee.full_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Biometric Number",
+                        path: "employee.biometric_number",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 hasDateRange
                 withStatus

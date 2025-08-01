@@ -84,7 +84,7 @@ const TardinessTableCard = () => {
             }
         },
         {
-            columnHead: "Employee",
+            columnHead: "Employee Name",
             path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
@@ -380,7 +380,85 @@ const TardinessTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+            columnSettings={[
+                    {
+                        columnHead: "Employee Number",
+                        path: "employee.employee_number",
+                        columnType: COLUMNTYPES.function,
+                        function: (data:any) => {
+                            return (
+                                <Link
+                                    href={`/employees/${data.employee.employee_number}`}
+                                    target="_blank"
+                                    className="text-blue-700 underline"
+                                >
+                                    {data.employee.employee_number}
+                                </Link>
+                            )
+                        }
+                    },
+                    {
+                        columnHead: "Employee Name",
+                        path: "employee.full_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Count",
+                        path: "tardiness_sanction.count",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Total Minutes",
+                        path: "total_minutes",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "NTE Status",
+                        path: "nte_status",
+                        columnType: COLUMNTYPES.function,
+                        function: (data:any) => {
+                            if (data.nte_status) {
+                                return (
+                                    <>
+                                        <p>{data.nte_status}</p>
+
+                                        { data.nte_date_sent &&
+                                            <>
+                                            <p className="text-xs">{ moment(data.nte_date_sent).format("MMMM DD, YYYY")}</p>
+                                            <p className="text-xs">{ moment(data.nte_date_sent).format("HH:mm:ss A")}</p>
+                                            </>
+                                        }
+                                    </>
+                                )
+                            } else {
+                                return "—";
+                            }
+                        }
+                    },
+                    {
+                        columnHead: "NOD Status",
+                        path: "da_status",
+                        columnType: COLUMNTYPES.function,
+                        function: (data: any) => {
+                            if (data.da_status) {
+                                return (
+                                    <>
+                                        <p>{data.da_status}</p>
+
+                                        { data.da_date_sent &&
+                                            <>
+                                            <p className="text-xs">{ moment(data.da_date_sent).format("MMMM DD, YYYY")}</p>
+                                            <p className="text-xs">{ moment(data.da_date_sent).format("HH:mm:ss A")}</p>
+                                            </>
+                                        }
+                                    </>
+                                )
+                            } else {
+                                return "—";
+                            }
+                        }
+                    },
+                ]}
                 filterHandler={filter}
                 defaultColumnSelected="employee.full_name"
                 withStatus

@@ -92,7 +92,23 @@ const AgencyTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Name",
+                        path: "name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Employee Code",
+                        path: "employee_code",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Address",
+                        path: "address",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport

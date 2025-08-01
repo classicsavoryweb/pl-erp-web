@@ -9,7 +9,6 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { getAllDatabaseBackups } from "@/api/database-backups";
 import { useState } from "react";
-import { useModal } from "@/hooks/modal";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { createDatabaseBackup, downloadSqlFile } from "@/api/database-backups";
 import confirm from "@/components/common/Confirm";
@@ -17,8 +16,7 @@ import confirm from "@/components/common/Confirm";
 const DatabaseBackupsTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
-    const [data, setData] = useState<any>({});
-    const modal = useModal();
+    const [data] = useState<any>({});
 
     useAsyncEffect(() => {
         api.setLoading(true);

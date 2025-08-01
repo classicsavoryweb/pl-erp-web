@@ -44,7 +44,7 @@ const ReportVaccinationTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Employee",
+            columnHead: "Employee Name",
             path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
@@ -95,9 +95,42 @@ const ReportVaccinationTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Employee Name",
+                        path: "employee.full_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Employee Number",
+                        path: "employee.employee_number",
+                        columnType: COLUMNTYPES.function,
+                        function: (data:any) => {
+                            return (
+                                <Link
+                                    href={`/employees/${data.employee.employee_number}`}
+                                    target="_blank"
+                                    className="text-blue-700 underline"
+                                >
+                                    {data.employee.employee_number}
+                                </Link>
+                            )
+                        }
+                    },
+                    {
+                        columnHead: "Vaccine",
+                        path: "vaccine.description",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Dose",
+                        path: "dose",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
+                defaultColumnSelected="employee.full_name"
                 statusOption={[
                     {
                         label: "Done",

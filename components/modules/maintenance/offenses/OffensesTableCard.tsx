@@ -92,7 +92,23 @@ const OffensesTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Category",
+                        path: "category",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Sub Category",
+                        path: "subcategory",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Description",
+                        path: "description",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport

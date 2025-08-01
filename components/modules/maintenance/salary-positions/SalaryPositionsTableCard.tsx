@@ -91,7 +91,23 @@ const SalaryPositionsTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Position",
+                        path: "position.description",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Basic Salary",
+                        path: "basic_salary",
+                        columnType: COLUMNTYPES.amount
+                    },
+                    {
+                        columnHead: "Rate Category",
+                        path: "rate_category",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport
