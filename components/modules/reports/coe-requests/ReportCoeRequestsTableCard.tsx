@@ -57,7 +57,7 @@ const ReportCoeRequestsTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Employee",
+            columnHead: "Employee Name",
             path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
@@ -223,7 +223,34 @@ const ReportCoeRequestsTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Employee Name",
+                        path: "employee.full_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Employee Number",
+                        path: "employee.employee_number",
+                        columnType: COLUMNTYPES.function,
+                        function: (data:any) => {
+                            return (
+                                <Link
+                                    href={`/employees/${data.employee.employee_number}`}
+                                    target="_blank"
+                                    className="text-blue-700 underline"
+                                >
+                                    {data.employee.employee_number}
+                                </Link>
+                            )
+                        }
+                    },
+                    {
+                        columnHead: "COE Purpose",
+                        path: "coe_reason",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 statusOption={[
@@ -242,6 +269,7 @@ const ReportCoeRequestsTableCard = () => {
                 ]}
                 hasDateRange
                 isExpanded
+                defaultColumnSelected="employee.full_name"
                 callBack={() => {
                     paginator.setPage(1);
                 }}

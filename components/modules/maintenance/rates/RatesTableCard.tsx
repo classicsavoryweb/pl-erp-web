@@ -92,7 +92,23 @@ const RatesTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Rate Code",
+                        path: "code",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Minimum",
+                        path: "minimum",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Area",
+                        path: "area",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport

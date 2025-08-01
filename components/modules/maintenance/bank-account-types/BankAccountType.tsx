@@ -85,7 +85,18 @@ const BankAccountTypeCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Description",
+                        path: "description",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Number Length",
+                        path: "number_length",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport

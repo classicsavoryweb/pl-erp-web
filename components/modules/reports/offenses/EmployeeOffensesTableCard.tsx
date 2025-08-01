@@ -44,7 +44,7 @@ const EmployeeOffensesTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Employee",
+            columnHead: "Employee Name",
             path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
@@ -83,11 +83,43 @@ const EmployeeOffensesTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Employee Name",
+                        path: "employee.full_name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Employee Number",
+                        path: "employee.employee_number",
+                        columnType: COLUMNTYPES.function,
+                        function: (data:any) => {
+                            return (
+                                <Link
+                                    href={`/employees/${data.employee.employee_number}`}
+                                    className="text-blue-700 underline"
+                                >
+                                    {data.employee.employee_number}
+                                </Link>
+                            )
+                        }
+                    },
+                    {
+                        columnHead: "Offense Category",
+                        path: "offense.category",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Summary",
+                        path: "summary",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 hasDateRange
                 hasExport
                 isExpanded
+                defaultColumnSelected="employee.full_name"
                 api={exportAllReportsOffenses}
                 exportFileName={`EMPLOYEE-OFFENSES-${moment().format('YYYY-MM-DD')}.xls`}
                 exportPermission="export_all_records_offenses"

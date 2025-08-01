@@ -86,7 +86,18 @@ const StationTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Station Name",
+                        path: "name",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Station Order",
+                        path: "station_order",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport

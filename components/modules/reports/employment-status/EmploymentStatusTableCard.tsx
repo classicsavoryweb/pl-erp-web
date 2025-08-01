@@ -26,7 +26,7 @@ const EmploymentStatusTableCard = () => {
             columnType: COLUMNTYPES.string,
         },
         {
-            columnHead: "Employee",
+            columnHead: "Employee Name",
             path: "full_name",
             columnType: COLUMNTYPES.string
         },

@@ -99,7 +99,28 @@ const TrainingTitlesTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Title",
+                        path: "title",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Speaker",
+                        path: "speaker",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Venue",
+                        path: "venue",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Option",
+                        path: "option",
+                        columnType: COLUMNTYPES.string
+                    },
+                ]}
                 filterHandler={filter}
                 withStatus
                 hasExport
