@@ -16,7 +16,7 @@ import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { approveAdjustments, getAllAdjustments, unapproveAdjustments } from "@/api/transactions/adjustments";
+import { approveAdjustments, getAllAdjustments, unapproveAdjustments, voidAdjustments } from "@/api/transactions/adjustments";
 import CreateAdjustmentsModal from "./CreateAdjustmentsModal";
 
 const AdjustmentsTableCard = () => {
@@ -85,11 +85,17 @@ const AdjustmentsTableCard = () => {
             path: "status",
             columnType: COLUMNTYPES.function,
             function: (data:any) => {
-                let status: "default" | "success" | "danger" = "default";
+                let status: "default" | "success" | "danger" | "warning" = "default" ;
 
                 switch (data.status) {
                     case "Approved":
                         status = "success";
+                        break;
+                    case "Adjusted":
+                        status = "success";
+                        break;
+                    case "Voided":
+                        status = "warning";
                         break;
                     case "Unapproved":
                         status = "danger";
@@ -114,7 +120,12 @@ const AdjustmentsTableCard = () => {
                     tableActions[1],
                 ];
 
-                if (data.status !== "Pending") {
+                if (data.status === "Approved") {
+                    actions = [
+                        tableActions[2]
+                    ];
+                }
+                if (data.status === "Unapproved" || data.status === "Adjusted") {
                     return "—";
                 }
                 
@@ -161,6 +172,28 @@ const AdjustmentsTableCard = () => {
 
                 isConfirmed &&
                 unapproveAdjustments(data.id).then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        api.triggerReload();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                });
+            },
+            permission: "unapprove_transactions_adjustments"
+        },
+        {
+            label: "Void",
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Void Adjustments",
+                    message: "Are you sure you want to void this adjustments?",
+                });
+
+                isConfirmed &&
+                voidAdjustments(data.id).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
                         api.triggerReload();

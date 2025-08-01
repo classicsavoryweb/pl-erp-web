@@ -19,6 +19,15 @@ export const approveAdjustments = async (id: string) => {
     return resData;
 };
 
+export const voidAdjustments = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/void-adjustments/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
 export const unapproveAdjustments = async (id: string) => {
     const resData = await axiosHelper({
         func_path: `/unapprove-adjustments/${id}`,
