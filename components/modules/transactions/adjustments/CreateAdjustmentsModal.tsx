@@ -14,6 +14,7 @@ import LoadingState from "@/components/common/LoadingState";
 import Dropdown from "@/components/common/Dropdown";
 import ScheduleMasterlistDropDown from "../../generic/ScheduleMasterlistDropDown";
 import { createAdjustments } from "@/api/transactions/adjustments";
+import BranchDropDown from "../../generic/BranchDropDown";
 
 type PunchFormValues = {
     punches: { punch_time: string }[];
@@ -21,6 +22,7 @@ type PunchFormValues = {
     date: string;
     type: string;
     schedule: string;
+    branch_id: string;
 };
 
 interface FormModalInterface {
@@ -40,14 +42,16 @@ const CreateAdjustmentsModal = ({
             date: "",
             punches: [{ punch_time: ""}],
             type: "",
-            schedule: ""
+            schedule: "",
+            branch_id: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             employee_number: Yup.string().required("Employee is required."),
             date: Yup.string().required("Date is required."),
             type: Yup.string().required("Adjustment type is required."),
-            schedule: Yup.string().required("Schedule is required.")
+            schedule: Yup.string().required("Schedule is required."),
+            branch_id: Yup.string().required("Branch is required.")
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
             const isConfirmed = await confirm({
@@ -83,6 +87,12 @@ const CreateAdjustmentsModal = ({
                         setData(resp.data);
                         formHandler.setFieldValue("punches", resp.data.biotime_log.punches);
                         formHandler.setFieldValue("schedule", resp.data.schedule.timetable);
+                        formHandler.setFieldValue("branch_id", resp.data.branch_id);
+                    } else {
+                        setData([]);
+                        formHandler.setFieldValue("punches", []);
+                        formHandler.setFieldValue("schedule", "");
+                        formHandler.setFieldValue("branch_id", "");
                     }
                 } else {
                     toast.error("Error fetching timekeeping details.");
@@ -100,6 +110,7 @@ const CreateAdjustmentsModal = ({
             onClose={() => {
                 modal.onClose();
                 formHandler.resetForm();
+                setData([]);
             }}
             size="lg"
         >
@@ -111,6 +122,7 @@ const CreateAdjustmentsModal = ({
                     placeholder="select employee"
                     onChange={formHandler.handleChange}
                     value={formHandler.values.employee_number}
+                    error={formHandler.errors.employee_number}
                     required
                 />
 
@@ -120,6 +132,17 @@ const CreateAdjustmentsModal = ({
                     name="date"
                     value={formHandler.values.date || ""}
                     onChange={formHandler.handleChange}
+                    error={formHandler.errors.date}
+                    required
+                />
+
+                <BranchDropDown
+                    label="Branch"
+                    name="branch_id"
+                    placeholder="select branch"
+                    onChange={formHandler.handleChange}
+                    value={Number(formHandler.values.branch_id)}
+                    error={formHandler.errors.branch_id}
                     required
                 />
             </Grid>
@@ -232,6 +255,8 @@ const CreateAdjustmentsModal = ({
                         variant="secondary"
                         onClick={() => {
                             modal.onClose();
+                            formHandler.resetForm();
+                            setData([]);
                         }}
                     />            
                 </div>
