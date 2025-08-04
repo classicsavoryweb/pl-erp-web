@@ -3,11 +3,12 @@ import { toast } from "react-toastify";
 import Button from "@/components/common/Button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import moment from "moment";
 import confirm from "@/components/common/Confirm";
 import Grid from "@/components/common/Grid";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
 import Textfield from "@/components/common/Textfield";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { getTimeKeeping } from "@/api/transactions/time-keeping";
 import LoadingState from "@/components/common/LoadingState";
@@ -23,6 +24,7 @@ type PunchFormValues = {
     type: string;
     schedule: string;
     branch_id: string;
+    punches_count: string;
 };
 
 interface FormModalInterface {
@@ -41,6 +43,7 @@ const CreateAdjustmentsModal = ({
             employee_number: "",
             date: "",
             punches: [{ punch_time: ""}],
+            punches_count: "",
             type: "",
             schedule: "",
             branch_id: "",
@@ -49,11 +52,40 @@ const CreateAdjustmentsModal = ({
         validationSchema: Yup.object().shape({
             employee_number: Yup.string().required("Employee is required."),
             date: Yup.string().required("Date is required."),
+            punches: Yup.array().of(
+                Yup.object().shape({
+                    punch_time: Yup.string()
+                })
+            ),
             type: Yup.string().required("Adjustment type is required."),
             schedule: Yup.string().required("Schedule is required."),
             branch_id: Yup.string().required("Branch is required.")
         }),
-        onSubmit: async (values, {setSubmitting, resetForm}) => {
+        validate: (values) => {
+            const errors: any = {};
+            if (values.punches && values.date) {
+                values.punches.forEach((punch, index) => {
+                    if (punch.punch_time && values.date) {
+                        const selectedDate = moment(values.date).startOf('day');
+                        const nextDay = moment(values.date).add(1, 'day').startOf('day');
+                        const punchDate = moment(punch.punch_time).startOf('day');
+                        
+                        if (!punchDate.isSame(selectedDate) && !punchDate.isSame(nextDay)) {
+                            if (!errors.punches) errors.punches = [];
+                            if (!errors.punches[index]) errors.punches[index] = {};
+                            errors.punches[index].punch_time = 'Must be same date as selected or next day.';
+                        }
+                    }
+                });
+            }
+            return errors;
+        },
+        onSubmit: async (values, {resetForm}) => {
+            if (values.punches.length !== 2 && values.punches.length !== 4) {
+                toast.error("You can only submit 2 or 4 number of punches");
+                return;
+            }
+
             const isConfirmed = await confirm({
                 title: "Create Adjustment",
                 message: "Are you sure you want to save changes?"
@@ -75,6 +107,13 @@ const CreateAdjustmentsModal = ({
         }
     });
 
+    const createDefaultPunches = (selectedDate: string) => {
+        const selectedDateFormatted = moment(selectedDate).format('YYYY-MM-DD');   
+        return [
+            { punch_time: `${selectedDateFormatted}` },
+        ];
+    };
+
     useAsyncEffect(() => {
         if (formHandler.values.employee_number, formHandler.values.date) {
             setLoading(true);
@@ -90,7 +129,8 @@ const CreateAdjustmentsModal = ({
                         formHandler.setFieldValue("branch_id", resp.data.branch_id);
                     } else {
                         setData([]);
-                        formHandler.setFieldValue("punches", []);
+                        const defaultPunches = createDefaultPunches(formHandler.values.date);
+                        formHandler.setFieldValue("punches", defaultPunches);
                         formHandler.setFieldValue("schedule", "");
                         formHandler.setFieldValue("branch_id", "");
                     }
@@ -131,7 +171,24 @@ const CreateAdjustmentsModal = ({
                     label="Date"
                     name="date"
                     value={formHandler.values.date || ""}
-                    onChange={formHandler.handleChange}
+                    onChange={(e) => {
+                        formHandler.handleChange(e);
+
+                        const newDate = e.target.value;
+                        const punches = formHandler.values.punches || [];
+
+                        const punchesMatchDate = punches.every(punch => {
+                            if (!punch.punch_time) return true;
+                            const punchDate = moment(punch.punch_time).format('YYYY-MM-DD');
+                            const selectedDate = moment(newDate).format('YYYY-MM-DD');
+                            return punchDate === selectedDate;
+                        });
+
+                        if (punches.length > 0 && !punchesMatchDate) {
+                            const defaultPunches = createDefaultPunches(newDate);
+                            formHandler.setFieldValue("punches", defaultPunches);
+                        }
+                    }}
                     error={formHandler.errors.date}
                     required
                 />
@@ -143,6 +200,34 @@ const CreateAdjustmentsModal = ({
                     onChange={formHandler.handleChange}
                     value={Number(formHandler.values.branch_id)}
                     error={formHandler.errors.branch_id}
+                    required
+                />
+
+                <Dropdown
+                    name="type"
+                    placeholder="select type"
+                    label="Adjust Type"
+                    onChange={formHandler.handleChange}
+                    value={formHandler.values.type ?? ""}
+                    error={formHandler.errors.type}
+                    options={[
+                        {
+                            label: "Incomplete Logs",
+                            value: "Incomplete Logs",
+                        },
+                        {
+                            label: "No Logs with Schedule",
+                            value: "No Logs with Schedule",
+                        },
+                        {
+                            label: "Incorrect Schedule",
+                            value: "Incorrect Schedule",
+                        },
+                        {
+                            label: "Blank Schedule with Logs",
+                            value: "Blank Schedule with Logs",
+                        },
+                    ]}
                     required
                 />
             </Grid>
@@ -171,63 +256,47 @@ const CreateAdjustmentsModal = ({
                     }
                     <Grid cols={2}>
                         {!loading && formHandler.values.punches.map((punch: any, index: number) => (
-                            <Textfield
-                                key={index}
-                                type="datetime-local"
-                                label={`Punch Time #${index + 1}`}
-                                value={punch.punch_time}
-                                onChange={(e) => {
-                                    const updatedPunches:any = [...formHandler.values.punches];
-                                    updatedPunches[index] = {
-                                        ...updatedPunches[index],
-                                        punch_time: e.target.value.replace("T", " ") + ":00"
-                                    };
-                                    formHandler.setFieldValue('punches', updatedPunches);
-                                }}
-                                error={
-                                    formHandler.touched.punches?.[index]?.punch_time &&
-                                    typeof (formHandler.errors.punches as { punch_time?: string }[] | undefined)?.[index]?.punch_time === "string"
-                                        ? (formHandler.errors.punches as { punch_time?: string }[])[index].punch_time
-                                        : ""
-                                }
-                            />
+                            <div key={index}>
+                                {index >= 0 && (
+                                    <div className="flex justify-end text-red-500">
+                                        <p
+                                            className="z-1 pt-3 mb-[-22px] hover:text-red-800 text-sm hover:cursor-pointer"
+                                            onClick={() => {
+                                                const updatedPunches = [...formHandler.values.punches];
+                                                updatedPunches.splice(index, 1);
+                                                formHandler.setFieldValue("punches", updatedPunches);
+                                            }}
+                                        >
+                                            Remove
+                                        </p>
+                                    </div>
+                                )}
+                                <Textfield
+                                    type="datetime-local"
+                                    label={`Punch Time #${index + 1}`}
+                                    value={punch.punch_time ? moment(punch.punch_time).format('YYYY-MM-DDTHH:mm') : ""}
+                                    onChange={(e) => {
+                                        const updatedPunches: any = [...formHandler.values.punches];
+                                        updatedPunches[index] = {
+                                            ...updatedPunches[index],
+                                            punch_time: e.target.value.replace("T", " ") + ":00"
+                                        };
+                                        formHandler.setFieldValue('punches', updatedPunches);
+                                    }}
+                                    error={
+                                        formHandler.touched.punches?.[index]?.punch_time &&
+                                        typeof (formHandler.errors.punches as { punch_time?: string }[] | undefined)?.[index]?.punch_time === "string"
+                                            ? (formHandler.errors.punches as { punch_time?: string }[])[index].punch_time
+                                            : ""
+                                    }
+                                />
+                            </div>
                         ))}
                     </Grid>
                 </>
             }
             <p className="mt-3">Adjustments</p>
             <Grid cols={2}>
-                <Dropdown
-                    name="type"
-                    placeholder="select type"
-                    label="Adjust Type"
-                    onChange={formHandler.handleChange}
-                    value={formHandler.values.type ?? ""}
-                    error={formHandler.errors.type}
-                    options={[
-                        {
-                            label: "Incomplete Logs",
-                            value: "Incomplete Logs",
-                        },
-                        {
-                            label: "Incorrect Logs",
-                            value: "Incorrect Logs",
-                        },
-                        {
-                            label: "No Logs with Schedule",
-                            value: "No Logs with Schedule",
-                        },
-                        {
-                            label: "Incorrect Schedule",
-                            value: "Incorrect Schedule",
-                        },
-                        {
-                            label: "Wrong Schedule No Logs",
-                            value: "Wrong Schedule No Logs",
-                        },
-                    ]}
-                    required
-                />
                 <ScheduleMasterlistDropDown
                     name="schedule"
                     placeholder="select schedule"
