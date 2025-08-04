@@ -125,7 +125,8 @@ const AdjustmentsTableCard = () => {
                         tableActions[2]
                     ];
                 }
-                if (data.status === "Unapproved" || data.status === "Adjusted") {
+
+                if (data.status === "Unapproved" || data.status === "Adjusted" || data.status === "Voided") {
                     return "—";
                 }
                 
