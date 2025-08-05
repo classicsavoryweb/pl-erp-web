@@ -100,6 +100,9 @@ const AdjustmentsTableCard = () => {
                     case "Unapproved":
                         status = "danger";
                         break;
+                    case "Reflected":
+                        status = "success";
+                        break;
                     default:
                         status = "default";
                         break;
