@@ -129,25 +129,41 @@ const CreateLogModal = ({
                 </div>
 
                 {formHandler.values.punches.map((punch: any, index) => (
-                    <Textfield
-                        key={index}
-                        type="datetime-local"
-                        label={`Punch Time #${index + 1}`}
-                        value={punch.punch_time}
-                        onChange={(e) => {
-                            const updatedPunches:any = [...formHandler.values.punches];
-                            updatedPunches[index] = {
-                                punch_time: e.target.value.replace("T", " ") + ":00"
-                            };
-                            formHandler.setFieldValue('punches', updatedPunches);
-                        }}
-                        error={
-                            formHandler.touched.punches?.[index]?.punch_time &&
-                            typeof (formHandler.errors.punches as { punch_time?: string }[] | undefined)?.[index]?.punch_time === "string"
-                                ? (formHandler.errors.punches as { punch_time?: string }[])[index].punch_time
-                                : ""
-                        }
-                    />
+                    <div key={index}>
+                        {index >= 0 && (
+                            <div className="flex justify-end text-red-500">
+                                <p
+                                    className="z-1 pt-3 mb-[-22px] hover:text-red-800 text-sm hover:cursor-pointer"
+                                    onClick={() => {
+                                        const updatedPunches = [...formHandler.values.punches];
+                                        updatedPunches.splice(index, 1);
+                                        formHandler.setFieldValue("punches", updatedPunches, false);
+                                    }}
+                                >
+                                    Remove
+                                </p>
+                            </div>
+                        )}
+                        <Textfield
+                            key={index}
+                            type="datetime-local"
+                            label={`Punch Time #${index + 1}`}
+                            value={punch.punch_time}
+                            onChange={(e) => {
+                                const updatedPunches:any = [...formHandler.values.punches];
+                                updatedPunches[index] = {
+                                    punch_time: e.target.value.replace("T", " ") + ":00"
+                                };
+                                formHandler.setFieldValue('punches', updatedPunches);
+                            }}
+                            error={
+                                formHandler.touched.punches?.[index]?.punch_time &&
+                                typeof (formHandler.errors.punches as { punch_time?: string }[] | undefined)?.[index]?.punch_time === "string"
+                                    ? (formHandler.errors.punches as { punch_time?: string }[])[index].punch_time
+                                    : ""
+                            }
+                        />
+                    </div>
                 ))}
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end gap-x-2">

@@ -69,12 +69,38 @@ const CreateAdjustmentsModal = ({
                         const selectedDate = moment(values.date).startOf('day');
                         const nextDay = moment(values.date).add(1, 'day').startOf('day');
                         const punchDate = moment(punch.punch_time).startOf('day');
-                        
+
                         if (!punchDate.isSame(selectedDate) && !punchDate.isSame(nextDay)) {
                             if (!errors.punches) errors.punches = [];
                             if (!errors.punches[index]) errors.punches[index] = {};
                             errors.punches[index].punch_time = 'Must be same date as selected or next day.';
                         }
+                    }
+                });
+
+                const selectedDateStr = moment(values.date).format('YYYY-MM-DD');
+                const timesOnSelectedDate: Record<string, number[]> = {};
+                values.punches.forEach((punch, idx) => {
+                    if (punch.punch_time) {
+                        const punchDateStr = moment(punch.punch_time).format('YYYY-MM-DD');
+                        const punchTimeStr = moment(punch.punch_time).format('HH:mm');
+
+                        if (punchDateStr === selectedDateStr) {
+                            if (!timesOnSelectedDate[punchTimeStr]) {
+                                timesOnSelectedDate[punchTimeStr] = [];
+                            }
+                            timesOnSelectedDate[punchTimeStr].push(idx);
+                        }
+                    }
+                });
+                
+                Object.entries(timesOnSelectedDate).forEach(([time, indices]) => {
+                    if (indices.length > 1) {
+                        if (!errors.punches) errors.punches = [];
+                        indices.forEach((i) => {
+                            if (!errors.punches[i]) errors.punches[i] = {};
+                            errors.punches[i].punch_time = 'Must be no same time from same date.';
+                        });
                     }
                 });
             }
