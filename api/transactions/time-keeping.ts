@@ -20,6 +20,15 @@ export const getAllTimeKeeping = async (payload?: {}) => {
     return resData;
 };
 
+export const triggerFetchBiotime = async () => {
+    const resData = await axiosHelper({
+        func_path: "/trigger-fetch-biotime",
+        method: 'GET',
+    })
+
+    return resData;
+};
+
 export const exportAllTimeKeeping = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: "/export-all-time-keeping",

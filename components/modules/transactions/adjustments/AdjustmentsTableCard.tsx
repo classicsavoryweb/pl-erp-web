@@ -129,7 +129,7 @@ const AdjustmentsTableCard = () => {
                     ];
                 }
 
-                if (data.status === "Unapproved" || data.status === "Adjusted" || data.status === "Voided") {
+                if (data.status === "Unapproved" || data.status === "Adjusted" || data.status === "Voided" || data.status === "Reflected" ) {
                     return "—";
                 }
                 
