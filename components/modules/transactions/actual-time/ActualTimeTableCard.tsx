@@ -17,6 +17,8 @@ import ActualTimeModal from "./ActualTimeModal";
 import EditActualTimeModal from "./EditActualTImeModal";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import CreateLogModal from "./CreateLogModal";
+import confirm from "@/components/common/Confirm";
+import { triggerFetchBiotime } from "@/api/transactions/time-keeping";
 
 const ActualTimeTableCard = () => {
     const api = useApiCall();
@@ -118,6 +120,19 @@ const ActualTimeTableCard = () => {
             label: "Create Log",
             onClick: () => {
                 createLogModal.onOpen();
+            }
+        },
+        {
+            label: "Fetch Biotime",
+            onClick: async () => {
+                const isConfirmed = await confirm({
+                    message: "Are you sure?",
+                    title: "Biotime Logs"
+                });
+
+                if (isConfirmed) {
+                    triggerFetchBiotime();
+                }
             }
         },
     ];
