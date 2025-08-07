@@ -34,14 +34,35 @@ export const getTransactionsScheduleTime = async (payload?: {}) => {
     return resData;
 };
 
-export const importTransactionsScheduleTime = async (payload: {}) => {
+export const validateImportTransactionsScheduleTime = async (payload: {}) => {
+    const isFileUpload = payload.hasOwnProperty('schedule_time_file');
+    
+    const additionalHeaders = isFileUpload ? {
+        "Content-Type": "multipart/form-data"
+    } : {};
+    
     const resData = await axiosHelper({
-        func_path: `/import-transactions-schedule-time`,
+        func_path: '/validate-import-transactions-schedule-time',
         method: 'POST',
         payload: payload,
-        additionalHeaders: {
-            "Content-Type": "multipart/form-data"
-        }
+        additionalHeaders: additionalHeaders
+    });
+
+    return resData;
+};
+
+export const importTransactionsScheduleTime = async (payload: {}) => {
+    const isFileUpload = payload.hasOwnProperty('schedule_time_file');
+    
+    const additionalHeaders = isFileUpload ? {
+        "Content-Type": "multipart/form-data"
+    } : {};
+    
+    const resData = await axiosHelper({
+        func_path: '/import-transactions-schedule-time',
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: additionalHeaders
     });
 
     return resData;
