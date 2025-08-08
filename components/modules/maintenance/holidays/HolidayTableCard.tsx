@@ -74,6 +74,11 @@ const HolidayTableCard = () => {
             columnHead: "Required Days",
             path: "required_days",
             columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Required For",
+            path: "required_for",
+            columnType: COLUMNTYPES.string,
         }
     ];
 

@@ -30,13 +30,15 @@ const CreateHolidayForm = ({
         branch_id: string[], 
         description: string,
         required_days: string,
+        required_for: string,
     }>({
         initialValues: {
             date: "",
             holiday_type: "",
             branch_id: [], 
             description: "",
-            required_days: ""
+            required_days: "",
+            required_for: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -197,6 +199,33 @@ const CreateHolidayForm = ({
                     required
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.required_days}
+                />
+                <Dropdown
+                    label="Required for"
+                    placeholder="select"
+                    name="required_for"
+                    value={createFormHandler.values.required_for ?? ""}
+                    required
+                    onChange={createFormHandler.handleChange}
+                    error={createFormHandler.errors.required_for}
+                    options={[
+                        {
+                            label: "Both",
+                            value: "BOTH"
+                        },
+                        {
+                            label: "Head Office",
+                            value: "HEAD OFFICE"
+                        },
+                        {
+                            label: "Branch",
+                            value: "BRANCH"
+                        },
+                        {
+                            label: "None",
+                            value: "NONE"
+                        },
+                    ]}
                 />
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <div className="flex justify-end">
