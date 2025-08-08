@@ -35,7 +35,8 @@ const BranchDropDown = ({
                 const newDataset = resp.data.branches.map((branch: any) => {
                     return {
                         label: branch.name,
-                        value: branch.id
+                        value: branch.id,
+                        obj: branch
                     };
                 });
                 api.setDataSet(newDataset);

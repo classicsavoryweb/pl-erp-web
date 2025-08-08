@@ -13,7 +13,7 @@ import BranchDropDown from "../../generic/BranchDropDown";
 import { generateTimeKeeping, getAllTimeKeeping, exportAllTimeKeeping} from "@/api/transactions/time-keeping";
 import confirm from "@/components/common/Confirm";
 import usePagination from "@/hooks/pagination";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthProvider";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
@@ -36,6 +36,7 @@ const TimeKeepingTableCard = ({
     const paginator = usePagination();
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
+    const [branch, setBranch] = useState<any>({});
 
     const columnSettings = [
         {
@@ -238,22 +239,24 @@ const TimeKeepingTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
+                    const branchName = branch ? branch.name : 'default-branch';
     
                     a.href = downloadUrl;
-                    a.download = `TIMEKEEPING-${moment().format('YYYY-MM-DD')}.xls`
+                    a.download = `${branchName.toUpperCase()}-TIMEKEEPING-${moment().format('YYYY-MM-DD')}.xls`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
                 });
-                
             }
         }
     });
 
     useAsyncEffect(() => {
         api.setLoading(false);
+            
         if (formHandler.values.branch_id) {
             api.setLoading(true);
+
             getAllTimeKeeping({
                 page: paginator.page,
                 per_page: paginator.per_page,
@@ -270,8 +273,7 @@ const TimeKeepingTableCard = ({
                 api.setLoading(false);
             });
         }
-    }, [paginator.reload, api.reload])
-    
+    }, [paginator.reload, api.reload]);
 
     return (
         <>
@@ -305,7 +307,11 @@ const TimeKeepingTableCard = ({
                             label="Branch"
                             name="branch_id"
                             value={formHandler.values.branch_id}
-                            onChange={formHandler.handleChange}
+                            onChange={(e) => {
+                                formHandler.handleChange(e);
+                                const branch = e.target.obj;
+                                setBranch(branch);
+                            }}
                             error={formHandler.errors.branch_id}
                         />
                         <CutOffDropDown

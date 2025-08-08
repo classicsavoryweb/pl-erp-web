@@ -97,7 +97,8 @@ const HolidayTableCard = () => {
                     short_name: data.short_name,
                     branch_id: branchIds,
                     description: data.description,
-                    required_days: data.required_days
+                    required_days: data.required_days,
+                    required_for: data.required_for
                 });
             }
         },

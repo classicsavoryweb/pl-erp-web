@@ -13,7 +13,7 @@ import BranchDropDown from "../../generic/BranchDropDown";
 import {generateTimeKeepingSummary, getAllTimeKeepingSummary, exportAllTimeKeepingSummary } from "@/api/transactions/time-keeping";
 import confirm from "@/components/common/Confirm";
 import usePagination from "@/hooks/pagination";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { AuthContext } from "@/context/AuthProvider";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
@@ -36,6 +36,7 @@ const TimeKeepingSummaryTableCard = ({
     const paginator = usePagination();
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
+    const [branch, setBranch] = useState<any>({});
 
     const columnSettings = [
         {
@@ -190,6 +191,30 @@ const TimeKeepingSummaryTableCard = ({
             }
         }
     });
+
+    useAsyncEffect(() => {
+        api.setLoading(false);
+
+        if (formHandler.values.branch_id) {
+            api.setLoading(true);
+
+            getAllTimeKeepingSummary({
+                page: paginator.page,
+                per_page: paginator.per_page,
+                ...formHandler.values
+            }).then((resp) => {
+                if (!resp.error) {
+                    api.setDataSet(resp.data.data);
+                    paginator.setPage(resp.data.current_page);
+                    paginator.setPaginationData(resp.data);
+                } else {
+                    toast.error("Error fetching timekeeping summary");
+                }
+            }).finally(() => {
+                api.setLoading(false);
+            });
+        }
+    }, [paginator.reload, api.reload]);
     
     const exportHandler = useFormik({
         initialValues: {
@@ -211,9 +236,10 @@ const TimeKeepingSummaryTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
+                    const branchName = branch ? branch.name : 'default-branch';
     
                     a.href = downloadUrl;
-                    a.download = `TIMEKEEPING_SUMMARY-${moment().format('YYYY-MM-DD')}.xls`
+                    a.download = `${branchName.toUpperCase()}-TIMEKEEPING_SUMMARY-${moment().format('YYYY-MM-DD')}.xls`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
@@ -222,29 +248,6 @@ const TimeKeepingSummaryTableCard = ({
             }
         }
     });
-
-    useAsyncEffect(() => {
-        api.setLoading(false);
-        if (formHandler.values.branch_id) {
-            api.setLoading(true);
-            getAllTimeKeepingSummary({
-                page: paginator.page,
-                per_page: paginator.per_page,
-                ...formHandler.values
-            }).then((resp) => {
-                if (!resp.error) {
-                    api.setDataSet(resp.data.data);
-                    paginator.setPage(resp.data.current_page);
-                    paginator.setPaginationData(resp.data);
-                } else {
-                    toast.error("Error fetching timekeeping");
-                }
-            }).finally(() => {
-                api.setLoading(false);
-            });
-        }
-    }, [paginator.reload, api.reload]);
-    
 
     return (
         <>
@@ -278,7 +281,11 @@ const TimeKeepingSummaryTableCard = ({
                             label="Branch"
                             name="branch_id"
                             value={formHandler.values.branch_id}
-                            onChange={formHandler.handleChange}
+                            onChange={(e) => {
+                                formHandler.handleChange(e);
+                                const branch = e.target.obj;
+                                setBranch(branch);
+                            }}
                             error={formHandler.errors.branch_id}
                         />
                         <CutOffDropDown
