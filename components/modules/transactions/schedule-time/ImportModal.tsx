@@ -5,15 +5,19 @@ import { useFormik } from "formik";
 import Textfield from "@/components/common/Textfield";
 import * as Yup from "yup";
 import confirm from "@/components/common/Confirm";
-import { importTransactionsScheduleTime } from "@/api/transactions/schedule-time";
+import { validateImportTransactionsScheduleTime, importTransactionsScheduleTime } from "@/api/transactions/schedule-time";
+import { useState } from "react";
 
 interface FormModalInterface {
     modal: any;
+    api?: any;
 };
 
 const ImportModal = ({
     modal,
+    api,
 }: FormModalInterface) => {
+    const [validatedFilePath, setValidatedFilePath] = useState<string | null>(null);
 
     const importForm = useFormik({
         initialValues: {
@@ -23,22 +27,47 @@ const ImportModal = ({
         validationSchema: Yup.object().shape({
             schedule_time_file: Yup.string().required("Excel file is required"),
         }),
-        onSubmit: async (values, {setSubmitting, resetForm}) => {
-            const isConfirm = await confirm({
-                title: "Import",
-                message: "Are you sure you want to import?"
-            });
+        onSubmit: async (values, { setSubmitting, resetForm }) => {
+            try {
+                setSubmitting(true);
 
-            if (isConfirm) {
-                importTransactionsScheduleTime(values)
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(resp.data.message);
-                        modal.onClose();
-                    } else {
-                        toast.error(resp.data.message);
+                const validationResponse = await validateImportTransactionsScheduleTime(values);
+
+                if (validationResponse.data?.file_path) {
+                    setValidatedFilePath(validationResponse.data.file_path);
+                }
+
+                if (validationResponse.error) {
+                    const isConfirmed = await confirm({
+                        title: "Confirm Import",
+                        message: `${validationResponse.data.message} Do you want to proceed?`
+                    });
+
+                    if (!isConfirmed) return;
+                } 
+
+                const importPayload = validatedFilePath
+                    ? { file_path: validatedFilePath }
+                    : values;
+
+                const importResponse = await importTransactionsScheduleTime(importPayload);
+
+                if (!importResponse.error) {
+                    toast.success(importResponse.data.message);
+                    modal.onClose();
+                    resetForm();
+                    setValidatedFilePath(null);
+                    if (api?.triggerReload) {
+                        api.triggerReload();
                     }
-                });
+                } else {
+                    toast.error(importResponse.data.message);
+                }
+
+            } catch (error) {
+                toast.error("Unexpected error occurred.");
+            } finally {
+                setSubmitting(false);
             }
         }
     });
@@ -49,6 +78,7 @@ const ImportModal = ({
             title="Import Schedule Time"
             onClose={() => {
                 modal.onClose();
+                setValidatedFilePath(null);
             }}
             size="sm"
         >
@@ -61,6 +91,7 @@ const ImportModal = ({
                     const file = event.target.files?.[0];
                     if (file) {
                         importForm.setFieldValue("schedule_time_file", file);
+                        setValidatedFilePath(null);
                     }
                 }}
                 error={importForm.errors.schedule_time_file}
@@ -76,6 +107,7 @@ const ImportModal = ({
                         onClick={() => {
                             modal.onClose();
                             importForm.resetForm();
+                            setValidatedFilePath(null);
                         }}
                     />
 
@@ -83,6 +115,7 @@ const ImportModal = ({
                         type="submit"
                         label="Submit"
                         onClick={() => {}}
+                        loading={importForm.isSubmitting}
                     />
                 </div>              
             </div>

@@ -149,6 +149,7 @@ const ScheduleTimeTableCard = () => {
 
             <ImportModal
                 modal={importModal}
+                api={api}
             />
         </>
     );
