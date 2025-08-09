@@ -9,12 +9,12 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import Dropdown from "@/components/common/Dropdown";
-import { useEffect } from "react";
 import confirm from "@/components/common/Confirm";
 import { editHoliday } from "@/api/holidays";
 import { getBranches } from "@/api/branches";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { useEffect, useState } from "react";
 
 interface FormModalInterface {
     modal: any;
@@ -29,14 +29,16 @@ const EditHolidayForm = ({
 }: FormModalInterface) => {
 
     const editFormHandler = useFormik<{
+        key_word: string,
         date: string,
         holiday_type: string,
-        branch_id: string[], 
+        branch_id: number[], 
         description: string,
         required_days: string,
         required_for: string,
     }>({
         initialValues: {
+            key_word: "",
             date: "",
             holiday_type: "",
             branch_id: [], 
@@ -82,12 +84,29 @@ const EditHolidayForm = ({
     });
 
     const api = useApiCall();
+    const [filteredBranches, setFilteredBranches] = useState<any[]>([]);
 
-    useEffect(() => {
-        if (modal.isShowing) {
-            editFormHandler.setValues(formValue);
+    const getIdsByBranchType = (typeLabel: string) =>
+        api.dataSet
+            .filter((branch: any) => String(branch.type).toLowerCase() === typeLabel.toLowerCase())
+            .map((branch: any) => branch.id);
+
+    const areAllTypeSelected = (typeLabel: string) => {
+        const ids = getIdsByBranchType(typeLabel);
+        return ids.length > 0 && ids.every((id: number) => editFormHandler.values.branch_id.includes(id));
+    };
+
+    const handleTypeToggle = (typeLabel: string, checked: boolean) => {
+        const ids = getIdsByBranchType(typeLabel);
+        const current = editFormHandler.values.branch_id;
+        if (checked) {
+            const merged = Array.from(new Set([...current, ...ids]));
+            editFormHandler.setFieldValue("branch_id", merged);
+        } else {
+            const removed = current.filter((id) => !ids.includes(id));
+            editFormHandler.setFieldValue("branch_id", removed);
         }
-    }, [modal.isShowing])
+    };
 
     useAsyncEffect(() => {
         if (modal.isShowing) {
@@ -97,6 +116,7 @@ const EditHolidayForm = ({
                 .then((resp) => {
                     if (!resp.error) {
                         api.setDataSet(resp.data.branches);
+                        setFilteredBranches(resp.data.branches);
                     }
                 })
                 .finally(() => {
@@ -105,10 +125,20 @@ const EditHolidayForm = ({
         }
     }, [modal.isShowing]);
 
-    const handleCheckboxChange = (
-        e: React.ChangeEvent<HTMLInputElement>,
-        value: string
-    ) => {
+
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+            const keyword = (e.target.value || '').trim().toLowerCase();
+            if (keyword) {
+                const filtered = api.dataSet.filter((branch: any) =>
+                    String(branch.name).toLowerCase().includes(keyword)
+                );
+                setFilteredBranches(filtered);
+            } else {
+                setFilteredBranches(api.dataSet);
+            }
+        };
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, value: number) => {
         const { checked } = e.target;
         const current = editFormHandler.values.branch_id;
 
@@ -121,7 +151,6 @@ const EditHolidayForm = ({
             editFormHandler.setFieldValue("branch_id", updated);
         }
     };
-
 
     return (
         <Modal
@@ -168,24 +197,49 @@ const EditHolidayForm = ({
                 <div className="py-3">
                     <div className="flex justify-between items-center">
                         <p>Branches</p>
-                        <Checkbox
-                            label={"Select All"}
-                            value={api.dataSet}
+                        <div className="flex gap-2">
+                            <Checkbox
+                                label={"Branch"}
+                                value="branch"
+                                checked={areAllTypeSelected("Branch")}
+                                onChange={(e) => handleTypeToggle("Branch", e.target.checked)}
+                            />
+                            <Checkbox
+                                label={"Head Office"}
+                                value="head_office"
+                                checked={areAllTypeSelected("Head Office")}
+                                onChange={(e) => handleTypeToggle("Head Office", e.target.checked)}
+                            />
+                            <Checkbox
+                                label={"Select All"}
+                                value="select_all"
+                                checked={api.dataSet.length > 0 && editFormHandler.values.branch_id.length === api.dataSet.length}
+                                onChange={(e) => {
+                                    const ids = api.dataSet.map((data) => data.id);
+                                    if (e.target.checked) {
+                                        editFormHandler.setFieldValue("branch_id", ids);
+                                    } else {
+                                        editFormHandler.setFieldValue("branch_id", []);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                        <Textfield
+                            name="key_word"
+                            label=""
+                            placeholder="search for branch"
+                            value={editFormHandler.values.key_word || ""}
                             onChange={(e) => {
-                                const ids = api.dataSet.map((data) => data.id);
-                                if (e.target.checked) {
-                                    editFormHandler.setFieldValue("branch_id", ids);
-                                } else {
-                                    editFormHandler.setFieldValue("branch_id", []);
-                                }
+                                editFormHandler.handleChange(e);
+                                handleSearchChange(e);
                             }}
                         />
-                    </div>
                     <div
                         className="max-h-[350px] overflow-hidden overflow-y-auto p-3"
                     >
                         <Grid cols={2}>
-                            {api.dataSet.map((data, key) => (
+                            {filteredBranches.map((data, key) => (
                                 <Checkbox
                                     label={data.name}
                                     key={key}

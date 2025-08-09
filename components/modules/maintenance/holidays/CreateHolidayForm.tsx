@@ -14,6 +14,7 @@ import { createHoliday } from "@/api/holidays";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { getBranches } from "@/api/branches";
+import { useEffect, useState } from "react";
 
 interface FormModalInterface {
     modal: any;
@@ -25,14 +26,16 @@ const CreateHolidayForm = ({
     onSubmitCallback
 }: FormModalInterface) => {
     const createFormHandler = useFormik<{
+        key_word: string,
         date: string,
         holiday_type: string,
-        branch_id: string[], 
+        branch_id: number[], 
         description: string,
         required_days: string,
         required_for: string,
     }>({
         initialValues: {
+            key_word: "",
             date: "",
             holiday_type: "",
             branch_id: [], 
@@ -77,6 +80,29 @@ const CreateHolidayForm = ({
     });
 
     const api = useApiCall();
+    const [filteredBranches, setFilteredBranches] = useState<any[]>([]);
+
+    const getIdsByBranchType = (typeLabel: string) =>
+        api.dataSet
+            .filter((branch: any) => String(branch.type).toLowerCase() === typeLabel.toLowerCase())
+            .map((branch: any) => branch.id);
+
+    const areAllTypeSelected = (typeLabel: string) => {
+        const ids = getIdsByBranchType(typeLabel);
+        return ids.length > 0 && ids.every((id: number) => createFormHandler.values.branch_id.includes(id));
+    };
+
+    const handleTypeToggle = (typeLabel: string, checked: boolean) => {
+        const ids = getIdsByBranchType(typeLabel);
+        const current = createFormHandler.values.branch_id;
+        if (checked) {
+            const merged = Array.from(new Set([...current, ...ids]));
+            createFormHandler.setFieldValue("branch_id", merged);
+        } else {
+            const removed = current.filter((id) => !ids.includes(id));
+            createFormHandler.setFieldValue("branch_id", removed);
+        }
+    };
 
     useAsyncEffect(() => {
         if (modal.isShowing) {
@@ -85,6 +111,7 @@ const CreateHolidayForm = ({
                 .then((resp) => {
                     if (!resp.error) {
                         api.setDataSet(resp.data.branches);
+                        setFilteredBranches(resp.data.branches);
                     }
                 })
                 .finally(() => {
@@ -101,7 +128,7 @@ const CreateHolidayForm = ({
             ]);
         } else {
             const ids = createFormHandler.values.branch_id;
-            const newIds = ids.filter((id) => id === e.target.value);
+            const newIds = ids.filter((id) => id !== value);
             createFormHandler.setFieldValue("branch_id", newIds)
         }
     };
@@ -151,28 +178,61 @@ const CreateHolidayForm = ({
                 <div className="py-3">
                     <div className="flex justify-between items-center">
                         <p>Branches</p>
-                        <Checkbox
-                            label={"Select All"}
-                            value={api.dataSet}
+                        <div className="flex gap-2">
+                            <Checkbox
+                                label={"Branch"}
+                                value="branch"
+                                checked={areAllTypeSelected("Branch")}
+                                onChange={(e) => handleTypeToggle("Branch", e.target.checked)}
+                            />
+                            <Checkbox
+                                label={"Head Office"}
+                                value="head_office"
+                                checked={areAllTypeSelected("Head Office")}
+                                onChange={(e) => handleTypeToggle("Head Office", e.target.checked)}
+                            />
+                            <Checkbox
+                                label={"Select All"}
+                                value="select_all"
+                                checked={api.dataSet.length > 0 && createFormHandler.values.branch_id.length === api.dataSet.length}
+                                onChange={(e) => {
+                                    const ids = api.dataSet.map((data) => data.id);
+                                    if (e.target.checked) {
+                                        createFormHandler.setFieldValue("branch_id", ids);
+                                    } else {
+                                        createFormHandler.setFieldValue("branch_id", []);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                        <Textfield
+                            name="key_word"
+                            label=""
+                            placeholder="search for branch"
+                            value={createFormHandler.values.key_word}
                             onChange={(e) => {
-                                const ids = api.dataSet.map((data) => data.id);
-                                if (e.target.checked) {
-                                    createFormHandler.setFieldValue("branch_id", ids);
+                                const keyword = e.target.value.trim().toLowerCase();
+                                if (keyword) {
+                                    const filtered = api.dataSet.filter((branch) =>
+                                        String(branch.name).toLowerCase().includes(keyword)
+                                    );
+                                    setFilteredBranches(filtered);
                                 } else {
-                                    createFormHandler.setFieldValue("branch_id", []);
+                                    setFilteredBranches(api.dataSet);
                                 }
                             }}
                         />
-                    </div>
                     <div
                         className="max-h-[350px] overflow-hidden overflow-y-auto p-3"
                     >
                         <Grid cols={2}>
-                            {api.dataSet.map((data, key) => (
+                            {filteredBranches.map((data, key) => (
                                 <Checkbox
                                     label={data.name}
                                     key={key}
                                     value={data.id}
+                                    checked={createFormHandler.values.branch_id.includes(data.id)}
                                     onChange={(e) => handleCheckboxChange(e, data.id)}
                                 />
                             ))}
