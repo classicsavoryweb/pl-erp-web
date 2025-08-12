@@ -132,6 +132,7 @@ const ScheduleTimeTableCard = () => {
                 }}
                 hasDateRange
                 withBranch
+                isExpanded
             />
             <Card>
                 <div className="flex justify-end gap-x-3">

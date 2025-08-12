@@ -367,14 +367,9 @@ const FilterCard = ({
                     <div className="flex justify-end gap-x-2">
                         <div className="w-[100px]">
                             <Button
-                                label="Reset"
-                                type="button"
-                                onClick={() => {
-                                    formHandler.resetForm();
-                                    exportHandler.resetForm();
-                                    formHandler.submitForm();
-                                }}
-                                variant="secondary"
+                                type="submit"
+                                label="Search"
+                                onClick={() => {}}
                             />    
                         </div>
                         
@@ -405,9 +400,14 @@ const FilterCard = ({
                         }
                         <div className="w-[100px]">
                             <Button
-                                type="submit"
-                                label="Search"
-                                onClick={() => {}}
+                                label="Reset"
+                                type="button"
+                                onClick={() => {
+                                    formHandler.resetForm();
+                                    exportHandler.resetForm();
+                                    formHandler.submitForm();
+                                }}
+                                variant="secondary"
                             />    
                         </div>
                     </div>

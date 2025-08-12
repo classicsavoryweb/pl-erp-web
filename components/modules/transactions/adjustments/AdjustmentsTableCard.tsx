@@ -250,6 +250,7 @@ const AdjustmentsTableCard = () => {
                 ]}
                 filterHandler={filter}
                 hasDateRange
+                isExpanded
             />
             <Card>
                 <div className="flex justify-end gap-x-3">

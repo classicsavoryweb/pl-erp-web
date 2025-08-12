@@ -108,8 +108,7 @@ const OvertimeTableCard = () => {
                     default:
                         status = "default";
                         break;
-                }
-;
+                };
                 return <Badge
                     label={data.status}
                     status={status}
@@ -289,6 +288,7 @@ const OvertimeTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
+                isExpanded
             />
             <Card>
                 <div className="flex justify-end gap-x-3">

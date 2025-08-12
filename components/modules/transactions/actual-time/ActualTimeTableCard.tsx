@@ -172,6 +172,7 @@ const ActualTimeTableCard = () => {
                     paginator.setPage(1);
                 }}
                 withBranch
+                isExpanded
             />
             <Card>
                 <div className="flex justify-end gap-x-3">
