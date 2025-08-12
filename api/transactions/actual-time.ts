@@ -29,3 +29,16 @@ export const createBiotimeLog = async (payload: {}) => {
 
     return resData;
 };
+
+export const importTransactionsActualLogs = async (payload: {}) => {    
+    const resData = await axiosHelper({
+        func_path: '/import-biotime-logs',
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+
+    return resData;
+};

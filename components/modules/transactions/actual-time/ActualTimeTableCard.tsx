@@ -19,12 +19,14 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import CreateLogModal from "./CreateLogModal";
 import confirm from "@/components/common/Confirm";
 import { triggerFetchBiotime } from "@/api/transactions/time-keeping";
+import ImportBiotimeLog from "./ImportBiotimeLog";
 
 const ActualTimeTableCard = () => {
     const api = useApiCall();
     const viewModal = useModal();
     const createLogModal = useModal();
     const editModal = useModal();
+    const importModal = useModal();
     const [data, setData] = useState<any[]>([]);
     const [selectedLog, setSelectedLog] = useState<string>("0");
     const paginator = usePagination(15);
@@ -135,6 +137,12 @@ const ActualTimeTableCard = () => {
                 }
             }
         },
+        {
+            label: "Import Biotime Logs",
+            onClick: async () => {
+                importModal.onOpen();
+            }
+        },
     ];
 
     return (
@@ -200,6 +208,10 @@ const ActualTimeTableCard = () => {
                 onSubmitCallback={() => {
                     api.triggerReload();
                 }}
+            />
+
+            <ImportBiotimeLog
+                modal={importModal}
             />
         </>
     );
