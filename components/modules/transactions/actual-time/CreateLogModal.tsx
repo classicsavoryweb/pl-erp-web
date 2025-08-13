@@ -8,7 +8,9 @@ import BranchDropDown from "../../generic/BranchDropDown";
 import confirm from "@/components/common/Confirm";
 import { useFormik } from "formik";
 import * as Yup from "yup";
+import moment from "moment";
 import { toast } from "react-toastify";
+import { useState } from "react";
 import { createBiotimeLog } from "@/api/transactions/actual-time";
 
 interface FormModalInterface {
@@ -21,6 +23,8 @@ type PunchFormValues = {
     employee_number: string;
     branch_id: string;
     date: string;
+    overwrite?: boolean;
+    punches_count: string;
 };
 
 const CreateLogModal = ({
@@ -28,42 +32,120 @@ const CreateLogModal = ({
     onSubmitCallback
 }: FormModalInterface) => {
 
+    const [data, setData] = useState<any>([]);
+
     const formHandler = useFormik<PunchFormValues>({
         initialValues: {
             punches: [{punch_time: ""}],
+            punches_count: "",
             employee_number: "",
             branch_id: "",
             date: ""
         },
         validationSchema: Yup.object().shape({
             punches: Yup.array()
-                .of(Yup.object().shape({
-                    punch_time: Yup.string().required("Punch time is required"),
-                }))
-                .min(1, "At least one punch is required"),
+            .of(Yup.object().shape({
+                punch_time: Yup.string().required("Punch time is required"),
+            }))
+            .min(1, "At least one punch is required"),
             employee_number: Yup.string().required("Employee is required"),
             branch_id: Yup.string().required("Branch is required"),
             date: Yup.string().required("Date is required"),          
         }),
-        onSubmit: async (values) => {
-            const isConfirmed = await confirm({
-                title: "Edit Biotime Punches",
-                message: "Are you sure you want to save changes?"
-            });
+        validate: (values) => {
+            const errors: any = {};
+            if (values.punches && values.date) {
+                const selectedDate = moment(values.date).startOf('day');
+                const nextDay = moment(values.date).add(1, 'day').startOf('day');
+                
+                const timesOnSelectedDate: Record<string, number[]> = {};
+                const timesOnNextDay: Record<string, number[]> = {};
 
-            if (isConfirmed) {
-                createBiotimeLog(values)
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(resp.data.message);
-                        modal.onClose();
-                        onSubmitCallback();
-                    } else {
-                        toast.error(resp.data.message);
+                values.punches.forEach((punch, index) => {
+                    if (punch.punch_time) {
+                        const punchTimeStr = moment(punch.punch_time).format('HH:mm');
+                        const punchDate = moment(punch.punch_time).startOf('day');
+
+                        if (punchDate.isSame(selectedDate)) {
+                            if (!timesOnSelectedDate[punchTimeStr]) {
+                                timesOnSelectedDate[punchTimeStr] = [];
+                            }
+                            timesOnSelectedDate[punchTimeStr].push(index);
+                        } else if (punchDate.isSame(nextDay)) {
+                            if (!timesOnNextDay[punchTimeStr]) {
+                                timesOnNextDay[punchTimeStr] = [];
+                            }
+                            timesOnNextDay[punchTimeStr].push(index);
+                        } else {
+                            if (!errors.punches) errors.punches = [];
+                            if (!errors.punches[index]) errors.punches[index] = {};
+                            errors.punches[index].punch_time = 'Must be same date as selected or next day.';
+                        }
                     }
-                }).catch(() => {
-                    toast.error("Error encountered");
                 });
+
+                Object.entries(timesOnSelectedDate).forEach(([time, indices]) => {
+                    if (indices.length > 1) {
+                        if (!errors.punches) errors.punches = [];
+                        indices.forEach((i) => {
+                            if (!errors.punches[i]) errors.punches[i] = {};
+                            errors.punches[i].punch_time = 'Must be no same time from same date.';
+                        });
+                    }
+                });
+
+                Object.entries(timesOnNextDay).forEach(([time, indices]) => {
+                    if (indices.length > 1) {
+                        if (!errors.punches) errors.punches = [];
+                        indices.forEach((i) => {
+                            if (!errors.punches[i]) errors.punches[i] = {};
+                            errors.punches[i].punch_time = 'Must be no same time from same date.';
+                        });
+                    }
+                });
+            }
+            return errors;
+        },
+        onSubmit: async (values, {resetForm}) => {
+            if (values.punches.length !== 2 && values.punches.length !== 4) {
+                toast.error("You can only submit 2 or 4 number of punches");
+                return;
+            }
+
+            const response = await createBiotimeLog(values);
+            if (!response.error) {
+                toast.success(response.data.message);
+                modal.onClose();
+                onSubmitCallback();
+            } else {
+                if (response.data.message === "Existing") {
+                    const isConfirmed = await confirm({
+                        title: "Biotime Already Exists",
+                        message: "Do you want to overwrite?"
+                    });
+
+                    if (isConfirmed) {
+                        createBiotimeLog({
+                            ...values,
+                            overwrite: true
+                        })
+                        .then((resp) => {
+                            if (!resp.error) {
+                                toast.success(resp.data.message);
+                                modal.onClose();
+                                resetForm();
+                                onSubmitCallback();
+                            } else {
+                                toast.error(resp.data.message);
+                            }
+                        })
+                        .catch(() => {
+                            toast.error("Error encountered");
+                        });
+                    }
+                } else {
+                    toast.error(response.data.message);
+                }
             }
         }
     });
@@ -75,6 +157,7 @@ const CreateLogModal = ({
             onClose={() => {
                 modal.onClose();
                 formHandler.resetForm();
+                setData([]);
             }}
             loading={modal.loading}
             size="md"
@@ -107,9 +190,9 @@ const CreateLogModal = ({
                 <Textfield
                     type="date"
                     label="Date"
-                    onChange={formHandler.handleChange}
                     name="date"
-                    value={formHandler.values.date}
+                    value={formHandler.values.date || ""}
+                    onChange={formHandler.handleChange}
                     error={formHandler.errors.date}
                     required
                 />
@@ -181,6 +264,7 @@ const CreateLogModal = ({
                             onClick={() => {
                                 modal.onClose();
                                 formHandler.resetForm();
+                                setData([]);
                             }}
                         />            
                     </div>
