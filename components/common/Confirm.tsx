@@ -6,15 +6,18 @@ import { useState } from "react";
 import Button from "./Button";
 
 export interface ConfirmModalProps {
+    size?: "sm" | "md" | "lg" | "xl" | "xxl" | "entireScreen";
     title: string;
     message: string;
+    children?: React.ReactNode;
+    onlyCancel?: boolean;
 }
 
 interface InternalConfirmProps extends ConfirmModalProps {
     proceed: (value?: any) => void;
 }
 
-const ConfirmBody = ({ title, message, proceed }: InternalConfirmProps) => {
+const ConfirmBody = ({ size, title, message, children, proceed, onlyCancel }: InternalConfirmProps) => {
     const [show, setShow] = useState(true);
 
     const handleConfirm = () => {
@@ -28,12 +31,15 @@ const ConfirmBody = ({ title, message, proceed }: InternalConfirmProps) => {
     };
 
     return (
-        <Modal isShowing={show} onClose={handleCancel} title={title} size="sm">
+        <Modal isShowing={show} onClose={handleCancel} title={title} size={size || "sm"}>
             <div className="space-y-6">
                 <p className="text-gray-700">{message}</p>
+                <div>{children}</div>
                 <div className="flex justify-end gap-2">
-                <Button label="Cancel" variant="secondary" onClick={handleCancel} />
-                <Button label="Confirm" onClick={handleConfirm} />
+                    <Button label="Cancel" variant="secondary" onClick={handleCancel} />
+                    {!onlyCancel && (
+                        <Button label="Confirm" onClick={handleConfirm} />
+                    )}
                 </div>
             </div>
         </Modal>

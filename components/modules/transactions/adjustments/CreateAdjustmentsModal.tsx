@@ -52,11 +52,11 @@ const CreateAdjustmentsModal = ({
         validationSchema: Yup.object().shape({
             employee_number: Yup.string().required("Employee is required."),
             date: Yup.string().required("Date is required."),
-            punches: Yup.array().of(
-                Yup.object().shape({
-                    punch_time: Yup.string()
-                })
-            ),
+            punches: Yup.array()
+            .of(Yup.object().shape({
+                punch_time: Yup.string().required("Punch time is required"),
+            }))
+            .min(1, "At least one punch is required"),
             type: Yup.string().required("Adjustment type is required."),
             schedule: Yup.string().required("Schedule is required."),
             branch_id: Yup.string().required("Branch is required.")
@@ -64,13 +64,28 @@ const CreateAdjustmentsModal = ({
         validate: (values) => {
             const errors: any = {};
             if (values.punches && values.date) {
+                const selectedDate = moment(values.date).startOf('day');
+                const nextDay = moment(values.date).add(1, 'day').startOf('day');
+                
+                const timesOnSelectedDate: Record<string, number[]> = {};
+                const timesOnNextDay: Record<string, number[]> = {};
+
                 values.punches.forEach((punch, index) => {
-                    if (punch.punch_time && values.date) {
-                        const selectedDate = moment(values.date).startOf('day');
-                        const nextDay = moment(values.date).add(1, 'day').startOf('day');
+                    if (punch.punch_time) {
+                        const punchTimeStr = moment(punch.punch_time).format('HH:mm');
                         const punchDate = moment(punch.punch_time).startOf('day');
 
-                        if (!punchDate.isSame(selectedDate) && !punchDate.isSame(nextDay)) {
+                        if (punchDate.isSame(selectedDate)) {
+                            if (!timesOnSelectedDate[punchTimeStr]) {
+                                timesOnSelectedDate[punchTimeStr] = [];
+                            }
+                            timesOnSelectedDate[punchTimeStr].push(index);
+                        } else if (punchDate.isSame(nextDay)) {
+                            if (!timesOnNextDay[punchTimeStr]) {
+                                timesOnNextDay[punchTimeStr] = [];
+                            }
+                            timesOnNextDay[punchTimeStr].push(index);
+                        } else {
                             if (!errors.punches) errors.punches = [];
                             if (!errors.punches[index]) errors.punches[index] = {};
                             errors.punches[index].punch_time = 'Must be same date as selected or next day.';
@@ -78,23 +93,17 @@ const CreateAdjustmentsModal = ({
                     }
                 });
 
-                const selectedDateStr = moment(values.date).format('YYYY-MM-DD');
-                const timesOnSelectedDate: Record<string, number[]> = {};
-                values.punches.forEach((punch, idx) => {
-                    if (punch.punch_time) {
-                        const punchDateStr = moment(punch.punch_time).format('YYYY-MM-DD');
-                        const punchTimeStr = moment(punch.punch_time).format('HH:mm');
-
-                        if (punchDateStr === selectedDateStr) {
-                            if (!timesOnSelectedDate[punchTimeStr]) {
-                                timesOnSelectedDate[punchTimeStr] = [];
-                            }
-                            timesOnSelectedDate[punchTimeStr].push(idx);
-                        }
+                Object.entries(timesOnSelectedDate).forEach(([time, indices]) => {
+                    if (indices.length > 1) {
+                        if (!errors.punches) errors.punches = [];
+                        indices.forEach((i) => {
+                            if (!errors.punches[i]) errors.punches[i] = {};
+                            errors.punches[i].punch_time = 'Must be no same time from same date.';
+                        });
                     }
                 });
-                
-                Object.entries(timesOnSelectedDate).forEach(([time, indices]) => {
+
+                Object.entries(timesOnNextDay).forEach(([time, indices]) => {
                     if (indices.length > 1) {
                         if (!errors.punches) errors.punches = [];
                         indices.forEach((i) => {
