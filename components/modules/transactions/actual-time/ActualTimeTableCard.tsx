@@ -173,6 +173,7 @@ const ActualTimeTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
+                withBranch
                 isExpanded
             />
             <Card>
