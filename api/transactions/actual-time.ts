@@ -10,6 +10,20 @@ export const getAllTransactionsActualTime = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllTransactionsActualLogs = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-transactions-actual-logs',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+    });
+
+    return resData;
+};
+
 export const editBiotimePunches = async (payload: {}, id: string) => {
     const resData = await axiosHelper({
         func_path: `/edit-biotime-punch/${id}`,

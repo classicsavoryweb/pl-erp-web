@@ -17,8 +17,10 @@ import ActualTimeModal from "./ActualTimeModal";
 import EditActualTimeModal from "./EditActualTImeModal";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import CreateLogModal from "./CreateLogModal";
+import moment from "moment";
 import confirm from "@/components/common/Confirm";
 import { triggerFetchBiotime } from "@/api/transactions/time-keeping";
+import { exportAllTransactionsActualLogs } from "@/api/transactions/actual-time";
 import ImportBiotimeLog from "./ImportBiotimeLog";
 
 const ActualTimeTableCard = () => {
@@ -164,14 +166,13 @@ const ActualTimeTableCard = () => {
                 hasDateRange
                 withStatus
                 dateLabel="Date"
-                // hasExport
-                // api={exportAllBranches}
-                // exportFileName={`BRANCHES-${moment().format("YYYY-MM-DD")}.xls`}
+                hasExport
+                api={exportAllTransactionsActualLogs}
+                exportFileName={`ACTUAL-LOGS-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="full_name"
                 callBack={() => {
                     paginator.setPage(1);
                 }}
-                withBranch
                 isExpanded
             />
             <Card>
