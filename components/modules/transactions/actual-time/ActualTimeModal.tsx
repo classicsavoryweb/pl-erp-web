@@ -22,7 +22,7 @@ const ActualTimeModal = ({
                 modal.onClose();
             }}
             loading={modal.loading}
-            size="md"
+            size="lg"
         >
             { data.map((log, key) => {
                 return (

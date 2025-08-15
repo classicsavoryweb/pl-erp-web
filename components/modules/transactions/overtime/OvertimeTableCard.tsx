@@ -23,7 +23,7 @@ import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime
 const OvertimeTableCard = () => {
     const api = useApiCall();
     const importModal = useModal();
-    const paginator = usePagination(15);
+    const paginator = usePagination(20);
     const filter = useFilter();
 
     useAsyncEffect(() => {

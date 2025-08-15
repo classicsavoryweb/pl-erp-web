@@ -21,7 +21,7 @@ import CreateAdjustmentsModal from "./CreateAdjustmentsModal";
 
 const AdjustmentsTableCard = () => {
     const api = useApiCall();
-    const paginator = usePagination(15);
+    const paginator = usePagination(20);
     const createAdjustments = useModal();
     const filter = useFilter();
 

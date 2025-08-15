@@ -31,7 +31,7 @@ const ActualTimeTableCard = () => {
     const importModal = useModal();
     const [data, setData] = useState<any[]>([]);
     const [selectedLog, setSelectedLog] = useState<string>("0");
-    const paginator = usePagination(15);
+    const paginator = usePagination(20);
     const filter = useFilter();
 
     useAsyncEffect(() => {
