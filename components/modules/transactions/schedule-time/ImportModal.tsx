@@ -27,7 +27,7 @@ const ImportModal = ({
     const [validatedFilePath, setValidatedFilePath] = useState<string | null>(null);
     const [employeesWithExcessiveTimetableValues, setEmployeesWithExcessiveTimetableValues] = useState<EmployeesWithExcessiveTimetableValues[]>([]);
     const [showValidationDetails, setShowValidationDetails] = useState(false);
-    const [validationStep, setValidationStep] = useState<'initial' | 'rest_days' | 'incentive_leaves' | 'multiple_rest_days' | 'complete'>('initial');
+    const [validationStep, setValidationStep] = useState<'initial' | 'rest_days' | 'incentive_leaves' | 'both_cut_off_has_rest_days' | 'multiple_rest_days' | 'complete'>('initial');
     const [excludedEmployeeIds, setExcludedEmployeeIds] = useState<string[]>([]);
 
     const importForm = useFormik({
@@ -58,13 +58,13 @@ const ImportModal = ({
 
             const excludedIds: string[] = [];
             
-            if (!validationResponse.data?.employees_with_excessive_leaves && 
+            if (!validationResponse.data?.employees_with_excessive_timetable_values && 
                 !validationResponse.data?.employees_with_multiple_rest_days_per_week) {
                 setValidationStep('complete');
             }
 
-            if (validationResponse.data?.employees_with_excessive_leaves?.length > 0) {
-                const employeesWithExcessiveRestDays = validationResponse.data.employees_with_excessive_leaves.filter(
+            if (validationResponse.data?.employees_with_excessive_timetable_values?.length > 0) {
+                const employeesWithExcessiveRestDays = validationResponse.data.employees_with_excessive_timetable_values.filter(
                     (emp: any) => emp.rest_day_count >= 3
                 );
 
@@ -117,8 +117,8 @@ const ImportModal = ({
                 }
             }
 
-            if (validationResponse.data?.employees_with_excessive_leaves?.length > 0) {
-                const employeesWithExcessiveIncentiveLeaves = validationResponse.data.employees_with_excessive_leaves.filter(
+            if (validationResponse.data?.employees_with_excessive_timetable_values?.length > 0) {
+                const employeesWithExcessiveIncentiveLeaves = validationResponse.data.employees_with_excessive_timetable_values.filter(
                     (emp: any) => emp.incentive_leave_count >= 3
                 );
 
@@ -166,6 +166,50 @@ const ImportModal = ({
                     if (!incentiveLeaveConfirmed) {
                         toast.info("Incentive leave data excluded");
                     }
+                }
+            }
+
+            if (validationResponse.data?.employees_with_rest_day_in_both_cutoffs?.length > 0) {
+                const employeesWithRestDaysInBoth = validationResponse.data.employees_with_rest_day_in_both_cutoffs;
+                setValidationStep('both_cut_off_has_rest_days');
+
+                const message = (
+                    <div className="space-y-4 text-sm">
+                        <p>Employees with a rest day in both previous and current cutoff:</p>
+                        <div className="space-y-1">
+                            <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">
+                                <span>Employee Name</span>
+                                <span>Rest Day Dates</span>
+                            </div>
+                            {employeesWithRestDaysInBoth.map((employee: any) => (
+                                <div key={employee.employee_id} className="flex justify-between items-start">
+                                    <span>{employee.employee_name}</span>
+                                    <span className="text-right">
+                                        {employee.rest_day_dates.join(', ')}
+                                    </span>
+                                </div>
+                            ))}
+                        </div>
+                        <p className="mt-4">Do you want to proceed?</p>
+                    </div>
+                );
+
+                const confirmed = await confirm({
+                    title: "Rest Day in Both Cutoffs",
+                    message: "",
+                    children: message,
+                    size: "md"
+                });
+
+                if (!confirmed) {
+                    employeesWithRestDaysInBoth.forEach((emp: any) => {
+                        if (!excludedIds.includes(emp.employee_id)) {
+                            excludedIds.push(emp.employee_id);
+                        }
+                    });
+                    toast.info("Importing cancelled.");
+                    setSubmitting(false);
+                    return;
                 }
             }
 
