@@ -1,9 +1,9 @@
 "use cient";
 
-import { getEmployees } from "@/api/employee";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
-import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { useEmployeeStore } from "@/stores/useEmployeeStore";
+import { useState } from "react";
 interface SelectInterface {
     label: string;
     placeholder?: string;
@@ -24,27 +24,21 @@ const EmployeeDropDown = ({
     required = false
 }: SelectInterface) => {
 
-    const api = useApiCall();
+    const {employees, loading, getEmployees} = useEmployeeStore();
+    const [dataSet, setDataSet] = useState<any>([]);
 
     useAsyncEffect(() => {
-        api.setLoading(true);
-        getEmployees()
-        .then((resp) => {
-            if (!resp.error) {
-                const newDataset = resp.data.employees.map((employee: any) => {
-                    return {
-                        label: employee.full_name,
-                        value: employee.employee_number,
-                        obj: employee
-                    };
-                });
-                api.setDataSet(newDataset);
-            }
-        })
-        .finally(() => {
-            api.setLoading(false);
+        getEmployees();
+        const newDataset = employees.map((employee: any) => {
+            return {
+                label: employee.full_name,
+                value: employee.employee_number,
+                obj: employee
+            };
         });
-    }, []);
+
+        setDataSet(newDataset);
+    }, [employees]);
 
     return (
         <SearchableDropDown
@@ -54,8 +48,8 @@ const EmployeeDropDown = ({
             onChange={onChange}
             error={error}
             value={value}
-            loading={api.loading}
-            options={api.dataSet}
+            loading={loading}
+            options={dataSet}
             required={required}
         />
     );

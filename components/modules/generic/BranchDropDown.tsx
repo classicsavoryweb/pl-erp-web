@@ -1,10 +1,9 @@
 "use cient";
 
-import { getBranches } from "@/api/branches";
-import { getPositions } from "@/api/positions";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
-import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { useBranchStore } from "@/stores/useBranchStore";
+import { useState } from "react";
 interface SelectInterface {
     label: string;
     placeholder?: string;
@@ -25,27 +24,20 @@ const BranchDropDown = ({
     required = false
 }: SelectInterface) => {
 
-    const api = useApiCall();
+    const [branchData, setBranchData] = useState<any>([]);
+    const {branches, loading, getBranches} = useBranchStore();
 
-    useAsyncEffect(() => {
-        api.setLoading(true);
-        getBranches()
-        .then((resp) => {
-            if (!resp.error) {
-                const newDataset = resp.data.branches.map((branch: any) => {
-                    return {
-                        label: branch.name,
-                        value: branch.id,
-                        obj: branch
-                    };
-                });
-                api.setDataSet(newDataset);
-            }
-        })
-        .finally(() => {
-            api.setLoading(false);
-        });
-    }, []);
+    useAsyncEffect(() => {        
+        getBranches();
+        if (branches.length > 0) {
+            const newDataset = branches.map((branch: any) => ({
+                label: branch.name,
+                value: branch.id,
+                obj: branch,
+            }));
+            setBranchData(newDataset);
+        }
+    }, [branches]);
 
     return (
         <SearchableDropDown
@@ -55,8 +47,8 @@ const BranchDropDown = ({
             onChange={onChange}
             error={error}
             value={value}
-            loading={api.loading}
-            options={api.dataSet}
+            loading={loading}
+            options={branchData}
             required={required}
         />
     );

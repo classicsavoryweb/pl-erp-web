@@ -1,9 +1,9 @@
 "use cient";
 
-import { getPositions } from "@/api/positions";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
-import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { usePositionStore } from "@/stores/usePositionStore";
+import { useState } from "react";
 interface SelectInterface {
     label: string;
     placeholder?: string;
@@ -24,27 +24,20 @@ const PositionDropDown = ({
     required = false
 }: SelectInterface) => {
 
-    const api = useApiCall();
-
+    const { positions, loading, getPositions } = usePositionStore();
+    const [dataSet, setDataSet] = useState<any>([]);
+    
     useAsyncEffect(() => {
-        api.setLoading(true);
-        getPositions()
-        .then((resp) => {
-            if (!resp.error) {
-                const newDataset = resp.data.positions.map((position: any) => {
-                    return {
-                        label: position.description,
-                        value: position.id,
-                        obj: position
-                    };
-                });
-                api.setDataSet(newDataset);
-            }
-        })
-        .finally(() => {
-            api.setLoading(false);
+        getPositions();
+        const newDataset = positions.map((position: any) => {
+            return {
+                label: position.description,
+                value: position.id,
+                obj: position
+            };
         });
-    }, []);
+        setDataSet(newDataset);
+    }, [positions]);
 
     return (
         <SearchableDropDown
@@ -54,8 +47,8 @@ const PositionDropDown = ({
             onChange={onChange}
             error={error}
             value={value}
-            loading={api.loading}
-            options={api.dataSet}
+            loading={loading}
+            options={dataSet}
             required={required}
         />
     );
