@@ -13,7 +13,6 @@ import confirm from "@/components/common/Confirm";
 import usePagination from "@/hooks/pagination";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
-import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import * as Yup from "yup";
@@ -25,14 +24,12 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
-import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime } from "@/api/transactions/overtime";
 
 interface FilterInterface {
     hasExport?: boolean;
     exportPermission?: string;
-    columnSort?: boolean;
     unique_api?: (values: any) => any;
     statusOption?: {label: string, value: string}[];
 };
@@ -51,7 +48,6 @@ const OvertimeTableCard = ({
             value: "Unapproved"
         }
     ],
-
 }: FilterInterface) => {
     const api = useApiCall();
     const importModal = useModal();
