@@ -8,42 +8,42 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import FilterCard from "../../cards/FilterCard";
-import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import ImportModal from "./ImportModal";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { exportAllTransactionsScheduleTime, getAllTransactionsScheduleTime } from "@/api/transactions/schedule-time";
+import Button from "@/components/common/Button";
+import Textfield from "@/components/common/Textfield";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import Grid from "@/components/common/Grid";
+import BranchDropDown from "../../generic/BranchDropDown";
+import confirm from "@/components/common/Confirm";
+import { useContext, useState, useEffect } from "react";
+import { AuthContext } from "@/context/AuthProvider";
+import Dropdown from "@/components/common/Dropdown";
+import { useFilter } from "@/hooks/use-filter";
+import CutOffDropDown from "../../generic/CutOffDropDown";
 
-const ScheduleTimeTableCard = () => {
+interface FilterInterface {
+    hasExport?: boolean;
+    exportPermission?: string;
+    columnSort?: boolean;
+    unique_api?: (values: any) => any;
+};
+
+const ScheduleTimeTableCard = ({
+    unique_api = exportAllTransactionsScheduleTime,
+    hasExport = true,
+    exportPermission = "export_all_transactions_schedule_time",
+
+}: FilterInterface) => {
     const api = useApiCall();
     const importModal = useModal();
     const paginator = usePagination(20);
+    const { permissions } = useContext(AuthContext);
+    const [branch, setBranch] = useState<any>({});
     const filter = useFilter();
-
-    useAsyncEffect(() => {
-        api.setLoading(true);
-        getAllTransactionsScheduleTime({
-            page: paginator.page,
-            per_page: paginator.per_page,
-            ...filter.filters
-        })
-        .then((resp) => {
-            if (resp.error) {
-                toast.error("Error fetching schedules");
-            } else {
-                api.setDataSet(resp.data.data);
-                paginator.setPage(resp.data.current_page);
-                paginator.setPaginationData(resp.data);
-            }
-        })
-        .catch(() => {
-            toast.error("Error encountered");
-        })
-        .finally(() => {
-            api.setLoading(false);
-        });
-    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -92,48 +92,185 @@ const ScheduleTimeTableCard = () => {
         }
     ];
 
+    const formHandler = useFormik({
+        initialValues: {
+            key_word: "",
+            column_type: "employee.full_name",
+            branch_id: "",
+            cutoff: null,
+            selected_cutoff: "",
+            year: moment().year(),
+        },
+        validateOnChange: false,
+        validationSchema: Yup.object().shape({
+            key_word: Yup.string(),
+            column_type: Yup.string().when('key_word', (keyWord, schema) => 
+                String(keyWord) !== ""
+                    ? schema.required('Column type is required')
+                    : schema.notRequired()
+            ),
+        }),
+        onSubmit: async (values, { setSubmitting }) => {
+            api.triggerReload();
+            filter.onReload();
+            filter.setFilters(values);
+            setSubmitting(true);
+        }
+    });
+
+    useAsyncEffect(() => {
+        api.setLoading(true);
+        getAllTransactionsScheduleTime({
+            page: paginator.page,
+            per_page: paginator.per_page,
+            ...filter.filters,  
+        })
+        .then((resp) => {
+            if (resp.error) {
+                toast.error("Error fetching schedules");
+            } else {
+                api.setDataSet(resp.data.data);
+                paginator.setPage(resp.data.current_page);
+                paginator.setPaginationData(resp.data);
+            }
+        })
+        .catch(() => toast.error("Error encountered"))
+        .finally(() => api.setLoading(false));
+    }, [paginator.reload, api.reload, filter.reload]);
+
+    const exportHandler = useFormik({
+        initialValues: {
+            key_word: '',
+            column_type: '',
+        },
+        validateOnChange: false,
+        onSubmit: async (values) => {
+            const isConfirm = await confirm({
+                title: "Export",
+                message: "Are you sure you want to export?"
+            });
+            
+            if (isConfirm) {
+                unique_api && unique_api(values).then((resp: any) => {
+                    const blob = new Blob([resp.data], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    });
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    const branchName = branch && branch.name ? branch.name : 'default-branch';
+    
+                    a.href = downloadUrl;
+                    a.download = `${branchName.toUpperCase()}-SCHEDULE-TIME-${moment().format('YYYY-MM-DD')}.xls`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+            }
+        }
+    });
+
     return (
         <>
-            <FilterCard
-                columnSettings={[
-                    {
-                        columnHead: "Employee Name",
-                        path: "employee.full_name",
-                        columnType: COLUMNTYPES.string
-                    },
-                    {
-                        columnHead: "Biometric Number",
-                        path: "employee.biometric_number",
-                        columnType: COLUMNTYPES.string
-                    },
-                    {
-                        columnHead: "Timetable",
-                        path: "timetable",
-                        columnType: COLUMNTYPES.string,
-                    },
-                    {
-                        columnHead: "Check In",
-                        path: "check_in",
-                        columnType: COLUMNTYPES.string,
-                    },
-                    {
-                        columnHead: "Check Out",
-                        path: "check_out",
-                        columnType: COLUMNTYPES.string,
-                    }
-                ]}
-                filterHandler={filter}
-                hasExport
-                api={exportAllTransactionsScheduleTime}
-                exportFileName={`SCHEDULE-TIME-${moment().format("YYYY-MM-DD")}.xls`}
-                defaultColumnSelected="employee.full_name"
-                callBack={() => {
-                    paginator.setPage(1);
-                }}
-                hasDateRange
-                withBranch
-                isExpanded
-            />
+            <Card>
+                <p className="text-sm font-semibold text-red-800">Filters</p>
+                <form onSubmit={formHandler.handleSubmit}>
+                    <Grid cols={4}>
+                        <Dropdown
+                            placeholder="select column"
+                            label="Column"
+                            name="column_type"
+                            value={formHandler.values.column_type}
+                            error={formHandler.errors.column_type}
+                            onChange={formHandler.handleChange}
+                            options={columnSettings.map((column:any) => {
+                                return {
+                                    label: column.columnHead,
+                                    value: column.path
+                                }
+                            })}
+                        />
+                        <Textfield
+                            name="key_word"
+                            label="Keyword"
+                            placeholder="enter keyword"
+                            value={formHandler.values.key_word}
+                            onChange={formHandler.handleChange}
+                        />
+                        <BranchDropDown
+                            placeholder="select branch"
+                            label="Branch"
+                            name="branch_id"
+                            value={formHandler.values.branch_id}
+                            onChange={(e) => {
+                                formHandler.handleChange(e);
+                                const branch = e.target.obj;
+                                setBranch(branch);
+                            }}
+                            error={formHandler.errors.branch_id}
+                        />
+                        <CutOffDropDown
+                            value={formHandler.values.selected_cutoff}
+                            onChange={(e) => {
+                                formHandler.setFieldValue("selected_cutoff", e.target.value);
+                                formHandler.setFieldValue("cutoff", e.target.obj || null);
+                            }}
+                        />
+                        <Dropdown
+                            placeholder="select year"
+                            label="Year"
+                            name="year"
+                            value={String(formHandler.values.year)}
+                            onChange={formHandler.handleChange}
+                            options={Array.from({ length: 100 }, (_, i) => {
+                                const year = new Date().getFullYear() - i;
+                                return { label: year.toString(), value: year.toString() };
+                            })}
+                        />
+                    </Grid>
+                    <div className="flex justify-end gap-x-2">
+                        <div className="w-[100px]">
+                            <Button
+                                type="submit"
+                                label="Search"
+                                onClick={() => {}}
+                            />    
+                        </div>
+                        {(exportPermission === "" || permissions.includes(exportPermission)) &&
+                            <>
+                                { hasExport &&
+                                    <div className="w-[100px]">
+                                        <Button
+                                            label="Export"
+                                            type="button"
+                                            onClick={() => {
+                                                exportHandler.setValues(prev => ({
+                                                    ...prev,
+                                                    ...formHandler.values
+                                                }));
+
+                                                exportHandler.submitForm();
+                                            }}
+                                            variant="success"
+                                        />    
+                                    </div>
+                                }
+                            </>
+                        }
+                        <div className="w-[100px]">
+                            <Button
+                                label="Reset"
+                                type="button"
+                                onClick={() => {
+                                    formHandler.resetForm();
+                                    exportHandler.resetForm();
+                                    formHandler.submitForm();
+                                }}
+                                variant="secondary"
+                            />    
+                        </div>
+                    </div>
+                </form>
+            </Card>
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
