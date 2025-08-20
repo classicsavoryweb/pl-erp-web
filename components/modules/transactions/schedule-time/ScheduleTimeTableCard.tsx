@@ -23,6 +23,7 @@ import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "@/context/AuthProvider";
 import Dropdown from "@/components/common/Dropdown";
 import { useFilter } from "@/hooks/use-filter";
+import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 
 interface FilterInterface {
@@ -97,8 +98,10 @@ const ScheduleTimeTableCard = ({
             key_word: "",
             column_type: "employee.full_name",
             branch_id: "",
-            cutoff: null,
-            selected_cutoff: "",
+            cutoff: {
+                ...getCurrentCutoff()
+            },
+            selected_cutoff: getCurrentCutoff().range,
             year: moment().year(),
         },
         validateOnChange: false,
@@ -123,7 +126,7 @@ const ScheduleTimeTableCard = ({
         getAllTransactionsScheduleTime({
             page: paginator.page,
             per_page: paginator.per_page,
-            ...filter.filters,  
+            ...formHandler.values 
         })
         .then((resp) => {
             if (resp.error) {

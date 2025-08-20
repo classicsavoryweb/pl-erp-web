@@ -24,6 +24,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
+import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime } from "@/api/transactions/overtime";
 
@@ -31,14 +32,21 @@ interface FilterInterface {
     hasExport?: boolean;
     exportPermission?: string;
     unique_api?: (values: any) => any;
-    statusOption?: {label: string, value: string}[];
 };
 
 const OvertimeTableCard = ({
     unique_api = exportAllOvertime,
     hasExport = true,
     exportPermission = "export_all_transactions_overtime",
-    statusOption = [
+    
+}: FilterInterface) => {
+    const api = useApiCall();
+    const importModal = useModal();
+    const { permissions } = useContext(AuthContext);
+    const [branch, setBranch] = useState<any>({});
+    const paginator = usePagination(20);
+    const filter = useFilter();
+    const statusOption = [
         {
             label: "Approved",
             value: "Approved"
@@ -47,14 +55,7 @@ const OvertimeTableCard = ({
             label: "Unapproved",
             value: "Unapproved"
         }
-    ],
-}: FilterInterface) => {
-    const api = useApiCall();
-    const importModal = useModal();
-    const { permissions } = useContext(AuthContext);
-    const [branch, setBranch] = useState<any>({});
-    const paginator = usePagination(20);
-    const filter = useFilter();
+    ];
 
     const columnSettings = [
         {
@@ -249,8 +250,10 @@ const OvertimeTableCard = ({
             column_type: "employee.full_name",
             branch_id: "",
             status: "",
-            cutoff: null,
-            selected_cutoff: "",
+            cutoff: {
+                ...getCurrentCutoff()
+            },
+            selected_cutoff: getCurrentCutoff().range,
             year: moment().year(),
         },
         validateOnChange: false,
@@ -275,7 +278,7 @@ const OvertimeTableCard = ({
         getAllOvertime({
             page: paginator.page,
             per_page: paginator.per_page,
-            ...filter.filters
+            ...formHandler.values 
         })
         .then((resp) => {
             if (resp.error) {
