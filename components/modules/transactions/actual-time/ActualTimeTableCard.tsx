@@ -30,6 +30,7 @@ import Grid from "@/components/common/Grid";
 import BranchDropDown from "../../generic/BranchDropDown";
 import { AuthContext } from "@/context/AuthProvider";
 import Dropdown from "@/components/common/Dropdown";
+import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 
 interface FilterInterface {
@@ -151,8 +152,10 @@ const ActualTimeTableCard = ({
             key_word: "",
             column_type: "employee.full_name",
             branch_id: "",
-            cutoff: null,
-            selected_cutoff: "",
+            cutoff: {
+                ...getCurrentCutoff()
+            },
+            selected_cutoff: getCurrentCutoff().range,
             year: moment().year(),
         },
         validateOnChange: false,
@@ -177,7 +180,7 @@ const ActualTimeTableCard = ({
         getAllTransactionsActualTime({
             page: paginator.page,
             per_page: paginator.per_page,
-            ...filter.filters
+            ...formHandler.values 
         })
         .then((resp) => {
             if (resp.error) {
