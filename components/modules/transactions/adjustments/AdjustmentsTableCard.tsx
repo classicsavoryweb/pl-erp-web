@@ -19,6 +19,7 @@ import Grid from "@/components/common/Grid";
 import Dropdown from "@/components/common/Dropdown";
 import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
+import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import { approveAdjustments, getAdjustment, getAllAdjustments, unapproveAdjustments, voidAdjustments } from "@/api/transactions/adjustments";
@@ -235,37 +236,39 @@ const AdjustmentsTableCard = () => {
     ];
 
     const formHandler = useFormik({
-            initialValues: {
-                key_word: "",
-                column_type: "employee.full_name",
-                status: "",
-                cutoff: null,
-                selected_cutoff: "",
-                year: moment().year(),
+        initialValues: {
+            key_word: "",
+            column_type: "employee.full_name",
+            status: "",
+            cutoff: {
+                ...getCurrentCutoff()
             },
-            validateOnChange: false,
-            validationSchema: Yup.object().shape({
-                key_word: Yup.string(),
-                column_type: Yup.string().when('key_word', (keyWord, schema) => 
-                    String(keyWord) !== ""
-                        ? schema.required('Column type is required')
-                        : schema.notRequired()
-                ),
-            }),
-            onSubmit: async (values, { setSubmitting }) => {
-                api.triggerReload();
-                filter.onReload();
-                filter.setFilters(values);
-                setSubmitting(true);
-            }
-        });
+            selected_cutoff: getCurrentCutoff().range,
+            year: moment().year(),
+        },
+        validateOnChange: false,
+        validationSchema: Yup.object().shape({
+            key_word: Yup.string(),
+            column_type: Yup.string().when('key_word', (keyWord, schema) => 
+                String(keyWord) !== ""
+                    ? schema.required('Column type is required')
+                    : schema.notRequired()
+            ),
+        }),
+        onSubmit: async (values, { setSubmitting }) => {
+            api.triggerReload();
+            filter.onReload();
+            filter.setFilters(values);
+            setSubmitting(true);
+        }
+    });
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllAdjustments({
             page: paginator.page,
             per_page: paginator.per_page,
-            ...filter.filters
+            ...formHandler.values 
         })
         .then((resp) => {
             if (resp.error) {
