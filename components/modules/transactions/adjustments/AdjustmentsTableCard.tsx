@@ -21,15 +21,19 @@ import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { approveAdjustments, getAllAdjustments, unapproveAdjustments, voidAdjustments } from "@/api/transactions/adjustments";
+import { approveAdjustments, getAdjustment, getAllAdjustments, unapproveAdjustments, voidAdjustments } from "@/api/transactions/adjustments";
 import CreateAdjustmentsModal from "./CreateAdjustmentsModal";
+import { useState } from "react";
+import ViewAdjustmentModal from "./ViewAdjustmentModal";
 
-interface FilterInterface {
-    statusOption?: {label: string, value: string}[];
-};
-
-const AdjustmentsTableCard = ({
-    statusOption = [
+const AdjustmentsTableCard = () => {
+    const api = useApiCall();
+    const paginator = usePagination(20);
+    const createAdjustments = useModal();
+    const viewAdjustments = useModal();
+    const filter = useFilter();
+    const [id, setId] = useState<number|string>(0);
+    const statusOption = [
         {
             label: "Approved",
             value: "Approved"
@@ -42,24 +46,7 @@ const AdjustmentsTableCard = ({
             label: "Voided",
             value: "Voided"
         },
-        {
-            label: "Unapproved",
-            value: "Unapproved"
-        },
-        {
-            label: "Reflected",
-            value: "Reflected"
-        },
-        {
-            label: "Pending",
-            value: "Pending"
-        },
-    ],
-}: FilterInterface) => {
-    const api = useApiCall();
-    const paginator = usePagination(20);
-    const createAdjustments = useModal();
-    const filter = useFilter();
+    ];
 
     const columnSettings = [
         {
@@ -137,11 +124,18 @@ const AdjustmentsTableCard = ({
 
                 if (data.status === "Approved") {
                     actions = [
-                        tableActions[2]
+                        tableActions[2],
+                        tableActions[3]
                     ];
                 }
 
-                if (data.status === "Unapproved" || data.status === "Adjusted" || data.status === "Voided" || data.status === "Reflected" ) {
+                if (data.status === "Adjusted") {
+                    actions = [
+                        tableActions[3]
+                    ];
+                }
+
+                if (data.status === "Unapproved" || data.status === "Voided" || data.status === "Reflected" ) {
                     return "—";
                 }
                 
@@ -221,6 +215,13 @@ const AdjustmentsTableCard = ({
                 });
             },
             permission: "unapprove_transactions_adjustments"
+        },
+        {
+            label: "View",
+            onClick: async (data: any) => { 
+                setId(data.id);
+                viewAdjustments.onOpen();
+            },
         },
     ];
 
@@ -375,6 +376,14 @@ const AdjustmentsTableCard = ({
 
             <CreateAdjustmentsModal
                 modal={createAdjustments}
+                callBack={() => {
+                    api.triggerReload();
+                }}
+            />
+
+            <ViewAdjustmentModal
+                modal={viewAdjustments}
+                id={id}
             />
         </>
     );

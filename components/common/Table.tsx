@@ -36,6 +36,7 @@ interface TableInterface {
     onCheck?: (e: any) => void;
     canSortColumns?: boolean;
     onSort?: (e: any) => void;
+    smallText?: boolean;
 };
 
 const Table = ({
@@ -50,6 +51,7 @@ const Table = ({
     onCheck,
     canSortColumns,
     onSort,
+    smallText
 }: TableInterface) => {
 
     const currentPage = paginator && paginator.paginationData.current_page;
@@ -76,8 +78,8 @@ const Table = ({
     };
 
     return (
-        <div className="relative my-1 w-full">
-            <div className="overflow-x-auto">
+        <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-sm"}`}>
+            <div>
             <table className="min-w-auto w-full rounded-md">
                 <thead className="bg-red-800">
                     <tr>
@@ -172,7 +174,7 @@ const Table = ({
                                     <tr key={idx}>
                                         { withCheckBox &&
                                             <td
-                                                className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm max-w-[400px]`}
+                                                className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300  max-w-[400px]`}
                                             >
                                                 <div
                                                     className="flex justify-center"
@@ -190,7 +192,7 @@ const Table = ({
                                                 return (
                                                     <td
                                                         key={key}
-                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300 text-sm max-w-[400px]`}
+                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300  max-w-[400px]`}
                                                     >
                                                         { settings.columnType === COLUMNTYPES.string &&
                                                             columnData
@@ -250,7 +252,7 @@ const Table = ({
     
                                         { withActions && actions &&
                                             <td
-                                                className="py-1 px-2 border-1 border-slate-300 text-sm"
+                                                className="py-1 px-2 border-1 border-slate-300 "
                                             >
                                                 <ActionDropDown
                                                     data={data}
@@ -265,7 +267,7 @@ const Table = ({
                             <tr>
                                 <td colSpan={withActions ? columnSettings.length + 1 : columnSettings.length} className="w-full p-2 text-center">
                                     <EmptyState/>
-                                    <p className="text-sm">No data available...</p>
+                                    <p className="">No data available...</p>
                                 </td>
                             </tr>
 
@@ -275,14 +277,14 @@ const Table = ({
             </div>
             { !loading && paginator && dataSet.length > 0 &&
                 <div
-                    className="w-full text-sm flex justify-between items-center pt-2"
+                    className="w-full  flex justify-between items-center pt-2"
                 >
                     <p>Showing {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
 
                     <div className="flex gap-x-1 justify-end items-center">
                         {currentPage > 1 && (
                             <button
-                                className="px-2 text-sm bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                className="px-2  bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
                                 onClick={() => paginator.onClickSetPageNumber(currentPage - 1)}
                             >
                                 Previous
@@ -299,7 +301,7 @@ const Table = ({
                                     key={key}
                                     className={`
                                         px-2
-                                        text-sm
+                                        
                                         ${paginator.paginationData.current_page === item ? "bg-red-800 text-slate-50" : "bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
                                     `}
                                     onClick={() => paginator.onClickSetPageNumber(Number(item))}
@@ -311,7 +313,7 @@ const Table = ({
 
                         {currentPage < totalPages && (
                             <button
-                                className="px-2 text-sm bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                className="px-2  bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
                                 onClick={() => paginator.onClickSetPageNumber(currentPage + 1)}
                             >
                                 Next

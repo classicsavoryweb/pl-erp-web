@@ -10,6 +10,15 @@ export const getAllAdjustments = async (payload?: {}) => {
     return resData;
 };
 
+export const getAdjustment = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/get-adjustment/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
 export const approveAdjustments = async (id: string) => {
     const resData = await axiosHelper({
         func_path: `/approve-adjustments/${id}`,

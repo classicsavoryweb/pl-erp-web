@@ -1,6 +1,5 @@
 "use client";
 
-import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
@@ -214,6 +213,18 @@ const EmployeeTableCard = () => {
         {
             label: "Proper Format Full Name",
             value: "proper_full_name",
+        },
+        {
+            label: "Schedule Type",
+            value: "schedule.schedule_type.name",
+        },
+        {
+            label: "Incentive Leave",
+            value: "schedule.incentive_leave",
+        },
+        {
+            label: "Flexible Schedule",
+            value: "schedule.flexible_schedule",
         },
     ];
 

@@ -16,6 +16,7 @@ import Dropdown from "@/components/common/Dropdown";
 import ScheduleMasterlistDropDown from "../../generic/ScheduleMasterlistDropDown";
 import { createAdjustments } from "@/api/transactions/adjustments";
 import BranchDropDown from "../../generic/BranchDropDown";
+import { getCurrentCutoff } from "@/helper/cutoff";
 
 type PunchFormValues = {
     punches: { punch_time: string }[];
@@ -29,10 +30,12 @@ type PunchFormValues = {
 
 interface FormModalInterface {
     modal: any;
+    callBack: () => void;
 };
 
 const CreateAdjustmentsModal = ({
-    modal
+    modal,
+    callBack
 }: FormModalInterface) => {
 
     const [loading, setLoading] = useState<boolean>(true);
@@ -51,7 +54,13 @@ const CreateAdjustmentsModal = ({
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             employee_number: Yup.string().required("Employee is required."),
-            date: Yup.string().required("Date is required."),
+            date: Yup.string().required("Date is required.").test(
+                'past-dates',
+                'Date must not be in the future or current cut off.',
+                function (value) {
+                    const { start_time } = getCurrentCutoff();
+                    return moment(value).isBefore(moment(start_time));
+                }),
             punches: Yup.array()
             .of(Yup.object().shape({
                 punch_time: Yup.string().required("Punch time is required"),
@@ -131,6 +140,8 @@ const CreateAdjustmentsModal = ({
                 .then((resp) => {
                     if (!resp.error) {
                         toast.success("Adjustment saved successfully");
+                        callBack();
+                        modal.onClose();
                         resetForm();
                     } else {
                         toast.error(resp.data.message);
