@@ -27,6 +27,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 18px;
 }
 
 .Toastify__toast--error .Toastify__toast-icon {
@@ -35,6 +36,7 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
+    height: 18px;
 }
 
 .Toastify__toast--success .Toastify__toast-icon svg {
