@@ -124,7 +124,18 @@ export const maintenanceRoutes: Route[] = [
             {
                 name: "Holidays",
                 pathname: "/maintenance/holidays",
-                permission: "view_holidays"
+                permission: "view_holidays",
+                break: true
+            },
+            {
+                name: "SSS",
+                pathname: "/maintenance/sss",
+                permission: "view_sss",
+            },
+            {
+                name: "Tax",
+                pathname: "/maintenance/tax",
+                permission: "view_tax",
             },
         ]
     }
