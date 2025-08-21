@@ -47,6 +47,11 @@ export const transactionRoutes: Route[] = [
                 name: "Overtime",
                 pathname: "/transactions/overtime",
                 permission: "view_transactions_overtime",
+            },
+            {
+                name: "Adjustments",
+                pathname: "/transactions/adjustments",
+                permission: "view_transactions_adjustments",
                 break: true
             },
             {
@@ -59,11 +64,7 @@ export const transactionRoutes: Route[] = [
                 pathname: "/transactions/timekeeping-summary",
                 permission: "view_transactions_time_keeping_summary",
             },
-            {
-                name: "Adjustments",
-                pathname: "/transactions/adjustments",
-                permission: "view_transactions_adjustments"
-            },
+            
         ]
     }
 ];
