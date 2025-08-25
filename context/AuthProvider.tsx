@@ -2,6 +2,7 @@
 import { createContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
+import { toast } from "react-toastify";
 
 interface UserDetails {
     gender: string,
@@ -57,13 +58,25 @@ const AuthProvider = ({
     const [permissions, setPermissions] = useState<any>([]);
     
     useEffect(() => {
-        const userDetails = Cookies.get('userDetails');
-        const permissions = Cookies.get('permissions');
+        const userDetailsCookie = Cookies.get('userDetails');
 
-        if (userDetails) {
-            setUserDetails(JSON.parse(userDetails ?? ""));
-            setPermissions(JSON.parse(permissions ?? ""));
+        if (userDetailsCookie) {
+            setUserDetails(JSON.parse(userDetailsCookie ?? ""));
         }
+
+        const permissionChunks: any[] = [];
+        let index = 0;
+
+        while (true) {
+            const chunk = Cookies.get(`permissions_${index}`);
+            if (!chunk) break;
+            
+            permissionChunks.push(...JSON.parse(chunk));
+            
+            index++;
+        }
+
+        setPermissions(permissionChunks);
     }, [pathName]);
 
     return (

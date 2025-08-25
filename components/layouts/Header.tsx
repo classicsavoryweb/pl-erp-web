@@ -87,8 +87,12 @@ const Header = () => {
                         onClick={async () => {
                             await logout();
                             Cookies.remove('authToken');
-                            Cookies.remove('permissions');
                             Cookies.remove('userDetails');
+                            let index = 0;
+                            while (Cookies.get(`permissions_${index}`)) {
+                                Cookies.remove(`permissions_${index}`);
+                                index++;
+                            }
                             router.push('/login');
                             toast.success("Logged out successfully");
                         }}

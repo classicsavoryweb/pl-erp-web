@@ -22,36 +22,47 @@ const LoginForm = () => {
             email: Yup.string().required("Email is required."),
             password: Yup.string().required("Password is required.")
         }),
-        onSubmit: (values, {setSubmitting}) => {
+        onSubmit: (values, { setSubmitting }) => {
             setSubmitting(true);
             login(values)
-            .then((resp) => {
-                if (resp.error) {
-                    toast.error(resp.data.message);
-                } else {
-                    const expiresInHours = 12 / 24;
-                    const user = resp.data.user;
-                    const {
-                        employee_status,
-                        home_branch,
-                        schedule,
-                        current_position,
-                        ...filteredData
-                    } = user;
-                    Cookies.set('authToken', resp.data.token, {path: '/' ,expires: expiresInHours});
-                    Cookies.set('permissions', JSON.stringify(resp.data.permissions), {path: '/' ,expires: expiresInHours});
-                    Cookies.set('userDetails', JSON.stringify(filteredData), {path: '/', expires: expiresInHours});
+                .then((resp) => {
+                    if (resp.error) {
+                        toast.error(resp.data.message);
+                    } else {
+                        const expiresInHours = 12 / 24;
+                        const user = resp.data.user;
+                        const {
+                            employee_status,
+                            home_branch,
+                            schedule,
+                            current_position,
+                            ...filteredData
+                        } = user;
 
-                    router.push("/");
-                }
-            })
-            .catch((err) => {
-                console.log(err);
-                toast.error("Error encountered")
-            })
-            .finally(() => {
-                setSubmitting(false);
-            });
+                        const permissions = resp.data.permissions || [];
+                        const chunkSize = 50;
+                        const partitionedPermissions = [];
+
+                        for (let i = 0; i < permissions.length; i += chunkSize) {
+                        partitionedPermissions.push(permissions.slice(i, i + chunkSize));
+                        }
+
+                        partitionedPermissions.forEach((chunk, index) => {
+                            Cookies.set(`permissions_${index}`, JSON.stringify(chunk), { path: '/', expires: expiresInHours });
+                        });
+                        Cookies.set('authToken', resp.data.token, { path: '/', expires: expiresInHours });
+                        Cookies.set('userDetails', JSON.stringify(filteredData), { path: '/', expires: expiresInHours });
+
+                        router.push("/");
+                    }
+                })
+                .catch((err) => {
+                    console.log(err);
+                    toast.error("Error encountered");
+                })
+                .finally(() => {
+                    setSubmitting(false);
+                });
         }
     });
 

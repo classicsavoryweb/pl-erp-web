@@ -128,6 +128,11 @@ export const maintenanceRoutes: Route[] = [
                 break: true
             },
             {
+                name: "Philhealth",
+                pathname: "/maintenance/philhealth",
+                permission: "view_philhealth",
+            },
+            {
                 name: "SSS",
                 pathname: "/maintenance/sss",
                 permission: "view_sss",
