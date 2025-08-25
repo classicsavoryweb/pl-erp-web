@@ -138,6 +138,11 @@ export const maintenanceRoutes: Route[] = [
                 permission: "view_sss",
             },
             {
+                name: "Pagibig",
+                pathname: "/maintenance/pagibig",
+                permission: "view_pagibig",
+            },
+            {
                 name: "Tax",
                 pathname: "/maintenance/tax",
                 permission: "view_tax",
