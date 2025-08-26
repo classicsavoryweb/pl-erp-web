@@ -147,6 +147,11 @@ export const maintenanceRoutes: Route[] = [
                 pathname: "/maintenance/tax",
                 permission: "view_tax",
             },
+            {
+                name: "Deductions",
+                pathname: "/maintenance/deductions",
+                permission: "view_deductions",
+            },
         ]
     }
 ];
