@@ -69,7 +69,7 @@ const EditPagibigForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit Pagibig"
+            title="Edit pagibig"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();

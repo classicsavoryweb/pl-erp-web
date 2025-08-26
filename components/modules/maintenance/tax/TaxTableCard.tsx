@@ -113,7 +113,7 @@ const TaxTableCard = () => {
                 filterHandler={filter}
                 hasExport
                 api={exportAllTax}
-                exportFileName={`Tax-${moment().format("YYYY-MM-DD")}.xls`}
+                exportFileName={`TAX-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="salary_base"
                 callBack={() => {
                     paginator.setPage(1);
@@ -123,7 +123,7 @@ const TaxTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new Tax"
+                            label="Create new tax"
                             onClick={createModal.onOpen}
                         />
                     </div>
