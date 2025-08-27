@@ -39,7 +39,7 @@ const CreatePhilhealthForm = ({
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Create Philhealth",
+                title: "Create philhealth",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed) {

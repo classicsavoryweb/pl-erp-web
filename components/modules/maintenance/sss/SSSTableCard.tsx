@@ -117,7 +117,7 @@ const SSSTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new SSS"
+                            label="Create new sss"
                             onClick={createModal.onOpen}
                         />
                     </div>

@@ -46,7 +46,7 @@ const EditTaxForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Edit Tax",
+                title: "Edit tax",
                 message: "Are you sure you want to save changes?"
             });
 

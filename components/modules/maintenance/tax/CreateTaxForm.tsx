@@ -83,7 +83,7 @@ const CreateTaxForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create Tax"
+            title="Create tax"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();

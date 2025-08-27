@@ -77,7 +77,7 @@ const EditPhilhealthForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit Philhealth"
+            title="Edit philhealth"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();

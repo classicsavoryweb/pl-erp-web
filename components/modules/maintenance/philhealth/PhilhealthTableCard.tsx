@@ -107,7 +107,7 @@ const PhilhealthTableCard = () => {
                 filterHandler={filter}
                 hasExport
                 api={exportAllPhilhealth}
-                exportFileName={`Philhealth-${moment().format("YYYY-MM-DD")}.xls`}
+                exportFileName={`PHILHEALTH-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="salary_base"
                 callBack={() => {
                     paginator.setPage(1);
@@ -117,7 +117,7 @@ const PhilhealthTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new Philhealth"
+                            label="Create new philhealth"
                             onClick={createModal.onOpen}
                         />
                     </div>
