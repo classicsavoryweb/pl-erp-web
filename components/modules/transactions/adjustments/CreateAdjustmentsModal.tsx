@@ -59,7 +59,7 @@ const CreateAdjustmentsModal = ({
                 'Date must not be in the future or current cut off.',
                 function (value) {
                     const { start_time } = getCurrentCutoff();
-                    return moment(value).isBefore(moment(start_time));
+                    return moment(value).isBefore(moment(start_time).format('YYYY-MM-DD'));
                 }),
             punches: Yup.array()
             .of(Yup.object().shape({

@@ -17,8 +17,8 @@ export function getCurrentCutoff(): { start_time: string; end_time: string; rang
     const range = `${startTime.format('MM-DD')}-${endTime.format('MM-DD')}`;
 
     return {
-        start_time: startTime.format('YYYY-MM-DD'),
-        end_time: endTime.format('YYYY-MM-DD'),
+        start_time: startTime.format('MM-DD'),
+        end_time: endTime.format('MM-DD'),
         range: range
     };
 }

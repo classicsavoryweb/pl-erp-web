@@ -80,7 +80,7 @@ const Table = ({
     return (
         <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-sm"}`}>
             <div>
-            <table className="min-w-auto w-full rounded-md">
+            <table className="table-auto min-w-auto w-full rounded-md">
                 <thead className="bg-red-800">
                     <tr>
                         { withCheckBox &&
