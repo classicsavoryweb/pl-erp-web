@@ -157,6 +157,11 @@ export const maintenanceRoutes: Route[] = [
                 pathname: "/maintenance/additional-income",
                 permission: "view_additional_income",
             },
+            {
+                name: "Period Definition",
+                pathname: "/maintenance/period-definition",
+                permission: "view_period_definition",
+            },
         ]
     }
 ];
