@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Header from "./Header";
-import Sidebar from "./Sidebar";
+import Sidebar from "./Sidebar"
 
 const Authenticated = ({ children }: { children: React.ReactNode }) => {
     return (
@@ -24,7 +24,7 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                 <div className="overflow-auto pb-5 shadow bg-zinc-50 min-w-[250px] max-w-[250px]">
                     <Sidebar />
                 </div>
-                <div className="flex-1 overflow-auto pb-7 shadow w-full p-5">
+                <div className="flex-1 overflow-auto pb-7 shadow w-full p-4">
                     {children}
                 </div>
             </div>

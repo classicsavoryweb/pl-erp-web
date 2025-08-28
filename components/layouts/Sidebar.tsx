@@ -30,7 +30,8 @@ const Sidebar = () => {
                                 gap-2
                                 ${isActive ? "bg-red-800 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
                                 rounded-md
-                                p-3
+                                px-3
+                                py-[10px]
                                 flex
                                 items-center
                                 gap-2
