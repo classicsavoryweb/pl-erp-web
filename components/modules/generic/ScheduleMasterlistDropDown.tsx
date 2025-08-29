@@ -6,6 +6,8 @@ import { getScheduleType } from "@/api/schedule-type";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { useScheduleMasterlistStore } from "@/stores/useScheduleMasterlistStore";
+import { useState } from "react";
 interface SelectInterface {
     label: string;
     placeholder?: string;
@@ -26,26 +28,20 @@ const ScheduleMasterlistDropDown = ({
     required = false
 }: SelectInterface) => {
 
-    const api = useApiCall();
+    const [data, setData] = useState<any>([]);
+    const {scheduleMasterlist, loading, getScheduleMasterlist} = useScheduleMasterlistStore();
 
-    useAsyncEffect(() => {
-        api.setLoading(true);
-        getScheduleMasterlist()
-        .then((resp) => {
-            if (!resp.error) {
-                const newDataset = resp.data.schedule_masterlist.map((data: any) => {
-                    return {
-                        label: data.selection,
-                        value: data.selection
-                    };
-                });
-                api.setDataSet(newDataset);
-            }
-        })
-        .finally(() => {
-            api.setLoading(false);
-        });
-    }, []);
+    useAsyncEffect(() => {        
+        getScheduleMasterlist();
+        if (scheduleMasterlist.length > 0) {
+            const newDataset = scheduleMasterlist.map((data: any) => ({
+                label: data.selection,
+                value: data.selection,
+                obj: data,
+            }));
+            setData(newDataset);
+        }
+    }, [scheduleMasterlist]);
 
     return (
         <SearchableDropDown
@@ -55,8 +51,8 @@ const ScheduleMasterlistDropDown = ({
             onChange={onChange}
             error={error}
             value={value}
-            loading={api.loading}
-            options={api.dataSet}
+            loading={loading}
+            options={data}
             required={required}
         />
     );

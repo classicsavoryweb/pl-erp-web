@@ -17,6 +17,7 @@ import ScheduleMasterlistDropDown from "../../generic/ScheduleMasterlistDropDown
 import { createAdjustments } from "@/api/transactions/adjustments";
 import BranchDropDown from "../../generic/BranchDropDown";
 import { getCurrentCutoff } from "@/helper/cutoff";
+import AdjustmentTypeDropDown from "../../generic/AdjustmentTypeDropDown";
 
 type PunchFormValues = {
     punches: { punch_time: string }[];
@@ -250,31 +251,13 @@ const CreateAdjustmentsModal = ({
                     required
                 />
 
-                <Dropdown
+                <AdjustmentTypeDropDown
                     name="type"
                     placeholder="select type"
-                    label="Adjust Type"
+                    label="Adjustment Type"
                     onChange={formHandler.handleChange}
                     value={formHandler.values.type ?? ""}
                     error={formHandler.errors.type}
-                    options={[
-                        {
-                            label: "Incomplete Logs",
-                            value: "Incomplete Logs",
-                        },
-                        {
-                            label: "No Logs with Schedule",
-                            value: "No Logs with Schedule",
-                        },
-                        {
-                            label: "Incorrect Schedule",
-                            value: "Incorrect Schedule",
-                        },
-                        {
-                            label: "Blank Schedule with Logs",
-                            value: "Blank Schedule with Logs",
-                        },
-                    ]}
                     required
                 />
             </Grid>

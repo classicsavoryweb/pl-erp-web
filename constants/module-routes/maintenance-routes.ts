@@ -117,6 +117,11 @@ export const maintenanceRoutes: Route[] = [
                 permission: "view_schedule_type"
             },
             {
+                name: "Adjustment Types",
+                pathname: "/maintenance/adjustment-types",
+                permission: "view_adjustment_types"
+            },
+            {
                 name: "Schedule Masterlist",
                 pathname: "/maintenance/schedule-masterlist",
                 permission: "view_schedule_masterlist"
