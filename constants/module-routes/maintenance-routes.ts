@@ -158,6 +158,11 @@ export const maintenanceRoutes: Route[] = [
                 permission: "view_additional_income",
             },
             {
+                name: "Period Definition",
+                pathname: "/maintenance/period-definition",
+                permission: "view_period_definition",
+            },
+            {
                 name: "CSHub Transaction Type",
                 pathname: "/maintenance/cshub-transaction-type",
                 permission: "view_cshub_transaction_type",
