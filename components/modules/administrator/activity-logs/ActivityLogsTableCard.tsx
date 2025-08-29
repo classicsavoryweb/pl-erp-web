@@ -14,7 +14,7 @@ import Modal from "@/components/common/Modal";
 
 const ActivityLogsTableCard = () => {
     const api = useApiCall();
-    const paginator = usePagination(10);
+    const paginator = usePagination(15);
     const [data, setData] = useState<any>({});
     const modal = useModal();
 

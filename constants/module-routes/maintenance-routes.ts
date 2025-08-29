@@ -157,6 +157,11 @@ export const maintenanceRoutes: Route[] = [
                 pathname: "/maintenance/additional-income",
                 permission: "view_additional_income",
             },
+            {
+                name: "CSHub Transaction Type",
+                pathname: "/maintenance/cshub-transaction-type",
+                permission: "view_cshub_transaction_type",
+            },
         ]
     }
 ];
