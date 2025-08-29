@@ -77,7 +77,7 @@ const DeductionsTableCard = () => {
                     amortization_credit_id: data.amortization_credit_id,
                     end_loan_vendor_id: data.end_loan_vendor_id,
                     end_loan_debit_id: data.end_loan_debit_id,
-                    end_load_credit_id: data.end_load_credit_id,
+                    end_loan_credit_id: data.end_loan_credit_id,
                     status: data.status,
                 });
             }
