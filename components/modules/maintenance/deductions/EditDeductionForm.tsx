@@ -10,7 +10,11 @@ import { useEffect } from "react";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import confirm from "@/components/common/Confirm";
+import { useApiCall } from "@/hooks/api-call";
+import { useAsyncEffect } from "@/hooks/async-effect";
 import { editDeduction } from "@/api/maintenance/deductions";
+import { getAccounts } from "@/api/accounting/accounts";
+import { getVendors } from "@/api/accounting/vendors";
 
 interface FormModalInterface {
     modal: any;
@@ -78,6 +82,44 @@ const EditDeductionForm = ({
         }
     });
 
+    const api = useApiCall();
+    const api_1 = useApiCall();
+
+    useAsyncEffect(() => {
+        if (modal.isShowing) {
+            api.setLoading(true);
+            getAccounts()
+                .then((resp) => {
+                    if (!resp.error) {
+                        api.setDataSet(resp.data.accounts);
+                    }
+                })
+                .finally(() => {
+                    api.setLoading(false);
+                });
+            api_1.setLoading(true);
+            getVendors()
+                .then((resp) => {
+                    if (!resp.error) {
+                        api_1.setDataSet(resp.data.vendors);
+                    }
+                })
+                .finally(() => {
+                    api_1.setLoading(false);
+                });
+        }
+    }, [modal.isShowing]);
+
+    const accountOptions = api.dataSet?.map((acc: any) => ({
+        label: acc.acc_name,
+        value: acc.acc_no
+    }));
+
+    const vendorOptions = api_1.dataSet?.map((acc: any) => ({
+        label: acc.ven_name,
+        value: acc.ven_no
+    }));
+
     useEffect(() => {
         if (modal.isShowing) {
             editFormHandler.setValues(formValue);
@@ -126,16 +168,7 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.debit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    options={accountOptions}
                 />
                 <Dropdown
                     label="Credit Account"
@@ -145,16 +178,7 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.credit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    options={accountOptions}
                 />
 
                 <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
@@ -168,16 +192,7 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.amortization_vendor_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    options={vendorOptions}
                 />
                 <Dropdown
                     label="Debit Account"
@@ -187,16 +202,7 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.amortization_debit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    options={accountOptions}
                 />
                 <Dropdown
                     label="Credit Account"
@@ -206,16 +212,7 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.amortization_credit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    options={accountOptions}
                 />
 
                 <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
@@ -229,16 +226,7 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.end_loan_vendor_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    options={vendorOptions}
                 />
                 <Dropdown
                     label="Debit Account"
@@ -248,16 +236,7 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.end_loan_debit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    options={accountOptions}
                 />
                 <Dropdown
                     label="Credit Account"
@@ -267,16 +246,7 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.end_loan_credit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    options={accountOptions}
                 />
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
