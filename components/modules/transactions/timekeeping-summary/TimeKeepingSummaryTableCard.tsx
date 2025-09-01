@@ -236,10 +236,10 @@ const TimeKeepingSummaryTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch ? branch.name : 'default-branch';
+                    const branchName = branch ? branch.short_name : 'default-branch';
     
                     a.href = downloadUrl;
-                    a.download = `${branchName.toUpperCase()}-TIMEKEEPING_SUMMARY-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `${branchName.toUpperCase()}-TIMEKEEPING-SUMMARY-${formHandler.values.selected_cutoff+"-"+formHandler.values.year}.xls`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();

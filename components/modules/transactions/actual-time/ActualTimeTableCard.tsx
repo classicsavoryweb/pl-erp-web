@@ -76,17 +76,17 @@ const ActualTimeTableCard = ({
         },
         {
             columnHead: "Status",
-            path: "date",
+            path: "status",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let status: "danger" | "default" | "warning" | "success" = "default";
 
                 switch(data.status) {
                     case "COMPLETE":
-                        status="success"
+                        status="success";
                     break;
                     case "INCOMPLETE":
-                        status="warning"
+                        status="warning";
                     break;
                 }
 
