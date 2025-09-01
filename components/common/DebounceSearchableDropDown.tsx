@@ -17,7 +17,9 @@ interface SelectInterface {
     value?: any;
     required?: boolean;
     api: (payload: any) => Promise<any>;
-    status?: "active" | "inactive" | "all";
+    mapResponse: (item: any) => Option;
+    transformResponse?: (resp: any) => any[];
+    status?: "active" | "inactive";
 }
 
 const DebounceSearchableDropDown = ({
@@ -29,7 +31,9 @@ const DebounceSearchableDropDown = ({
     value,
     required,
     api,
-    status = "all"
+    mapResponse,
+    status= "active",
+    transformResponse = (resp: any) => resp?.data || [],
 }: SelectInterface) => {
     const [toggle, setToggle] = useState(false);
     const [keyWord, setKeyWord] = useState("");
@@ -39,7 +43,7 @@ const DebounceSearchableDropDown = ({
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const selectedLabel = useMemo(() => {
-        return options.find((opt) => opt.label === value?.last_name + ", "+value?.first_name + " " + value?.middle_name)?.label || placeholder;
+        return (options.find((opt) => opt.value === value)?.label || placeholder || "");
     }, [value, options, placeholder, loading]);
 
     useEffect(() => {
@@ -82,16 +86,8 @@ const DebounceSearchableDropDown = ({
                 status: status,
                 keyWord: keyWord
             }).then((resp:any) => {
-                const data = resp.data;
-                const newDataSet = data.map((emp: any) => {
-                    return (
-                        {
-                            label: emp.last_name + ", " + emp.first_name + " " + emp.middle_name,
-                            value: emp
-                        }
-                    );
-                })
-
+                const rawData = transformResponse(resp);
+                const newDataSet: Option[] = rawData.map(mapResponse);
                 setOptions(newDataSet);
             }).finally(() => setLoading(false));
         }, 500);
@@ -105,16 +101,8 @@ const DebounceSearchableDropDown = ({
             status: status,
         })
         .then((resp:any) => {
-            const data = resp.data;
-            const newDataSet = data.map((emp: any) => {
-                return (
-                    {
-                        label: emp.last_name + ", " + emp.first_name + " " + emp.middle_name,
-                        value: emp
-                    }
-                );
-            })
-
+            const rawData = transformResponse(resp);
+            const newDataSet: Option[] = rawData.map(mapResponse);
             setOptions(newDataSet);
         })
         .finally(() => setLoading(false));
