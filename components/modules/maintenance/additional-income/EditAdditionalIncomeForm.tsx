@@ -7,9 +7,9 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import AccountDropDown from "../../generic/AccountDropDown";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import Checkbox from "@/components/common/Checkbox";
-import Dropdown from "@/components/common/Dropdown";
 import confirm from "@/components/common/Confirm";
 import { editAdditionalIncome } from "@/api/maintenance/additional-income";
 
@@ -127,85 +127,45 @@ const EditAdditionalIncomeForm = ({
                 <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Head Office</span>
                 </div>
-                <Dropdown
+                <AccountDropDown
                     label="Debit Account"
                     placeholder="select debit account"
                     name="head_office_debit_id"
-                    value={editFormHandler.values.head_office_debit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.head_office_debit_id}
                     error={editFormHandler.errors.head_office_debit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    required
                 />
-                <Dropdown
+                <AccountDropDown
                     label="Credit Account"
                     placeholder="select credit account"
                     name="head_office_credit_id"
-                    value={editFormHandler.values.head_office_credit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.head_office_credit_id}
                     error={editFormHandler.errors.head_office_credit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    required
                 />
 
                 <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Store</span>
                 </div>
-                <Dropdown
+                <AccountDropDown
                     label="Debit Account"
                     placeholder="select debit account"
                     name="store_debit_id"
-                    value={editFormHandler.values.store_debit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.store_debit_id}
                     error={editFormHandler.errors.store_debit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    required
                 />
-                <Dropdown
+                <AccountDropDown
                     label="Credit Account"
                     placeholder="select credit account"
                     name="store_credit_id"
-                    value={editFormHandler.values.store_credit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.store_credit_id}
                     error={editFormHandler.errors.store_credit_id}
-                    options={[
-                        {
-                            label: "Sample 1",
-                            value: "Sample 1"
-                        },
-                        {
-                            label: "Sample 2",
-                            value: "Sample 2"
-                        },
-                    ]}
+                    required
                 />
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
