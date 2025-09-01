@@ -121,16 +121,18 @@ const CreateHolidayForm = ({
     }, [modal.isShowing]);
 
     const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, value: number) => {
+        const current = [...createFormHandler.values.branch_id];
         if (e.target.checked) {
-            createFormHandler.setFieldValue("branch_id", [
-                ...createFormHandler.values.branch_id,
-                e.target.value
-            ]);
+            if (!current.includes(value)) {
+                current.push(value);
+            }
         } else {
-            const ids = createFormHandler.values.branch_id;
-            const newIds = ids.filter((id) => id !== value);
-            createFormHandler.setFieldValue("branch_id", newIds)
+            const index = current.indexOf(value);
+            if (index !== -1) {
+                current.splice(index, 1);
+            }
         }
+        createFormHandler.setFieldValue("branch_id", current);
     };
 
     return (
@@ -196,9 +198,9 @@ const CreateHolidayForm = ({
                                 value="select_all"
                                 checked={api.dataSet.length > 0 && createFormHandler.values.branch_id.length === api.dataSet.length}
                                 onChange={(e) => {
-                                    const ids = api.dataSet.map((data) => data.id);
                                     if (e.target.checked) {
-                                        createFormHandler.setFieldValue("branch_id", ids);
+                                        const allBranchIds = api.dataSet.map((data) => data.id);
+                                        createFormHandler.setFieldValue("branch_id", allBranchIds);
                                     } else {
                                         createFormHandler.setFieldValue("branch_id", []);
                                     }
@@ -206,26 +208,25 @@ const CreateHolidayForm = ({
                             />
                         </div>
                     </div>
-                        <Textfield
-                            name="key_word"
-                            label=""
-                            placeholder="search for branch"
-                            value={createFormHandler.values.key_word}
-                            onChange={(e) => {
-                                const keyword = e.target.value.trim().toLowerCase();
-                                if (keyword) {
-                                    const filtered = api.dataSet.filter((branch) =>
-                                        String(branch.name).toLowerCase().includes(keyword)
-                                    );
-                                    setFilteredBranches(filtered);
-                                } else {
-                                    setFilteredBranches(api.dataSet);
-                                }
-                            }}
-                        />
-                    <div
-                        className="max-h-[350px] overflow-hidden overflow-y-auto p-3"
-                    >
+                    <Textfield
+                        name="key_word"
+                        label=""
+                        placeholder="search for branch"
+                        value={createFormHandler.values.key_word}
+                        onChange={(e) => {
+                            createFormHandler.setFieldValue("key_word", e.target.value);
+                            const keyword = e.target.value.trim().toLowerCase();
+                            if (keyword) {
+                                const filtered = api.dataSet.filter((branch) =>
+                                    String(branch.name).toLowerCase().includes(keyword)
+                                );
+                                setFilteredBranches(filtered);
+                            } else {
+                                setFilteredBranches(api.dataSet);
+                            }
+                        }}
+                    />
+                    <div className="max-h-[350px] overflow-hidden overflow-y-auto p-3">
                         <Grid cols={2}>
                             {filteredBranches.map((data, key) => (
                                 <Checkbox
