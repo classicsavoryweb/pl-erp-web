@@ -7,15 +7,11 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useEffect } from "react";
+import VendorDropDown from "../../generic/VendorDropDown";
+import AccountDropDown from "../../generic/AccountDropDown";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
-import Dropdown from "@/components/common/Dropdown";
 import confirm from "@/components/common/Confirm";
-import { useApiCall } from "@/hooks/api-call";
-import { useAsyncEffect } from "@/hooks/async-effect";
 import { editDeduction } from "@/api/maintenance/deductions";
-import { getAccounts } from "@/api/accounting/accounts";
-import { getVendors } from "@/api/accounting/vendors";
-
 interface FormModalInterface {
     modal: any;
     onSubmitCallback: () => void;
@@ -82,44 +78,6 @@ const EditDeductionForm = ({
         }
     });
 
-    const api = useApiCall();
-    const api_1 = useApiCall();
-
-    useAsyncEffect(() => {
-        if (modal.isShowing) {
-            api.setLoading(true);
-            getAccounts()
-                .then((resp) => {
-                    if (!resp.error) {
-                        api.setDataSet(resp.data.accounts);
-                    }
-                })
-                .finally(() => {
-                    api.setLoading(false);
-                });
-            api_1.setLoading(true);
-            getVendors()
-                .then((resp) => {
-                    if (!resp.error) {
-                        api_1.setDataSet(resp.data.vendors);
-                    }
-                })
-                .finally(() => {
-                    api_1.setLoading(false);
-                });
-        }
-    }, [modal.isShowing]);
-
-    const accountOptions = api.dataSet?.map((acc: any) => ({
-        label: acc.acc_name,
-        value: acc.acc_no
-    }));
-
-    const vendorOptions = api_1.dataSet?.map((acc: any) => ({
-        label: acc.ven_name,
-        value: acc.ven_no
-    }));
-
     useEffect(() => {
         if (modal.isShowing) {
             editFormHandler.setValues(formValue);
@@ -160,93 +118,85 @@ const EditDeductionForm = ({
                 <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Deduction Setup</span>
                 </div>
-                <Dropdown
+                <AccountDropDown
                     label="Debit Account"
                     placeholder="select debit account"
                     name="debit_id"
-                    value={editFormHandler.values.debit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.debit_id}
                     error={editFormHandler.errors.debit_id}
-                    options={accountOptions}
+                    required
                 />
-                <Dropdown
+                <AccountDropDown
                     label="Credit Account"
                     placeholder="select credit account"
                     name="credit_id"
-                    value={editFormHandler.values.credit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.credit_id}
                     error={editFormHandler.errors.credit_id}
-                    options={accountOptions}
+                    required
                 />
 
                 <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Amortization Setup</span>
                 </div>
-                <Dropdown
+                <VendorDropDown
                     label="Vendor"
                     placeholder="select vendor"
                     name="amortization_vendor_id"
-                    value={editFormHandler.values.amortization_vendor_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.amortization_vendor_id}
                     error={editFormHandler.errors.amortization_vendor_id}
-                    options={vendorOptions}
+                    required
                 />
-                <Dropdown
+                <AccountDropDown
                     label="Debit Account"
                     placeholder="select debit account"
                     name="amortization_debit_id"
-                    value={editFormHandler.values.amortization_debit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.amortization_debit_id}
                     error={editFormHandler.errors.amortization_debit_id}
-                    options={accountOptions}
+                    required
                 />
-                <Dropdown
+                <AccountDropDown
                     label="Credit Account"
                     placeholder="select credit account"
                     name="amortization_credit_id"
-                    value={editFormHandler.values.amortization_credit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.amortization_credit_id}
                     error={editFormHandler.errors.amortization_credit_id}
-                    options={accountOptions}
+                    required
                 />
 
                 <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>End Loan Setup</span>
                 </div>
-                <Dropdown
+                <VendorDropDown
                     label="Vendor"
                     placeholder="select vendor"
                     name="end_loan_vendor_id"
-                    value={editFormHandler.values.end_loan_vendor_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.end_loan_vendor_id}
                     error={editFormHandler.errors.end_loan_vendor_id}
-                    options={vendorOptions}
+                    required
                 />
-                <Dropdown
+                <AccountDropDown
                     label="Debit Account"
                     placeholder="select debit account"
                     name="end_loan_debit_id"
-                    value={editFormHandler.values.end_loan_debit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.end_loan_debit_id}
                     error={editFormHandler.errors.end_loan_debit_id}
-                    options={accountOptions}
+                    required
                 />
-                <Dropdown
+                <AccountDropDown
                     label="Credit Account"
                     placeholder="select credit account"
                     name="end_loan_credit_id"
-                    value={editFormHandler.values.end_loan_credit_id}
-                    required
                     onChange={editFormHandler.handleChange}
+                    value={editFormHandler.values.end_loan_credit_id}
                     error={editFormHandler.errors.end_loan_credit_id}
-                    options={accountOptions}
+                    required
                 />
 
                 <hr className="mt-6 pb-2 text-slate-300"/>

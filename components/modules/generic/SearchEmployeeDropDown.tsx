@@ -1,4 +1,4 @@
-"use cient";
+"use client";
 
 import { getEmployeesList } from "@/api/employee";
 import DebounceSearchableDropDown from "@/components/common/DebounceSearchableDropDown";
@@ -11,7 +11,7 @@ interface SelectInterface {
     error?: string;
     value?: string | number;
     required?: boolean;
-    status?: "all" | "active" | "inactive"
+    status?: "active" | "inactive"
 }
 
 const SearchEmployeeDropDown = ({
@@ -22,7 +22,7 @@ const SearchEmployeeDropDown = ({
     error,
     value,
     required = false,
-    status= "all",
+    status= "active",
 }: SelectInterface) => {
 
     return (
@@ -36,6 +36,10 @@ const SearchEmployeeDropDown = ({
             required={required}
             api={getEmployeesList}
             status={status}
+            mapResponse={(emp: any) => ({
+                label: `${emp.last_name}, ${emp.first_name} ${emp.middle_name || ""}`,
+                value: emp,
+            })}
         />
     );
 };

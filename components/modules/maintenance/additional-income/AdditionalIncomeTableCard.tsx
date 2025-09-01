@@ -89,7 +89,18 @@ const AdditionalIncomeTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Description",
+                        path: "description",
+                        columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Taxable",
+                        path: "taxable",
+                        columnType: COLUMNTYPES.string
+                    }
+                ]}
                 filterHandler={filter}
                 hasExport
                 api={exportAllAdditionalIncome}

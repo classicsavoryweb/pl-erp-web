@@ -87,7 +87,13 @@ const DeductionsTableCard = () => {
     return (
         <>
             <FilterCard
-                columnSettings={columnSettings}
+                columnSettings={[
+                    {
+                        columnHead: "Description",
+                        path: "description",
+                        columnType: COLUMNTYPES.string
+                    }
+                ]}
                 filterHandler={filter}
                 hasExport
                 api={exportAllDeductions}
@@ -102,7 +108,7 @@ const DeductionsTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new Deduction"
+                            label="Create new deduction"
                             onClick={createModal.onOpen}
                         />
                     </div>
