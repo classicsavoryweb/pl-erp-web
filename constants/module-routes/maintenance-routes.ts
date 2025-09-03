@@ -172,6 +172,11 @@ export const maintenanceRoutes: Route[] = [
                 pathname: "/maintenance/cshub-transaction-type",
                 permission: "view_cshub_transaction_type",
             },
+            {
+                name: "Incentives Management",
+                pathname: "/maintenance/incentives-management",
+                permission: "view_incentives_management",
+            },
         ]
     }
 ];
