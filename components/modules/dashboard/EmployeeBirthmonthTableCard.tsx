@@ -59,7 +59,7 @@ const EmployeeBirthmonthTableCard = () => {
             path: "birthday",
             columnType: COLUMNTYPES.function,
             function: (data:any) => {
-                return moment(data.birthday).format("MMMM DD");
+                return moment(data.birthday).format("MMM DD");
             }
         },
     ];

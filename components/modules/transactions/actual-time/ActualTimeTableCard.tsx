@@ -70,6 +70,11 @@ const ActualTimeTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Home Branch",
+            path: "employee.current_branch.short_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Date",
             path: "date",
             columnType: COLUMNTYPES.date
@@ -120,12 +125,12 @@ const ActualTimeTableCard = ({
                 }
             }
         },
-        {
-            label: "Import Biotime Logs",
-            onClick: async () => {
-                importModal.onOpen();
-            }
-        },
+        // {
+        //     label: "Import Biotime Logs",
+        //     onClick: async () => {
+        //         importModal.onOpen();
+        //     }
+        // },
     ];
 
     const tableActions = [
