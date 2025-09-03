@@ -42,7 +42,7 @@ const ActionDropDown = ({
     }, []);
 
     return (
-        <div ref={dropdownRef} className="relative w-[115px] py-1">
+        <div ref={dropdownRef} className="w-[115px] py-1">
             <button
                 className="bg-gray-200 w-full py-1 px-2 hover:cursor-pointer flex justify-between items-center gap-x-1 text-sm"
                 onClick={() => setToggle(prev => !prev)}
@@ -55,7 +55,9 @@ const ActionDropDown = ({
             </button>
             
             { toggle &&
-                 <div className="absolute flex flex-col items-start w-full z-50 bg-gray-200 shadow-lg">
+                 <div
+                    className="absolute flex flex-col items-start w-[115px] z-50 bg-gray-200 shadow-lg"
+                >
                     {actions.map((action, idx) => {
                         let render = true;
 

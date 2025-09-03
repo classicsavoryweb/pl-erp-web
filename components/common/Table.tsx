@@ -79,8 +79,8 @@ const Table = ({
 
     return (
         <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-sm"}`}>
-            <div>
-            <table className="table-auto min-w-auto w-full rounded-md">
+            <div className="overflow-x-auto">
+            <table className="table-auto w-full rounded-md">
                 <thead className="bg-red-800">
                     <tr>
                         { withCheckBox &&
@@ -174,7 +174,7 @@ const Table = ({
                                     <tr key={idx}>
                                         { withCheckBox &&
                                             <td
-                                                className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300  max-w-[400px]`}
+                                                className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300`}
                                             >
                                                 <div
                                                     className="flex justify-center"
@@ -192,7 +192,7 @@ const Table = ({
                                                 return (
                                                     <td
                                                         key={key}
-                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300  max-w-[400px]`}
+                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300`}
                                                     >
                                                         { settings.columnType === COLUMNTYPES.string &&
                                                             columnData
