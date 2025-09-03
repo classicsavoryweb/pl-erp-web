@@ -9,7 +9,7 @@ interface SelectInterface {
     name: string;
     onChange: (e: any) => void;
     error?: string;
-    value?: string | number;
+    value?: any;
     required?: boolean;
     status?: "active" | "inactive"
 }
@@ -40,6 +40,7 @@ const SearchEmployeeDropDown = ({
                 label: `${emp.last_name}, ${emp.first_name} ${emp.middle_name || ""}`,
                 value: emp,
             })}
+            transformResponse={(resp: any) => resp?.data || []}
         />
     );
 };

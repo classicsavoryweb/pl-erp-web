@@ -43,7 +43,10 @@ const DebounceSearchableDropDown = ({
     const dropdownRef = useRef<HTMLDivElement>(null);
 
     const selectedLabel = useMemo(() => {
-        return (options.find((opt) => opt.value === value)?.label || placeholder || "");
+        if (value && typeof value === "object" && "employee_number" in value) {
+            return `${value.last_name}, ${value.first_name} ${value.middle_name || ""}`;
+        }
+        return options.find((opt) => opt.value === value)?.label || placeholder || "";
     }, [value, options, placeholder, loading]);
 
     useEffect(() => {
