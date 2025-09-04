@@ -345,7 +345,7 @@ const TimeKeepingTableCard = ({
                                 }}
                             />    
                         </div>
-                        <div className="w-[100px]">
+                        {/* <div className="w-[100px]">
                             <Button
                                 label="Generate"
                                 onClick={() => {
@@ -353,7 +353,7 @@ const TimeKeepingTableCard = ({
                                     formHandler.submitForm();
                                 }}
                             />    
-                        </div>
+                        </div> */}
                         <div className="w-[100px]">
                             <Button
                                 label="Reset"
