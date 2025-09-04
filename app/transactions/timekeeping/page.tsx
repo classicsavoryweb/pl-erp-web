@@ -5,7 +5,7 @@ const Page = () => {
     return (
         <>
             <PageTitle
-                title="Timekeeping"
+                title="Daily Timekeeping"
             />
             <TimeKeepingTableCard/>
         </>

@@ -55,7 +55,7 @@ export const transactionRoutes: Route[] = [
                 break: true
             },
             {
-                name: "Timekeeping",
+                name: "Daily Timekeeping",
                 pathname: "/transactions/timekeeping",
                 permission: "view_transactions_time_keeping"
             },
