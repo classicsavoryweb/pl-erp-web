@@ -13,6 +13,8 @@ import { useState } from "react";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
+import CreateCSHubTransactionTypeForm from "./CreateCSHubTransactionTypeForm";
+import EditCSHubTransactionTypeForm from "./EditCSHubTransactionTypeForm";
 import { exportAllCSHubTransactionType, getAllCSHubTransactionType } from "@/api/maintenance/cshub-transaction-type";
 
 const CSHubTransactionTypeTableCard = () => {
@@ -64,8 +66,26 @@ const CSHubTransactionTypeTableCard = () => {
         {
             label: "Edit",
             onClick: (data: any) => {
-                console.log(data);
-
+                editModal.onOpen();
+                setData({
+                    id: data.id,
+                    description: data.description,
+                    source_id: data.source_id,
+                    transaction_type: data.transaction_type,
+                    exam_type: data.exam_type,
+                    deduction_id: data.deduction_id,
+                    deduction_status_positive: data.deduction_status_positive,
+                    deduction_status_negative: data.deduction_status_negative,
+                    credit_status_positive: data.credit_status_positive,
+                    credit_status_negative: data.credit_status_negative,
+                    email_status: data.email_status,
+                    ho_debit: data.ho_debit,
+                    ho_credit: data.ho_credit,
+                    branch_debit: data.branch_debit,
+                    branch_credit: data.branch_credit,
+                    advances_debit: data.advances_debit,
+                    status: data.status,
+                });
             }
         },
     ];
@@ -102,6 +122,17 @@ const CSHubTransactionTypeTableCard = () => {
                     actions={tableActions}
                 />
             </Card>
+
+            <CreateCSHubTransactionTypeForm
+                modal={createModal}
+                onSubmitCallback={api.triggerReload}
+            />
+
+            <EditCSHubTransactionTypeForm
+                modal={editModal}
+                onSubmitCallback={api.triggerReload}
+                formValue={data}
+            />
         </>
     );
 };

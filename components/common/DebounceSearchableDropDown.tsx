@@ -20,6 +20,7 @@ interface SelectInterface {
     mapResponse: (item: any) => Option;
     transformResponse?: (resp: any) => any[];
     status?: "active" | "inactive";
+    disabled?: boolean;
 }
 
 const DebounceSearchableDropDown = ({
@@ -33,6 +34,7 @@ const DebounceSearchableDropDown = ({
     api,
     mapResponse,
     status= "active",
+    disabled = false,
     transformResponse = (resp: any) => resp?.data || [],
 }: SelectInterface) => {
     const [toggle, setToggle] = useState(false);
@@ -141,8 +143,13 @@ const DebounceSearchableDropDown = ({
             type="button"
             className={`w-full h-[40px] rounded-md focus:outline-none hover:cursor-pointer border-2 ${
                 error ? "border-red-400" : "border-slate-300 focus:border-slate-400"
-            } p-2 text-left`}
+            } 
+                p-2 text-left
+                ${disabled ? "hover:cursor-not-allowed bg-gray-100" : "hover:cursor-pointer"}
+                `
+            }
             onClick={() => setToggle((prev) => !prev)}
+            disabled={disabled}
             >
             <div className="flex justify-between items-center">
                 <p className="truncate">{selectedLabel}</p>

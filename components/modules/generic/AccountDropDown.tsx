@@ -12,6 +12,7 @@ interface SelectInterface {
     value?: string | number;
     required?: boolean;
     status?: "active" | "inactive";
+    disabled?: boolean;
 }
 
 const AccountDropDown = ({
@@ -22,6 +23,7 @@ const AccountDropDown = ({
     error,
     value,
     required = false,
+    disabled = false
 }: SelectInterface) => {
 
     return (
@@ -39,6 +41,7 @@ const AccountDropDown = ({
                 value: `${acc.acc_no}`,
             })}
             transformResponse={(resp: any) => resp?.data?.accounts || []}
+            disabled={disabled}
         />
     );
 };
