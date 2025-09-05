@@ -32,3 +32,23 @@ export const exportAllCSHubTransactionType = async (payload?: {}) => {
 
     return resData;
 };
+
+export const createCSHubTransactionType = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/create-cshub-transaction-type',
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const editCSHubTransactionType = async (payload: {}, id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-cshub-transaction-type/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
