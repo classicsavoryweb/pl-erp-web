@@ -64,6 +64,16 @@ const TimeKeepingSummaryTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Home Branch",
+            path: "employee.current_branch.short_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Timekeeping Branch",
+            path: "branch.short_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Regular Days",
             path: "regular_days",
             columnType: COLUMNTYPES.function,
@@ -278,7 +288,7 @@ const TimeKeepingSummaryTableCard = ({
                         />
                         <BranchDropDown
                             placeholder="select branch"
-                            label="Branch"
+                            label="Timekeeping Branch"
                             name="branch_id"
                             value={formHandler.values.branch_id}
                             onChange={(e) => {

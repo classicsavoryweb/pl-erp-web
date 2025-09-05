@@ -10,6 +10,8 @@ import { useEffect } from "react";
 import moment from "moment";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+import BranchDropDown from "../../generic/BranchDropDown";
+import Grid from "@/components/common/Grid";
 
 interface FormModalInterface {
     modal: any;
@@ -19,7 +21,7 @@ interface FormModalInterface {
 }
 
 type PunchFormValues = {
-    punches: { punch_time: string, newPunch?: boolean }[]; 
+    punches: { punch_time: string, newPunch?: boolean, branch_id: string }[]; 
     punches_count: string;
     date: string;
 };
@@ -33,7 +35,7 @@ const EditActualTimeModal = ({
 
     const formHandler = useFormik<PunchFormValues>({
         initialValues: {
-            punches: [{ punch_time: "", newPunch: true }],
+            punches: [{ punch_time: "", newPunch: true, branch_id: "" }],
             punches_count: "",
             date: "",
         },
@@ -150,7 +152,7 @@ const EditActualTimeModal = ({
                 modal.onClose();
             }}
             loading={modal.loading}
-            size="md"
+            size="lg"
         >
             <Textfield
                 type="date"
@@ -192,26 +194,41 @@ const EditActualTimeModal = ({
                                 </p>
                             </div>
                         )}
-                        <Textfield
-                            key={index}
-                            type="datetime-local"
-                            label={`Punch Time #${index + 1}`}
-                            value={punch.punch_time}
-                            onChange={(e) => {
-                                const updatedPunches: any = [...formHandler.values.punches];
-                                updatedPunches[index] = {
-                                    ...updatedPunches[index],
-                                    punch_time: e.target.value.replace("T", " ") + ":00"
-                                };
-                                formHandler.setFieldValue('punches', updatedPunches);
-                            }}
-                            error={
-                                formHandler.touched.punches?.[index]?.punch_time &&
-                                typeof (formHandler.errors.punches as { punch_time?: string }[] | undefined)?.[index]?.punch_time === "string"
-                                    ? (formHandler.errors.punches as { punch_time?: string }[])[index].punch_time
-                                    : ""
-                            }
-                        />
+                        <Grid cols={2} key={index}>
+                            <Textfield
+                                type="datetime-local"
+                                label={`Punch Time #${index + 1}`}
+                                value={punch.punch_time}
+                                onChange={(e) => {
+                                    const updatedPunches: any = [...formHandler.values.punches];
+                                    updatedPunches[index] = {
+                                        ...updatedPunches[index],
+                                        punch_time: e.target.value.replace("T", " ") + ":00"
+                                    };
+                                    formHandler.setFieldValue('punches', updatedPunches);
+                                }}
+                                error={
+                                    formHandler.touched.punches?.[index]?.punch_time &&
+                                    typeof (formHandler.errors.punches as { punch_time?: string }[] | undefined)?.[index]?.punch_time === "string"
+                                        ? (formHandler.errors.punches as { punch_time?: string }[])[index].punch_time
+                                        : ""
+                                }
+                            />
+                            <BranchDropDown
+                                label={`Biometric Branch #${index + 1}`}
+                                value={Number(punch.branch_id ?? 125)}
+                                name="branch_id"
+                                placeholder="select branch"
+                                onChange={(e) => {
+                                    const updatedPunches: any = [...formHandler.values.punches];
+                                    updatedPunches[index] = {
+                                        ...updatedPunches[index],
+                                        branch_id: e.target.value
+                                    };
+                                    formHandler.setFieldValue('punches', updatedPunches);
+                                }}
+                            />
+                        </Grid>
                     </div>
                 ))}
 

@@ -304,7 +304,7 @@ const TimeKeepingTableCard = ({
                         />
                         <BranchDropDown
                             placeholder="select branch"
-                            label="Branch"
+                            label="Timekeeping Branch"
                             name="branch_id"
                             value={formHandler.values.branch_id}
                             onChange={(e) => {

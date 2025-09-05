@@ -12,7 +12,7 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                     <Image
                         alt="classic savory logo"
                         src="/images/classic-savory.png"
-                        width={150}
+                        width={140}
                         height={100}
                         className="invert brightness-0"
                     />

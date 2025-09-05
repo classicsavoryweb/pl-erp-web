@@ -264,7 +264,7 @@ const ActualTimeTableCard = ({
                         />
                         <BranchDropDown
                             placeholder="select branch"
-                            label="Branch"
+                            label="Home Branch"
                             name="branch_id"
                             value={formHandler.values.branch_id}
                             onChange={(e) => {

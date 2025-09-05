@@ -238,6 +238,9 @@ const CreateLogModal = ({
                 { formHandler.values.time_keeping.map((timekeep, key) => {
                     return (
                         <div key={key}>
+                            { key !== 0 &&
+                                <hr className="mt-5 text-gray-300"/>
+                            }
                             <div className="mt-5 flex justify-between items-center">
                                 <p>Log Details</p>
 
