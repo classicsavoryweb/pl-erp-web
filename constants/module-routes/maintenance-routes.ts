@@ -177,6 +177,11 @@ export const maintenanceRoutes: Route[] = [
                 pathname: "/maintenance/incentives-management",
                 permission: "view_incentives_management",
             },
+            {
+                name: "Contributions and Tax Set-up",
+                pathname: "/maintenance/contributions-and-tax",
+                permission: "view_contributions_and_tax",
+            },
         ]
     }
 ];
