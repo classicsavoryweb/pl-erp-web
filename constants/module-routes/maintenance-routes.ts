@@ -178,6 +178,11 @@ export const maintenanceRoutes: Route[] = [
                 permission: "view_incentives_management",
             },
             {
+                name: "Incentives Bracket",
+                pathname: "/maintenance/incentives-bracket",
+                permission: "view_incentives_bracket",
+            },
+            {
                 name: "Contributions and Tax Set-up",
                 pathname: "/maintenance/contributions-and-tax",
                 permission: "view_contributions_and_tax",
