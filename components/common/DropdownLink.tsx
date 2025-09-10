@@ -83,7 +83,7 @@ const DropdownLink = ({
                                         py-[7px]
                                         items-center
                                         font-medium
-                                        text-[13.5px]
+                                        text-[13px]
                                         px-3
                                         focus:outline-none
                                         ${active ? "text-red-800" : "text-gray-500"}

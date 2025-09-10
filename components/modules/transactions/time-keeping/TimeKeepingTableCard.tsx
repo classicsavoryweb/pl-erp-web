@@ -125,7 +125,7 @@ const TimeKeepingTableCard = ({
             }
         },
         {
-            columnHead: "Overtime",
+            columnHead: "Computed Overtime",
             path: "regular_overtime",
             columnType: COLUMNTYPES.timekeeping
         },

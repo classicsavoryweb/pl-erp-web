@@ -12,8 +12,8 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                     <Image
                         alt="classic savory logo"
                         src="/images/classic-savory.png"
-                        width={140}
-                        height={100}
+                        width="140"
+                        height="100"
                         className="invert brightness-0"
                     />
                     <p className="text-zinc-50 font-semibold text-md tracking-wider">{process.env.NEXT_PUBLIC_COMPANY}</p>

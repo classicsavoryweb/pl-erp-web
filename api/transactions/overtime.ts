@@ -62,6 +62,34 @@ export const unapproveOvertime = async ( id: number) => {
     return resData;
 };
 
+export const voidOvertime = async ( id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/void-overtime/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
+export const forceAdjustOvertime = async (id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/force-adjust-overtime/${id}`,
+        method: 'POST',
+    });
+
+    return resData;
+};
+
+export const forceAdjustOvertimeWithoutTimeKeeping = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/force-adjust-overtime-without-timekeeping`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const importOvertime = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/import-overtime`,

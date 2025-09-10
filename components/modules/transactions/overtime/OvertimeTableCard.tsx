@@ -26,7 +26,9 @@ import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
-import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime } from "@/api/transactions/overtime";
+import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime, voidOvertime, forceAdjustOvertime } from "@/api/transactions/overtime";
+import ViewTimeKeepingModal from "./ViewTimeKeepingModal";
+import ChooseTimeKeepingModal from "./ChooseTimeKeepingModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -42,27 +44,40 @@ const OvertimeTableCard = ({
 }: FilterInterface) => {
     const api = useApiCall();
     const importModal = useModal();
+    const viewModal = useModal();
+    const timekeepingModal = useModal();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
     const paginator = usePagination(20);
     const filter = useFilter();
+    const [data, setData] = useState<any>({});
+    const [dataSet, setDataSet] = useState<any[]>([]);
+
     const statusOption = [
         {
-            label: "Approved",
-            value: "Approved"
+            label: "Paid",
+            value: "Paid"
+        },
+        {
+            label: "Partial Paid",
+            value: "Partial Paid"
+        },
+        {
+            label: "Unpaid",
+            value: "Unpaid"
         },
         {
             label: "Unapproved",
             value: "Unapproved"
+        },
+        {
+            label: "Voided",
+            value: "Voided"
         }
+
     ];
 
     const columnSettings = [
-        {
-            columnHead: "Date Filed",
-            path: "date_filed",
-            columnType: COLUMNTYPES.date,
-        },
         {
             columnHead: "Employee Name",
             path: "employee.full_name",
@@ -89,9 +104,19 @@ const OvertimeTableCard = ({
             columnType: COLUMNTYPES.date
         },
         {
-            columnHead: "Total Hours",
+            columnHead: "Applied Hours",
             path: "total_hours",
-            columnType: COLUMNTYPES.amount
+            columnType: COLUMNTYPES.timekeeping
+        },
+        {
+            columnHead: "Hours Paid",
+            path: "hours_paid",
+            columnType: COLUMNTYPES.timekeeping
+        },
+        {
+            columnHead: "Cutoff Paid",
+            path: "cutoff_paid",
+            columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Purpose",
@@ -103,14 +128,20 @@ const OvertimeTableCard = ({
             path: "status",
             columnType: COLUMNTYPES.function,
             function: (data:any) => {
-                let status: "default" | "success" | "danger" = "default";
+                let status: "default" | "success" | "danger" | "warning" = "default";
 
                 switch (data.status) {
-                    case "Approved":
+                    case "Unpaid":
+                        status = "warning";
+                        break;
+                    case "Voided":
+                        status = "danger";
+                        break;
+                    case "Partial Paid":
                         status = "success";
                         break;
-                    case "Unapproved":
-                        status = "danger";
+                    case "Paid":
+                        status = "success";
                         break;
                     default:
                         status = "default";
@@ -128,13 +159,18 @@ const OvertimeTableCard = ({
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let actions = tableActions;
-                if (data.status === "Unapproved") {
-                    actions = [
-                        tableActions[0],
-                    ];
-                } else if (data.status === "Approved") {
+                if (data.status === "Voided") {
                     actions = [
                         tableActions[1],
+                    ];
+                } else if (data.status === "Unpaid") {
+                    actions = [
+                        tableActions[0],
+                        tableActions[1],
+                    ];
+                } else if (data.status === "Partial Paid" || data.status === "Paid") {
+                    actions = [
+                        tableActions[2],
                     ];
                 } else {
                     actions = [tableActions[0]]; 
@@ -152,37 +188,42 @@ const OvertimeTableCard = ({
 
     const tableActions = [
         {
-            label: "Approve",
+            label: "Force Adjustment",
             onClick: async (data: any) => {
+                setData(data);
                 const isConfirmed = await confirm({
-                    title: "Approve Overtime",
-                    message: "Are you sure you want to approve this overtime?",
+                    title: "Force Adjustment",
+                    message: "Are you sure you want to force adjust this overtime?",
                 });
 
                 isConfirmed &&
-                approveOvertime(data.id).then((resp) => {
+                forceAdjustOvertime(data.id).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
                         api.triggerReload();
                     } else {
-                        toast.error(resp.data.message);
+                        if (resp.data.message == "not_found") {
+                            toast.error("Timekeeping not found");
+                            timekeepingModal.onOpen();
+                            setDataSet(resp.data.timekeepings);
+                        }
                     }
                 }).catch(() => {
                     toast.error("Error encountered");
                 });
             },
-            permission: "approve_all_transactions_overtime"
+            permission: "force_adjust_all_transactions_overtime"
         },
         {
-            label: "Unapprove",
+            label: "Void",
             onClick: async (data: any) => {
                 const isConfirmed = await confirm({
-                    title: "Unapprove Overtime",
-                    message: "Are you sure you want to unapprove this overtime?",
+                    title: "Void Overtime",
+                    message: "Are you sure you want to void this overtime?",
                 });
 
                 isConfirmed &&
-                unapproveOvertime(data.id).then((resp) => {
+                voidOvertime(data.id).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
                         api.triggerReload();
@@ -193,35 +234,16 @@ const OvertimeTableCard = ({
                     toast.error("Error encountered");
                 });
             },
-            permission: "unapprove_all_transactions_overtime"
+            permission: "void_all_transactions_overtime"
+        },
+        {
+            label: "View",
+            onClick: async (data: any) => {
+                setData(data);
+                viewModal.onOpen();
+            },
         },
     ];
-
-    const approveBulk = useFormik({
-        initialValues: {
-            overtime_id: []
-        },
-        validateOnChange: false,
-        onSubmit:async (values, {resetForm}) => {
-            if (values.overtime_id.length === 0) {
-                toast.error("Must select atleast 1 record");
-            } else {
-                approveBulkOvertime(values)
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(resp.data.message);
-                        resetForm();
-                        api.triggerReload();
-                    } else {
-                        toast.error(resp.data.message);
-                    }
-                }).catch(() => {
-                    toast.error("Error encountered");
-                });
-            }
-            
-        }
-    });
 
     const globalActionSettings = [
         {
@@ -230,18 +252,6 @@ const OvertimeTableCard = ({
                 importModal.onOpen();
             }
         },
-        {
-            label: "Approve Selected",
-            onClick: async () => {
-                const isConfirm = await confirm({
-                    title: "Approve Bulk Overtime",
-                    message: "Are you sure you want to approve this overtime?"
-                });
-                if (isConfirm) {
-                    await approveBulk.submitForm();
-                }
-            }
-        }
     ];
 
     const formHandler = useFormik({
@@ -449,23 +459,25 @@ const OvertimeTableCard = ({
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    withCheckBox
-                    onCheck={(e: any) => {
-                        if (e.target.checked) {
-                            approveBulk.setFieldValue("overtime_id",
-                                [...approveBulk.values.overtime_id,
-                                    e.target.value
-                            ]);
-                        } else {
-                            const overtime_ids = approveBulk.values.overtime_id;
-                            overtime_ids.filter((overtime) => overtime !== e.target.value);
-                            approveBulk.setFieldValue("overtime_id", overtime_ids);
-                        }
-                    }}
                 />
             </Card>
             <ImportModal
                 modal={importModal}
+            />
+
+            <ViewTimeKeepingModal
+                modal={viewModal}
+                data={data}
+            />
+
+            <ChooseTimeKeepingModal
+                modal={timekeepingModal}
+                data={dataSet}
+                overtimeData={data}
+                onSubmitCallBack={() => {
+                    timekeepingModal.onClose();
+                    api.triggerReload();
+                }}
             />
         </>
     );

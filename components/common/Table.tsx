@@ -218,7 +218,7 @@ const Table = ({
                                                         { (settings.columnType === COLUMNTYPES.timekeeping) &&
                                                             <>
                                                                 {
-                                                                    columnData == "0"  
+                                                                    columnData == "0" || columnData == "—" || columnData == null
                                                                     ? "—" 
                                                                     : Math.floor(columnData * 2) / 2    
                                                                 }
