@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { createBranch } from "@/api/branches";
+import AccountDropDown from "../../generic/AccountDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import CompanyDropDown from "../../generic/CompanyDropDown";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
@@ -42,7 +43,11 @@ const CreateBranchForm = ({
             group_head_employee_number: "",
             rate_code: "",
             kitchen_oic_employee_number: "",
-            mancom_employee_number: ""
+            mancom_employee_number: "",
+            expense_debit: "",
+            expense_credit: "",
+            advance_debit: "",
+            advance_credit: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -60,7 +65,11 @@ const CreateBranchForm = ({
             rate_code: Yup.string().required("Rate code is required."),
             branch_head_employee_number: Yup.string().required("Branch OIC is required."),
             mancom_employee_number: Yup.string().required("Mancom is required."),
-            group_head_employee_number: Yup.string().required("Group head is required.")
+            group_head_employee_number: Yup.string().required("Group head is required."),
+            expense_debit: Yup.string().required("Expense debit is required."),
+            expense_credit: Yup.string().required("Expense credit is required."),
+            advance_debit: Yup.string().required("Advance debit is required."),
+            advance_credit: Yup.string().required("Advance credit is required.")
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
@@ -87,7 +96,6 @@ const CreateBranchForm = ({
                     setSubmitting(false);
                 }));
             }
-
         }
     });
 
@@ -251,6 +259,48 @@ const CreateBranchForm = ({
                         required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.device_name}
+                    />
+                </Grid>
+
+                <Grid cols={2}>
+                    <AccountDropDown
+                        label="Expense Debit"
+                        placeholder="select debit account"
+                        name="expense_debit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.expense_debit}
+                        error={createBranchFormHandler.errors.expense_debit}
+                        required
+                    />
+                    <AccountDropDown
+                        label="Expense credit"
+                        placeholder="select credit account"
+                        name="expense_credit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.expense_credit}
+                        error={createBranchFormHandler.errors.expense_credit}
+                        required
+                    />
+                </Grid>
+
+                <Grid cols={2}>
+                    <AccountDropDown
+                        label="Advance Debit"
+                        placeholder="select debit account"
+                        name="advance_debit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.advance_debit}
+                        error={createBranchFormHandler.errors.advance_debit}
+                        required
+                    />
+                    <AccountDropDown
+                        label="Advance credit"
+                        placeholder="select credit account"
+                        name="advance_credit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.advance_credit}
+                        error={createBranchFormHandler.errors.advance_credit}
+                        required
                     />
                 </Grid>
 
