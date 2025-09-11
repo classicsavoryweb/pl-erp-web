@@ -10,6 +10,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { editBranch } from "@/api/branches";
 import { useEffect } from "react";
 import Grid from "@/components/common/Grid";
+import AccountDropDown from "../../generic/AccountDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import CompanyDropDown from "../../generic/CompanyDropDown";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
@@ -46,7 +47,11 @@ const EditBranchForm = ({
             group_head_employee_number: "",
             rate_code: "",
             kitchen_oic_employee_number: "",
-            mancom_employee_number: ""
+            mancom_employee_number: "",
+            expense_debit: "",
+            expense_credit: "",
+            advance_debit: "",
+            advance_credit: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -65,7 +70,11 @@ const EditBranchForm = ({
             rate_code: Yup.string().required("Rate code is required."),
             branch_head_employee_number: Yup.string().required("Branch OIC is required."),
             mancom_employee_number: Yup.string().required("Mancom is required."),
-            group_head_employee_number: Yup.string().required("Group head is required.")
+            group_head_employee_number: Yup.string().required("Group head is required."),
+            expense_debit: Yup.string().required("Expense debit is required."),
+            expense_credit: Yup.string().required("Expense credit is required."),
+            advance_debit: Yup.string().required("Advance debit is required."),
+            advance_credit: Yup.string().required("Advance credit is required.")
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -254,7 +263,42 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.device_name}
                     />
-
+                    <AccountDropDown
+                        label="Expense Debit"
+                        placeholder="select debit account"
+                        name="expense_debit"
+                        onChange={editBranchFormHandler.handleChange}
+                        value={editBranchFormHandler.values.expense_debit}
+                        error={editBranchFormHandler.errors.expense_debit}
+                        required
+                    />
+                    <AccountDropDown
+                        label="Expense credit"
+                        placeholder="select credit account"
+                        name="expense_credit"
+                        onChange={editBranchFormHandler.handleChange}
+                        value={editBranchFormHandler.values.expense_credit}
+                        error={editBranchFormHandler.errors.expense_credit}
+                        required
+                    />
+                    <AccountDropDown
+                        label="Advance Debit"
+                        placeholder="select debit account"
+                        name="advance_debit"
+                        onChange={editBranchFormHandler.handleChange}
+                        value={editBranchFormHandler.values.advance_debit}
+                        error={editBranchFormHandler.errors.advance_debit}
+                        required
+                    />
+                    <AccountDropDown
+                        label="Advance credit"
+                        placeholder="select credit account"
+                        name="advance_credit"
+                        onChange={editBranchFormHandler.handleChange}
+                        value={editBranchFormHandler.values.advance_credit}
+                        error={editBranchFormHandler.errors.advance_credit}
+                        required
+                    />
                     <Dropdown
                         label="Type"
                         placeholder="select type"

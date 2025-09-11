@@ -121,6 +121,10 @@ const BranchesTableCard = () => {
                     rate_code: data.rate_code,
                     kitchen_oic_employee_number: data.kitchen_oic_employee_number,
                     mancom_employee_number: data.mancom_employee_number,
+                    expense_debit: data.expense_debit,
+                    expense_credit: data.expense_credit,
+                    advance_debit: data.advance_debit,
+                    advance_credit: data.advance_credit,
                 });
             }
         },
