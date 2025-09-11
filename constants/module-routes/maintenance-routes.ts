@@ -192,6 +192,11 @@ export const maintenanceRoutes: Route[] = [
                 pathname: "/maintenance/contributions-and-tax",
                 permission: "view_contributions_and_tax",
             },
+            {
+                name: "Terms",
+                pathname: "/maintenance/terms",
+                permission: "view_terms",
+            },
         ]
     }
 ];
