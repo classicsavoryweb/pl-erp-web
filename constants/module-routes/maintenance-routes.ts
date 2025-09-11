@@ -183,6 +183,11 @@ export const maintenanceRoutes: Route[] = [
                 permission: "view_incentives_bracket",
             },
             {
+                name: "Incentives per Employee",
+                pathname: "/maintenance/incentives-per-employee",
+                permission: "view_incentives_per_employee",
+            },
+            {
                 name: "Contributions and Tax Set-up",
                 pathname: "/maintenance/contributions-and-tax",
                 permission: "view_contributions_and_tax",
