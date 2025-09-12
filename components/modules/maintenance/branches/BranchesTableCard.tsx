@@ -125,6 +125,14 @@ const BranchesTableCard = () => {
                     expense_credit: data.expense_credit,
                     advance_debit: data.advance_debit,
                     advance_credit: data.advance_credit,
+                    ho_13th_debit: data.ho_13th_debit,
+                    ho_13th_debit_1: data.ho_13th_debit_1,
+                    ho_13th_credit: data.ho_13th_credit,
+                    branch_ho_13th_debit: data.branch_ho_13th_debit,
+                    branch_ho_13th_debit_1: data.branch_ho_13th_debit_1,
+                    branch_ho_13th_credit: data.branch_ho_13th_credit,
+                    branch_ho_stat_debit: data.branch_ho_stat_debit,
+                    branch_ho_stat_credit: data.branch_ho_stat_credit,
                 });
             }
         },
