@@ -1,4 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
+import CutOffTableCard from "@/components/modules/compensation/cutoff/CutOffTableCard";
 
 const Page = () => {
     return (
@@ -6,6 +7,8 @@ const Page = () => {
             <PageTitle
                 title="Cutoff Setup"
             />
+
+            <CutOffTableCard/>
         </>
     );
 };
