@@ -48,6 +48,14 @@ const CreateBranchForm = ({
             expense_credit: "",
             advance_debit: "",
             advance_credit: "",
+            ho_13th_debit: "",
+            ho_13th_debit_1: "",
+            ho_13th_credit: "",
+            branch_ho_13th_debit: "",
+            branch_ho_13th_debit_1: "",
+            branch_ho_13th_credit: "",
+            branch_ho_stat_debit: "",
+            branch_ho_stat_credit: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -69,7 +77,15 @@ const CreateBranchForm = ({
             expense_debit: Yup.string().required("Expense debit is required."),
             expense_credit: Yup.string().required("Expense credit is required."),
             advance_debit: Yup.string().required("Advance debit is required."),
-            advance_credit: Yup.string().required("Advance credit is required.")
+            advance_credit: Yup.string().required("Advance credit is required."),
+            ho_13th_debit: Yup.string().required("13th allocation debit is required."),
+            ho_13th_debit_1: Yup.string().required("13th allocation debit is required."),
+            ho_13th_credit: Yup.string().required("13th allocation credit is required."),
+            branch_ho_13th_debit: Yup.string().required("13th allocation debit is required."),
+            branch_ho_13th_debit_1: Yup.string().required("13th allocation debit is required."),
+            branch_ho_13th_credit: Yup.string().required("13th allocation credit is required."),
+            branch_ho_stat_debit: Yup.string().required("Statutory debit is required."),
+            branch_ho_stat_credit: Yup.string().required("Statutory credit is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
@@ -273,7 +289,7 @@ const CreateBranchForm = ({
                         required
                     />
                     <AccountDropDown
-                        label="Expense credit"
+                        label="Expense Credit"
                         placeholder="select credit account"
                         name="expense_credit"
                         onChange={createBranchFormHandler.handleChange}
@@ -294,12 +310,96 @@ const CreateBranchForm = ({
                         required
                     />
                     <AccountDropDown
-                        label="Advance credit"
+                        label="Advance Credit"
                         placeholder="select credit account"
                         name="advance_credit"
                         onChange={createBranchFormHandler.handleChange}
                         value={createBranchFormHandler.values.advance_credit}
                         error={createBranchFormHandler.errors.advance_credit}
+                        required
+                    />
+                </Grid>
+
+                <Grid cols={2}>
+                    <AccountDropDown
+                        label="13th Monthly Allocation (HO/HO) Debit"
+                        placeholder="select debit account"
+                        name="ho_13th_debit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.ho_13th_debit}
+                        error={createBranchFormHandler.errors.ho_13th_debit}
+                        required
+                    />
+                    <AccountDropDown
+                        label="13th Monthly Allocation (HO/HO) Debit"
+                        placeholder="select debit account"
+                        name="ho_13th_debit_1"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.ho_13th_debit_1}
+                        error={createBranchFormHandler.errors.ho_13th_debit_1}
+                        required
+                    />
+                </Grid>
+
+                <Grid cols={2}>
+                    <AccountDropDown
+                        label="13th Monthly Allocation (HO/HO) Credit"
+                        placeholder="select credit account"
+                        name="ho_13th_credit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.ho_13th_credit}
+                        error={createBranchFormHandler.errors.ho_13th_credit}
+                        required
+                    />
+                    <AccountDropDown
+                        label="13th Monthly Allocation (Branch/HO) Debit"
+                        placeholder="select debit account"
+                        name="branch_ho_13th_debit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.branch_ho_13th_debit}
+                        error={createBranchFormHandler.errors.branch_ho_13th_debit}
+                        required
+                    />
+                </Grid>
+
+                <Grid cols={2}>
+                    <AccountDropDown
+                        label="13th Monthly Allocation (Branch/HO) Debit"
+                        placeholder="select debit account"
+                        name="branch_ho_13th_debit_1"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.branch_ho_13th_debit_1}
+                        error={createBranchFormHandler.errors.branch_ho_13th_debit_1}
+                        required
+                    />
+                    <AccountDropDown
+                        label="13th Monthly Allocation (Branch/HO) Credit"
+                        placeholder="select credit account"
+                        name="branch_ho_13th_credit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.branch_ho_13th_credit}
+                        error={createBranchFormHandler.errors.branch_ho_13th_credit}
+                        required
+                    />
+                </Grid>
+
+                <Grid cols={2}>
+                    <AccountDropDown
+                        label="Statutory Allocation (Branch/HO) Debit"
+                        placeholder="select debit account"
+                        name="branch_ho_stat_debit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.branch_ho_stat_debit}
+                        error={createBranchFormHandler.errors.branch_ho_stat_debit}
+                        required
+                    />
+                    <AccountDropDown
+                        label="Statutory Allocation (Branch/HO) Credit"
+                        placeholder="select credit account"
+                        name="branch_ho_stat_credit"
+                        onChange={createBranchFormHandler.handleChange}
+                        value={createBranchFormHandler.values.branch_ho_stat_credit}
+                        error={createBranchFormHandler.errors.branch_ho_stat_credit}
                         required
                     />
                 </Grid>
