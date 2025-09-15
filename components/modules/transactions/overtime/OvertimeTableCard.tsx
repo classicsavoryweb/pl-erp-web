@@ -26,7 +26,7 @@ import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
-import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime, voidOvertime, forceAdjustOvertime } from "@/api/transactions/overtime";
+import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime, voidOvertime, forceAdjustOvertime, fetchOvertime } from "@/api/transactions/overtime";
 import ViewTimeKeepingModal from "./ViewTimeKeepingModal";
 import ChooseTimeKeepingModal from "./ChooseTimeKeepingModal";
 
@@ -250,6 +250,27 @@ const OvertimeTableCard = ({
             label: "Import Overtime",
             onClick: () => {
                 importModal.onOpen();
+            }
+        },
+        {
+            label: "Fetch Overtime",
+            onClick: async () => {
+                const isConfirmed = await confirm({
+                    message: "Are you sure you want to fetch overtime?",
+                    title: "Fetch Overtime"
+                });
+
+                isConfirmed &&
+                    fetchOvertime()
+                    .then((resp) => {
+                        if (!resp.error) {
+                            toast.success(resp.data.message);
+                        } else {
+                            toast.error(resp.data.message);
+                        }
+                    }).catch(() => {
+                        toast.error("Error encountered");
+                    });
             }
         },
     ];

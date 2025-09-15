@@ -27,6 +27,16 @@ const ViewTimeKeepingModal = ({
 
     const columnSettings = [
         {
+            columnHead: "Date",
+            path: "date",
+            columnType: COLUMNTYPES.date,
+        },
+        {
+            columnHead: "Schedule",
+            path: "schedule.timetable",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Actual Worked Hours",
             path: "worked_hours",
             columnType: COLUMNTYPES.function,
@@ -149,14 +159,7 @@ const ViewTimeKeepingModal = ({
                 <>
                     <p>Original Timekeeping</p>
                     <Table
-                        columnSettings={[
-                            {
-                                columnHead: "Schedule",
-                                path: "schedule.timetable",
-                                columnType: COLUMNTYPES.string
-                            },
-                            ...columnSettings
-                        ]}
+                        columnSettings={columnSettings}
                         dataSet={originalTimeKeeping}
                         smallText
                     />
