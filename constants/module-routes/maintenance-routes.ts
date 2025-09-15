@@ -197,6 +197,11 @@ export const maintenanceRoutes: Route[] = [
                 pathname: "/maintenance/terms",
                 permission: "view_terms",
             },
+            {
+                name: "Last Pay Setup",
+                pathname: "/maintenance/last-pay-setup",
+                permission: "view_last_pay_setup",
+            },
         ]
     }
 ];
