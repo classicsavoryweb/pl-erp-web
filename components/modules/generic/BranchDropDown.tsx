@@ -12,6 +12,7 @@ interface SelectInterface {
     error?: string;
     value?: string | number;
     required?: boolean;
+    disabled?: boolean;
 }
 
 const BranchDropDown = ({
@@ -21,7 +22,8 @@ const BranchDropDown = ({
     onChange,
     error,
     value,
-    required = false
+    required = false,
+    disabled = false
 }: SelectInterface) => {
 
     const [branchData, setBranchData] = useState<any>([]);
@@ -49,6 +51,7 @@ const BranchDropDown = ({
             value={value}
             loading={loading}
             options={branchData}
+            disabled={disabled}
             required={required}
         />
     );
