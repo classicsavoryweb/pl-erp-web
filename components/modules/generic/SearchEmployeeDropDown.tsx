@@ -11,6 +11,7 @@ interface SelectInterface {
     error?: string;
     value?: any;
     required?: boolean;
+    disabled?: boolean;
     status?: "active" | "inactive"
 }
 
@@ -22,6 +23,7 @@ const SearchEmployeeDropDown = ({
     error,
     value,
     required = false,
+    disabled = false,
     status= "active",
 }: SelectInterface) => {
 
@@ -36,6 +38,7 @@ const SearchEmployeeDropDown = ({
             required={required}
             api={getEmployeesList}
             status={status}
+            disabled={disabled}
             mapResponse={(emp: any) => ({
                 label: `${emp.last_name}, ${emp.first_name} ${emp.middle_name || ""}`,
                 value: emp,
