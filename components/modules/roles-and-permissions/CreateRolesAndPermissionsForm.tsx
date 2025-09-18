@@ -142,7 +142,7 @@ const CreateRolesAndPermissionsForm = ({
                             const isChecked = createRole.values.permissions.includes(permission.name);
 
                             return (
-                                <div key={key} className={` ${ String(permission.name).includes("module") ? "col-span-4 pt-[5px]" : ""}`}>
+                                <div key={key} className={` ${ String(permission.name).includes("module") ? "col-span-4 pt-[10px]" : ""}`}>
                                     <Checkbox
                                         highlight={String(permission.name).includes("module")}
                                         label={permission.name}
