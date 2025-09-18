@@ -15,12 +15,15 @@ import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import CreateEmployeeDeductionForm from "./CreateEmployeeDeductionForm";
 import EditEmployeeDeductionForm from "./EditEmployeeDeductionForm";
+import ActionDropDown from "@/components/common/ActionDropDown";
+import EndLoanTransactionForm from "./EndLoanTransactionForm";
 import { exportAllEmployeeDeductions, getAllEmployeeDeductions } from "@/api/compensation/employee-deductions";
     
 const EmployeeDeductionsTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const editModal = useModal();
+    const editLoanModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
     const filter = useFilter();
@@ -81,6 +84,11 @@ const EmployeeDeductionsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Balance",
+            path: "balance",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Date Start",
             path: "start_date",
             columnType: COLUMNTYPES.string
@@ -95,43 +103,61 @@ const EmployeeDeductionsTableCard = () => {
             path: "approved_status",
             columnType: COLUMNTYPES.string
         },
-    ];
-
-    const tableActions = [
         {
-            label: "Edit",
-            onClick: (data: any) => {
-                editModal.onOpen();
-                setData({
-                    id: data.id,
-                    employee_id: data.employee_id,
-                    employee_number: data.employee.employee_number,
-                    deduction_id: data.deduction_id,
-                    reference_doc: data.reference_doc,
-                    months: data.months,
-                    amount: data.amount,
-                    source_of_fund: data.source_of_fund,
-                    start_date: data.start_date,
-                    end_date: data.end_date,
-                    monthly_amortization: data.monthly_amortization,
-                    balance: data.balance,
-                    remarks: data.remarks,
-                    debit_id: data.debit_id,
-                    credit_id: data.credit_id,
-                    branch_id: data.branch_id,
-                    block_payment: data.block_payment,
-                    approved_by: data.approved_by,
-                    approved_date: data.approved_date,
-                    approved_status: data.approved_status,
-                    deduction_ref: data.deduction_ref,
-                    deduction_status: data.deduction_status,
-                    created_by: data.created_by,
-                    date_created: data.date_created,
-                    end_loan_reason: data.end_loan_reason,
-                    end_loan_status: data.end_loan_status,
+            columnHead: "Action",
+            path: "action",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                const actions = [];
+
+                actions.push({
+                    label: "Edit",
+                    onClick: () => {
+                        editModal.onOpen();
+                        setData({
+                        id: data.id,
+                        employee_id: data.employee_id,
+                        employee_number: data.employee.employee_number,
+                        deduction_id: data.deduction_id,
+                        months: data.months,
+                        amount: data.amount,
+                        start_date: data.start_date,
+                        end_date: data.end_date,
+                        monthly_amortization: data.monthly_amortization,
+                        balance: data.balance,
+                        remarks: data.remarks,
+                        branch_id: data.branch_id,
+                        block_payment: data.block_payment,
+                        });
+                    }
                 });
+
+                const balance = parseFloat(data.balance);
+                const status = data.end_loan_status;
+
+                if (balance > 0  && status !== "Yes") {
+                    actions.push({
+                            label: "End Loan Transaction",
+                            onClick: () => {
+                            editLoanModal.onOpen();
+                            setData({
+                                id: data.id,
+                                amount: data.amount,
+                                balance: data.balance,
+                                end_loan_reason: data.end_loan_reason,
+                                end_loan_status: data.end_loan_status,
+                            });
+                        }
+                    });
+                }
+
+                return actions.length > 0 ? 
+                <ActionDropDown 
+                    data={data} 
+                    actions={actions} 
+                /> : "—";
             }
-        },
+        }
     ];
 
     return (
@@ -161,8 +187,6 @@ const EmployeeDeductionsTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    withActions
-                    actions={tableActions}
                 />
             </Card>
 
@@ -177,6 +201,11 @@ const EmployeeDeductionsTableCard = () => {
                 formValue={data}
             />
 
+            <EndLoanTransactionForm
+                modal={editLoanModal}
+                onSubmitCallback={api.triggerReload}
+                formValue={data}
+            />
         </>
     );
 };

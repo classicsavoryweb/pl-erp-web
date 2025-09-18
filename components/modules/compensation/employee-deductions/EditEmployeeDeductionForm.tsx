@@ -17,7 +17,6 @@ import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
 import confirm from "@/components/common/Confirm";
 import { editEmployeeDeduction } from "@/api/compensation/employee-deductions";
 import { getEmployee } from "@/api/employee";
-import { getBranches } from "@/api/branches";
 interface FormModalInterface {
     modal: any;
     onSubmitCallback: () => void;
