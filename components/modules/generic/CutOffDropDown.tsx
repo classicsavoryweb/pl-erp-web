@@ -3,10 +3,16 @@ import SearchableDropDown from "@/components/common/SearchableDropDown";
 interface DropDownInterface {
     value: string;
     onChange: (e: any) => void;
+    required?: boolean;
+    error?: string;
+    disabled?: boolean;
 };
 const CutOffDropDown = ({
     value,
-    onChange
+    onChange,
+    required = false,
+    error,
+    disabled = false
 }: DropDownInterface) => {
     return (
         <SearchableDropDown
@@ -15,6 +21,9 @@ const CutOffDropDown = ({
             name="cutoff"
             value={String(value)}
             onChange={onChange}
+            required={required}
+            error={error}
+            disabled={disabled}
             options={[
                 { label: "Dec. 26 - Jan. 10", value: "12-26-01-10", obj: { start_time: "12-26", end_time: "01-10" } },
                 { label: "Jan. 11 - Jan. 25", value: "01-11-01-25", obj: { start_time: "01-11", end_time: "01-25" } },

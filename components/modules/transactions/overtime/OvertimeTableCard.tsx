@@ -246,12 +246,12 @@ const OvertimeTableCard = ({
     ];
 
     const globalActionSettings = [
-        {
-            label: "Import Overtime",
-            onClick: () => {
-                importModal.onOpen();
-            }
-        },
+        // {
+        //     label: "Import Overtime",
+        //     onClick: () => {
+        //         importModal.onOpen();
+        //     }
+        // },
         {
             label: "Fetch Overtime",
             onClick: async () => {

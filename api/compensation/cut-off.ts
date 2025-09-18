@@ -20,11 +20,20 @@ export const createCutOff = async (payload: {}) => {
     return resData;
 };
 
-export const editCutOffs = async (payload: {}, id: number | string) => {
+export const editCutOff = async (payload: {}, id: number | string) => {
     const resData = await axiosHelper({
         func_path: `/edit-cut-off/${id}`,
         method: 'POST',
         payload: payload
+    });
+
+    return resData;
+};
+
+export const initializeCutOff = async (id: number | string) => {
+    const resData = await axiosHelper({
+        func_path: `/initialize-cut-off/${id}`,
+        method: 'GET',
     });
 
     return resData;
