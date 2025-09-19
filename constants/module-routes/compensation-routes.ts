@@ -43,6 +43,11 @@ export const compensationRoutes: Route[] = [
                 pathname: "/compensation/employee-deductions",
                 permission: "view_compensation_deductions",
             },
+            {
+                name: "Payroll",
+                pathname: "/compensation/payroll",
+                permission: "view_compensation_payroll",
+            },
         ]
     }
 ];

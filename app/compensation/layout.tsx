@@ -1,4 +1,5 @@
 import Authenticated from "@/components/layouts/Authenticated";
+import PayrollProvider from "@/context/PayrollProvider";
 
 export default function Layout({
   	children,
@@ -7,7 +8,9 @@ export default function Layout({
 }>) {
 	return (
 		<Authenticated>
-            {children}
+			<PayrollProvider>
+				{children}
+			</PayrollProvider>
         </Authenticated>
 	);
 }
