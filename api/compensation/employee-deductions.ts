@@ -53,3 +53,13 @@ export const editEmployeeDeduction = async (payload: {}, id: number) => {
 
     return resData;
 };
+
+export const endLoanTransaction = async (payload: {}, id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/end-loan-transaction/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
