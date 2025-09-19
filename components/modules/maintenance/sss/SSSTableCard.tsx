@@ -34,7 +34,7 @@ const SSSTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching SSS");
+                toast.error("Error fetching SSS Contributions");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
@@ -117,7 +117,7 @@ const SSSTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new sss"
+                            label="Create new contribution"
                             onClick={createModal.onOpen}
                         />
                     </div>

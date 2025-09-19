@@ -38,7 +38,7 @@ const CreatePeriodDefinitionForm = ({
         }),
         onSubmit: async (values, { resetForm, setSubmitting }) => {
             const isConfirmed = await confirm({
-                title: "Create period definition",
+                title: "Create Period Definition",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed){
@@ -72,7 +72,7 @@ const CreatePeriodDefinitionForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create period definition"
+            title="Create Period Definition"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();

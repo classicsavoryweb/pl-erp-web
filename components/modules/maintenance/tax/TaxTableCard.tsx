@@ -34,7 +34,7 @@ const TaxTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching Tax");
+                toast.error("Error fetching tax contributions");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
@@ -123,7 +123,7 @@ const TaxTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new tax"
+                            label="Create new contribution"
                             onClick={createModal.onOpen}
                         />
                     </div>

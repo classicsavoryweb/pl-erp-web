@@ -31,7 +31,7 @@ const ContributionsAndTaxTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching Contributions and Tax");
+                toast.error("Error fetching contributions and tax");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);

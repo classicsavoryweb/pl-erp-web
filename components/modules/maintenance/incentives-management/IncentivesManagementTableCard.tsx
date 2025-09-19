@@ -34,7 +34,7 @@ const IncentivesManagementTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching incentives management");
+                toast.error("Error fetching incentives");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);

@@ -39,7 +39,7 @@ const CreatePhilhealthForm = ({
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Create philhealth",
+                title: "Create Philhealth Contribution",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed) {
@@ -47,7 +47,7 @@ const CreatePhilhealthForm = ({
                 createPhilhealth(values)
                 .then((resp) => {
                     if(!resp.error) {
-                        toast.success("Philhealth created successfully");
+                        toast.success("Philhealth contribution created successfully");
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -66,7 +66,7 @@ const CreatePhilhealthForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create Philhealth"
+            title="Create Philhealth Contribution"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();

@@ -36,7 +36,7 @@ const CreateIncentivesPerEmployeeForm = ({
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Create incentives",
+                title: "Create Incentives",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed) {

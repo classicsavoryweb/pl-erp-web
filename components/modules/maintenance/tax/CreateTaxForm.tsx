@@ -42,7 +42,7 @@ const CreateTaxForm = ({
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Create Tax",
+                title: "Create Tax Contribution",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed) {
@@ -50,7 +50,7 @@ const CreateTaxForm = ({
                 createTax(values)
                 .then((resp) => {
                     if(!resp.error) {
-                        toast.success("Tax created successfully");
+                        toast.success("Tax contribution created successfully");
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -83,7 +83,7 @@ const CreateTaxForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create tax"
+            title="Create Tax Contribution"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();

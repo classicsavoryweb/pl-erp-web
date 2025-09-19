@@ -34,7 +34,7 @@ const TermsTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching Terms");
+                toast.error("Error fetching terms");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);

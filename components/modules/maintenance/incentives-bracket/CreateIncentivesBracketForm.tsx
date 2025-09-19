@@ -65,7 +65,7 @@ const CreateIncentivesBracketForm = ({
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Create incentives bracket",
+                title: "Create Incentives Bracket",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed) {

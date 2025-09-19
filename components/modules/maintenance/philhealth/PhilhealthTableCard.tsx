@@ -34,7 +34,7 @@ const PhilhealthTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching Philhealth");
+                toast.error("Error fetching philhealth contributions");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
@@ -117,7 +117,7 @@ const PhilhealthTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new philhealth"
+                            label="Create new contribution"
                             onClick={createModal.onOpen}
                         />
                     </div>
