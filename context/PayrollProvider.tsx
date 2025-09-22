@@ -5,12 +5,14 @@ import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { PayrollDetails } from "@/constants/interfaces/interface";
+import { getPayroll } from "@/api/compensation/payroll";
 
 interface PayrollContextType {
     payrollDetails: PayrollDetails;
     loading: boolean;
     triggerReload: () => void;
     setPayrollDetails: Dispatch<SetStateAction<PayrollDetails>>;
+    error: boolean;
 }
 
 const defaultPayrollDetails: PayrollDetails = {
@@ -65,7 +67,8 @@ export const PayrollContext = createContext<PayrollContextType>({
     payrollDetails: defaultPayrollDetails,
     loading: true,
     triggerReload: () => {},
-    setPayrollDetails: () => {}
+    setPayrollDetails: () => {},
+    error: false,
 });
 
 const PayrollProvider = ({
@@ -74,6 +77,7 @@ const PayrollProvider = ({
     const [payrollDetails, setPayrollDetails] = useState<PayrollDetails>(defaultPayrollDetails);
     const [loading, setLoading] = useState<boolean>(true);
     const [reload, setReload] = useState<boolean>(true);
+    const [error, setError] = useState<boolean>(false);
     const params = useParams();
     const payrollId = params["payroll-id"];
 
@@ -84,19 +88,20 @@ const PayrollProvider = ({
     useAsyncEffect(() => {
         if (payrollId) {
             setLoading(true);
-            // getEmployee("",(payrollId))
-            // .then((resp) => {
-            //     if (!resp.error) {
-            //         setEmployee(resp.data.employee);
-            //     } else {
-            //         toast.error(resp.data.message); 
-            //     }
-    
-            // }).catch(() => {
-            //     toast.error("Error fetching employee details");
-            // }).finally(() => {
-            //     setLoading(false);
-            // });
+            getPayroll(Number(payrollId))
+            .then((resp) => {
+                if (!resp.error) {
+                    setPayrollDetails(resp.data);
+                } else {
+                    toast.error(resp.data.message); 
+                    setError(true);
+                }
+            }).catch(() => {
+                toast.error("Error fetching payroll details");
+                setError(true);
+            }).finally(() => {
+                setLoading(false);
+            });
         }
     }, [payrollId, reload]);
     
@@ -105,7 +110,8 @@ const PayrollProvider = ({
             payrollDetails,
             setPayrollDetails,
             loading,
-            triggerReload
+            triggerReload,
+            error
         }}>
             {children}
         </PayrollContext.Provider>

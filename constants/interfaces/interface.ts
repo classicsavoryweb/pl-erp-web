@@ -104,6 +104,7 @@ interface Employee {
   current_position: CurrentPosition
   schedule: Schedule
   home_branch: HomeBranch
+  latest_bank_details: LatestBankDetails
 }
 
 interface CurrentBranch {
@@ -257,4 +258,14 @@ export interface Late {
   late_minutes: string
   created_at: string
   updated_at: string
+}
+
+export interface LatestBankDetails {
+  bank_account_type_id : string;
+  bank_number : string;
+  created_at : string;
+  employee_id : string
+  id : number;
+  remarks : string;
+  updated_at : string;
 }
