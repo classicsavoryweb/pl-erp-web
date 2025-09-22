@@ -82,7 +82,7 @@ const EditAdditionalIncomeForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit additional income"
+            title="Edit Additional Income"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();

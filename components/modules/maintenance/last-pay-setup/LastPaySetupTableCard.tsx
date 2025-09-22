@@ -33,7 +33,7 @@ const LastPaySetupTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching Last Pay Setup");
+                toast.error("Error fetching last pay setup");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);

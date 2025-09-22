@@ -9,7 +9,6 @@ import { toast } from "react-toastify";
 import AccountDropDown from "../../generic/AccountDropDown";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import Checkbox from "@/components/common/Checkbox";
-import Dropdown from "@/components/common/Dropdown";
 import confirm from "@/components/common/Confirm";
 import { createAdditionalIncome } from "@/api/maintenance/additional-income";
 
@@ -74,7 +73,7 @@ const CreateAdditionalIncomeForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create additional income"
+            title="Create Additional Income"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();

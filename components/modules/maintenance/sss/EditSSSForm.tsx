@@ -43,7 +43,7 @@ const EditSSSForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Edit SSS",
+                title: "Edit SSS Contribution",
                 message: "Are you sure you want to save changes?"
             });
 
@@ -77,7 +77,7 @@ const EditSSSForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit SSS"
+            title="Edit SSS Contribution"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();

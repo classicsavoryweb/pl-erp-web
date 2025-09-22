@@ -35,7 +35,7 @@ const EditPagibigForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Edit Pagibig",
+                title: "Edit Pagibig Contribution",
                 message: "Are you sure you want to save changes?"
             });
 
@@ -69,7 +69,7 @@ const EditPagibigForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit pagibig"
+            title="Edit Pagibig Contribution"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();

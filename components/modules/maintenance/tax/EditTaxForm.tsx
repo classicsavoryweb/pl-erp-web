@@ -46,7 +46,7 @@ const EditTaxForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Edit tax",
+                title: "Edit Tax Contribution",
                 message: "Are you sure you want to save changes?"
             });
 
@@ -55,7 +55,7 @@ const EditTaxForm = ({
                 editTax(values, formValue.id)
                 .then((resp) => {
                     if(!resp.error) {
-                        toast.success("Tax updated successfully");
+                        toast.success("Tax contribution updated successfully");
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -94,7 +94,7 @@ const EditTaxForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit Tax"
+            title="Edit Tax Contribution"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();

@@ -108,7 +108,7 @@ const CSHubTransactionTypeTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new type"
+                            label="Create new transaction type"
                             onClick={createModal.onOpen}
                         />
                     </div>

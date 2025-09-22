@@ -100,7 +100,7 @@ const PeriodDefinitionTableCard = () => {
                 <div className="flex justify-end items-center">
                     <div>
                         <Button
-                            label="Create new period definition"
+                            label="Create new period"
                             onClick={createModal.onOpen}
                         />
                     </div>

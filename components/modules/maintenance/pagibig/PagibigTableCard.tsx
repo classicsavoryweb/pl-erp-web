@@ -86,7 +86,7 @@ const PagibigTableCard = ({
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching Pagibig");
+                toast.error("Error fetching pagibig contributions");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);

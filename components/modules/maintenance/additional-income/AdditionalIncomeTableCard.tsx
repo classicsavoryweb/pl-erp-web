@@ -34,7 +34,7 @@ const AdditionalIncomeTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching Additional Income");
+                toast.error("Error fetching additional income");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);

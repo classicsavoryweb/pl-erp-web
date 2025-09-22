@@ -97,7 +97,7 @@ const EditCSHubTransactionTypeForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit transaciton type"
+            title="Edit Transaction Type"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();

@@ -43,7 +43,7 @@ const EditPhilhealthForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Edit Philhealth",
+                title: "Edit Philhealth Contribution",
                 message: "Are you sure you want to save changes?"
             });
 
@@ -77,7 +77,7 @@ const EditPhilhealthForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit philhealth"
+            title="Edit Philhealth Contribution"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();

@@ -39,7 +39,7 @@ const CreateSSSForm = ({
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Create SSS",
+                title: "Create SSS Contribution",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed) {
@@ -66,7 +66,7 @@ const CreateSSSForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create SSS"
+            title="Create SSS Contribution"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
