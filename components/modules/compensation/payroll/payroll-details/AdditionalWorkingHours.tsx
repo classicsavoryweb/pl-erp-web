@@ -14,7 +14,7 @@ const AdditionalWorkingHours = () => {
             loading={loading}
         >
             <p className="font-semibold text-red-800">Additional Working Hours</p>
-            <Grid cols={2}>
+            <Grid cols={3}>
                 <Textfield
                     disabled
                     label="Special Holiday"
@@ -49,6 +49,11 @@ const AdditionalWorkingHours = () => {
                     disabled
                     label="Night Differential Overtime"
                     value={payrollDetails.night_differential_overtime_amount}
+                />
+                <Textfield
+                    disabled
+                    label="Cancelled Off"
+                    value={payrollDetails.cancelled_off}
                 />
             </Grid>
         </Card>

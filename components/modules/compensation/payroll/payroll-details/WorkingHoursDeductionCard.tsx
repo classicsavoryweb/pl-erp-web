@@ -4,6 +4,7 @@ import Card from "@/components/common/Card";
 import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
 import { PayrollContext } from "@/context/PayrollProvider";
+import moment from "moment";
 import { useContext } from "react";
 
 const WorkingHoursDeductionCard = () => {
@@ -14,18 +15,42 @@ const WorkingHoursDeductionCard = () => {
             loading={loading}
         >
             <p className="font-semibold text-red-800">Working Hours Deduction</p>
-            <Grid cols={2}>
-                <Textfield
-                    disabled
-                    label="Special Holiday"
-                    value={payrollDetails.special_holiday_amount}
-                />
-                <Textfield
-                    disabled
-                    label="Legal Holiday"
-                    value={payrollDetails.legal_holiday_amount}
-                />
-            </Grid>
+
+            { (payrollDetails.tardiness_list && payrollDetails.tardiness_list.length > 0) &&
+                <>
+                    <p className="mt-3">Tardiness</p>
+                    <Grid cols={3}>
+                        { payrollDetails.tardiness_list.map((tardy, idx) => {
+                            return (
+                                <Textfield
+                                    key={idx}
+                                    disabled
+                                    label={moment(tardy.date).format("MMMM d, Y")}
+                                    value={tardy.tardiness + " mins - " + tardy.payment.tardiness_deduction}
+                                />
+                            );
+                        })}
+                    </Grid>
+                </>
+            }
+
+            { (payrollDetails.undertime_list && payrollDetails.undertime_list.length > 0) &&
+                <>
+                    <p className="mt-3">Undertime</p>
+                    <Grid cols={3}>
+                        { payrollDetails.undertime_list.map((undertime,idx) => {
+                            return (
+                                <Textfield
+                                    key={idx}
+                                    disabled
+                                    label={moment(undertime.date).format("MMMM d, Y")}
+                                    value={undertime.undertime + " mins - " + undertime.payment.undertime_deduction}
+                                />
+                            );
+                        })}
+                    </Grid>
+                </>
+            }
         </Card>
     );
 };
