@@ -20,6 +20,7 @@ import { useState } from "react";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import confirm from "@/components/common/Confirm";
 import EditReportCoeRequestForm from "./EditReportCoeRequestForm";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const ReportCoeRequestsTableCard = () => {
     const [selectedRequest, setSelectedRequest] = useState<number>(0);
@@ -147,6 +148,15 @@ const ReportCoeRequestsTableCard = () => {
             }
 
         }
+    ];
+
+    const globalActionSettings = [
+        {
+            label: "Create new request",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
     ];
 
     const actionSettings = [
@@ -288,15 +298,10 @@ const ReportCoeRequestsTableCard = () => {
                 data={data}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div
-                        className="w-[180px]"
-                    >
-                        <Button
-                            label="Create new request"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={globalActionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

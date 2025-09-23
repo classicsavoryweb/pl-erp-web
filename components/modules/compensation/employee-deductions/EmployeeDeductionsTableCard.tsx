@@ -18,6 +18,7 @@ import EditEmployeeDeductionForm from "./EditEmployeeDeductionForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import EndLoanTransactionForm from "./EndLoanTransactionForm";
 import { exportAllEmployeeDeductions, getAllEmployeeDeductions } from "@/api/compensation/employee-deductions";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const EmployeeDeductionsTableCard = () => {
     const api = useApiCall();
@@ -160,6 +161,15 @@ const EmployeeDeductionsTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new deduction",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     return (
         <>
             <FilterCard
@@ -174,13 +184,10 @@ const EmployeeDeductionsTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new deduction"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

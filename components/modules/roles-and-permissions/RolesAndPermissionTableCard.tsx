@@ -15,6 +15,7 @@ import { useModal } from "@/hooks/modal";
 import EditRolesAndPermissionsForm from "./EditRolesAndPermissionsForm";
 import { useState } from "react";
 import confirm from "@/components/common/Confirm";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const RolesAndPermissionTableCard = () => {
     const roles = useApiCall();
@@ -75,6 +76,15 @@ const RolesAndPermissionTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new role",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -113,15 +123,10 @@ const RolesAndPermissionTableCard = () => {
     return (
         <>
             <Card>
-                <div className="flex justify-end items-center">
-                    <div
-                        className="w-[150px]"
-                    >
-                        <Button
-                            label="Create new role"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={roles.dataSet}
