@@ -14,7 +14,7 @@ const EmployeeDetailCard = () => {
             loading={loading}
         >
             <p className="font-semibold text-red-800">Employee Details</p>
-            <Grid cols={2}> 
+            <Grid cols={3}> 
                 <Textfield
                     disabled
                     label="Employee"
@@ -27,12 +27,22 @@ const EmployeeDetailCard = () => {
                 />
                 <Textfield
                     disabled
-                    label="Branch"
+                    label="Position"
+                    value={payrollDetails?.employee?.current_position?.description}
+                />
+                <Textfield
+                    disabled
+                    label="Home Branch"
                     value={payrollDetails?.employee?.current_branch?.name}
                 />
                 <Textfield
                     disabled
-                    label={payrollDetails?.employee?.latest_bank_details?.bank_account_type_id === "2" ? "Savings Account" : "Cash Card"}
+                    label="Timekeeping Branch"
+                    value={payrollDetails?.employee?.current_branch?.name}
+                />
+                <Textfield
+                    disabled
+                    label={payrollDetails?.employee?.latest_bank_details?.bank_account_type_id == "2" ? "Savings Account" : "Cash Card"}
                     value={payrollDetails?.employee?.latest_bank_details?.bank_number}
                 />
                 <Textfield

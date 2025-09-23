@@ -60,7 +60,12 @@ const defaultPayrollDetails: PayrollDetails = {
     employee: {} as any,
     timekeeping_branch: {} as any,
     timekeeping_summary: {} as any,
-    lates: []
+    tardiness_list: [],
+    undertime_list: [],
+    taxable_income : "",
+    contribution_total : "",
+    additional_working_hours_total: "",
+    working_hours_deduction_total: "",
 };
 
 export const PayrollContext = createContext<PayrollContextType>({

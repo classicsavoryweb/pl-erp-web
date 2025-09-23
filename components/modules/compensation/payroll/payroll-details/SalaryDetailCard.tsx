@@ -4,6 +4,7 @@ import Card from "@/components/common/Card";
 import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
 import { PayrollContext } from "@/context/PayrollProvider";
+import moment from "moment";
 import { useContext } from "react";
 
 const SalaryDetailCard = () => {
@@ -14,7 +15,12 @@ const SalaryDetailCard = () => {
             loading={loading}
         >
             <p className="font-semibold text-red-800">Salary Details</p>
-            <Grid cols={3}>
+            <Grid cols={2}>
+                <Textfield
+                    disabled
+                    label="Cutoff"
+                    value={moment(payrollDetails.start_date).format("MMM. DD") + " to " +moment(payrollDetails.end_date).format("MMM. DD, YYYY")}
+                />
                 <Textfield
                     disabled
                     label="Pay Date"

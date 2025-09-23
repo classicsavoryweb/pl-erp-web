@@ -43,7 +43,12 @@ export interface PayrollDetails {
   employee: Employee
   timekeeping_branch: any
   timekeeping_summary: TimekeepingSummary
-  lates: Late[]
+  tardiness_list: TimeKeeping[]
+  undertime_list: TimeKeeping[]
+  taxable_income: string
+  contribution_total : string,
+  additional_working_hours_total: string,
+  working_hours_deduction_total: string,
 }
 
 interface Employee {
@@ -251,15 +256,6 @@ export interface TimekeepingSummary {
   updated_at: string
 }
 
-export interface Late {
-  id: number
-  timekeeping_summary_id: string
-  date: string
-  late_minutes: string
-  created_at: string
-  updated_at: string
-}
-
 export interface LatestBankDetails {
   bank_account_type_id : string;
   bank_number : string;
@@ -268,4 +264,50 @@ export interface LatestBankDetails {
   id : number;
   remarks : string;
   updated_at : string;
+}
+
+export interface TimeKeeping {
+  id: number
+  date: string
+  employee_id: string
+  branch_id: string
+  regular_days: string
+  special_leave: string
+  cancelled_off: string
+  special_holiday: string
+  legal_holiday: string
+  regular_overtime: string
+  night_differential: string
+  night_differential_overtime: string
+  legal_holiday_overtime: string
+  special_holiday_overtime: string
+  undertime: string
+  tardiness: string
+  travel_time: string
+  adjustment_amount: string
+  remarks: any
+  created_at: string
+  updated_at: string
+  payment: TimeKeepingPayment
+}
+
+export interface TimeKeepingPayment {
+  adjustment_timekeeping_id : string | null
+  base_amount : string
+  cancelled_off : string
+  created_at : string
+  id : number
+  legal_holiday : string
+  legal_holiday_overtime : string
+  night_differential : string
+  night_differential_overtime : string
+  regular_overtime : string
+  special_holiday : string
+  special_holiday_overtime : string
+  tardiness_deduction : string
+  timekeeping_id : string
+  total_amount : string
+  type : string
+  undertime_deduction : string
+  updated_at : string
 }
