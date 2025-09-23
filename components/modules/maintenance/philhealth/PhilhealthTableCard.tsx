@@ -1,6 +1,6 @@
 "use client";
 
-import Button from "@/components/common/Button";
+import DropDownButtons from "@/components/common/DropDownButtons";
 import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
@@ -14,6 +14,7 @@ import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import CreatePhilhealthForm from "./CreatePhilhealthForm";
+import EditPhilhealthPercentageBaseForm from "./EditPhilhealthPercentageBaseForm";
 import EditPhilhealthForm from "./EditPhilhealthForm";
 import { exportAllPhilhealth, getAllPhilhealth } from "@/api/maintenance/philhealth";
     
@@ -21,6 +22,7 @@ const PhilhealthTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const editModal = useModal();
+    const percentageBaseModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
     const filter = useFilter();
@@ -100,6 +102,21 @@ const PhilhealthTableCard = () => {
         },
     ];
 
+    const globalActionSettings = [
+        {
+            label: "Create new contribution",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+        {
+            label: "Percentage based setup",
+            onClick: () => {
+                percentageBaseModal.onOpen();
+            }
+        },
+    ];
+
     return (
         <>
             <FilterCard
@@ -114,13 +131,10 @@ const PhilhealthTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new contribution"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={globalActionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}
@@ -134,6 +148,11 @@ const PhilhealthTableCard = () => {
 
             <CreatePhilhealthForm
                 modal={createModal}
+                onSubmitCallback={api.triggerReload}
+            />
+
+            <EditPhilhealthPercentageBaseForm
+                modal={percentageBaseModal}
                 onSubmitCallback={api.triggerReload}
             />
 
