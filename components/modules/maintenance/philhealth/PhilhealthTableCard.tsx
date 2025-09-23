@@ -16,6 +16,7 @@ import moment from "moment";
 import CreatePhilhealthForm from "./CreatePhilhealthForm";
 import EditPhilhealthForm from "./EditPhilhealthForm";
 import { exportAllPhilhealth, getAllPhilhealth } from "@/api/maintenance/philhealth";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const PhilhealthTableCard = () => {
     const api = useApiCall();
@@ -82,6 +83,15 @@ const PhilhealthTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new contribution",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -114,13 +124,10 @@ const PhilhealthTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new contribution"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

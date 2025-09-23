@@ -17,6 +17,7 @@ import { exportAllCoeReasons, getAllCoeReasons } from "@/api/coe-reason";
 import CreateCoeReasonForm from "./CreateCoeReasonForm";
 import EditCoeReasonForm from "./EditCoeReasonForm";
 import moment from "moment";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const CoeReasonsTableCard = () => {
     const api = useApiCall();
@@ -63,6 +64,15 @@ const CoeReasonsTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new reason",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -99,13 +109,10 @@ const CoeReasonsTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new reason"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

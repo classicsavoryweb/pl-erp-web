@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateIncentivesBracketForm from "./CreateIncentivesBracketForm";
 import EditIncentivesBracketForm from "./EditIncentivesBracketForm";
 import { exportAllIncentivesBracket, getAllIncentivesBracket } from "@/api/maintenance/incentives-bracket";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const IncentivesBracketTableCard = () => {
     const api = useApiCall();
@@ -57,6 +58,15 @@ const IncentivesBracketTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new incentives bracket",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -89,13 +99,10 @@ const IncentivesBracketTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new incentives bracket"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

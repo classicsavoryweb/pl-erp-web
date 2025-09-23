@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateActingCapacityReasonForm from "./CreateActingCapacityReasonForm";
 import EditActingCapacityReasonForm from "./EditActingCapacityReasonForm";
 import { exportAllActingCapacityReasons, getAllActingCapacityReasons } from "@/api/acting-capacity-reason";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const ActingCapacityReasonsTableCard = () => {
     const api = useApiCall();
@@ -62,6 +63,15 @@ const ActingCapacityReasonsTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new reason",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -97,13 +107,10 @@ const ActingCapacityReasonsTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new reason"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateIncentivesPerEmployeeForm from "./CreateIncentivesPerEmployeeForm";
 import EditIncentivesPerEmployeeForm from "./EditIncentivesPerEmployeeForm";
 import { exportAllIncentivesPerEmployee, getAllIncentivesPerEmployee } from "@/api/maintenance/incentives-per-employee";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const IncentivesPerEmployeeTableCard = () => {
     const api = useApiCall();
@@ -62,6 +63,15 @@ const IncentivesPerEmployeeTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new incentives",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -92,13 +102,10 @@ const IncentivesPerEmployeeTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new incentives"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

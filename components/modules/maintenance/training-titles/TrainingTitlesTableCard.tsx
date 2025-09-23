@@ -18,6 +18,7 @@ import EditTrainingTitleForm from "./EditTrainingTitleForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const TrainingTitlesTableCard = () => {
     const api = useApiCall();
@@ -79,6 +80,15 @@ const TrainingTitlesTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new title",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -132,15 +142,10 @@ const TrainingTitlesTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div
-                        className="w-[170px]"
-                    >
-                        <Button
-                            label="Create new title"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

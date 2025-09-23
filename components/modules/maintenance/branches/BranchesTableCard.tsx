@@ -16,6 +16,7 @@ import EditBranchForm from "./EditBranchForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const BranchesTableCard = () => {
     const api = useApiCall();
@@ -95,6 +96,15 @@ const BranchesTableCard = () => {
             path: "status",
             columnType: COLUMNTYPES.status,
         }
+    ];
+
+    const actionSettings = [
+        {
+            label: "Create new branch",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
     ];
 
     const tableActions = [
@@ -186,15 +196,10 @@ const BranchesTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div
-                        className="w-[170px]"
-                    >
-                        <Button
-                            label="Create new branch"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

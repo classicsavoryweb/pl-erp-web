@@ -17,6 +17,7 @@ import EditDiagnosisForm from "./EditDiagnosisForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const DiagnosisTableCard = () => {
     const api = useApiCall();
@@ -63,6 +64,15 @@ const DiagnosisTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new diagnosis",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -98,14 +108,10 @@ const DiagnosisTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div
-                    >
-                        <Button
-                            label="Create new diagnosis"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

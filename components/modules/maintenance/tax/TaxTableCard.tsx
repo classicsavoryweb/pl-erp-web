@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateTaxForm from "./CreateTaxForm";
 import EditTaxForm from "./EditTaxForm";
 import { exportAllTax, getAllTax } from "@/api/maintenance/tax";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const TaxTableCard = () => {
     const api = useApiCall();
@@ -87,6 +88,15 @@ const TaxTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new contribution",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -120,13 +130,10 @@ const TaxTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new contribution"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

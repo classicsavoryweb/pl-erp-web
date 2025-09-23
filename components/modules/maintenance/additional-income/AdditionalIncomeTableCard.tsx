@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateAdditionalIncomeForm from "./CreateAdditionalIncomeForm";
 import EditAdditionalIncomeForm from "./EditAdditionalIncomeForm";
 import { exportAllAdditionalIncome, getAllAdditionalIncome } from "@/api/maintenance/additional-income";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const AdditionalIncomeTableCard = () => {
     const api = useApiCall();
@@ -67,6 +68,15 @@ const AdditionalIncomeTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new additional income",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -112,13 +122,10 @@ const AdditionalIncomeTableCard = () => {
                 withStatus
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new additional income"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

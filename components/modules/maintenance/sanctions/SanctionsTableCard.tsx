@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateSanctionForm from "./CreateSanctionForm";
 import EditSanctionForm from "./EditSanctionForm";
 import { exportAllSanctions, getAllSanctions } from "@/api/sanctions";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const SanctionsTableCard = () => {
     const api = useApiCall();
@@ -72,6 +73,15 @@ const SanctionsTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new sanction",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -119,13 +129,10 @@ const SanctionsTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new sanction"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

@@ -16,6 +16,7 @@ import moment from "moment";
 import { exportAllAdjustmentTypes, getAllAdjustmentTypes } from "@/api/maintenance/adjustment-type";
 import CreateAdjustmentTypeModal from "./CreateAdjustmentTypeModal";
 import EditAdjustmentTypeModal from "./EditAdjustmentTypeModal";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const AdjustmentTypesTableCard = () => {
     const api = useApiCall();
@@ -62,6 +63,15 @@ const AdjustmentTypesTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new adjustment type",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -91,13 +101,10 @@ const AdjustmentTypesTableCard = () => {
                 withStatus
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new adjustment type"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

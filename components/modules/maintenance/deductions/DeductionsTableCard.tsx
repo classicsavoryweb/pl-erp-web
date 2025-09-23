@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateDeductionForm from "./CreateDeductionForm";
 import EditDeductionForm from "./EditDeductionForm";
 import { exportAllDeductions, getAllDeductions } from "@/api/maintenance/deductions";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const DeductionsTableCard = () => {
     const api = useApiCall();
@@ -62,6 +63,15 @@ const DeductionsTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new deduction",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -105,13 +115,10 @@ const DeductionsTableCard = () => {
                 withStatus
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new deduction"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

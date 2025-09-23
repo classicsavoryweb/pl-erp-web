@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateCSHubTransactionTypeForm from "./CreateCSHubTransactionTypeForm";
 import EditCSHubTransactionTypeForm from "./EditCSHubTransactionTypeForm";
 import { exportAllCSHubTransactionType, getAllCSHubTransactionType } from "@/api/maintenance/cshub-transaction-type";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const CSHubTransactionTypeTableCard = () => {
     const api = useApiCall();
@@ -62,6 +63,15 @@ const CSHubTransactionTypeTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new transaction type",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -105,13 +115,10 @@ const CSHubTransactionTypeTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new transaction type"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}
