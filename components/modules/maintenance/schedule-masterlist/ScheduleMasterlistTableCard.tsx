@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateScheduleForm from "./CreateScheduleForm";
 import EditScheduleForm from "./EditScheduleForm";
 import { exportAllScheduleMasterlist, getAllScheduleMasterlist } from "@/api/schedule-masterlist";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const ScheduleMasterlistTableCard = () => {
     const api = useApiCall();
@@ -92,6 +93,15 @@ const ScheduleMasterlistTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new schedule",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -164,13 +174,10 @@ const ScheduleMasterlistTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new schedule"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

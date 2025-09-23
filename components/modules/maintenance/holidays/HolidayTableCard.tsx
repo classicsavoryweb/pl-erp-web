@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateHolidayForm from "./CreateHolidayForm";
 import EditHolidayForm from "./EditHolidayForm";
 import { exportAllHolidays, getAllHolidays } from "@/api/holidays";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const HolidayTableCard = () => {
     const api = useApiCall();
@@ -82,6 +83,15 @@ const HolidayTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new holiday",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -131,13 +141,10 @@ const HolidayTableCard = () => {
                 withHolidayType
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new holiday"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

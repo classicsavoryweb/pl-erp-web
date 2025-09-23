@@ -25,6 +25,7 @@ import ViewConfirmationDocumentModal from "./ViewConfirmationDocumentsModal";
 import RejectPromotionModal from "./RejectPromotionForm";
 import ConfirmPromotionModal from "./ConfirmPromotionModal";
 import Link from "next/link";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const ActingCapacityTableCard = () => {
     const api = useApiCall();
@@ -173,6 +174,15 @@ const ActingCapacityTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new record",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const actions = [
         {
             label: "View",
@@ -276,13 +286,10 @@ const ActingCapacityTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new record"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

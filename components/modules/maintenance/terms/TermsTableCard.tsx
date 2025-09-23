@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateTermForm from "./CreateTermForm";
 import EditTermForm from "./EditTermForm";
 import { exportAllTerms, getAllTerms } from "@/api/maintenance/terms";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const TermsTableCard = () => {
     const api = useApiCall();
@@ -77,6 +78,15 @@ const TermsTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new term",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -108,13 +118,10 @@ const TermsTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new term"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

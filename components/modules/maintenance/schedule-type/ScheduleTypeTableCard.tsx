@@ -15,6 +15,7 @@ import { useFilter } from "@/hooks/use-filter";
 import { getAllScheduleType } from "@/api/schedule-type";
 import CreateScheduleTypeForm from "./CreateScheduleTypeForm";
 import EditScheduleTypeForm from "./EditScheduleTypeForm";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const ScheduleTypeTableCard = () => {
     const api = useApiCall();
@@ -61,6 +62,15 @@ const ScheduleTypeTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new schedule type",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -96,13 +106,10 @@ const ScheduleTypeTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new schedule type"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

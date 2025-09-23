@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateSSSForm from "./CreateSSSForm";
 import EditSSSForm from "./EditSSSForm";
 import { exportAllSSS, getAllSSS } from "@/api/maintenance/sss";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const SSSTableCard = () => {
     const api = useApiCall();
@@ -82,6 +83,15 @@ const SSSTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new contribution",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -114,13 +124,10 @@ const SSSTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new contribution"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

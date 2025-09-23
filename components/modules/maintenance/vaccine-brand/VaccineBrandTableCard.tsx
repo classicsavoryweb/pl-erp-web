@@ -16,6 +16,7 @@ import { exportAllVaccines, getAllVaccines } from "@/api/vaccines";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "../../cards/FilterCard";
 import moment from "moment";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const VaccineBrandTableCard = () => {
     const api = useApiCall();
@@ -62,6 +63,15 @@ const VaccineBrandTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new brand",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -97,15 +107,10 @@ const VaccineBrandTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div
-                        className="w-[170px]"
-                    >
-                        <Button
-                            label="Create new title"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

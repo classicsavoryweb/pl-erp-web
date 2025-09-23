@@ -16,6 +16,7 @@ import moment from "moment";
 import CreateIncentivesManagementForm from "./CreateIncentivesManagementForm";
 import EditIncentivesManagementForm from "./EditIncentivesManagementForm";
 import { exportAllIncentivesManagement, getAllIncentivesManagement } from "@/api/maintenance/incentives-management";
+import DropDownButtons from "@/components/common/DropDownButtons";
     
 const IncentivesManagementTableCard = () => {
     const api = useApiCall();
@@ -62,6 +63,15 @@ const IncentivesManagementTableCard = () => {
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new incentives",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -92,13 +102,10 @@ const IncentivesManagementTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div>
-                        <Button
-                            label="Create new incentives"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

@@ -18,6 +18,7 @@ import EditPositionForm from "./EditPositionForm";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const PositionsTableCard = () => {
     const api = useApiCall();
@@ -84,6 +85,15 @@ const PositionsTableCard = () => {
         }
     ];
 
+    const actionSettings = [
+        {
+            label: "Create new position",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
+    ];
+
     const tableActions = [
         {
             label: "Edit",
@@ -143,15 +153,10 @@ const PositionsTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end items-center">
-                    <div
-                        className="w-[180px]"
-                    >
-                        <Button
-                            label="Create new position"
-                            onClick={createModal.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={api.dataSet}

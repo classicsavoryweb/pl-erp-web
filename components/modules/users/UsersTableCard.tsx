@@ -14,6 +14,7 @@ import { useModal } from "@/hooks/modal";
 import CreateUsersForm from "./CreateUsersForm";
 import EditUsersForm from "./EditUsersForm";
 import { useState } from "react";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const UsersTableCard = () => {
 
@@ -73,6 +74,15 @@ const UsersTableCard = () => {
             columnType: COLUMNTYPES.status,
         }
     ];
+
+    const actionSettings = [
+        {
+            label: "Create new user",
+            onClick: () => {
+                createUser.onOpen();
+            }
+        },
+    ];
     
     const tableActions = [
         {
@@ -98,15 +108,10 @@ const UsersTableCard = () => {
     return (
         <>
             <Card>
-                <div className="flex justify-end items-center">
-                    <div
-                        className="w-[150px]"
-                    >
-                        <Button
-                            label="Create new user"
-                            onClick={createUser.onOpen}
-                        />
-                    </div>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
                 </div>
                 <Table
                     dataSet={users.dataSet}
