@@ -29,4 +29,9 @@ export const PAGE_PERMISSION = [
         pathname: "/employees/edit/[employee-number]",
         permission: "perform_employee_tracking"
     },
+    {
+        name: "Compensation",
+        pathname: "/compensation/payroll/[payroll-id]",
+        permission: "view_compensation_payroll"
+    },
 ];

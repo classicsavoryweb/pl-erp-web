@@ -18,3 +18,23 @@ export const getPayroll = async (id: number) => {
 
     return resData;
 };
+
+export const updatePayrollDeduction = async (id: number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/update-payroll-deduction/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const updatePayrollDetails = async (id: number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/update-payroll-details/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};

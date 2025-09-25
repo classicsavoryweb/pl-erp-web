@@ -38,3 +38,12 @@ export const initializeCutOff = async (id: number | string) => {
 
     return resData;
 };
+
+export const finalizeCutOff = async (id: number | string) => {
+    const resData = await axiosHelper({
+        func_path: `/finalize-cut-off/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};

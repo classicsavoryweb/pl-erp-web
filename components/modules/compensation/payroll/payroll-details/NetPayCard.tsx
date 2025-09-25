@@ -1,13 +1,17 @@
 "use client";
 
+import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
 import TextArea from "@/components/common/TextArea";
 import Textfield from "@/components/common/Textfield";
+import { AuthContext } from "@/context/AuthProvider";
 import { PayrollContext } from "@/context/PayrollProvider";
 import { useContext } from "react";
 
-const NetPayCard = () => {
+const NetPayCard = ({ formHandler } : { formHandler: any }) => {
     const { loading, payrollDetails } = useContext(PayrollContext);
+    const { permissions } = useContext(AuthContext);
+
     return (
         <Card
             size="medium"
@@ -26,18 +30,18 @@ const NetPayCard = () => {
             />
             <Textfield
                 disabled
-                label="Working Hours Deduction"
+                label="Working Hours Deductions"
                 value={payrollDetails.working_hours_deduction_total}
-            />
-            <Textfield
-                disabled
-                label="Contributions"
-                value={payrollDetails.contribution_total}
             />
             <Textfield
                 disabled
                 label="Gross Pay"
                 value={payrollDetails.gross_pay}
+            />
+            <Textfield
+                disabled
+                label="Contributions"
+                value={payrollDetails.contribution_total}
             />
             <Textfield
                 disabled
@@ -55,15 +59,34 @@ const NetPayCard = () => {
                 value={payrollDetails.total_deductions}
             />
             <Textfield
+                disabled = {!permissions.includes("perform_compensation_payroll")}
+                type="number"
+                onChange={formHandler.handleChange}
+                label="Manual Deductions"
+                name="manual_deductions"
+                value={formHandler.values.manual_deductions}
+                error={formHandler.errors.manual_deductions}
+            />
+            <Textfield
                 disabled
                 label="Net Pay"
                 value={payrollDetails.net_pay}
             />
             <TextArea
-                disabled
+                disabled = {!permissions.includes("perform_compensation_payroll")}
                 label="Remarks"
-                value={payrollDetails.remarks ?? ""}
+                onChange={formHandler.handleChange}
+                name="remarks"
+                value={formHandler.values.remarks ?? ""}
             />
+
+            { permissions.includes("perform_compensation_payroll") &&
+                <Button
+                    type="submit"
+                    onClick={() => {}}
+                    label="Save changes"
+                />
+            }
         </Card>
     );
 };

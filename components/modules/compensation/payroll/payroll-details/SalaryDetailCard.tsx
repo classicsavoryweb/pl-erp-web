@@ -3,12 +3,15 @@
 import Card from "@/components/common/Card";
 import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
+import { AuthContext } from "@/context/AuthProvider";
 import { PayrollContext } from "@/context/PayrollProvider";
 import moment from "moment";
 import { useContext } from "react";
 
-const SalaryDetailCard = () => {
+const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
     const { loading, payrollDetails } = useContext(PayrollContext);
+    const { permissions } = useContext(AuthContext);
+
     return (
         <Card
             size="small"
@@ -52,13 +55,17 @@ const SalaryDetailCard = () => {
             <Grid cols={2}>
                 <Textfield
                     disabled
-                    label="Taxable Adjustments"
+                    label="Taxable Adjustment"
                     value={payrollDetails.timekeeping_summary.adjustment_amount}
                 />
                 <Textfield
-                    disabled
-                    label="Non-taxable Adjustments"
-                    value={payrollDetails.non_taxable_adjustment}
+                    disabled = {!permissions.includes("perform_compensation_payroll")}
+                    label="Non-taxable Adjustment"
+                    name="non_taxable_adjustment"
+                    type="number"
+                    onChange={formHandler.handleChange}
+                    value={formHandler.values.non_taxable_adjustment}
+                    error={formHandler.errors.non_taxable_adjustment}
                 />
             </Grid>
         </Card>

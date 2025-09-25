@@ -14,7 +14,7 @@ const WorkingHoursDeductionCard = () => {
             size="small"
             loading={loading}
         >
-            <p className="font-semibold text-red-800">Working Hours Deduction</p>
+            <p className="font-semibold text-red-800">Working Hours Deductions</p>
 
             { (payrollDetails.tardiness_list && payrollDetails.tardiness_list.length > 0) &&
                 <>
@@ -25,7 +25,7 @@ const WorkingHoursDeductionCard = () => {
                                 <Textfield
                                     key={idx}
                                     disabled
-                                    label={moment(tardy.date).format("MMMM d, Y")}
+                                    label={moment(tardy.date).format("MMMM DD, Y")}
                                     value={tardy.tardiness + " mins - " + tardy.payment.tardiness_deduction}
                                 />
                             );
