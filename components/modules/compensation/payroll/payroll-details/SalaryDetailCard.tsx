@@ -5,6 +5,7 @@ import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
 import { AuthContext } from "@/context/AuthProvider";
 import { PayrollContext } from "@/context/PayrollProvider";
+import { formatNumber } from "@/helper/amount";
 import moment from "moment";
 import { useContext } from "react";
 
@@ -37,17 +38,17 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 <Textfield
                     disabled
                     label="Daily Rate"
-                    value={payrollDetails.daily_rate}
+                    value={formatNumber(payrollDetails.daily_rate)}
                 />
                 <Textfield
                     disabled
                     label="Hourly Rate"
-                    value={payrollDetails.hourly_rate}
+                    value={formatNumber(payrollDetails.hourly_rate)}
                 />
                 <Textfield
                     disabled
                     label="Salary"
-                    value={payrollDetails.salary}
+                    value={formatNumber(payrollDetails.salary)}
                 />
             </Grid>
 
@@ -56,7 +57,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 <Textfield
                     disabled
                     label="Taxable Adjustment"
-                    value={payrollDetails.timekeeping_summary.adjustment_amount}
+                    value={formatNumber(payrollDetails.timekeeping_summary.adjustment_amount)}
                 />
                 <Textfield
                     disabled = {!permissions.includes("perform_compensation_payroll")}

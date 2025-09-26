@@ -40,3 +40,11 @@ export function convertToPesosAndCentavos(amount: number): string {
 
     return pesosText + centavosText;
 }
+
+export function formatNumber(amount: string | number) {
+    return Number(amount)
+        .toLocaleString('en-US', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+}

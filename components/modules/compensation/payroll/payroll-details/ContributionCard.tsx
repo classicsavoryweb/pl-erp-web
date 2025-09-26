@@ -4,6 +4,7 @@ import Card from "@/components/common/Card";
 import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
 import { PayrollContext } from "@/context/PayrollProvider";
+import { formatNumber } from "@/helper/amount";
 import { useContext } from "react";
 
 const ContributionCard = () => {
@@ -18,37 +19,37 @@ const ContributionCard = () => {
                 <Textfield
                     disabled
                     label="EE SSS"
-                    value={payrollDetails.employee_sss}
+                    value={formatNumber(payrollDetails.employee_sss)}
                 />
                 <Textfield
                     disabled
                     label="ER SSS"
-                    value={payrollDetails.employer_sss}
+                    value={formatNumber(payrollDetails.employer_sss)}
                 />
                 <Textfield
                     disabled
                     label="EE Pagibig"
-                    value={payrollDetails.employee_pagibig}
+                    value={formatNumber(payrollDetails.employee_pagibig)}
                 />
                 <Textfield
                     disabled
                     label="ER Pagibig"
-                    value={payrollDetails.employer_pagibig}
+                    value={formatNumber(payrollDetails.employer_pagibig)}
                 />
                 <Textfield
                     disabled
                     label="EE Philhealth"
-                    value={payrollDetails.employee_philhealth}
+                    value={formatNumber(payrollDetails.employee_philhealth)}
                 />
                 <Textfield
                     disabled
                     label="ER Philhealth"
-                    value={payrollDetails.employer_philhealth}
+                    value={formatNumber(payrollDetails.employer_philhealth)}
                 />
                 <Textfield
                     disabled
-                    label="Total Contributions"
-                    value={payrollDetails.contribution_total}
+                    label="Withholding Tax"
+                    value={formatNumber(payrollDetails.withholding_tax)}
                 />
             </Grid>
         </Card>

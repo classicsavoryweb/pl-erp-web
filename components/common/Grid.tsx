@@ -1,6 +1,7 @@
 interface GridInterface {
     cols?: 1 | 2 | 3 | 4 | 5 | 6 | 7 | 8 | 9 | 10 | 11 | 12;
     children: React.ReactNode;
+    smallGap?: boolean;
 };
 
 const colClasses = {
@@ -20,10 +21,11 @@ const colClasses = {
 
 const Grid = ({
     cols = 4,
-    children
+    children,
+    smallGap = false
 }: GridInterface) => {
     return (
-        <div className={`grid gap-x-4 ${colClasses[cols]}`}>
+        <div className={`grid ${smallGap ? "gap-x-1" : "gap-x-4"} ${colClasses[cols]}`}>
             {children}
         </div>
     );

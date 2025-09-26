@@ -1,17 +1,12 @@
 "use client";
-import { getAllCutOffs } from "@/api/compensation/cut-off";
 import Card from "@/components/common/Card";
-import DropDownButtons from "@/components/common/DropDownButtons";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
-import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import moment from "moment";
-import ActionDropDown from "@/components/common/ActionDropDown";
-import { useContext, useState } from "react";
 import { getAllPayroll } from "@/api/compensation/payroll";
 import * as Yup from "yup";
 import { useFormik } from "formik";
@@ -22,14 +17,12 @@ import Dropdown from "@/components/common/Dropdown";
 import Textfield from "@/components/common/Textfield";
 import BranchDropDown from "../../generic/BranchDropDown";
 import CutOffDropDown from "../../generic/CutOffDropDown";
-import Button from "@/components/common/Button";
-import { useRouter } from "next/navigation";
+import Button from "@/components/common/Button"
+import Badge from "@/components/common/Badge";
 
 const PayrollTableCard = () => {
-    const router = useRouter();
     const api = useApiCall();
     const paginator = usePagination(10);
-    const [data, setData] = useState<any>({});
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -84,7 +77,27 @@ const PayrollTableCard = () => {
         {
             columnHead: "Status",
             path: "status",
-            columnType: COLUMNTYPES.status
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let status: "default" | "success" | "warning" | "danger" = "default";
+
+                switch(data.status) {
+                    case "final": 
+                        status = "success";
+                        break;
+                    case "initial":
+                        status = "warning";
+                        break;
+                    default:
+                        status = "default";
+                        break;
+                };
+
+                return <Badge
+                    label={data.status}
+                    status={status}
+                />
+            }
         },
     ];
 

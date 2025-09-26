@@ -4,6 +4,7 @@ import Card from "@/components/common/Card";
 import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
 import { PayrollContext } from "@/context/PayrollProvider";
+import { formatNumber } from "@/helper/amount";
 import moment from "moment";
 import { useContext } from "react";
 
@@ -22,12 +23,22 @@ const WorkingHoursDeductionCard = () => {
                     <Grid cols={3}>
                         { payrollDetails.tardiness_list.map((tardy, idx) => {
                             return (
-                                <Textfield
+                                <Grid
+                                    cols={2}
                                     key={idx}
-                                    disabled
-                                    label={moment(tardy.date).format("MMMM DD, Y")}
-                                    value={tardy.tardiness + " mins - " + tardy.payment.tardiness_deduction}
-                                />
+                                    smallGap
+                                >
+                                    <Textfield
+                                        disabled
+                                        label={moment(tardy.date).format("MMMM DD, Y")}
+                                        value={tardy.tardiness + " mins"}
+                                    />
+                                    <Textfield
+                                        disabled
+                                        label={"Amount"}
+                                        value={formatNumber(tardy.payment.tardiness_deduction)}
+                                    />
+                                </Grid>
                             );
                         })}
                     </Grid>
@@ -40,12 +51,22 @@ const WorkingHoursDeductionCard = () => {
                     <Grid cols={3}>
                         { payrollDetails.undertime_list.map((undertime,idx) => {
                             return (
-                                <Textfield
+                                <Grid
+                                    cols={2}
                                     key={idx}
-                                    disabled
-                                    label={moment(undertime.date).format("MMMM d, Y")}
-                                    value={undertime.undertime + " mins - " + undertime.payment.undertime_deduction}
-                                />
+                                    smallGap
+                                >
+                                    <Textfield
+                                        disabled
+                                        label={moment(undertime.date).format("MMMM d, Y")}
+                                        value={undertime.undertime + "mins"}
+                                    />
+                                    <Textfield
+                                        disabled
+                                        label={"Amount"}
+                                        value={formatNumber(undertime.payment.undertime_deduction)}
+                                    />
+                                </Grid>
                             );
                         })}
                     </Grid>
