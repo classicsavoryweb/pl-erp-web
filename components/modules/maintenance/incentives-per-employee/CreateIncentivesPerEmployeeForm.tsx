@@ -36,7 +36,7 @@ const CreateIncentivesPerEmployeeForm = ({
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Create Incentives",
+                title: "Create Incentive",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed) {
@@ -44,7 +44,7 @@ const CreateIncentivesPerEmployeeForm = ({
                 createIncentivesPerEmployee(values)
                 .then((resp) => {
                     if(!resp.error) {
-                        toast.success("Incentives created successfully");
+                        toast.success("Incentive created successfully");
                         setEmployee({});
                         onSubmitCallback();
                         modal.onClose();
@@ -64,7 +64,7 @@ const CreateIncentivesPerEmployeeForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create Incentives"
+            title="Create Incentive"
             onClose={() => {
                 modal.onClose();
                 setEmployee({});

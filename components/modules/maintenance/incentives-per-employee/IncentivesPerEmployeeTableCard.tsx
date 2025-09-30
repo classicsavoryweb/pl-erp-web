@@ -35,7 +35,7 @@ const IncentivesPerEmployeeTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching incentives per employee");
+                toast.error("Error fetching rank and file per employee");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
@@ -65,7 +65,7 @@ const IncentivesPerEmployeeTableCard = () => {
 
     const actionSettings = [
         {
-            label: "Create new incentives",
+            label: "Create new incentive",
             onClick: () => {
                 createModal.onOpen();
             }
@@ -95,7 +95,7 @@ const IncentivesPerEmployeeTableCard = () => {
                 filterHandler={filter}
                 hasExport
                 api={exportAllIncentivesPerEmployee}
-                exportFileName={`INCENTIVES-PER-EMPLOYEE-${moment().format("YYYY-MM-DD")}.xls`}
+                exportFileName={`RANK-AND-FILE-PER-EMPLOYEE-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="employee.full_name"
                 callBack={() => {
                     paginator.setPage(1);

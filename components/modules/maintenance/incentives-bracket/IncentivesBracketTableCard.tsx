@@ -35,7 +35,7 @@ const IncentivesBracketTableCard = () => {
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching incentives bracket");
+                toast.error("Error fetching rank and file bracket");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
@@ -92,7 +92,7 @@ const IncentivesBracketTableCard = () => {
                 filterHandler={filter}
                 hasExport
                 api={exportAllIncentivesBracket}
-                exportFileName={`INCENTIVES-BRACKET-${moment().format("YYYY-MM-DD")}.xls`}
+                exportFileName={`RANK-AND-FILE-BRACKET-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="bracket_name"
                 callBack={() => {
                     paginator.setPage(1);

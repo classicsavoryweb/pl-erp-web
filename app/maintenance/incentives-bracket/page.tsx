@@ -5,7 +5,7 @@ const Page = () => {
     return (
         <>
             <PageTitle
-                title="Incentives | Rank and File Bracket"
+                title="Rank and File Bracket"
             />
             <IncentivesBracketTableCard/>
         </>
