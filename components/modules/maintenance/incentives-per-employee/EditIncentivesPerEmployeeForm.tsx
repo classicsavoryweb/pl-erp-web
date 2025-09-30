@@ -43,7 +43,7 @@ const EditIncentivesPerEmployeeForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Edit Incentives",
+                title: "Edit Incentive",
                 message: "Are you sure you want to save changes?"
             });
 
@@ -51,7 +51,7 @@ const EditIncentivesPerEmployeeForm = ({
                 setSubmitting(true);
                 editIncentivesPerEmployee(values, formValue.id).then((resp) => {
                     if(!resp.error) {
-                        toast.success("Incentives updated successfully");
+                        toast.success("Incentive updated successfully");
                         setEmployee({});
                         onSubmitCallback();
                         modal.onClose();
@@ -94,7 +94,7 @@ const EditIncentivesPerEmployeeForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit Incentives"
+            title="Edit Incentive"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();
@@ -114,6 +114,7 @@ const EditIncentivesPerEmployeeForm = ({
                     }}
                     value={employee}
                     error={editFormHandler.errors.employee_id}
+                    disabled
                     required
                 />
 

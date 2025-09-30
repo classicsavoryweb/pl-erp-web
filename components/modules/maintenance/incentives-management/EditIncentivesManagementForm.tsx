@@ -115,6 +115,7 @@ const EditIncentivesManagementForm = ({
                     value={employee}
                     error={editFormHandler.errors.employee_id}
                     required
+                    disabled
                 />
 
                 { Object.entries(employee).length > 0 && employee.current_position &&

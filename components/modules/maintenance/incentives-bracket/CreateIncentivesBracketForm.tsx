@@ -10,6 +10,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { getPositions } from "@/api/positions";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { useState } from "react";
 import { useApiCall } from "@/hooks/api-call";
 import confirm from "@/components/common/Confirm";
 import { createIncentivesBracket } from "@/api/maintenance/incentives-bracket";
@@ -41,11 +42,13 @@ const CreateIncentivesBracketForm = ({
     ];
 
     const createFormHandler = useFormik<{
+        key_word: string,
         bracket_name: string,
         increments: { month: string; amount: string }[],
         position_id: number[],
     }>({
         initialValues: {
+            key_word: "",
             bracket_name: "",
             position_id: [],
             increments: fixedIncrements.map((item) => ({
@@ -65,7 +68,7 @@ const CreateIncentivesBracketForm = ({
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
-                title: "Create Incentives Bracket",
+                title: "Create Rank and File Bracket",
                 message: "Are you sure you want to create?"
             });
             if (isConfirmed) {
@@ -73,7 +76,7 @@ const CreateIncentivesBracketForm = ({
                 createIncentivesBracket(values)
                 .then((resp) => {
                     if(!resp.error) {
-                        toast.success("Incentives bracket created successfully");
+                        toast.success("Rank and file bracket created successfully");
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -90,6 +93,7 @@ const CreateIncentivesBracketForm = ({
     });
 
     const api = useApiCall();
+    const [filteredBrackets, setFilteredBrackets] = useState<any[]>([]);
 
     useAsyncEffect(() => {
         if (modal.isShowing) {
@@ -98,6 +102,7 @@ const CreateIncentivesBracketForm = ({
             .then((resp) => {
                 if (!resp.error) {
                     api.setDataSet(resp.data.positions);
+                    setFilteredBrackets(resp.data.positions);
                 }
             })
             .finally(() => {
@@ -123,7 +128,7 @@ const CreateIncentivesBracketForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Create Incentives Bracket"
+            title="Create Rank and File Bracket"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
@@ -160,9 +165,27 @@ const CreateIncentivesBracketForm = ({
                             }}
                         />
                     </div>
+                    <Textfield
+                        name="key_word"
+                        label=""
+                        placeholder="search for position"
+                        value={createFormHandler.values.key_word}
+                        onChange={(e) => {
+                            createFormHandler.setFieldValue("key_word", e.target.value);
+                            const keyword = e.target.value.trim().toLowerCase();
+                            if (keyword) {
+                                const filtered = api.dataSet.filter((position) =>
+                                    String(position.description).toLowerCase().includes(keyword)
+                                );
+                                setFilteredBrackets(filtered);
+                            } else {
+                                setFilteredBrackets(api.dataSet);
+                            }
+                        }}
+                    />
                     <div className="max-h-[350px] overflow-hidden overflow-y-auto p-3">
                         <Grid cols={2}>
-                            {api.dataSet.map((data, key) => (
+                            {filteredBrackets.map((data, key) => (
                                 <Checkbox
                                     label={data.description}
                                     key={key}

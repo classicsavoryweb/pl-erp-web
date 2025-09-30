@@ -9,7 +9,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import { useApiCall } from "@/hooks/api-call";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import confirm from "@/components/common/Confirm";
 import { getPositions } from "@/api/positions";
@@ -44,6 +44,7 @@ const EditIncentivesBracketForm = ({
     ];
 
     const editFormHandler = useFormik<{
+        key_word: string,
         incentives_bracket_id: string,
         bracket_name: string,
         increments: { month: string; amount: string }[],
@@ -51,6 +52,7 @@ const EditIncentivesBracketForm = ({
     }>({
         enableReinitialize: true,
         initialValues: {
+            key_word: "",
             incentives_bracket_id: formValue.incentives_bracket_id || "",
             bracket_name: formValue.bracket_name || "",
             position_id: formValue.position_id || [],
@@ -75,7 +77,7 @@ const EditIncentivesBracketForm = ({
         }),
         onSubmit: async (values, { resetForm, setSubmitting }) => {
             const isConfirmed = await confirm({
-                title: "Edit Incentives Bracket",
+                title: "Edit Rank and File Bracket",
                 message: "Are you sure you want to save changes?",
             });
 
@@ -88,7 +90,7 @@ const EditIncentivesBracketForm = ({
                     increments: values.increments,
                 }, formValue.bracket_id).then((resp) => {
                     if (!resp.error) {
-                        toast.success("Incentives bracket updated successfully");
+                        toast.success("Rank and file bracket updated successfully");
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -107,6 +109,7 @@ const EditIncentivesBracketForm = ({
     });
 
     const api = useApiCall();
+    const [filteredBrackets, setFilteredBrackets] = useState<any[]>([]);
 
     useAsyncEffect(() => {
         if (modal.isShowing) {
@@ -115,6 +118,7 @@ const EditIncentivesBracketForm = ({
             .then((resp) => {
                 if (!resp.error) {
                     api.setDataSet(resp.data.positions);
+                    setFilteredBrackets(resp.data.positions);
                 }
             })
             .finally(() => {
@@ -129,24 +133,36 @@ const EditIncentivesBracketForm = ({
         }
     }, [modal.isShowing]);
 
-    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, value: number) => {
-        const id = Number(e.target.value);
-        if (e.target.checked) {
-            editFormHandler.setFieldValue("position_id", [
-                ...editFormHandler.values.position_id,
-                id
-            ]);
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const keyword = (e.target.value || '').trim().toLowerCase();
+        if (keyword) {
+            const filtered = api.dataSet.filter((position: any) =>
+                String(position.description).toLowerCase().includes(keyword)
+            );
+            setFilteredBrackets(filtered);
         } else {
-            const ids = editFormHandler.values.position_id;
-            const newIds = ids.filter((item) => item !== id);
-            editFormHandler.setFieldValue("position_id", newIds);
+            setFilteredBrackets(api.dataSet);
+        }
+    };
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, value: number) => {
+        const { checked } = e.target;
+        const current = editFormHandler.values.position_id;
+
+        if (checked) {
+            if (!current.includes(value)) {
+            editFormHandler.setFieldValue("position_id", [...current, value]);
+            }
+        } else {
+            const updated = current.filter((id) => id !== value);
+            editFormHandler.setFieldValue("position_id", updated);
         }
     };
 
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit Incentives Bracket"
+            title="Edit Rank and File Bracket"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();
@@ -183,14 +199,24 @@ const EditIncentivesBracketForm = ({
                             }}
                         />
                     </div>
+                    <Textfield
+                        name="key_word"
+                        label=""
+                        placeholder="search for position"
+                        value={editFormHandler.values.key_word || ""}
+                        onChange={(e) => {
+                            editFormHandler.handleChange(e);
+                            handleSearchChange(e);
+                        }}
+                    />
                     <div className="max-h-[350px] overflow-hidden overflow-y-auto p-3">
                         <Grid cols={2}>
-                            {api.dataSet.map((data, key) => (
+                            {filteredBrackets.map((data, key) => (
                                 <Checkbox
                                     label={data.description}
                                     key={key}
                                     value={data.id}
-                                    checked={editFormHandler.values.position_id.includes(data.id)}
+                                    checked={ editFormHandler.values.position_id.includes(data.id) }
                                     onChange={(e) => handleCheckboxChange(e, data.id)}
                                 />
                             ))}
