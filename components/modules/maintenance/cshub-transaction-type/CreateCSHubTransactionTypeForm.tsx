@@ -127,7 +127,7 @@ const CreateCSHubTransactionTypeForm = ({
                     placeholder="select source module"
                 />
                 <DeductionDropDown
-                    label="Payroll Deduction ID"
+                    label="Payroll Deduction"
                     required
                     name="deduction_id"
                     value={createFormHandler.values.deduction_id}

@@ -9,9 +9,15 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { useState } from "react";
-import FilterCard from "../../cards/FilterCard";
+import { AuthContext } from "@/context/AuthProvider";
+import { useContext, useState } from "react";
+import Textfield from "@/components/common/Textfield";
+import confirm from "@/components/common/Confirm";
+import Grid from "@/components/common/Grid";
+import Dropdown from "@/components/common/Dropdown";
 import { useFilter } from "@/hooks/use-filter";
+import { useFormik } from "formik";
+import * as Yup from "yup";
 import moment from "moment";
 import CreateEmployeeDeductionForm from "./CreateEmployeeDeductionForm";
 import EditEmployeeDeductionForm from "./EditEmployeeDeductionForm";
@@ -19,39 +25,29 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import EndLoanTransactionForm from "./EndLoanTransactionForm";
 import { exportAllEmployeeDeductions, getAllEmployeeDeductions } from "@/api/compensation/employee-deductions";
 import DropDownButtons from "@/components/common/DropDownButtons";
-    
-const EmployeeDeductionsTableCard = () => {
+import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
+
+interface EmployeeDeductionsInterface {
+    hasExport?: boolean;
+    exportPermission?: string;
+    unique_api?: (values: any) => any;
+};
+
+const EmployeeDeductionsTableCard = ({
+    unique_api = exportAllEmployeeDeductions,
+    hasExport = true,
+    exportPermission = "export_all_compensation_deductions",
+
+}: EmployeeDeductionsInterface) => {
     const api = useApiCall();
     const createModal = useModal();
     const editModal = useModal();
     const editLoanModal = useModal();
     const [data, setData] = useState({});
+    const [employee, setEmployee] = useState<any>({});
+    const { permissions } = useContext(AuthContext);
     const paginator = usePagination();
     const filter = useFilter();
-
-    useAsyncEffect(() => {
-        api.setLoading(true);
-        getAllEmployeeDeductions({
-            page: paginator.page,
-            per_page: paginator.per_page,
-            ...filter.filters
-        })
-        .then((resp) => {
-            if (resp.error) {
-                toast.error("Error fetching deductions");
-            } else {
-                api.setDataSet(resp.data.data);
-                paginator.setPage(resp.data.current_page);
-                paginator.setPaginationData(resp.data);
-            }
-        })
-        .catch(() => {
-            toast.error("Error encountered");
-        })
-        .finally(() => {
-            api.setLoading(false);
-        });
-    }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -60,12 +56,7 @@ const EmployeeDeductionsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Reference Doc",
-            path: "reference_doc",
-            columnType: COLUMNTYPES.string
-        },
-        {
-            columnHead: "Description",
+            columnHead: "Deduction Type",
             path: "deduction.description",
             columnType: COLUMNTYPES.string
         },
@@ -170,19 +161,173 @@ const EmployeeDeductionsTableCard = () => {
         },
     ];
 
+    const formHandler = useFormik({
+        initialValues: {
+            key_word: "",
+            column_type: "",
+            employee_id: "",
+        },
+        validateOnChange: false,
+        validationSchema: Yup.object().shape({
+            key_word: Yup.string(),
+            employee_id: Yup.number(),
+            column_type: Yup.string().when('key_word', (keyWord, schema) => 
+                String(keyWord) !== ""
+                    ? schema.required('Column type is required')
+                    : schema.notRequired()
+            ),
+        }),
+        onSubmit: async (values, { setSubmitting }) => {
+            api.triggerReload();
+            filter.onReload();
+            filter.setFilters(values);
+            setSubmitting(true);
+        }
+    });
+
+    useAsyncEffect(() => {
+        api.setLoading(true);
+        getAllEmployeeDeductions({
+            page: paginator.page,
+            per_page: paginator.per_page,
+            ...filter.filters,
+            employee_id: formHandler.values.employee_id,
+        })
+        .then((resp) => {
+            if (resp.error) {
+                toast.error("Error fetching deductions");
+            } else {
+                api.setDataSet(resp.data.data);
+                paginator.setPage(resp.data.current_page);
+                paginator.setPaginationData(resp.data);
+            }
+        })
+        .catch(() => {
+            toast.error("Error encountered");
+        })
+        .finally(() => {
+            api.setLoading(false);
+        });
+    }, [paginator.reload, api.reload, filter.reload, formHandler.values.employee_id]);
+
+    const exportHandler = useFormik({
+        initialValues: {
+            key_word: '',
+            column_type: "",
+            employee_id: "",
+        },
+        validateOnChange: false,
+        onSubmit: async (values) => {
+            const isConfirm = await confirm({
+                title: "Export",
+                message: "Are you sure you want to export?"
+            });
+
+            if (isConfirm) {
+                unique_api && unique_api(values).then((resp: any) => {
+                    const blob = new Blob([resp.data], {
+                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    });
+                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+
+                    a.href = downloadUrl;
+                    a.download = `EMPLOYEE-DEDUCTIONS-${moment().format('YYYY-MM-DD')}.xls`;
+                    document.body.appendChild(a);
+                    a.click();
+                    a.remove();
+                });
+            }
+        }
+    });
+
     return (
         <>
-            <FilterCard
-                columnSettings={columnSettings}
-                filterHandler={filter}
-                hasExport
-                api={exportAllEmployeeDeductions}
-                exportFileName={`EMPLOYEE-DEDUCTIONS-${moment().format("YYYY-MM-DD")}.xls`}
-                defaultColumnSelected="employee.full_name"
-                callBack={() => {
-                    paginator.setPage(1);
-                }}
-            />
+            <Card>
+                <p className="text-sm font-semibold text-red-800">Filters</p>
+                <form onSubmit={formHandler.handleSubmit}>
+                    <Grid cols={4}>
+                        <SearchEmployeeDropDown
+                            label="Employee"
+                            placeholder="select employee"
+                            name="employee_id"
+                            onChange={(e) => {
+                                const selectedEmployee = e.target.value;
+                                setEmployee(selectedEmployee);
+                                formHandler.setFieldValue("employee_id", selectedEmployee.id);
+                            }}
+                            value={employee}
+                            error={formHandler.errors.employee_id}
+                        />
+                        <Dropdown
+                            placeholder="select column"
+                            label="Column"
+                            name="column_type"
+                            value={formHandler.values.column_type}
+                            error={formHandler.errors.column_type}
+                            onChange={formHandler.handleChange}
+                            options={columnSettings
+                                .filter((column: any) => column.columnHead !== "Employee Name")
+                                .map((column: any) => {
+                                    return {
+                                        label: column.columnHead,
+                                        value: column.path
+                                    };
+                                })
+                            }
+                        />
+                        <Textfield
+                            name="key_word"
+                            label="Keyword"
+                            placeholder="enter keyword"
+                            value={formHandler.values.key_word}
+                            onChange={formHandler.handleChange}
+                        />
+                    </Grid>
+                    <div className="flex justify-end gap-x-2">
+                        <div className="w-[100px]">
+                            <Button
+                                type="submit"
+                                label="Search"
+                                onClick={() => {}}
+                            />    
+                        </div>
+                        {(exportPermission === "" || permissions.includes(exportPermission)) &&
+                            <>
+                                { hasExport &&
+                                    <div className="w-[100px]">
+                                        <Button
+                                            label="Export"
+                                            type="button"
+                                            onClick={() => {
+                                                exportHandler.setValues(prev => ({
+                                                    ...prev,
+                                                    ...formHandler.values
+                                                }));
+                                                exportHandler.submitForm();
+                                            }}
+                                            variant="success"
+                                        />    
+                                    </div>
+                                }
+                            </>
+                        }
+                        <div className="w-[100px]">
+                            <Button
+                                label="Reset"
+                                type="button"
+                                onClick={() => {
+                                    formHandler.resetForm();
+                                    exportHandler.resetForm();
+                                    formHandler.submitForm();
+                                    setEmployee({});
+                                }}
+                                variant="secondary"
+                            />    
+                        </div>
+                    </div>
+                </form>
+            </Card>
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
