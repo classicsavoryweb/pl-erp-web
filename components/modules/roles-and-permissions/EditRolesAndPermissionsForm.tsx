@@ -94,7 +94,7 @@ const EditRolesAndPermissionsForm = ({
         }
     }, [modal.isShowing]);
 
-    useEffect(() => {
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const keyword = createRole.values.key_word?.toLowerCase() || "";
 
         if (keyword) {
@@ -105,7 +105,7 @@ const EditRolesAndPermissionsForm = ({
         } else {
             setFilteredPermissions(permissions);
         }
-    }, [createRole.values.key_word, permissions]);
+    };
 
     return (
         <Modal
@@ -140,7 +140,10 @@ const EditRolesAndPermissionsForm = ({
                         label=""
                         placeholder="search for permission"
                         value={createRole.values.key_word || ""}
-                        onChange={createRole.handleChange}
+                        onChange={(e) => {
+                            createRole.handleChange(e);
+                            handleSearchChange(e);
+                        }}
                     />
                 </Grid>
 

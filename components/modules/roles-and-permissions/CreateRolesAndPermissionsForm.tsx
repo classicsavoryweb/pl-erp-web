@@ -84,8 +84,8 @@ const CreateRolesAndPermissionsForm = ({
         }
     });
 
-    useEffect(() => {
-        const keyword = createRole.values.key_word.toLowerCase();
+    const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const keyword = createRole.values.key_word?.toLowerCase() || "";
 
         if (keyword) {
             const filtered = permissions.filter((permission: any) =>
@@ -95,8 +95,7 @@ const CreateRolesAndPermissionsForm = ({
         } else {
             setFilteredPermissions(permissions);
         }
-        
-    }, [createRole.values.key_word, permissions]);
+    };
 
     return (
         <Modal
@@ -129,8 +128,11 @@ const CreateRolesAndPermissionsForm = ({
                         name="key_word"
                         label=""
                         placeholder="search for permission"
-                        value={createRole.values.key_word}
-                        onChange={createRole.handleChange}
+                        value={createRole.values.key_word || ""}
+                        onChange={(e) => {
+                            createRole.handleChange(e);
+                            handleSearchChange(e);
+                        }}
                     />
                 </Grid>
 
