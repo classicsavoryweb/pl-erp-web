@@ -60,6 +60,7 @@ const defaultPayrollDetails: PayrollDetails = {
     employee: {} as any,
     timekeeping_branch: {} as any,
     timekeeping_summary: {} as any,
+    incentives: {} as any,
     tardiness_list: [],
     undertime_list: [],
     taxable_income : "",
