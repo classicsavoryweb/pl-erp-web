@@ -43,6 +43,7 @@ export interface PayrollDetails {
   employee: Employee
   timekeeping_branch: any
   timekeeping_summary: TimekeepingSummary
+  incentives: Incentives
   tardiness_list: TimeKeeping[]
   undertime_list: TimeKeeping[]
   taxable_income: string
@@ -264,6 +265,22 @@ export interface LatestBankDetails {
   id : number;
   remarks : string;
   updated_at : string;
+}
+
+export interface Incentives {
+  id: number
+  employee_id: string
+  position_id: string
+  branch_id: string
+  incentive_amount: number
+  max_amount: number
+  remarks: string
+  pay_date: string
+  amount_rate: number
+  additional_incentive: number
+  adjustment_days: number
+  adjustment_percent: number
+  status: string 
 }
 
 export interface TimeKeeping {

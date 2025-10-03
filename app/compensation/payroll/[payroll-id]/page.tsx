@@ -16,6 +16,7 @@ import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
 import { updatePayrollDetails } from "@/api/compensation/payroll";
 import * as Yup from "yup";
+import IncentivesCard from "@/components/modules/compensation/payroll/payroll-details/IncentivesCard";
 
 const Page = () => {
     const params = useParams();
@@ -80,6 +81,9 @@ const Page = () => {
                     </div>
                     <div className="mt-[16px]">
                         <PayrollDeductionTableCard/>
+                    </div>
+                    <div className="mt-[16px]">
+                        <IncentivesCard/>
                     </div>
                 </div>
 
