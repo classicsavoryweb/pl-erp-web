@@ -10,7 +10,7 @@ interface TextfieldInterface {
     name?: string;
     onChange?: (e: any) => void;
     error?: string;
-    value?: string;
+    value?: string | number;
     type?: "text" | "email" | "date" | "password" | "file" | "number" | "time" | "datetime-local";
     required?: boolean;
     disabled?: boolean;
