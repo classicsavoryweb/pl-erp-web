@@ -15,6 +15,7 @@ import { useContext, useEffect } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
 import { updatePayrollDetails } from "@/api/compensation/payroll";
+import { updatePayrollIncentive } from "@/api/compensation/payroll";
 import * as Yup from "yup";
 import IncentivesCard from "@/components/modules/compensation/payroll/payroll-details/IncentivesCard";
 
@@ -22,6 +23,7 @@ const Page = () => {
     const params = useParams();
     const payrollId = params["payroll-id"];
     const { setPayrollDetails ,payrollDetails } = useContext(PayrollContext);
+    const { setIncentivesDetails ,incentivesDetails } = useContext(PayrollContext);
 
     useEffect(() => {
         formHandler.setValues({
@@ -29,7 +31,12 @@ const Page = () => {
             manual_deductions: payrollDetails.manual_deductions,
             remarks: payrollDetails.remarks
         });
-    }, [payrollDetails]);
+
+        incentivesformHandler.setValues({
+            adjustment_percent: incentivesDetails.adjustment_percent,
+        });
+
+    }, [payrollDetails, incentivesDetails]);
 
     const formHandler = useFormik({
         initialValues: {
@@ -62,10 +69,35 @@ const Page = () => {
         }
     });
 
+    const incentivesformHandler = useFormik({
+        initialValues: {
+            adjustment_percent: incentivesDetails.adjustment_percent,
+        },
+        validateOnChange: false,
+        onSubmit: async (values) => {
+            const isConfirmed = await confirm({
+                message : "Are you sure you want to save changes",
+                title: "Incentives"
+            });
+
+            isConfirmed && updatePayrollIncentive(payrollDetails.id, values)
+            .then((resp) => {
+                if (!resp.error) {
+                    toast.success(resp.data.message);
+                    setIncentivesDetails(resp.data.incentives);
+                } else {
+                    toast.error(resp.data.message);
+                }
+            }).catch(() => {
+                toast.error("Error encountered");
+            });
+        }
+    });
+
     return (
         <>
             <title>{`PR-${payrollId} | Classic Savory ERP`}</title>
-            <form onSubmit={formHandler.handleSubmit}>
+            
             <div className="flex gap-x-5 w-full">
                 <div className="w-8/12">
                     <EmployeeDetailCard/>
@@ -83,22 +115,26 @@ const Page = () => {
                         <PayrollDeductionTableCard/>
                     </div>
                     <div className="mt-[16px]">
-                        <IncentivesCard/>
+                        <form onSubmit={incentivesformHandler.handleSubmit}>
+                            <IncentivesCard
+                                incentivesformHandler={incentivesformHandler}
+                            />
+                        </form>
                     </div>
                 </div>
-
                 <div className="w-4/12">
-                    <SalaryDetailCard
-                        formHandler={formHandler}
-                    />
-                    <div className="mt-[16px]">
-                        <NetPayCard
+                    <form onSubmit={formHandler.handleSubmit}>
+                        <SalaryDetailCard
                             formHandler={formHandler}
                         />
-                    </div>
+                        <div className="mt-[16px]">
+                            <NetPayCard
+                                formHandler={formHandler}
+                            />
+                        </div>
+                    </form>
                 </div>
             </div>
-            </form>
         </>
     );
 };

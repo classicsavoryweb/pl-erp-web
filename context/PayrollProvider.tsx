@@ -4,14 +4,16 @@ import { useParams, usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { useAsyncEffect } from "@/hooks/async-effect";
-import { PayrollDetails } from "@/constants/interfaces/interface";
+import { Incentives, PayrollDetails } from "@/constants/interfaces/interface";
 import { getPayroll } from "@/api/compensation/payroll";
 
 interface PayrollContextType {
     payrollDetails: PayrollDetails;
+    incentivesDetails: Incentives;
     loading: boolean;
     triggerReload: () => void;
     setPayrollDetails: Dispatch<SetStateAction<PayrollDetails>>;
+    setIncentivesDetails: Dispatch<SetStateAction<Incentives>>;
     error: boolean;
 }
 
@@ -69,11 +71,29 @@ const defaultPayrollDetails: PayrollDetails = {
     working_hours_deduction_total: "",
 };
 
+const defaultIncentivesDetails: Incentives = {
+    id: 0,
+    employee_id: "",
+    position_id: "",
+    branch_id: "",
+    incentive_amount: 0,
+    max_amount: 0,
+    remarks: "",
+    pay_date: "",
+    amount_rate: 0,
+    additional_incentive: 0,
+    adjustment_days: 0,
+    adjustment_percent: 0,
+    status: "",
+};
+
 export const PayrollContext = createContext<PayrollContextType>({
     payrollDetails: defaultPayrollDetails,
+    incentivesDetails: defaultIncentivesDetails,
     loading: true,
     triggerReload: () => {},
     setPayrollDetails: () => {},
+    setIncentivesDetails: () => {},
     error: false,
 });
 
@@ -81,6 +101,7 @@ const PayrollProvider = ({
     children
 }: {children: React.ReactNode}) => {
     const [payrollDetails, setPayrollDetails] = useState<PayrollDetails>(defaultPayrollDetails);
+    const [incentivesDetails, setIncentivesDetails] = useState<Incentives>(defaultIncentivesDetails);
     const [loading, setLoading] = useState<boolean>(true);
     const [reload, setReload] = useState<boolean>(true);
     const [error, setError] = useState<boolean>(false);
@@ -98,6 +119,7 @@ const PayrollProvider = ({
             .then((resp) => {
                 if (!resp.error) {
                     setPayrollDetails(resp.data);
+                    setIncentivesDetails(resp.data.incentives);
                 } else {
                     toast.error(resp.data.message); 
                     setError(true);
@@ -115,6 +137,8 @@ const PayrollProvider = ({
         <PayrollContext.Provider value={{
             payrollDetails,
             setPayrollDetails,
+            incentivesDetails,
+            setIncentivesDetails,
             loading,
             triggerReload,
             error
