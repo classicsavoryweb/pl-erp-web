@@ -98,7 +98,7 @@ const Page = () => {
         <>
             <title>{`PR-${payrollId} | Classic Savory ERP`}</title>
             
-            <div className="flex gap-x-5 w-full">
+            <div className="flex gap-x-4 w-full">
                 <div className="w-8/12">
                     <EmployeeDetailCard/>
                     <div className="mt-[16px]">

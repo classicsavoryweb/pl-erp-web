@@ -17,7 +17,7 @@ const EmployeeDetailsCard = () => {
     const {employee, loading} = useContext(EmployeeContext);
 
     return (
-        <div className="flex gap-x-5">
+        <div className="flex gap-x-4">
             <div className="w-7/12">
                 <Card
                     loading={loading}

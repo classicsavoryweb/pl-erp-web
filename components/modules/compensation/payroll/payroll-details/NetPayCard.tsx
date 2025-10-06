@@ -81,7 +81,7 @@ const NetPayCard = ({ formHandler } : { formHandler: any }) => {
                 value={formHandler.values.remarks ?? ""}
             />
 
-            { (payrollDetails.status === "pending" && permissions.includes("perform_compensation_payroll")) &&
+            { (payrollDetails.status === "initial" && permissions.includes("perform_compensation_payroll")) &&
                 <Button
                     type="submit"
                     onClick={() => {}}

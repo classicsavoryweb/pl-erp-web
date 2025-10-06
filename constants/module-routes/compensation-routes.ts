@@ -34,6 +34,11 @@ export const compensationRoutes: Route[] = [
         basepath: "/compensation",
         subLinks: [
             {
+                name: "Payroll List",
+                pathname: "/compensation/payroll-list",
+                permission: "view_compensation_payroll_list"
+            },
+            {
                 name: "Cutoff Setup",
                 pathname: "/compensation/cutoff-setup",
                 permission: "view_compensation_cutoff_setup"
