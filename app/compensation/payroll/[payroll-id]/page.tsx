@@ -32,11 +32,13 @@ const Page = () => {
             remarks: payrollDetails.remarks
         });
 
-        incentivesformHandler.setValues({
-            adjustment_percent: incentivesDetails.adjustment_percent,
-        });
+    }, [payrollDetails]);
 
-    }, [payrollDetails, incentivesDetails]);
+    useEffect(() => {
+        incentivesformHandler.setValues({
+            adjustment_percent: incentivesDetails.adjustment_percent ?? 0,
+        });
+    }, [incentivesDetails]);
 
     const formHandler = useFormik({
         initialValues: {
@@ -71,7 +73,7 @@ const Page = () => {
 
     const incentivesformHandler = useFormik({
         initialValues: {
-            adjustment_percent: incentivesDetails.adjustment_percent,
+            adjustment_percent: incentivesDetails.adjustment_percent ?? 0,
         },
         validateOnChange: false,
         onSubmit: async (values) => {

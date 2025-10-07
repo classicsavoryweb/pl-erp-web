@@ -23,7 +23,7 @@ const AdditionalWorkingHours = () => {
                     <Textfield
                         disabled
                         label="Special Holiday"
-                        value={payrollDetails.timekeeping_summary.special_holiday}
+                        value={payrollDetails?.timekeeping_summary?.special_holiday ?? 0}
                     />
                     <Textfield
                         disabled
@@ -39,7 +39,7 @@ const AdditionalWorkingHours = () => {
                     <Textfield
                         disabled
                         label="Legal Holiday"
-                        value={payrollDetails.timekeeping_summary.legal_holiday}
+                        value={payrollDetails?.timekeeping_summary?.legal_holiday ?? 0}
                     />
                     <Textfield
                         disabled
@@ -55,7 +55,7 @@ const AdditionalWorkingHours = () => {
                     <Textfield
                         disabled
                         label="Overtime Regular"
-                        value={payrollDetails.timekeeping_summary.regular_overtime}
+                        value={payrollDetails?.timekeeping_summary?.regular_overtime ?? 0}
                     />
                     <Textfield
                         disabled
@@ -71,7 +71,7 @@ const AdditionalWorkingHours = () => {
                     <Textfield
                         disabled
                         label="Legal Holiday OT"
-                        value={payrollDetails.timekeeping_summary.legal_holiday_overtime}
+                        value={payrollDetails?.timekeeping_summary?.legal_holiday_overtime ?? 0}
                     />
                     <Textfield
                         disabled
@@ -87,7 +87,7 @@ const AdditionalWorkingHours = () => {
                     <Textfield
                         disabled
                         label="Night Differential"
-                        value={payrollDetails.timekeeping_summary.night_differential}
+                        value={payrollDetails?.timekeeping_summary?.night_differential ?? 0}
                     />
                     <Textfield
                         disabled
@@ -103,7 +103,7 @@ const AdditionalWorkingHours = () => {
                     <Textfield
                         disabled
                         label="Special Holiday OT"
-                        value={payrollDetails.timekeeping_summary.special_holiday_overtime}
+                        value={payrollDetails?.timekeeping_summary?.special_holiday_overtime ?? 0}
                     />
                     <Textfield
                         disabled
@@ -119,7 +119,7 @@ const AdditionalWorkingHours = () => {
                     <Textfield
                         disabled
                         label="Night Differential OT"
-                        value={payrollDetails.timekeeping_summary.night_differential_overtime}
+                        value={payrollDetails?.timekeeping_summary?.night_differential_overtime ?? 0}
                     />
                     <Textfield
                         disabled
@@ -135,7 +135,7 @@ const AdditionalWorkingHours = () => {
                     <Textfield
                         disabled
                         label="Cancelled Off"
-                        value={payrollDetails.timekeeping_summary.cancelled_off}
+                        value={payrollDetails?.timekeeping_summary?.cancelled_off ?? 0}
                     />
                     <Textfield
                         disabled

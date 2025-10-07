@@ -33,7 +33,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 <Textfield
                     disabled
                     label="Regular Days"
-                    value={payrollDetails.timekeeping_summary.regular_days}
+                    value={payrollDetails?.timekeeping_summary?.regular_days ?? 0}
                 />
                 <Textfield
                     disabled
@@ -57,7 +57,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 <Textfield
                     disabled
                     label="Taxable Adjustment"
-                    value={formatNumber(payrollDetails.timekeeping_summary.adjustment_amount)}
+                    value={formatNumber(payrollDetails?.timekeeping_summary?.adjustment_amount ?? 0)}
                 />
                 <Textfield
                     disabled = {!permissions.includes("perform_compensation_payroll")}
