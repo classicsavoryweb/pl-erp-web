@@ -4,11 +4,11 @@ interface SelectInterface {
     name: string;
     onChange: (e: any) => void;
     error?: string;
-    value?: string;
+    value?: string | number;
     required?: boolean;
     options: {
         label: string;
-        value: string;
+        value?: string | number;
     }[];
     loading?: boolean;
     disabled?: boolean;
