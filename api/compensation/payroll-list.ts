@@ -1,0 +1,31 @@
+import { axiosHelper } from "../axios-config";
+
+export const getAllPayrollList = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-all-payroll-list',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const createPayrollList = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/create-payroll-list',
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const editPayrollList = async (payload: {}, id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-payroll-list/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};

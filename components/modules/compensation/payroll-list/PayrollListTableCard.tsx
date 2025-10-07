@@ -8,13 +8,21 @@ import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import { getAllPayrollList } from "@/api/compensation/payroll-list";
 import FilterCard from "../../cards/FilterCard";
+import { useState } from "react";
+import { useModal } from "@/hooks/modal";
 import { useFilter } from "@/hooks/use-filter";
 import Badge from "@/components/common/Badge";
+import DropDownButtons from "@/components/common/DropDownButtons";
+import CreatePayrollListForm from "./CreatePayrollListForm";
+import EditPayrollListForm from "./EditPayrollListForm";
 
 const PayrollListTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
-    const filter = useFilter();
+    const filter = useFilter();    
+    const [data, setData] = useState({});
+    const createModal = useModal();
+    const editModal = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -78,9 +86,27 @@ const PayrollListTableCard = () => {
     const actionSettings = [
         {
             label: "Edit",
-            onClick: (data:any) => {
+            onClick: (data: any) => {
+                editModal.onOpen();
+                setData({
+                    id: data.id,
+                    employee_id: data.employee_id,
+                    employee_number: data.employee.employee_number,
+                    is_included: data.is_included,
+                    is_statutory_only: data.is_statutory_only,
+                    remarks: data.remarks,
+                });
             }
         }
+    ];
+
+    const globalActionSettings = [
+        {
+            label: "Add employee to payroll list",
+            onClick: () => {
+                createModal.onOpen();
+            }
+        },
     ];
 
     return (
@@ -116,6 +142,11 @@ const PayrollListTableCard = () => {
                 }}
             />
             <Card>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={globalActionSettings}
+                    />
+                </div>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
@@ -125,6 +156,17 @@ const PayrollListTableCard = () => {
                     actions={actionSettings}
                 />
             </Card>
+
+            <CreatePayrollListForm
+                modal={createModal}
+                onSubmitCallback={api.triggerReload}
+            />
+
+            <EditPayrollListForm
+                modal={editModal}
+                onSubmitCallback={api.triggerReload}
+                formValue={data}
+            />
         </>
     );
 };
