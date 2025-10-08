@@ -30,7 +30,6 @@ const EditPhilhealthPercentageBaseForm = ({
         initialValues: {
             philhealth_formula: "",
             percentage: "",
-            management_max: "",
             philhealth_cap: "",
             philhealth_max: ""
         },
@@ -38,7 +37,6 @@ const EditPhilhealthPercentageBaseForm = ({
         validationSchema: Yup.object().shape({
             philhealth_formula: Yup.string().required("Philhealth formula is required."),
             percentage: Yup.string().required("Percentage is required."),
-            management_max: Yup.string().required("Max Contribution is required."),
             philhealth_cap: Yup.string().required("Percentage Cap is required.")
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
@@ -144,12 +142,12 @@ const EditPhilhealthPercentageBaseForm = ({
                 <Textfield
                     label="Max Contribution"
                     placeholder="enter max contribution"
-                    name="management_max"
+                    name="philhealth_max"
                     type="number"
-                    value={editFormHandler.values.management_max}
+                    value={editFormHandler.values.philhealth_max}
                     required
                     onChange={editFormHandler.handleChange}
-                    error={editFormHandler.errors.management_max}
+                    error={editFormHandler.errors.philhealth_max}
                 />
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">

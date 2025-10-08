@@ -27,8 +27,8 @@ const EditTaxForm = ({
         initialValues: {
             type: "Semi-monthly",
             status: "S",
-            salary_range_min: "",
-            salary_range_max: "",
+            range_min: "",
+            range_max: "",
             salary_base: "",
             percentage: "",
             exemption: "",
@@ -37,8 +37,8 @@ const EditTaxForm = ({
         validationSchema: Yup.object().shape({
             type: Yup.string().required("Type is required."),
             status: Yup.string().required("Status is required."),
-            salary_range_min: Yup.string().required("Range minimum is required."),
-            salary_range_max: Yup.string().required("Range maximum is required."),
+            range_min: Yup.string().required("Range minimum is required."),
+            range_max: Yup.string().required("Range maximum is required."),
             salary_base: Yup.string().required("Salary base is required."),
             percentage: Yup.string().required("Percentage is required."),
             exemption: Yup.string().required("Exemption is required."),
@@ -122,22 +122,22 @@ const EditTaxForm = ({
                 <Textfield
                     label="Salary Range Minimum"
                     placeholder="enter range minimum"
-                    name="salary_range_min"
+                    name="range_min"
                     type="text"
-                    value={editFormHandler.values.salary_range_min}
+                    value={editFormHandler.values.range_min}
                     required
                     onChange={editFormHandler.handleChange}
-                    error={editFormHandler.errors.salary_range_min}
+                    error={editFormHandler.errors.range_min}
                 />
                 <Textfield
                     label="Salary Range Maximum"
                     placeholder="enter range maximum"
-                    name="salary_range_max"
+                    name="range_max"
                     type="text"
-                    value={editFormHandler.values.salary_range_max}
+                    value={editFormHandler.values.range_max}
                     required
                     onChange={editFormHandler.handleChange}
-                    error={editFormHandler.errors.salary_range_max}
+                    error={editFormHandler.errors.range_max}
                 />
                 <Textfield
                     label="Salary Base"

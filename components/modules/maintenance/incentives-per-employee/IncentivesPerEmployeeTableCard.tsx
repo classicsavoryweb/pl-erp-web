@@ -59,7 +59,7 @@ const IncentivesPerEmployeeTableCard = () => {
         {
             columnHead: "Max Amount",
             path: "max_amount",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
     ];
 
