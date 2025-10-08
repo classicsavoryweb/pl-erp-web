@@ -64,17 +64,17 @@ const TaxTableCard = () => {
         {
             columnHead: "Range Minumum",
             path: "range_min",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Range Maximum",
             path: "range_max",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Salary Base",
             path: "salary_base",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Percentage",
@@ -84,7 +84,7 @@ const TaxTableCard = () => {
         {
             columnHead: "Exemption",
             path: "exemption",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
     ];
 

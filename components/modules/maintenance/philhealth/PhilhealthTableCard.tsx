@@ -55,41 +55,32 @@ const PhilhealthTableCard = () => {
         {
             columnHead: "Salary Range Minimum",
             path: "salary_range_min",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
         {
             columnHead: "Salary Range Maximum",
             path: "salary_range_max",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
         {
             columnHead: "Salary Base",
             path: "salary_base",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Employee Share",
             path: "employee_share",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Employer Share",
             path: "employer_share",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Total Monthly Contribution",
             path: "total_monthly_contribution",
-            columnType: COLUMNTYPES.string,
-        },
-    ];
-
-    const actionSettings = [
-        {
-            label: "Create new contribution",
-            onClick: () => {
-                createModal.onOpen();
-            }
+            columnType: COLUMNTYPES.amount,
         },
     ];
 

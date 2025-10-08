@@ -43,12 +43,12 @@ const PagibigTableCard = ({
         {
             columnHead: "Employer Share",
             path: "employer_share",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
         {
             columnHead: "Employee Share",
             path: "employee_share",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
     ];
 
