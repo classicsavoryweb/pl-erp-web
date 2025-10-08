@@ -54,32 +54,32 @@ const SSSTableCard = () => {
         {
             columnHead: "Salary Range Minimum",
             path: "salary_range_min",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
         {
             columnHead: "Salary Range Maximum",
             path: "salary_range_max",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
         {
             columnHead: "Salary Credit",
             path: "salary_credit",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Employer SS",
             path: "employer_ss",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Employer CC",
             path: "employer_cc",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Employee SS",
             path: "employee_ss",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.amount,
         },
     ];
 

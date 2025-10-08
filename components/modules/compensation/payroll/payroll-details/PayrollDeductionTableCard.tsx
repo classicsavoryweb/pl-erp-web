@@ -70,7 +70,7 @@ const PayrollDeductionTableCard = () => {
             <Table
                 dataSet={dataSet}
                 columnSettings={columnSettings}
-                withActions={payrollDetails.status === "pending"}
+                withActions={payrollDetails.status === "initial"}
                 actions={actionSettings}
             />
         </Card>
