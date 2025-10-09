@@ -21,7 +21,7 @@ const NetPayCard = ({ formHandler } : { formHandler: any }) => {
             <p className="font-semibold text-red-800">Salary</p>
             <Textfield
                 disabled
-                label="Gross Salary"
+                label="Basic Salary"
                 value={formatNumber(payrollDetails.salary)}
             />
             <Textfield
@@ -36,7 +36,7 @@ const NetPayCard = ({ formHandler } : { formHandler: any }) => {
             />
             <Textfield
                 disabled
-                label="Gross Pay"
+                label="Gross Salary"
                 value={formatNumber(payrollDetails.gross_pay)}
             />
             <Textfield

@@ -26,6 +26,11 @@ const PayrollDeductionTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Remaining Balance",
+            path: "balance",
+            columnType: COLUMNTYPES.amount
+        },
+        {
             columnHead: "Monthly Amortization",
             path: "monthly_amortization",
             columnType: COLUMNTYPES.amount
