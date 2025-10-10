@@ -64,12 +64,12 @@ const TermsTableCard = () => {
         {
             columnHead: "Amount from",
             path: "amount_from",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
         {
             columnHead: "Amount to",
             path: "amount_to",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.amount
         },
         {
             columnHead: "Months",
