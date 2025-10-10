@@ -11,7 +11,8 @@ import Grid from "@/components/common/Grid";
 import PayrollDeductionTableCard from "@/components/modules/compensation/payroll/payroll-details/PayrollDeductionTableCard";
 import { useFormik } from "formik";
 import { PayrollContext } from "@/context/PayrollProvider";
-import { useContext, useEffect } from "react";
+import { AuthContext } from "@/context/AuthProvider";
+import { useContext, useEffect, useState } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
 import { updatePayrollDetails } from "@/api/compensation/payroll";
@@ -22,8 +23,12 @@ import IncentivesCard from "@/components/modules/compensation/payroll/payroll-de
 const Page = () => {
     const params = useParams();
     const payrollId = params["payroll-id"];
+    const { permissions } = useContext(AuthContext);
     const { setPayrollDetails ,payrollDetails } = useContext(PayrollContext);
     const { setIncentivesDetails ,incentivesDetails } = useContext(PayrollContext);
+    const [showBreakdown, setShowBreakdown] = useState(false);
+    const [oldIncentiveAmount, setOldIncentiveAmount] = useState(0);
+    const [monthShouldBeWorkDays, setMonthShouldBeWorkDays] = useState(0);
 
     useEffect(() => {
         formHandler.setValues({
@@ -31,12 +36,14 @@ const Page = () => {
             manual_deductions: payrollDetails.manual_deductions,
             remarks: payrollDetails.remarks
         });
-
     }, [payrollDetails]);
 
     useEffect(() => {
         incentivesformHandler.setValues({
-            adjustment_percent: incentivesDetails.adjustment_percent ?? 0,
+            adjustment_days: 0,
+            adjustment_percent: 0,
+            additional_incentive: 0,
+            remarks: incentivesDetails.remarks
         });
     }, [incentivesDetails]);
 
@@ -73,7 +80,10 @@ const Page = () => {
 
     const incentivesformHandler = useFormik({
         initialValues: {
-            adjustment_percent: incentivesDetails.adjustment_percent ?? 0,
+            adjustment_days: 0,
+            adjustment_percent: 0,
+            additional_incentive: 0,
+            remarks: incentivesDetails.remarks
         },
         validateOnChange: false,
         onSubmit: async (values) => {
@@ -82,17 +92,31 @@ const Page = () => {
                 title: "Incentives"
             });
 
-            isConfirmed && updatePayrollIncentive(payrollDetails.id, values)
-            .then((resp) => {
-                if (!resp.error) {
-                    toast.success(resp.data.message);
-                    setIncentivesDetails(resp.data.incentives);
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            });
+            if (isConfirmed) {
+                const oldAdjustmentDays = incentivesDetails.adjustment_days;
+                const oldAdjustmentPercent = incentivesDetails.adjustment_percent;
+                const originalIncentiveAmount = incentivesDetails.incentive_amount; 
+                updatePayrollIncentive(payrollDetails.id, values)
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        setIncentivesDetails(resp.data.incentives);
+                        setMonthShouldBeWorkDays(resp.data.days);
+                        setOldIncentiveAmount(originalIncentiveAmount);
+                        if (Number(oldAdjustmentDays) !== Number(resp.data.incentives.adjustment_days) || Number(oldAdjustmentPercent) !== Number(resp.data.incentives.adjustment_percent)) {
+                            setShowBreakdown(true);
+                        } else {
+                            setShowBreakdown(false);
+                        }
+                    } else {
+                        toast.error(resp.data.message);
+                        setShowBreakdown(false);
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                    setShowBreakdown(false);
+                });
+            }
         }
     });
 
@@ -116,13 +140,18 @@ const Page = () => {
                     <div className="mt-[16px]">
                         <PayrollDeductionTableCard/>
                     </div>
-                    <div className="mt-[16px]">
-                        <form onSubmit={incentivesformHandler.handleSubmit}>
-                            <IncentivesCard
-                                incentivesformHandler={incentivesformHandler}
-                            />
-                        </form>
-                    </div>
+                    { (permissions.includes("perform_compensation_incentives")) &&
+                        <div className="mt-[16px]">
+                            <form onSubmit={incentivesformHandler.handleSubmit}>
+                                <IncentivesCard
+                                    incentivesformHandler={incentivesformHandler}
+                                    showBreakdown={showBreakdown}
+                                    oldIncentiveAmount={oldIncentiveAmount}
+                                    monthShouldBeWorkDays={monthShouldBeWorkDays}
+                                />
+                            </form>
+                        </div>
+                    }
                 </div>
                 <div className="w-4/12">
                     <form onSubmit={formHandler.handleSubmit}>
