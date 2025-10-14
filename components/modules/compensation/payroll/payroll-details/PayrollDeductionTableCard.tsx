@@ -6,12 +6,16 @@ import confirm from "@/components/common/Confirm";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { PayrollContext } from "@/context/PayrollProvider";
+import { useModal } from "@/hooks/modal";
 import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
+import EditDeductionDetails from "./EditDeductionDetails";
 
 const PayrollDeductionTableCard = () => {
     const { loading, setPayrollDetails, payrollDetails } = useContext(PayrollContext);
     const [dataSet, setDataSet] = useState<any[]>([]);
+    const editModal = useModal();
+    const [data, setData] = useState<any>({});
 
     useEffect(() => {
         if (!loading) {
@@ -44,6 +48,13 @@ const PayrollDeductionTableCard = () => {
 
     const actionSettings = [
         {
+            label: "Edit Amount",
+            onClick: (data:any) => {
+                editModal.onOpen();
+                setData(data);
+            }
+        },
+        {
             label: "Remove",
             onClick: async (data:any) => {
                 const isConfirmed = await confirm({
@@ -67,18 +78,24 @@ const PayrollDeductionTableCard = () => {
     ];
 
     return (
-        <Card
-            size="medium"
-            loading={loading}
-        >
-            <p className="font-semibold text-red-800">Company Deductions</p>
-            <Table
-                dataSet={dataSet}
-                columnSettings={columnSettings}
-                withActions={payrollDetails.status === "initial"}
-                actions={actionSettings}
+        <>
+            <Card
+                size="medium"
+                loading={loading}
+            >
+                <p className="font-semibold text-red-800">Company Deductions</p>
+                <Table
+                    dataSet={dataSet}
+                    columnSettings={columnSettings}
+                    withActions={payrollDetails.status === "initial"}
+                    actions={actionSettings}
+                />
+            </Card>
+            <EditDeductionDetails
+                modal={editModal}
+                formValue={data}
             />
-        </Card>
+        </>
     );
 };
 
