@@ -15,6 +15,8 @@ import { editPayrollList } from "@/api/compensation/payroll-list";
 import { getEmployee } from "@/api/employee";
 import Dropdown from "@/components/common/Dropdown";
 import TextArea from "@/components/common/TextArea";
+import Grid from "@/components/common/Grid";
+import Checkbox from "@/components/common/Checkbox";
 
 interface FormModalInterface {
     modal: any;
@@ -36,6 +38,8 @@ const EditPayrollListForm = ({
             employee_id: "",
             is_included: "",
             is_statutory_only: "",
+            is_mancom: 0,
+            is_on_maternity_leave: 0,
             remarks: "",
         },
         validateOnChange: false,
@@ -159,6 +163,34 @@ const EditPayrollListForm = ({
                         },
                     ]}
                 />
+                <Grid cols={2}>
+                    <Checkbox
+                        label="Is Mancom"
+                        checked={editFormHandler.values.is_mancom === 1}
+                        value="is_mancom"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue("is_mancom", 1);
+                                editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                            } else {
+                                editFormHandler.setFieldValue("is_mancom", 0);
+                            }
+                        }}
+                    />
+                    <Checkbox
+                        label="Is On Maternity Leave"
+                        checked={editFormHandler.values.is_on_maternity_leave === 1}
+                        value="is_on_maternity_leave"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue("is_on_maternity_leave", 1);
+                                editFormHandler.setFieldValue("is_mancom", 0);
+                            } else {
+                                editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                            }
+                        }}
+                    />
+                </Grid>
                 <TextArea
                     label="Remarks"
                     name="remarks"

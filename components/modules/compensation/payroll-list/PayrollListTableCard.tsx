@@ -94,6 +94,8 @@ const PayrollListTableCard = () => {
                     employee_number: data.employee.employee_number,
                     is_included: data.is_included,
                     is_statutory_only: data.is_statutory_only,
+                    is_mancom: data.is_mancom,
+                    is_on_maternity_leave: data.is_on_maternity_leave,
                     remarks: data.remarks,
                 });
             }
