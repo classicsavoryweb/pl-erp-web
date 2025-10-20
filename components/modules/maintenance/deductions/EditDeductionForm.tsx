@@ -12,6 +12,7 @@ import AccountDropDown from "../../generic/AccountDropDown";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import confirm from "@/components/common/Confirm";
 import { editDeduction } from "@/api/maintenance/deductions";
+import Dropdown from "@/components/common/Dropdown";
 interface FormModalInterface {
     modal: any;
     onSubmitCallback: () => void;
@@ -27,6 +28,7 @@ const EditDeductionForm = ({
     const editFormHandler = useFormik({
         initialValues: {
             description: "",
+            category: "",
             debit_id: "",
             credit_id: "",
             amortization_vendor_id: "",
@@ -40,6 +42,7 @@ const EditDeductionForm = ({
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             description: Yup.string().required("Description is required."),
+            category: Yup.string().required("Category is required."),
             debit_id: Yup.string().required("Debit account is required."),
             credit_id: Yup.string().required("Credit account is required."),
             amortization_vendor_id: Yup.string().required("Amortization vendor is required."),
@@ -105,6 +108,37 @@ const EditDeductionForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.description}
+                />
+                <Dropdown
+                    label="Category"
+                    placeholder="select category"
+                    name="category"
+                    value={editFormHandler.values.category}
+                    required
+                    onChange={editFormHandler.handleChange}
+                    error={editFormHandler.errors.category}
+                    options={[
+                        {
+                            label: "SSS",
+                            value: "SSS"
+                        },
+                        {
+                            label: "Pag-ibig",
+                            value: "Pag-ibig"
+                        },
+                        {
+                            label: "Philhealth",
+                            value: "Philhealth"
+                        },
+                        {
+                            label: "Company",
+                            value: "Company"
+                        },
+                        {
+                            label: "N/A",
+                            value: "N/A"
+                        },
+                    ]}
                 />
                 <ActiveInactiveDropDown
                     label="Status"
