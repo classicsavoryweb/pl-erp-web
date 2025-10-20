@@ -57,6 +57,11 @@ const DeductionsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Category",
+            path: "category",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status
@@ -80,6 +85,7 @@ const DeductionsTableCard = () => {
                 setData({
                     id: data.id,
                     description: data.description,
+                    category: data.category,
                     debit_id: data.debit_id,
                     credit_id: data.credit_id,
                     amortization_vendor_id: data.amortization_vendor_id,
