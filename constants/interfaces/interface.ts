@@ -50,6 +50,7 @@ export interface PayrollDetails {
   contribution_total : string,
   additional_working_hours_total: string,
   working_hours_deduction_total: string,
+  tardiness_offenses: TardinessOffense[]
 }
 
 interface Employee {
@@ -327,4 +328,23 @@ export interface TimeKeepingPayment {
   type : string
   undertime_deduction : string
   updated_at : string
+}
+
+export interface TardinessOffense {
+  id: number;
+  employee_id: string;
+  branch_id: string;
+  month: string;
+  year: string;
+  total_minutes: string;
+  tardiness_sanction_id: string;
+  offense_punishment: string;
+  reason: string;
+  status: string;
+  da_status: string;
+  da_date_sent: string;
+  nte_status: string;
+  nte_date_sent: string;
+  created_at: string;
+  updated_at: string;
 }

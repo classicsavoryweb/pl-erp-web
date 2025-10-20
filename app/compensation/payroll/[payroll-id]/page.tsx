@@ -19,6 +19,7 @@ import { updatePayrollDetails } from "@/api/compensation/payroll";
 import { updatePayrollIncentive } from "@/api/compensation/payroll";
 import * as Yup from "yup";
 import IncentivesCard from "@/components/modules/compensation/payroll/payroll-details/IncentivesCard";
+import TardinessHistoryCard from "@/components/modules/compensation/payroll/payroll-details/TardinessHistoryCard";
 
 const Page = () => {
     const params = useParams();
@@ -140,6 +141,10 @@ const Page = () => {
                     <div className="mt-[16px]">
                         <PayrollDeductionTableCard/>
                     </div>
+
+                    <div className="mt-[16px]">
+                        <TardinessHistoryCard/>
+                    </div>
                     { (permissions.includes("perform_compensation_incentives")) &&
                         <div className="mt-[16px]">
                             <form onSubmit={incentivesformHandler.handleSubmit}>
@@ -152,6 +157,7 @@ const Page = () => {
                             </form>
                         </div>
                     }
+
                 </div>
                 <div className="w-4/12">
                     <form onSubmit={formHandler.handleSubmit}>

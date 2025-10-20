@@ -112,6 +112,12 @@ export const maintenanceRoutes: Route[] = [
                 permission: "view_sanctions"
             },
             {
+                name: "Tardiness Sanctions",
+                pathname: "/maintenance/tardiness-sanctions",
+                permission: "view_tardiness_sanctions",
+                break: true
+            },
+            {
                 name: "Schedule Type",
                 pathname: "/maintenance/schedule-type",
                 permission: "view_schedule_type"

@@ -33,7 +33,15 @@ const EditDeductionDetails = ({
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             deduction_id: Yup.string().required("Deduction ID is required."),
-            deducted_amount: Yup.string().required("Amount is required."),
+            deducted_amount: Yup.string().required("Amount is required.")
+            .test(
+            'same-or-equal-to-balance',
+            `Amount must be less than or equal to remaining balance`,
+            function (value) {
+                const { balance } = this.parent;
+                if (!value || !balance) return true;
+                return parseFloat(value) <= parseFloat(balance);
+            }),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({

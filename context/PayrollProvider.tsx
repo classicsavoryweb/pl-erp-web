@@ -69,6 +69,7 @@ const defaultPayrollDetails: PayrollDetails = {
     contribution_total : "",
     additional_working_hours_total: "",
     working_hours_deduction_total: "",
+    tardiness_offenses: [],
 };
 
 const defaultIncentivesDetails: Incentives = {
