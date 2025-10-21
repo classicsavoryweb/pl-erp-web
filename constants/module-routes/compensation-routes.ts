@@ -53,6 +53,16 @@ export const compensationRoutes: Route[] = [
                 pathname: "/compensation/payroll",
                 permission: "view_compensation_payroll",
             },
+            {
+                name: "Entries",
+                pathname: "/compensation/entries",
+                permission: "view_compensation_entries",
+            },
+            {
+                name: "Converter",
+                pathname: "/compensation/converter",
+                permission: "view_compensation_converter",
+            },
         ]
     }
 ];
