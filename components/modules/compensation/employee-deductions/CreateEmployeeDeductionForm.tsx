@@ -155,13 +155,13 @@ const CreateEmployeeDeductionForm = ({
                     required
                 />
                 <DeductionDropDown
-                    label="Deduction ID"
+                    label="Deduction Type"
                     required
                     name="deduction_id"
                     value={createFormHandler.values.deduction_id}
                     error={createFormHandler.errors.deduction_id}
                     onChange={createFormHandler.handleChange}
-                    placeholder="select deduction"
+                    placeholder="select deduction type"
                 />
                 <Textfield
                     label="Month(s)"
