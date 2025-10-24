@@ -3,6 +3,8 @@ interface SubLink {
     pathname: string;
     permission: string;
     break?: boolean;
+    isDropDown?: boolean;
+    subLinks?: SubLink[];
 }
 
 interface BaseRoute {

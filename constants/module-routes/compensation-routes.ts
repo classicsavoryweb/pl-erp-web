@@ -3,6 +3,8 @@ interface SubLink {
     pathname: string;
     permission: string;
     break?: boolean;
+    isDropDown?: boolean;
+    subLinks?: SubLink[];
 }
 
 interface BaseRoute {
@@ -62,6 +64,19 @@ export const compensationRoutes: Route[] = [
                 name: "Converter",
                 pathname: "/compensation/converter",
                 permission: "view_compensation_converter",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "Details",
+                        pathname: "/compensation/converter/details",
+                        permission: "view_compensation_converter",
+                    },
+                    {
+                        name: "Main",
+                        pathname: "/compensation/converter/main",
+                        permission: "view_compensation_converter",
+                    },
+                ]
             },
         ]
     }
