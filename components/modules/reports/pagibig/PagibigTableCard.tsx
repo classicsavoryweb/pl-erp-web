@@ -25,13 +25,13 @@ const PagibigTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Employee Name",
-            path: "employee.full_name",
+            columnHead: "Employee Number",
+            path: "employee.employee_number",
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Biometric Number",
-            path: "employee.biometric_number",
+            columnHead: "Employee Name",
+            path: "employee.full_name",
             columnType: COLUMNTYPES.string
         },
         {
@@ -40,8 +40,18 @@ const PagibigTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Monthly Contribution",
-            path: "employee_pagibig",
+            columnHead: "First Cutoff Contribution",
+            path: "first_cutoff_employee_contribution",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Second Cutoff Contribution",
+            path: "second_cutoff_employee_contribution",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Total Contribution",
+            path: "total_employee_contribution",
             columnType: COLUMNTYPES.string
         },
     ];
