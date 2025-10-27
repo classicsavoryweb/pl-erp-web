@@ -1,7 +1,9 @@
 "use client";
 
-import { getAccounts } from "@/api/accounting/accounts";
-import DebounceSearchableDropDown from "@/components/common/DebounceSearchableDropDown";
+import SearchableDropDown from "@/components/common/SearchableDropDown";
+import { useAccountStore } from "@/stores/useAccountStore";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import { useState } from "react";
 
 interface SelectInterface {
     label: string;
@@ -26,22 +28,32 @@ const AccountDropDown = ({
     disabled = false
 }: SelectInterface) => {
 
+    const [accountData, setAccountData] = useState<any>([]);
+    const {accounts, loading, getAccount} = useAccountStore();
+
+    useAsyncEffect(() => {        
+        getAccount();
+        if (accounts.length > 0) {
+            const newDataset = accounts.map((account: any) => ({
+                label: account.acc_name,
+                value: account.acc_no,
+                obj: account,
+            }));
+            setAccountData(newDataset);
+        }
+    }, [accounts]);
+
     return (
-        <DebounceSearchableDropDown
+        <SearchableDropDown
             label={label}
             placeholder={placeholder}
             name={name}
             onChange={onChange}
             error={error}
             value={value}
+            loading={loading}
+            options={accountData}
             required={required}
-            api={getAccounts}
-            mapResponse={(acc: any) => ({
-                label: `${acc.acc_name}`,
-                value: `${acc.acc_no}`,
-            })}
-            transformResponse={(resp: any) => resp?.data?.accounts || []}
-            disabled={disabled}
         />
     );
 };
