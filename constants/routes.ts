@@ -5,7 +5,7 @@ import { compensationRoutes } from "./module-routes/compensation-routes";
 import { transactionRoutes } from "./module-routes/transaction-routes";
 import { reportRoutes } from "./module-routes/report-routes";
 
-interface SubLink {
+export interface SubLink {
     name: string;
     pathname: string;
     permission: string;

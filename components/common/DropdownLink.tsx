@@ -8,6 +8,7 @@ import { useContext, useState } from "react";
 import Link from "next/link";
 import { AuthContext } from "@/context/AuthProvider";
 import { usePathname } from "next/navigation";
+import SubDropDown from "./SubDropDown";
 
 interface DropDownInterface {
     route: DropdownRoute;
@@ -20,7 +21,6 @@ const DropdownLink = ({
 }: DropDownInterface) => {
     const IconComponent = Icons[route.icon as keyof typeof Icons];
     const [toggle, setToggle] = useState<boolean>(isActive);
-    const [subToggle, setSubToggle] = useState<boolean>(false);
     const { permissions } = useContext(AuthContext);
     const pathName = usePathname();
 
@@ -76,95 +76,10 @@ const DropdownLink = ({
                             <div key={index}>
                                 { link.isDropDown
                                     ?
-                                        <>
-                                            <button
-                                                className={`
-                                                    w-full
-                                                    flex
-                                                    hover:bg-red-300/20
-                                                    rounded-md
-                                                    py-[7px]
-                                                    items-center
-                                                    font-medium
-                                                    text-[13px]
-                                                    px-3
-                                                    focus:outline-none
-                                                    hover:cursor-pointer
-                                                    ${active ? "text-red-800" : "text-gray-500"}
-                                                `}
-
-                                                onClick={() => {
-                                                    setSubToggle(prev => !prev);
-                                                }}
-                                            >
-                                                <svg
-                                                    width="25"
-                                                    height="25"
-                                                    viewBox="0 0 25 25"
-                                                    fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                >
-                                                    <path d="M4 4v10h10" stroke="currentColor" strokeWidth="1" />
-                                                </svg>
-
-                                                <div className="w-full flex items-center justify-between">
-                                                    <div>
-                                                        {link.name}
-                                                    </div>
-                                                    { subToggle
-                                                        ?
-                                                        <ExpandLessOutlinedIcon
-                                                            style={{ width: '19px', height: '19px' }}
-                                                        />
-                                                        :
-                                                        <ExpandMoreOutlinedIcon
-                                                            style={{ width: '19px', height: '19px' }}
-                                                        />
-                                                    }
-                                                </div>
-                                            </button>
-
-                                            { (subToggle || active) &&
-                                                <div>
-                                                    { link.subLinks?.map((link, index) => {
-                                                        const subActive = link.pathname === pathName;
-
-                                                        return (
-                                                            <div key={index}>
-                                                                <Link
-                                                                    href={link.pathname}
-                                                                    className={`
-                                                                        w-full
-                                                                        flex
-                                                                        hover:bg-red-300/20
-                                                                        rounded-md
-                                                                        py-[7px]
-                                                                        items-center
-                                                                        font-medium
-                                                                        text-[13px]
-                                                                        px-7
-                                                                        focus:outline-none
-                                                                        ${subActive ? "text-red-800" : "text-gray-500"}
-                                                                    `}
-                                                                >
-                                                                        <svg
-                                                                            width="25"
-                                                                            height="25"
-                                                                            viewBox="0 0 25 25"
-                                                                            fill="none"
-                                                                            xmlns="http://www.w3.org/2000/svg"
-                                                                        >
-                                                                            <path d="M4 4v10h10" stroke="currentColor" strokeWidth="1" />
-                                                                        </svg>
-                                                                        {link.name}
-                                                                </Link>
-                                                            </div>
-                                                        )
-                                                    })
-                                                    }
-                                                </div>
-                                            }
-                                        </>
+                                        <SubDropDown
+                                            link={link}
+                                            active={active}
+                                        />
                                     :
                                     <Link
                                         href={link.pathname}

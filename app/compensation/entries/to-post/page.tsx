@@ -4,7 +4,7 @@ const Page = () => {
     return (
         <>
             <PageTitle
-                title="Entries"
+                title="Entries To Post"
             />
         </>
     );

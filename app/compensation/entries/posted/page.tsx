@@ -4,7 +4,7 @@ const Page = () => {
     return (
         <>
             <PageTitle
-                title="Converter"
+                title="Entries Posted"
             />
         </>
     );
