@@ -30,7 +30,7 @@ const MonthlyContributionModal = ({
         return { label: String(year), value: String(year) };
     });
 
-    const currentMonth = new Date().toLocaleString('default', { month: 'long' });
+    const currentMonth = new Date().getMonth() + 1;
     const monthOptions = [
         "January", "February", "March", "April", "May", "June",
         "July", "August", "September", "October", "November", "December"
