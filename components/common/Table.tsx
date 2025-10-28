@@ -304,7 +304,7 @@ const Table = ({
                                         
                                         ${paginator.paginationData.current_page === item ? "bg-red-800 text-slate-50" : "bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
                                     `}
-                                    onClick={() => paginator.onClickSetPageNumber(Number(item))}
+                                    onClick={() => paginator.paginationData.current_page !== item && paginator.onClickSetPageNumber(Number(item))}
                                 >
                                     {item}
                                 </button>
