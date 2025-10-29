@@ -42,7 +42,7 @@ const Page = () => {
     useEffect(() => {
         incentivesformHandler.setValues({
             adjustment_days: 0,
-            adjustment_percent: 0,
+            adjustment_percent: incentivesDetails.adjustment_percent,
             additional_incentive: 0,
             remarks: incentivesDetails.remarks
         });
@@ -82,7 +82,7 @@ const Page = () => {
     const incentivesformHandler = useFormik({
         initialValues: {
             adjustment_days: 0,
-            adjustment_percent: 0,
+            adjustment_percent: incentivesDetails.adjustment_percent,
             additional_incentive: 0,
             remarks: incentivesDetails.remarks
         },
