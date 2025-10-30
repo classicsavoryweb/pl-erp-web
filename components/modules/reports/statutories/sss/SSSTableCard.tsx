@@ -9,17 +9,17 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useFilter } from "@/hooks/use-filter";
-import { getAllReportsPagibigContributions, getAllReportsPagibigLoans} from "@/api/reports/reports-pagibig";
+import { getAllReportsSSSContributions, getAllReportsSSSLoans} from "@/api/reports/reports-sss";
 import DropDownButtons from "@/components/common/DropDownButtons";
-import MonthlyContributionModal from "./MonthlyContributionModal";
-import PagibigLoansModal from "./PagibigLoansModal";
+import SSSMonthlyContributionModal from "./SSSMonthlyContributionModal";
+import SSSLoansModal from "./SSSLoansModal";
 
-const PagibigTableCard = () => {
+const SSSTableCard = () => {
     
     const api = useApiCall();
     const unique_api = useApiCall();
-    const exportMonthlyContributionModal = useModal();
-    const exportPagibigLoansModal = useModal();
+    const exportSSSMonthlyContributionModal = useModal();
+    const exportSSSLoansModal = useModal();
     const paginator = usePagination();
     const filter = useFilter();
 
@@ -35,37 +35,64 @@ const PagibigTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Pagibig ID",
-            path: "employee.pagibig",
+            columnHead: "SSS ID",
+            path: "employee.sss",
             columnType: COLUMNTYPES.string
         },
         {
             columnHead: "First Cutoff Contribution",
             path: "first_cutoff_employee_contribution",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.first_cutoff_employee_contribution);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
         {
             columnHead: "Second Cutoff Contribution",
             path: "second_cutoff_employee_contribution",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.second_cutoff_employee_contribution);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
         {
             columnHead: "Total Contribution",
             path: "total_employee_contribution",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.total_employee_contribution);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
     ];
 
     useAsyncEffect(() => {
         api.setLoading(true);
-        getAllReportsPagibigContributions({
+        getAllReportsSSSContributions({
             page: paginator.page,
             per_page: paginator.per_page,
             ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching pagibig contributions");
+                toast.error("Error fetching sss contributions");
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
@@ -80,10 +107,10 @@ const PagibigTableCard = () => {
         });
 
         unique_api.setLoading(true);
-        getAllReportsPagibigLoans({})
+        getAllReportsSSSLoans({})
         .then((resp) => {
             if (resp.error) {
-                toast.error("Error fetching pagibig loans");
+                toast.error("Error fetching sss loans");
             } else {
                 unique_api.setDataSet(resp.data.data);
             }
@@ -100,13 +127,13 @@ const PagibigTableCard = () => {
         {
             label: "Export Monthly Contribution",
             onClick: () => {
-                exportMonthlyContributionModal.onOpen();
+                exportSSSMonthlyContributionModal.onOpen();
             }
         },
         {
-            label: "Export Pagibig Loans",
+            label: "Export SSS Loans",
             onClick: () => {
-                exportPagibigLoansModal.onOpen();
+                exportSSSLoansModal.onOpen();
             }
         }
     ];
@@ -129,17 +156,17 @@ const PagibigTableCard = () => {
                 />
             </Card>
 
-            <MonthlyContributionModal
-                modal={exportMonthlyContributionModal}
+            <SSSMonthlyContributionModal
+                modal={exportSSSMonthlyContributionModal}
                 onSubmitCallback={api.triggerReload}
             />
 
-            <PagibigLoansModal
-                modal={exportPagibigLoansModal}
+            <SSSLoansModal
+                modal={exportSSSLoansModal}
                 onSubmitCallback={unique_api.triggerReload}
             />
         </>
     );
 };
 
-export default PagibigTableCard;
+export default SSSTableCard;

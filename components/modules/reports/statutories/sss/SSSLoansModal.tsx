@@ -5,10 +5,9 @@ import { useFormik } from "formik";
 import confirm  from "@/components/common/Confirm";
 import Button from "@/components/common/Button";
 import moment from "moment";
-import { toast } from "react-toastify";
-import { useApiCall } from "@/hooks/api-call";
 import Checkbox from "@/components/common/Checkbox";
-import { exportAllReportsSSSContributions } from "@/api/reports/reports-sss";
+import { exportAllReportsSSSLoans } from "@/api/reports/reports-sss";
+import ReportSSSDropDown from "@/components/modules/generic/ReportSSSDropDown";
 
 interface ModalInterface {
     modal: any;
@@ -17,11 +16,11 @@ interface ModalInterface {
     unique_api?: (values: any) => any;
 }
 
-const MonthlyContributionModal = ({
+const SSSLoansModal = ({
     modal,
     hasExport = true,
     onSubmitCallback,
-    unique_api = exportAllReportsSSSContributions,
+    unique_api = exportAllReportsSSSLoans,
 }: ModalInterface) => {
 
     const currentYear = new Date().getFullYear();
@@ -43,12 +42,13 @@ const MonthlyContributionModal = ({
         initialValues: {
             year: String(currentYear),
             month: String(currentMonth),
+            loan_type: "",
             with_dash: 0
         },
         onSubmit: async (values) => {
 
             const isConfirmed = await confirm({
-                title: "Export Monthly Contribution",
+                title: "Export SSS Loans",
                 message: "Are you sure you want to export?"
             });
 
@@ -59,9 +59,11 @@ const MonthlyContributionModal = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
+
+                    const loanType = values.loan_type ? values.loan_type : 'Unknown';
     
                     a.href = downloadUrl;
-                    a.download = `REPORTS-SSS-MONTHLY-CONTRIBUTION-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `REPORTS-SSS-LOANS-${loanType.toUpperCase()}-${moment().format('YYYY-MM-DD')}.xls`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
@@ -73,7 +75,7 @@ const MonthlyContributionModal = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Export Monthly Contribution"
+            title="Export SSS Loans"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
@@ -101,6 +103,15 @@ const MonthlyContributionModal = ({
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.month}
                     options={monthOptions}
+                />
+                <ReportSSSDropDown
+                    label="Loan Type"
+                    required
+                    placeholder="select loan type"
+                    name="loan_type"
+                    onChange={createFormHandler.handleChange}
+                    value={createFormHandler.values.loan_type}
+                    error={createFormHandler.errors.loan_type}
                 />
                 <Checkbox
                     label="with Dash"
@@ -140,4 +151,4 @@ const MonthlyContributionModal = ({
     );
 };
 
-export default MonthlyContributionModal;
+export default SSSLoansModal;

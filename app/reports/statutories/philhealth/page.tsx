@@ -1,5 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
-import PhilhealthTableCard from "@/components/modules/reports/philhealth/PhilhealthTableCard";
+import PhilhealthTableCard from "@/components/modules/reports/statutories/philhealth/PhilhealthTableCard";
 
 const Page = () => {
     return (

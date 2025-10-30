@@ -6,7 +6,7 @@ import confirm  from "@/components/common/Confirm";
 import Button from "@/components/common/Button";
 import moment from "moment";
 import Checkbox from "@/components/common/Checkbox";
-import { exportAllReportsSSSLoans } from "@/api/reports/reports-sss";
+import { exportAllReportsSSSContributions } from "@/api/reports/reports-sss";
 
 interface ModalInterface {
     modal: any;
@@ -15,11 +15,11 @@ interface ModalInterface {
     unique_api?: (values: any) => any;
 }
 
-const SSSLoansModal = ({
+const SSSMonthlyContributionModal = ({
     modal,
     hasExport = true,
     onSubmitCallback,
-    unique_api = exportAllReportsSSSLoans,
+    unique_api = exportAllReportsSSSContributions,
 }: ModalInterface) => {
 
     const currentYear = new Date().getFullYear();
@@ -46,7 +46,7 @@ const SSSLoansModal = ({
         onSubmit: async (values) => {
 
             const isConfirmed = await confirm({
-                title: "Export SSS Loans",
+                title: "Export Monthly Contribution",
                 message: "Are you sure you want to export?"
             });
 
@@ -59,7 +59,7 @@ const SSSLoansModal = ({
                     const a = document.createElement('a');
     
                     a.href = downloadUrl;
-                    a.download = `REPORTS-SSS-LOANS-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `REPORTS-SSS-MONTHLY-CONTRIBUTION-${moment().format('YYYY-MM-DD')}.xls`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
@@ -71,7 +71,7 @@ const SSSLoansModal = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Export SSS Loans"
+            title="Export Monthly Contribution"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
@@ -138,4 +138,4 @@ const SSSLoansModal = ({
     );
 };
 
-export default SSSLoansModal;
+export default SSSMonthlyContributionModal;

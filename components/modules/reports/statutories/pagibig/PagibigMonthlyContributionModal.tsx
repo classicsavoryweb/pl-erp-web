@@ -5,8 +5,10 @@ import { useFormik } from "formik";
 import confirm  from "@/components/common/Confirm";
 import Button from "@/components/common/Button";
 import moment from "moment";
+import { toast } from "react-toastify";
+import { useApiCall } from "@/hooks/api-call";
 import Checkbox from "@/components/common/Checkbox";
-import { exportAllReportsPagibigLoans } from "@/api/reports/reports-pagibig";
+import { exportAllReportsPagibigContributions } from "@/api/reports/reports-pagibig";
 
 interface ModalInterface {
     modal: any;
@@ -15,11 +17,11 @@ interface ModalInterface {
     unique_api?: (values: any) => any;
 }
 
-const PagibigLoansModal = ({
+const PagibigMonthlyContributionModal = ({
     modal,
     hasExport = true,
     onSubmitCallback,
-    unique_api = exportAllReportsPagibigLoans,
+    unique_api = exportAllReportsPagibigContributions,
 }: ModalInterface) => {
 
     const currentYear = new Date().getFullYear();
@@ -41,13 +43,12 @@ const PagibigLoansModal = ({
         initialValues: {
             year: String(currentYear),
             month: String(currentMonth),
-            loan_type: "",
             with_dash: 0
         },
         onSubmit: async (values) => {
 
             const isConfirmed = await confirm({
-                title: "Export Pagibig Loans",
+                title: "Export Monthly Contribution",
                 message: "Are you sure you want to export?"
             });
 
@@ -60,7 +61,7 @@ const PagibigLoansModal = ({
                     const a = document.createElement('a');
     
                     a.href = downloadUrl;
-                    a.download = `REPORTS-PAGIBIG-LOANS-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `REPORTS-PAGIBIG-MONTHLY-CONTRIBUTION-${moment().format('YYYY-MM-DD')}.xls`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
@@ -72,7 +73,7 @@ const PagibigLoansModal = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Export Pagibig Loans"
+            title="Export Monthly Contribution"
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
@@ -100,25 +101,6 @@ const PagibigLoansModal = ({
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.month}
                     options={monthOptions}
-                />
-                <Dropdown
-                    label="Loan Type"
-                    placeholder="select loan type"
-                    name="loan_type"
-                    value={createFormHandler.values.loan_type}
-                    required
-                    onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.loan_type}
-                    options={[
-                        {
-                            label: "Short Term",
-                            value: "Short Term"
-                        },
-                        {
-                            label: "Calamity",
-                            value: "Calamity"
-                        },
-                    ]}
                 />
                 <Checkbox
                     label="with Dash"
@@ -158,4 +140,4 @@ const PagibigLoansModal = ({
     );
 };
 
-export default PagibigLoansModal;
+export default PagibigMonthlyContributionModal;

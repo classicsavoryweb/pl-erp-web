@@ -20,6 +20,16 @@ export const getAllReportsSSSLoans = async (payload?: {}) => {
     return resData;
 };
 
+export const getReportsSSSLoanTypes = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-reports-sss-loan-types',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const exportAllReportsSSSContributions = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/export-all-reports-sss-contributions',
