@@ -9,11 +9,17 @@ import { PayrollContext } from "@/context/PayrollProvider";
 import { formatNumber } from "@/helper/amount";
 import { useContext } from "react";
 
-const IncentivesCard = ({ incentivesformHandler, showBreakdown, oldIncentiveAmount, monthShouldBeWorkDays } : { incentivesformHandler: any, showBreakdown: boolean,  oldIncentiveAmount: number, monthShouldBeWorkDays: number }) => {
+const IncentivesCard = ({ incentivesformHandler, showBreakdown, 
+    oldIncentiveAmount, monthShouldBeWorkDays } : { 
+    incentivesformHandler: any, showBreakdown: boolean,  
+    oldIncentiveAmount: number, monthShouldBeWorkDays: number }) => {
+
     const { loading, incentivesDetails } = useContext(PayrollContext);
     
-    const amountDeductedByPercentage = (oldIncentiveAmount + Number(incentivesDetails.additional_incentive)) * (Number(incentivesDetails.adjustment_percent) / 100);
-    const amountDeductedByDays = ((oldIncentiveAmount + Number(incentivesDetails.additional_incentive)) / Number(monthShouldBeWorkDays)) * Number(incentivesDetails.adjustment_days);
+    const amountDeductedByPercentage = (oldIncentiveAmount + Number(incentivesDetails.additional_incentive)) 
+    * (Number(incentivesDetails.adjustment_percent) / 100);
+    const amountDeductedByDays = ((oldIncentiveAmount + Number(incentivesDetails.additional_incentive)) / Number(monthShouldBeWorkDays)) 
+    * Number(incentivesDetails.adjustment_days);
 
     return (
         <Card

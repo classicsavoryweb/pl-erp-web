@@ -36,20 +36,28 @@ export const reportRoutes: Route[] = [
         basepath: "/reports",
         subLinks: [
             {
-                name: "Pag-ibig",
-                pathname: "/reports/pagibig",
-                permission: "view_reports_pagibig"
-            },
-            {
-                name: "SSS",
-                pathname: "/reports/sss",
-                permission: "view_reports_sss"
-            },
-            {
-                name: "Philhealth",
-                pathname: "/reports/philhealth",
-                permission: "view_reports_philhealth"
-            },
+                name: "Statutories",
+                pathname: "/reports/statutories",
+                permission: "view_statutory_reports",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "Pag-ibig",
+                        pathname: "/reports/statutories/pagibig",
+                        permission: "view_reports_pagibig"
+                    },
+                    {
+                        name: "SSS",
+                        pathname: "/reports/statutories/sss",
+                        permission: "view_reports_sss"
+                    },
+                    {
+                        name: "Philhealth",
+                        pathname: "/reports/statutories/philhealth",
+                        permission: "view_reports_philhealth"
+                    },
+                ]
+            }
         ]
     }
 ];

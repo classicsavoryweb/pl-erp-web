@@ -1,14 +1,14 @@
 import PageTitle from "@/components/common/PageTitle";
-import PagibigTableCard from "@/components/modules/reports/pagibig/PagibigTableCard";
+import SSSTableCard from "@/components/modules/reports/statutories/sss/SSSTableCard";
 
 const Page = () => {
     return (
         <>
             <PageTitle
-                title="Pag-ibig"
+                title="SSS"
             />
 
-            <PagibigTableCard/>
+            <SSSTableCard/>
         </>
     );
 };

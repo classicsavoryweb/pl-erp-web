@@ -63,22 +63,55 @@ const EmployeeDeductionsTableCard = ({
         {
             columnHead: "Loan Amount",
             path: "amount",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.amount);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
         {
             columnHead: "Month(s)",
             path: "months",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.months);
+                return !value || value === 0
+                    ? '-'
+                    : value;
+            }
         },
         {
             columnHead: "Monthly Amortization",
             path: "monthly_amortization",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.monthly_amortization);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
         {
             columnHead: "Balance",
             path: "balance",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.balance);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
         {
             columnHead: "Date Start",

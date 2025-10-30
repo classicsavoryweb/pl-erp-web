@@ -20,6 +20,16 @@ export const getAllReportsPagibigLoans = async (payload?: {}) => {
     return resData;
 };
 
+export const getReportsPagibigLoanTypes = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-reports-pagibig-loan-types',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const exportAllReportsPagibigContributions = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/export-all-reports-pagibig-contributions',

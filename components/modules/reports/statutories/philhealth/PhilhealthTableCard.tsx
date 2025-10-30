@@ -39,17 +39,44 @@ const PhilhealthTableCard = () => {
         {
             columnHead: "First Cutoff Contribution",
             path: "first_cutoff_employee_contribution",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.first_cutoff_employee_contribution);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
         {
             columnHead: "Second Cutoff Contribution",
             path: "second_cutoff_employee_contribution",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.second_cutoff_employee_contribution);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
         {
             columnHead: "Total Contribution",
             path: "total_employee_contribution",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const value = Number(data.total_employee_contribution);
+                return !value || value === 0
+                    ? '-'
+                    : value.toLocaleString('en-US', {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2
+                    });
+            }
         },
     ];
 
