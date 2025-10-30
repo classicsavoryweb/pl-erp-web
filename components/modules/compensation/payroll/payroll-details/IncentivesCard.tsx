@@ -37,7 +37,8 @@ const IncentivesCard = ({ incentivesformHandler, showBreakdown,
                     type="number"
                     name="adjustment_days"
                     onChange={incentivesformHandler.handleChange}
-                    label="Days"
+                    label="Absent Days"
+                    disabled
                     value={incentivesformHandler.values.adjustment_days}
                     error={incentivesformHandler.errors.adjustment_days}
                 />
@@ -53,7 +54,8 @@ const IncentivesCard = ({ incentivesformHandler, showBreakdown,
                     type="number"
                     name="adjustment_percent"
                     onChange={incentivesformHandler.handleChange}
-                    label="Adjustment Percent"
+                    label="Tardiness Deduction Percent"
+                    disabled
                     value={incentivesformHandler.values.adjustment_percent}
                     error={incentivesformHandler.errors.adjustment_percent}
                 />
@@ -72,13 +74,13 @@ const IncentivesCard = ({ incentivesformHandler, showBreakdown,
                             <Textfield
                                 disabled
                                 type="number"
-                                label="Days"
+                                label="Absent Days"
                                 value={incentivesDetails.adjustment_days ?? 0}
                             />
                            <Textfield
                                 disabled
                                 type="number"
-                                label="Adjustment Percent"
+                                label="Tardiness Deduction Percent"
                                 value={incentivesDetails.adjustment_percent}
                             />
                             </div>
