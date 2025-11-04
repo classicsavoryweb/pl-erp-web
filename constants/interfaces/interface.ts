@@ -282,6 +282,7 @@ export interface Incentives {
   adjustment_days: number
   adjustment_percent: number
   status: string 
+  days: number
 }
 
 export interface TimeKeeping {
