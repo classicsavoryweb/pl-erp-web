@@ -1,10 +1,9 @@
 "use cient";
 
-import { getAgencies } from "@/api/agencies";
-import { getBankAccountTypes } from "@/api/bank-account-types";
 import Dropdown from "@/components/common/Dropdown";
-import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { useBankAccountStore } from "@/stores/useBankAccountStore";
+import { useState } from "react";
 interface SelectInterface {
     label: string;
     placeholder?: string;
@@ -27,26 +26,20 @@ const BankAccountTypeDropDown = ({
     disabled = false
 }: SelectInterface) => {
 
-    const api = useApiCall();
+    const [bankAccountTypes, setBankAccountTypeData] = useState<any>([]);
+    const {account_types, loading, getBankAccountType} = useBankAccountStore();
 
-    useAsyncEffect(() => {
-        api.setLoading(true);
-        getBankAccountTypes()
-        .then((resp) => {
-            if (!resp.error) {
-                const newDataset = resp.data.bank_account_types.map((bank: any) => {
-                    return {
-                        label: bank.description,
-                        value: bank.id
-                    };
-                });
-                api.setDataSet(newDataset);
-            }
-        })
-        .finally(() => {
-            api.setLoading(false);
-        });
-    }, []);
+    useAsyncEffect(() => {        
+        getBankAccountType();
+        if (account_types.length > 0) {
+            const newDataset = account_types.map((account: any) => ({
+                label: account.description,
+                value: account.id,
+                obj: account,
+            }));
+            setBankAccountTypeData(newDataset);
+        }
+    }, [account_types]);
 
     return (
         <Dropdown
@@ -56,8 +49,8 @@ const BankAccountTypeDropDown = ({
             onChange={onChange}
             error={error}
             value={value}
-            loading={api.loading}
-            options={api.dataSet}
+            loading={loading}
+            options={bankAccountTypes}
             required={required}
             disabled={disabled}
         />

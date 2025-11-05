@@ -14,6 +14,9 @@ import CreateConverterDetailForm from "./CreateConverterDetailForm";
 import EditConverterDetailForm from "./EditConverterDetailForm";
 import { useState } from "react";
 import confirm from "@/components/common/Confirm";
+import FilterCard from "@/components/modules/cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
+import Badge from "@/components/common/Badge";
 
 const ConverterDetailsTableCard = () => {
     const api = useApiCall();
@@ -21,12 +24,14 @@ const ConverterDetailsTableCard = () => {
     const [data, setData] = useState<any>({});
     const createModal = useModal();
     const editModal = useModal();
-    
+    const filterHandler = useFilter();
+
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllConverterDetails({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filterHandler.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -43,7 +48,7 @@ const ConverterDetailsTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload]);
+    }, [paginator.reload, api.reload, filterHandler.reload]);
 
     const columnSettings = [
         {
@@ -69,8 +74,50 @@ const ConverterDetailsTableCard = () => {
         {
             columnHead: "Status",
             path: "status",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                var status: "success" | "danger" | "default" | "warning" = "default";
+
+                switch (data.status) {
+                    case "Pending":
+                        status = "warning";
+                        break;
+                    case "Generated":
+                        status = "success";
+                        break;
+                    case "Voided":
+                        status = "default";
+                        break;
+                    default:
+                        status = "default";
+                        break;
+                }
+
+                return <Badge
+                    label={data.status}
+                    status={status}
+                />
+            }
         },
+        {
+            columnHead: "Action",
+            path: "status",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                var tableActions:any[] = [];
+
+                if (data.status === "Pending") {
+                    tableActions = actions;
+                }
+
+                return (
+                    <ActionDropDown
+                        data={data}
+                        actions={tableActions}
+                    />
+                );
+            }
+        }
     ];
 
     const actions = [
@@ -105,10 +152,33 @@ const ConverterDetailsTableCard = () => {
 
             }
         },
-    ]
+    ];
 
     return (
         <>
+            <FilterCard
+                filterHandler={filterHandler}
+                columnSettings={columnSettings}
+                hasDateRange
+                dateLabel="Created"
+                withBranch
+                withStatus
+                statusOption={[
+                    {
+                        label: "Voided",
+                        value: "Voided"
+                    },
+                    {
+                        label: "Pending",
+                        value: "Pending"
+                    },
+                    {
+                        label: "Generated",
+                        value: "Generated"
+                    },
+
+                ]}
+            />
             <Card>
                 <div className="flex justify-end">
                     <div>
@@ -118,7 +188,7 @@ const ConverterDetailsTableCard = () => {
                                     label: "Create",
                                     onClick: () => {
                                         createModal.onOpen();
-                                    }
+                                     }
                                 }
                             ]}
                         />
@@ -129,8 +199,8 @@ const ConverterDetailsTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    withActions
-                    actions={actions}
+                    // withActions
+                    // actions={actions}
                 />
             </Card>
             <CreateConverterDetailForm

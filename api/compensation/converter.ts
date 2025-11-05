@@ -21,6 +21,16 @@ export const getAllConverterMain = async (payload: {}) => {
     return resData;
 };
 
+export const getConverterTransactions = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-transactions',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const voidConverterDetails = async (id: number) => {
     const resData = await axiosHelper({
         func_path: `/void-converter-details/${id}`,
@@ -59,3 +69,26 @@ export const createConverterMain = async (payload: {}) => {
 
     return resData;
 };
+
+export const generateConverter = async (id:number) => {
+    const resData = await axiosHelper({
+        func_path: `/generate-converter/${id}`,
+        method: 'GET',
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
+export const voidBatchConverter = async (id:number) => {
+    const resData = await axiosHelper({
+        func_path: `/void-batch-convereter/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
