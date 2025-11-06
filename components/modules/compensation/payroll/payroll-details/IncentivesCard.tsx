@@ -32,13 +32,11 @@ const IncentivesCard = () => {
     }, [incentivesDetails, oldAdjustmentDays, oldAdjustmentPercent]);
     
     const amountDeductedByPercentage = 
-        (Number(incentivesDetails.amount_rate) 
-        + Number(incentivesDetails.additional_incentive)) 
+        (Number(incentivesDetails.amount_rate)) 
         * (Number(incentivesDetails.adjustment_percent) / 100);
     
     const amountDeductedByDays = 
-        ((Number(incentivesDetails.amount_rate) 
-        + Number(incentivesDetails.additional_incentive)) 
+        ((Number(incentivesDetails.amount_rate)) 
         / Number(monthShouldBeWorkDays)) 
         * Number(incentivesDetails.adjustment_days);
 
@@ -122,7 +120,6 @@ const IncentivesCard = () => {
                                     error={incentivesformHandler.errors.additional_incentive}
                                 />
                             </div>
-                            
                             <Textfield
                                 type="text"
                                 name="adjustment_percent"
@@ -163,16 +160,8 @@ const IncentivesCard = () => {
                                 <Textfield
                                     disabled
                                     label="Final Incentive Amount"
-                                    value={formatNumber((Number(incentivesDetails.amount_rate) 
-                                        + Number(incentivesDetails.additional_incentive))
-                                        - (((Number(incentivesDetails.amount_rate) 
-                                        + Number(incentivesDetails.additional_incentive)) 
-                                        * (incentivesDetails.adjustment_percent / 100)) 
-                                        + (((Number(incentivesDetails.amount_rate) 
-                                        + Number(incentivesDetails.additional_incentive)) 
-                                        / incentivesDetails.days) 
-                                        * incentivesDetails.adjustment_days))
-                                    )}
+                                    name ="incentive_amount"
+                                    value={formatNumber(incentivesDetails.incentive_amount)}
                                 />
                             </div>
                             <div className="col-span-2 gap-x-4">
