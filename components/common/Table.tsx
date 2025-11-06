@@ -174,7 +174,7 @@ const Table = ({
                                     <tr key={idx}>
                                         { withCheckBox &&
                                             <td
-                                                className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300`}
+                                                className={` py-[10px] px-2 border-1 border-slate-300`}
                                             >
                                                 <div
                                                     className="flex justify-center"
@@ -192,7 +192,7 @@ const Table = ({
                                                 return (
                                                     <td
                                                         key={key}
-                                                        className={` ${ withActions ? "py-1" : "py-3"} px-2 border-1 border-slate-300`}
+                                                        className={`py-[10px] px-2 border-1 border-slate-300`}
                                                     >
                                                         { settings.columnType === COLUMNTYPES.string &&
                                                             columnData
@@ -252,7 +252,7 @@ const Table = ({
     
                                         { withActions && actions &&
                                             <td
-                                                className="py-1 px-2 border-1 border-slate-300 "
+                                                className="px-2 border-1 border-slate-300 "
                                             >
                                                 <ActionDropDown
                                                     data={data}
