@@ -86,7 +86,8 @@ const defaultIncentivesDetails: Incentives = {
     adjustment_days: 0,
     adjustment_percent: 0,
     status: "",
-    days: 0
+    days: 0,
+    worked_days: 0
 };
 
 export const PayrollContext = createContext<PayrollContextType>({
@@ -121,7 +122,11 @@ const PayrollProvider = ({
             .then((resp) => {
                 if (!resp.error) {
                     setPayrollDetails(resp.data);
-                    setIncentivesDetails({ ...resp.data.incentives, days: resp.data.days });
+                    setIncentivesDetails({ 
+                        ...resp.data.incentives, 
+                        days: resp.data.days, 
+                        worked_days: resp.data.worked_days 
+                    });
                 } else {
                     toast.error(resp.data.message); 
                     setError(true);

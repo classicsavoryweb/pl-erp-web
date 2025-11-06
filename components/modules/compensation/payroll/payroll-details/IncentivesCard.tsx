@@ -13,22 +13,13 @@ import { updatePayrollIncentive } from "@/api/compensation/payroll";
 import { FormikErrors, useFormik } from "formik";
 import { useContext, useEffect, useState } from "react";
 
-const IncentivesCard = ({}) => {
+const IncentivesCard = () => {
 
     const { setIncentivesDetails, loading , incentivesDetails } = useContext(PayrollContext);
     const { payrollDetails } = useContext(PayrollContext);
-    const [showBreakdown, setShowBreakdown] = useState(false);
     const [monthShouldBeWorkDays, setMonthShouldBeWorkDays] = useState(0);
     const oldAdjustmentDays = incentivesDetails.adjustment_days;
     const oldAdjustmentPercent = incentivesDetails.adjustment_percent;
-
-    const handleShowBreakdown = () => {
-        if (Number(oldAdjustmentDays) !== 0 || Number(oldAdjustmentPercent) !== 0) {
-            setShowBreakdown(true);
-        } else {
-            setShowBreakdown(false);
-        }
-    };
 
     useEffect(() => {
         incentivesformHandler.setValues({
@@ -38,14 +29,18 @@ const IncentivesCard = ({}) => {
             remarks: incentivesDetails.remarks,
         });
         setMonthShouldBeWorkDays(incentivesDetails.days);
-        handleShowBreakdown();
     }, [incentivesDetails, oldAdjustmentDays, oldAdjustmentPercent]);
     
-    const amountDeductedByPercentage = (Number(incentivesDetails.amount_rate) + Number(incentivesDetails.additional_incentive)) 
-    * (Number(incentivesDetails.adjustment_percent) / 100);
+    const amountDeductedByPercentage = 
+        (Number(incentivesDetails.amount_rate) 
+        + Number(incentivesDetails.additional_incentive)) 
+        * (Number(incentivesDetails.adjustment_percent) / 100);
     
-    const amountDeductedByDays = ((Number(incentivesDetails.amount_rate) + Number(incentivesDetails.additional_incentive)) / Number(monthShouldBeWorkDays)) 
-    * Number(incentivesDetails.adjustment_days);
+    const amountDeductedByDays = 
+        ((Number(incentivesDetails.amount_rate) 
+        + Number(incentivesDetails.additional_incentive)) 
+        / Number(monthShouldBeWorkDays)) 
+        * Number(incentivesDetails.adjustment_days);
 
     interface IncentiveFormValues {
         adjustment_days: number;
@@ -86,7 +81,11 @@ const IncentivesCard = ({}) => {
                 .then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
-                        setIncentivesDetails({ ...resp.data.incentives, days: resp.data.days });
+                        setIncentivesDetails({ 
+                            ...resp.data.incentives, 
+                            days: resp.data.days,
+                            worked_days: resp.data.worked_days
+                        });
                         setMonthShouldBeWorkDays(resp.data.days);
                     } else {
                         toast.error(resp.data.message);
@@ -106,78 +105,87 @@ const IncentivesCard = ({}) => {
             <form onSubmit={incentivesformHandler.handleSubmit}>
                 <p className="font-semibold text-red-800">Incentives</p>
                 <Grid cols={4}>
-                    <Textfield
-                        disabled
-                        label="Incentive Amount"
-                        value={formatNumber(incentivesDetails.incentive_amount)}
-                    />
-                    <Textfield
-                        type="number"
-                        name="adjustment_days"
-                        onChange={incentivesformHandler.handleChange}
-                        label="Absent Days"
-                        disabled
-                        value={incentivesformHandler.values.adjustment_days}
-                        error={incentivesformHandler.errors.adjustment_days}
-                    />
-                    <Textfield
-                        type="number"
-                        name="additional_incentive"
-                        onChange={incentivesformHandler.handleChange}
-                        label="Additional Incentive"
-                        value={incentivesformHandler.values.additional_incentive}
-                        error={incentivesformHandler.errors.additional_incentive}
-                    />
-                    <Textfield
-                        type="number"
-                        name="adjustment_percent"
-                        onChange={incentivesformHandler.handleChange}
-                        label="Tardiness Deduction Percent"
-                        disabled
-                        value={incentivesformHandler.values.adjustment_percent}
-                        error={incentivesformHandler.errors.adjustment_percent}
-                    />
                     <div className="col-span-2">
-                        <TextArea
-                            label="Remarks"
-                            onChange={incentivesformHandler.handleChange}
-                            name="remarks"
-                            value={incentivesformHandler.values.remarks ?? ""}
-                            error={incentivesformHandler.errors.remarks}
-                        />
+                        <Grid cols={2}>
+                            <Textfield
+                                disabled
+                                label="Monthly Incentive Amount"
+                                value={formatNumber(incentivesDetails.amount_rate)}
+                            />
+                            <div className="col-span-1">
+                                <Textfield
+                                    type="number"
+                                    name="additional_incentive"
+                                    onChange={incentivesformHandler.handleChange}
+                                    label="Additional Incentive"
+                                    value={incentivesformHandler.values.additional_incentive}
+                                    error={incentivesformHandler.errors.additional_incentive}
+                                />
+                            </div>
+                            
+                            <Textfield
+                                type="text"
+                                name="adjustment_percent"
+                                label="Tardiness Deduction Percent"
+                                disabled
+                                value={`${incentivesformHandler.values.adjustment_percent}%`}
+                                error={incentivesformHandler.errors.adjustment_percent}
+                            />
+                            <Textfield
+                                disabled
+                                label="Amount"
+                                value={formatNumber(amountDeductedByPercentage)}
+                            />
+                            <Textfield
+                                type="number"
+                                name="adjustment_days"
+                                onChange={incentivesformHandler.handleChange}
+                                label="Absent Days"
+                                disabled
+                                value={incentivesformHandler.values.adjustment_days}
+                                error={incentivesformHandler.errors.adjustment_days}
+                            />
+                            <Textfield
+                                disabled
+                                label="Amount"
+                                value={formatNumber(amountDeductedByDays)}
+                            />
+                        </Grid>
                     </div>
-                    {showBreakdown && (
-                        <div className="col-span-2">
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="col-span-1">
+                    <div className="col-span-2">
+                        <div className="grid grid-cols-2 gap-x-4">
+                            <Textfield
+                                disabled
+                                label="Worked Days"
+                                value={incentivesDetails.worked_days}
+                            />
+                            <div className="col-span-1">
                                 <Textfield
                                     disabled
-                                    type="number"
-                                    label="Absent Days"
-                                    value={incentivesDetails.adjustment_days ?? 0}
+                                    label="Final Incentive Amount"
+                                    value={formatNumber((Number(incentivesDetails.amount_rate) 
+                                        + Number(incentivesDetails.additional_incentive))
+                                        - (((Number(incentivesDetails.amount_rate) 
+                                        + Number(incentivesDetails.additional_incentive)) 
+                                        * (incentivesDetails.adjustment_percent / 100)) 
+                                        + (((Number(incentivesDetails.amount_rate) 
+                                        + Number(incentivesDetails.additional_incentive)) 
+                                        / incentivesDetails.days) 
+                                        * incentivesDetails.adjustment_days))
+                                    )}
                                 />
-                                <Textfield
-                                    disabled
-                                    type="number"
-                                    label="Tardiness Deduction Percent"
-                                    value={incentivesDetails.adjustment_percent}
+                            </div>
+                            <div className="col-span-2 gap-x-4">
+                                <TextArea
+                                    label="Remarks"
+                                    onChange={incentivesformHandler.handleChange}
+                                    name="remarks"
+                                    value={incentivesformHandler.values.remarks ?? ""}
+                                    error={incentivesformHandler.errors.remarks}
                                 />
-                                </div>
-                                <div className="col-span-1">
-                                <Textfield
-                                    disabled
-                                    label="Amount"
-                                    value={formatNumber(amountDeductedByDays)}
-                                />
-                                <Textfield
-                                    disabled
-                                    label="Amount"
-                                    value={formatNumber(amountDeductedByPercentage)}
-                                />
-                                </div>
                             </div>
                         </div>
-                    )}
+                    </div>
                 </Grid>
                 <Grid cols={3}>
                     <div />
