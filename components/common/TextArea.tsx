@@ -41,7 +41,7 @@ const TextArea = ({
                     onChange={onChange}
                     disabled={disabled}
                     className={`
-                        w-full h-[100px] rounded-md focus:outline-none border-2 ${error ? "border-red-400" : "border-slate-300 focus:border-slate-400"} p-2 pr-10
+                        w-full h-[109px] rounded-md focus:outline-none border-2 ${error ? "border-red-400" : "border-slate-300 focus:border-slate-400"} p-2 pr-10
                         ${disabled ? "hover:cursor-not-allowed bg-gray-100" : "cursor-text"}
                     `}
                 ></textarea>

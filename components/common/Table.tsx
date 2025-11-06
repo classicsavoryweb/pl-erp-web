@@ -192,7 +192,7 @@ const Table = ({
                                                 return (
                                                     <td
                                                         key={key}
-                                                        className={`py-[10px] px-2 border-1 border-slate-300`}
+                                                        className={`py-[10px] px-2 border-1 border-slate-300 max-w-[350px]`}
                                                     >
                                                         { settings.columnType === COLUMNTYPES.string &&
                                                             columnData
