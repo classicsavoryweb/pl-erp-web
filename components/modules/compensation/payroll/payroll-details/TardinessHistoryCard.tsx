@@ -104,6 +104,37 @@ const TardinessHistoryCard = () => {
                 />
             }
         },
+        {
+            columnHead: "Deduction Status",
+            path: "deduction_status",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let deduction_status: "default" | "success" | "warning";
+                let label: string;
+
+                switch (data.deduction_status) {
+                    case 1:
+                        deduction_status = "success";
+                        label = "Deducted";
+                        break;
+                    case 0:
+                        deduction_status = "warning";
+                        label = "Pending";
+                        break;
+                    default:
+                        deduction_status = "default";
+                        label = "Unknown";
+                        break;
+                }
+
+                return (
+                    <Badge
+                        label={label}
+                        status={deduction_status}
+                    />
+                );
+            }
+        },
     ];
 
     return (
