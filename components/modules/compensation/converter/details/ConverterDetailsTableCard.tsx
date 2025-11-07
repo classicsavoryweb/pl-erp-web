@@ -17,6 +17,7 @@ import confirm from "@/components/common/Confirm";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import Badge from "@/components/common/Badge";
+import FetchCSHubTransactionForm from "./FetchCSHubTransactionForm";
 
 const ConverterDetailsTableCard = () => {
     const api = useApiCall();
@@ -24,6 +25,7 @@ const ConverterDetailsTableCard = () => {
     const [data, setData] = useState<any>({});
     const createModal = useModal();
     const editModal = useModal();
+    const fetchModal = useModal();
     const filterHandler = useFilter();
 
     useAsyncEffect(() => {
@@ -185,10 +187,16 @@ const ConverterDetailsTableCard = () => {
                         <DropDownButtons
                             actions={[
                                 {
-                                    label: "Create",
+                                    label: "Create Transaction",
                                     onClick: () => {
                                         createModal.onOpen();
-                                     }
+                                    }
+                                },
+                                {
+                                    label: "Fetch CSHub Transactions",
+                                    onClick: () => {
+                                        fetchModal.onOpen();
+                                    }
                                 }
                             ]}
                         />
@@ -199,8 +207,6 @@ const ConverterDetailsTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    // withActions
-                    // actions={actions}
                 />
             </Card>
             <CreateConverterDetailForm
@@ -210,6 +216,10 @@ const ConverterDetailsTableCard = () => {
             <EditConverterDetailForm
                 modal={editModal}
                 data={data}
+                onSubmitCallback={api.triggerReload}
+            />
+            <FetchCSHubTransactionForm
+                modal={fetchModal}
                 onSubmitCallback={api.triggerReload}
             />
         </>

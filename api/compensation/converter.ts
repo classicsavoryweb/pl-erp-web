@@ -92,3 +92,31 @@ export const voidBatchConverter = async (id:number) => {
     return resData;
 };
 
+export const getCshubAppliedTransactions = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-cshub-applied-transactions`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const createCShubAppliedTransactions = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/create-cshub-applied-transactions`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const sendTransactionEmail = async (id:number) => {
+    const resData = await axiosHelper({
+        func_path: `/send-transaction-email/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};

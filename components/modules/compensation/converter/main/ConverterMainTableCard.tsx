@@ -10,7 +10,7 @@ import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import moment from "moment";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { generateConverter, getAllConverterMain, voidBatchConverter } from "@/api/compensation/converter";
+import { generateConverter, getAllConverterMain, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
 import CreateBatchModal from "./CreateBatchModal";
 import ViewBatchModal from "./ViewBatchModal";
 import Badge from "@/components/common/Badge";
@@ -116,7 +116,8 @@ const ConverterMainTableCard = () => {
                         status = "success";
                         statusActions = [
                             tableActions[0],
-                            tableActions[2]
+                            tableActions[2],
+                            tableActions[3]
                         ];
                         break;
                     case "Voided":
@@ -210,7 +211,29 @@ const ConverterMainTableCard = () => {
                 }
             }
         },
+        {
+            label: "Send Email",
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Email Batch Converter",
+                    message: "Are you sure you want to send email?"
+                });
 
+                if (isConfirmed) {
+                    sendTransactionEmail(data.id)
+                    .then((resp) => {
+                        if (!resp.error) {
+                            toast.success("Emails sent successfully");
+                            api.triggerReload();
+                        } else {
+                            toast.error(resp.data.message);
+                        }
+                    }).catch(() => {
+                        toast.error("Error encountered");
+                    });
+                }
+            }
+        }
     ];
 
     return (
