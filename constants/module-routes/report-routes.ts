@@ -38,7 +38,7 @@ export const reportRoutes: Route[] = [
             {
                 name: "Statutories",
                 pathname: "/reports/statutories",
-                permission: "view_statutory_reports",
+                permission: "",
                 isDropDown: true,
                 subLinks: [
                     {

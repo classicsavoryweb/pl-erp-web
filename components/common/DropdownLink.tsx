@@ -72,7 +72,6 @@ const DropdownLink = ({
                         const active = pathName.startsWith(link.pathname + '/') || pathName === link.pathname;
 
                         return (
-                            (permissions.includes(link.permission) || link.permission === "") &&
                             <div key={index}>
                                 { link.isDropDown
                                     ?
@@ -81,6 +80,7 @@ const DropdownLink = ({
                                             active={active}
                                         />
                                     :
+                                    (permissions.includes(link.permission) || link.permission === "") &&
                                     <Link
                                         href={link.pathname}
                                         className={`

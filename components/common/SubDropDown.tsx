@@ -1,11 +1,12 @@
 "use client";
 
 import { SubLink } from "@/constants/routes";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { AuthContext } from "@/context/AuthProvider";
 
 interface DropDownInterface {
     link: SubLink;
@@ -19,8 +20,13 @@ const SubDropDown = ({
 
     const [subToggle, setSubToggle] = useState<boolean>(active);
     const pathName = usePathname();
+    const { permissions } = useContext(AuthContext);
+    const isShowing = link?.subLinks?.some(subLink =>
+        permissions?.includes(subLink.permission)
+    );
 
     return (
+        isShowing &&
         <>
             <button
                 className={`
@@ -75,6 +81,7 @@ const SubDropDown = ({
                         const subActive = link.pathname === pathName;
 
                         return (
+                            (permissions.includes(link.permission) || link.permission === "") &&
                             <div key={index}>
                                 <Link
                                     href={link.pathname}
