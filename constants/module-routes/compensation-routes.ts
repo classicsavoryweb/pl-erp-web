@@ -89,6 +89,11 @@ export const compensationRoutes: Route[] = [
                         pathname: "/compensation/converter/main",
                         permission: "view_compensation_converter",
                     },
+                    {
+                        name: "Payroll Prooflist",
+                        pathname: "/compensation/converter/payroll-prooflist",
+                        permission: "view_compensation_payroll_prooflist",
+                    },
                 ]
             },
         ]
