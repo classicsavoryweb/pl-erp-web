@@ -24,13 +24,17 @@ const EditPagibigForm = ({
 
     const editFormHandler = useFormik({
         initialValues: {
-            employer_share: "",
-            employee_share: "",
+            min_amount: 0,
+            max_amount: 0,
+            percentage: 0,
+            max_deduction: 0,
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            employer_share: Yup.string().required("Employer share is required."),
-            employee_share: Yup.string().required("Employee share is required."),
+            min_amount: Yup.number().required("Minimum Amount is required.").min(1, "Must be greater than 0"),
+            max_amount: Yup.number().required("Max Amount is required.").min(1, "Must be greater than 0"),
+            percentage: Yup.number().required("Percentage is required.").min(1, "Must be greater than 0"),
+            max_deduction: Yup.number().required("Max Deduction is required.").min(1, "Must be greater than 0"),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
@@ -79,24 +83,44 @@ const EditPagibigForm = ({
         >
             <form onSubmit={editFormHandler.handleSubmit}>
                 <Textfield
-                    label="Employer Share"
-                    placeholder="enter employer share"
-                    name="employer_share"
-                    type="text"
-                    value={editFormHandler.values.employer_share}
+                    label="Minimum Amount"
+                    placeholder="enter minimum amount"
+                    name="min_amount"
+                    type="number"
+                    value={editFormHandler.values.min_amount}
                     required
                     onChange={editFormHandler.handleChange}
-                    error={editFormHandler.errors.employer_share}
+                    error={editFormHandler.errors.min_amount}
                 />
                 <Textfield
-                    label="Employee Share"
-                    placeholder="enter employee share"
-                    name="employee_share"
-                    type="text"
-                    value={editFormHandler.values.employee_share}
+                    label="Max Amount"
+                    placeholder="enter max amount"
+                    name="max_amount"
+                    type="number"
+                    value={editFormHandler.values.max_amount}
                     required
                     onChange={editFormHandler.handleChange}
-                    error={editFormHandler.errors.employee_share}
+                    error={editFormHandler.errors.max_amount}
+                />
+                <Textfield
+                    label="Percentage"
+                    placeholder="enter percentage"
+                    name="percentage"
+                    type="number"
+                    value={editFormHandler.values.percentage}
+                    required
+                    onChange={editFormHandler.handleChange}
+                    error={editFormHandler.errors.percentage}
+                />
+                <Textfield
+                    label="Max Deduction"
+                    placeholder="enter max deduction"
+                    name="max_deduction"
+                    type="number"
+                    value={editFormHandler.values.max_deduction}
+                    required
+                    onChange={editFormHandler.handleChange}
+                    error={editFormHandler.errors.max_deduction}
                 />
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">

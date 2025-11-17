@@ -41,13 +41,23 @@ const PagibigTableCard = ({
 
     const columnSettings = [
         {
-            columnHead: "Employer Share",
-            path: "employer_share",
+            columnHead: "Min Amount",
+            path: "min_amount",
             columnType: COLUMNTYPES.amount
         },
         {
-            columnHead: "Employee Share",
-            path: "employee_share",
+            columnHead: "Max Amount",
+            path: "max_amount",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Percentage",
+            path: "percentage",
+            columnType: COLUMNTYPES.amount
+        },
+        {
+            columnHead: "Max Deduction",
+            path: "max_deduction",
             columnType: COLUMNTYPES.amount
         },
     ];
@@ -59,8 +69,10 @@ const PagibigTableCard = ({
                 editModal.onOpen();
                 setData({
                     id: data.id,
-                    employer_share: data.employer_share,
-                    employee_share: data.employee_share,
+                    min_amount: data.min_amount,
+                    max_amount: data.max_amount,
+                    percentage: data.percentage,
+                    max_deduction: data.max_deduction,
                 });
             }
         },
