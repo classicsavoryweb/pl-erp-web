@@ -12,7 +12,7 @@ import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import confirm from "@/components/common/Confirm";
 import { editPayrollList } from "@/api/compensation/payroll-list";
-import { getEmployee } from "@/api/employee";
+import { getEmployee, getEmployeeBankDetailsHistory } from "@/api/employee";
 import Dropdown from "@/components/common/Dropdown";
 import TextArea from "@/components/common/TextArea";
 import Grid from "@/components/common/Grid";
@@ -31,6 +31,7 @@ const EditPayrollListForm = ({
 }: FormModalInterface) => {
 
     const [employee, setEmployee] = useState<any>({});
+    const [employeeBankAccount, setEmployeeBankAccount] = useState<any[]>([]);
     const api = useApiCall();
 
     const editFormHandler = useFormik({
@@ -40,6 +41,7 @@ const EditPayrollListForm = ({
             is_statutory_only: "",
             is_mancom: 0,
             is_on_maternity_leave: 0,
+            is_bank: 0,
             remarks: "",
         },
         validateOnChange: false,
@@ -47,6 +49,7 @@ const EditPayrollListForm = ({
             employee_id: Yup.string().required("Employee is required."),
             is_included: Yup.string().required("Payroll status is required."),
             is_statutory_only: Yup.string().required("Payroll Type is required."),
+            is_bank: Yup.string().required("Payroll Type is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
@@ -61,6 +64,7 @@ const EditPayrollListForm = ({
                     if(!resp.error) {
                         toast.success("Payroll updated successfully");
                         setEmployee({});
+                        setEmployeeBankAccount([]);
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -96,8 +100,29 @@ const EditPayrollListForm = ({
             }).finally(() => {
                 api.setLoading(false);
             });
+
+            if (!formValue.employee_number) return;
+
+            api.setLoading(true);
+            getEmployeeBankDetailsHistory(formValue.employee_number, {
+                page: 1,
+                per_page: 1
+            })
+            .then((resp) => {
+                if (resp.error) {
+                    toast.error("Error fetching bank details");
+                } else {
+                    setEmployeeBankAccount(resp.data.data);
+                }
+            })
+            .catch(() => {
+                toast.error("Error encountered");
+            })
+            .finally(() => {
+                api.setLoading(false); 
+            });
         }
-    }, [modal.isShowing]);
+    }, [formValue.employee_number, api.reload, modal.isShowing]);
 
     return (
         <Modal
@@ -144,53 +169,110 @@ const EditPayrollListForm = ({
                         },
                     ]}
                 />
-                <Dropdown
-                    label="Payroll Type"
-                    placeholder="select type"
-                    name="is_statutory_only"
-                    value={editFormHandler.values.is_statutory_only}
-                    required
-                    onChange={editFormHandler.handleChange}
-                    error={editFormHandler.errors.is_statutory_only}
-                    options={[
-                        {
-                            label: "Statutory only",
-                            value: 1
-                        },
-                        {
-                            label: "Full payroll",
-                            value: 0
-                        },
-                    ]}
-                />
+                <div className="mb-2">
+                    <Dropdown
+                        label="Payroll Type"
+                        placeholder="select type"
+                        name="is_statutory_only"
+                        value={editFormHandler.values.is_statutory_only}
+                        required
+                        onChange={editFormHandler.handleChange}
+                        error={editFormHandler.errors.is_statutory_only}
+                        options={[
+                            {
+                                label: "Statutory only",
+                                value: 1
+                            },
+                            {
+                                label: "Full payroll",
+                                value: 0
+                            },
+                        ]}
+                    />
+                </div>
+                <Grid cols={2}>
+                    <div className="mb-2">
+                        <Checkbox
+                            label="Is Mancom"
+                            checked={editFormHandler.values.is_mancom === 1}
+                            value="is_mancom"
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    editFormHandler.setFieldValue("is_mancom", 1);
+                                    editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                } else {
+                                    editFormHandler.setFieldValue("is_mancom", 0);
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className="mb-2">
+                        <Checkbox
+                            label="Is On Maternity Leave"
+                            checked={editFormHandler.values.is_on_maternity_leave === 1}
+                            value="is_on_maternity_leave"
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    editFormHandler.setFieldValue("is_on_maternity_leave", 1);
+                                    editFormHandler.setFieldValue("is_mancom", 0);
+                                } else {
+                                    editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                }
+                            }}
+                        />
+                    </div>
+                </Grid>
+
+                <p className="mb-[-2px]">
+                    Transaction Mode<span className="text-red-400">*</span>
+                </p>
                 <Grid cols={2}>
                     <Checkbox
-                        label="Is Mancom"
-                        checked={editFormHandler.values.is_mancom === 1}
-                        value="is_mancom"
+                        label="Bank"
+                        checked={editFormHandler.values.is_bank === 1}
+                        value="is_bank"
                         onChange={(e) => {
                             if (e.target.checked) {
-                                editFormHandler.setFieldValue("is_mancom", 1);
-                                editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                editFormHandler.setFieldValue("is_bank", 1);
                             } else {
-                                editFormHandler.setFieldValue("is_mancom", 0);
+                                editFormHandler.setFieldValue("is_bank", 0);
                             }
                         }}
                     />
                     <Checkbox
-                        label="Is On Maternity Leave"
-                        checked={editFormHandler.values.is_on_maternity_leave === 1}
-                        value="is_on_maternity_leave"
+                        label="Cash"
+                        checked={editFormHandler.values.is_bank === 0}
+                        value="is_bank"
                         onChange={(e) => {
                             if (e.target.checked) {
-                                editFormHandler.setFieldValue("is_on_maternity_leave", 1);
-                                editFormHandler.setFieldValue("is_mancom", 0);
+                                editFormHandler.setFieldValue("is_bank", 0);
                             } else {
-                                editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                editFormHandler.setFieldValue("is_bank", 1);
                             }
                         }}
                     />
                 </Grid>
+
+                {editFormHandler.values.is_bank === 1 &&
+                    employeeBankAccount.length > 0 &&
+                    employeeBankAccount.map((bank, index) => (
+                        <Grid cols={2} key={index}>
+                            <Textfield
+                                disabled
+                                label="Account Type"
+                                name="description"
+                                value={bank.bank_account_type?.description || ""}
+                            />
+                            <Textfield
+                                disabled
+                                label="Account No."
+                                name="account_no"
+                                value={bank.bank_number || ""}
+                            />
+                        </Grid>
+                    ))
+                }
+
                 <TextArea
                     label="Remarks"
                     name="remarks"
