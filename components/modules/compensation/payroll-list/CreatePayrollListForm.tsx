@@ -14,6 +14,9 @@ import Dropdown from "@/components/common/Dropdown";
 import TextArea from "@/components/common/TextArea";
 import Grid from "@/components/common/Grid";
 import Checkbox from "@/components/common/Checkbox";
+import { getEmployeeBankDetailsHistory } from "@/api/employee";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import { useApiCall } from "@/hooks/api-call";
 
 interface FormModalInterface {
     modal: any;
@@ -25,7 +28,9 @@ const CreatePayrollListForm = ({
     onSubmitCallback
 }: FormModalInterface) => {
 
-    const [employee, setEmployee] = useState<any>({});
+    const [employee, setEmployee] = useState<any>(null);
+    const [employeeBankAccount, setemployeeBankAccount] = useState<any[]>([]);
+    const api = useApiCall();
 
     const createFormHandler = useFormik({
         initialValues: {
@@ -34,6 +39,7 @@ const CreatePayrollListForm = ({
             is_statutory_only: 0,
             is_mancom: 0,
             is_on_maternity_leave: 0,
+            is_bank: 1,
             remarks: "",
         },
         validateOnChange: false,
@@ -41,6 +47,7 @@ const CreatePayrollListForm = ({
             employee_id: Yup.string().required("Employee is required."),
             is_included: Yup.string().required("Payroll status is required."),
             is_statutory_only: Yup.string().required("Payroll Type is required."),
+            is_bank: Yup.string().required("Payroll Type is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -54,6 +61,7 @@ const CreatePayrollListForm = ({
                     if(!resp.error) {
                         toast.success("Payroll created successfully");
                         setEmployee({});
+                        setemployeeBankAccount([]);
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -69,6 +77,30 @@ const CreatePayrollListForm = ({
         }
     });
 
+    useAsyncEffect(() => {
+        if (modal.isShowing) {
+            api.setLoading(true);
+            if (!employee || !employee.employee_number) return;
+            getEmployeeBankDetailsHistory(String(employee?.employee_number),{
+                page: 1,
+                per_page: 1
+            })
+            .then((resp) => {
+                if (resp.error) {
+                    toast.error("Error fetching bank details");
+                } else {
+                    setemployeeBankAccount(resp.data.data);
+                }
+            })
+            .catch(() => {
+                toast.error("Error encountered");
+            })
+            .finally(() => {
+                api.setLoading(false); 
+            });
+        }
+    }, [employee?.employee_number, api.reload, modal.isShowing]);
+
     return (
         <Modal
             isShowing={modal.isShowing}
@@ -76,6 +108,7 @@ const CreatePayrollListForm = ({
             onClose={() => {
                 modal.onClose();
                 setEmployee({});
+                setemployeeBankAccount([]);
                 createFormHandler.resetForm();
             }}
             loading={modal.loading}
@@ -113,53 +146,110 @@ const CreatePayrollListForm = ({
                         },
                     ]}
                 />
-                <Dropdown
-                    label="Payroll Type"
-                    placeholder="select type"
-                    name="is_statutory_only"
-                    value={createFormHandler.values.is_statutory_only}
-                    required
-                    onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.is_statutory_only}
-                    options={[
-                        {
-                            label: "Statutory only",
-                            value: 1
-                        },
-                        {
-                            label: "Full payroll",
-                            value: 0
-                        },
-                    ]}
-                />
+                <div className="mb-2">
+                    <Dropdown
+                        label="Payroll Type"
+                        placeholder="select type"
+                        name="is_statutory_only"
+                        value={createFormHandler.values.is_statutory_only}
+                        required
+                        onChange={createFormHandler.handleChange}
+                        error={createFormHandler.errors.is_statutory_only}
+                        options={[
+                            {
+                                label: "Statutory only",
+                                value: 1
+                            },
+                            {
+                                label: "Full payroll",
+                                value: 0
+                            },
+                        ]}
+                    />
+                </div>
+                <Grid cols={2}>
+                    <div className="mb-2">
+                        <Checkbox
+                            label="Is Mancom"
+                            checked={createFormHandler.values.is_mancom === 1}
+                            value="is_mancom"
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    createFormHandler.setFieldValue("is_mancom", 1);
+                                    createFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                } else {
+                                    createFormHandler.setFieldValue("is_mancom", 0);
+                                }
+                            }}
+                        />
+                    </div>
+                    <div className="mb-2">
+                        <Checkbox
+                            label="Is On Maternity Leave"
+                            checked={createFormHandler.values.is_on_maternity_leave === 1}
+                            value="is_on_maternity_leave"
+                            onChange={(e) => {
+                                if (e.target.checked) {
+                                    createFormHandler.setFieldValue("is_on_maternity_leave", 1);
+                                    createFormHandler.setFieldValue("is_mancom", 0);
+                                } else {
+                                    createFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                }
+                            }}
+                        />
+                    </div>
+                </Grid>
+
+                <p className="mb-[-2px]">
+                    Transaction Mode<span className="text-red-400">*</span>
+                </p>
                 <Grid cols={2}>
                     <Checkbox
-                        label="Is Mancom"
-                        checked={createFormHandler.values.is_mancom === 1}
-                        value="is_mancom"
+                        label="Bank"
+                        checked={createFormHandler.values.is_bank === 1}
+                        value="is_bank"
                         onChange={(e) => {
                             if (e.target.checked) {
-                                createFormHandler.setFieldValue("is_mancom", 1);
-                                createFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                createFormHandler.setFieldValue("is_bank", 1);
                             } else {
-                                createFormHandler.setFieldValue("is_mancom", 0);
+                                createFormHandler.setFieldValue("is_bank", 0);
                             }
                         }}
                     />
                     <Checkbox
-                        label="Is On Maternity Leave"
-                        checked={createFormHandler.values.is_on_maternity_leave === 1}
-                        value="is_on_maternity_leave"
+                        label="Cash"
+                        checked={createFormHandler.values.is_bank === 0}
+                        value="is_bank"
                         onChange={(e) => {
                             if (e.target.checked) {
-                                createFormHandler.setFieldValue("is_on_maternity_leave", 1);
-                                createFormHandler.setFieldValue("is_mancom", 0);
+                                createFormHandler.setFieldValue("is_bank", 0);
                             } else {
-                                createFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                createFormHandler.setFieldValue("is_bank", 1);
                             }
                         }}
                     />
                 </Grid>
+
+                {createFormHandler.values.is_bank === 1 &&
+                    employeeBankAccount.length > 0 &&
+                    employeeBankAccount.map((bank, index) => (
+                        <Grid cols={2} key={index}>
+                            <Textfield
+                                disabled
+                                label="Account Type"
+                                name="description"
+                                value={bank.bank_account_type?.description || ""}
+                            />
+                            <Textfield
+                                disabled
+                                label="Account No."
+                                name="account_no"
+                                value={bank.bank_number || ""}
+                            />
+                        </Grid>
+                    ))
+                }
+
                 <TextArea
                     label="Remarks"
                     name="remarks"
@@ -177,6 +267,7 @@ const CreatePayrollListForm = ({
                             onClick={() => {
                                 modal.onClose();
                                 setEmployee({});
+                                setemployeeBankAccount([]);
                                 createFormHandler.resetForm();
                             }}
                         />
