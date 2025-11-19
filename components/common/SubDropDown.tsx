@@ -36,7 +36,6 @@ const SubDropDown = ({
                     rounded-md
                     py-[7px]
                     items-center
-                    font-medium
                     text-[13px]
                     px-3
                     focus:outline-none
@@ -58,7 +57,7 @@ const SubDropDown = ({
                     <path d="M4 4v10h10" stroke="currentColor" strokeWidth="1" />
                 </svg>
 
-                <div className="w-full flex items-center justify-between">
+                <div className="flex flex-grow items-center justify-between">
                     <div>
                         {link.name}
                     </div>
