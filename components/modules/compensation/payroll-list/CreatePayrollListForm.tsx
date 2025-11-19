@@ -40,6 +40,7 @@ const CreatePayrollListForm = ({
             is_mancom: 0,
             is_on_maternity_leave: 0,
             is_bank: 1,
+            is_hold: 0,
             remarks: "",
         },
         validateOnChange: false,
@@ -225,6 +226,18 @@ const CreatePayrollListForm = ({
                                 createFormHandler.setFieldValue("is_bank", 0);
                             } else {
                                 createFormHandler.setFieldValue("is_bank", 1);
+                            }
+                        }}
+                    />
+                    <Checkbox
+                        label="Hold"
+                        checked={createFormHandler.values.is_hold === 1}
+                        value="is_hold"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                createFormHandler.setFieldValue("is_hold", 1);
+                            } else {
+                                createFormHandler.setFieldValue("is_hold", 0);
                             }
                         }}
                     />

@@ -42,6 +42,7 @@ const EditPayrollListForm = ({
             is_mancom: 0,
             is_on_maternity_leave: 0,
             is_bank: 0,
+            is_hold: 0,
             remarks: "",
         },
         validateOnChange: false,
@@ -226,7 +227,7 @@ const EditPayrollListForm = ({
                 <p className="mb-[-2px]">
                     Transaction Mode<span className="text-red-400">*</span>
                 </p>
-                <Grid cols={2}>
+                <Grid cols={3}>
                     <Checkbox
                         label="Bank"
                         checked={editFormHandler.values.is_bank === 1}
@@ -248,6 +249,19 @@ const EditPayrollListForm = ({
                                 editFormHandler.setFieldValue("is_bank", 0);
                             } else {
                                 editFormHandler.setFieldValue("is_bank", 1);
+                            }
+                        }}
+                    />
+
+                    <Checkbox
+                        label="Hold"
+                        checked={editFormHandler.values.is_hold === 1}
+                        value="is_hold"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue("is_hold", 1);
+                            } else {
+                                editFormHandler.setFieldValue("is_hold", 0);
                             }
                         }}
                     />

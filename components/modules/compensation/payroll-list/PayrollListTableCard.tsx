@@ -97,6 +97,7 @@ const PayrollListTableCard = () => {
                     is_mancom: data.is_mancom,
                     is_on_maternity_leave: data.is_on_maternity_leave,
                     is_bank: data.is_bank,
+                    is_hold: data.is_hold,
                     remarks: data.remarks,
                 });
             }
