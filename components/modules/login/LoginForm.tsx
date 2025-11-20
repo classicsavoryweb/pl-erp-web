@@ -57,7 +57,6 @@ const LoginForm = () => {
                     }
                 })
                 .catch((err) => {
-                    console.log(err);
                     toast.error("Error encountered");
                 })
                 .finally(() => {

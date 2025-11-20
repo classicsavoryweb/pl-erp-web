@@ -103,7 +103,6 @@ const CutOffTableCard = () => {
             onClick: (data: any) => {
                 viewCutOffModal.onOpen();
                 setData(data);
-                console.log(data);
             }   
         },
         {

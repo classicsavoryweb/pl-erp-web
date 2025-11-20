@@ -498,18 +498,10 @@ const TardinessTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
+                    dataKey="tardiness_id"
                     withCheckBox
                     onCheck={(e: any) => {
-                        if (e.target.checked) {
-                            approveBulk.setFieldValue("tardiness_id",
-                                [...approveBulk.values.tardiness_id,
-                                    e.target.value
-                            ]);
-                        } else {
-                            const tardiness_ids = approveBulk.values.tardiness_id;
-                            tardiness_ids.filter((tardiness) => tardiness !== e.target.value);
-                            approveBulk.setFieldValue("tardiness_id", tardiness_ids);
-                        }
+                        approveBulk.setFieldValue("tardiness_id", e);
                     }}
                 />
             </Card>
