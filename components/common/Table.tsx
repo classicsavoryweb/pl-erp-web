@@ -9,7 +9,7 @@ import EmptyState from "./EmptyState";
 import Checkbox from "./Checkbox";
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 interface columnSetting {
     columnHead: string;
@@ -37,6 +37,7 @@ interface TableInterface {
     canSortColumns?: boolean;
     onSort?: (e: any) => void;
     smallText?: boolean;
+    initialSelectedRows?: any[];
 };
 
 const Table = ({
@@ -51,12 +52,14 @@ const Table = ({
     onCheck,
     canSortColumns,
     onSort,
-    smallText
+    smallText,
+    initialSelectedRows = [],
 }: TableInterface) => {
 
     const currentPage = paginator && paginator.paginationData.current_page;
     const totalPages = paginator && paginator.paginationData.last_page;
     const [order, setOrder] = useState<"ASC" | "DESC" | "" >("");
+    const [selectedRows, setSelectedRows] = useState<any[]>(initialSelectedRows);
     moment.locale('eng');
 
     const getCustomLinks = () => {
@@ -85,9 +88,23 @@ const Table = ({
                     <tr>
                         { withCheckBox &&
                             <th
-                                className="text-left p-2 border-slate-300 border-1 text-zinc-100"
+                                className="text-left p-2 border-slate-300 border-1 text-zinc-100 hover:cursor-pointer"
+                                onClick={() => {
+                                    let newDataset = [];
+                                    if (selectedRows.length === dataSet.length) {
+                                        newDataset = [];
+                                    } else {
+                                        newDataset = dataSet.map((data) => {
+                                            const val = _.get(data, dataKey);
+                                            return val;
+                                        })
+                                    }
+
+                                    setSelectedRows(newDataset);
+                                    onCheck && onCheck(newDataset);
+                                }}
                             >
-                                Select
+                                Select All
                             </th>
                         }
                         {
@@ -170,6 +187,7 @@ const Table = ({
                         }
                         { (!loading && dataSet.length > 0 ) &&
                             dataSet.map((data, idx) => {
+                                const val = _.get(data, dataKey);
                                 return (
                                     <tr key={idx}>
                                         { withCheckBox &&
@@ -180,8 +198,23 @@ const Table = ({
                                                     className="flex justify-center"
                                                 >
                                                     <Checkbox
-                                                        value={data.id}
-                                                        onChange={(e:any) => onCheck && onCheck(e)}
+                                                        checked={selectedRows.includes(Number(val))}
+                                                        value={val}
+                                                        onChange={(e:any) => {
+                                                            const value = e.target.value;
+                                                            var selectedTransactions = selectedRows;
+                                                            if (e.target.checked) {
+                                                                selectedTransactions = [
+                                                                    ...selectedTransactions,
+                                                                    Number(value)
+                                                                ] 
+                                                            } else {
+                                                                selectedTransactions = selectedTransactions.filter(sel => Number(sel) !== Number(value))
+                                                            }
+
+                                                            setSelectedRows(selectedTransactions);
+                                                            onCheck && onCheck(selectedTransactions);
+                                                        }}
                                                     />
                                                 </div>
                                             </td>
