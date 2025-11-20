@@ -1,4 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
+import EntriesTableCard from "@/components/modules/compensation/entries/EntriesTableCard";
 
 const Page = () => {
     return (
@@ -6,6 +7,7 @@ const Page = () => {
             <PageTitle
                 title="Entries To Post"
             />
+            <EntriesTableCard/>
         </>
     );
 };
