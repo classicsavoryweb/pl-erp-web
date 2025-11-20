@@ -101,6 +101,7 @@ const FetchCSHubTransactionForm = ({
             isShowing = {modal.isShowing}
             onClose = {() => {
                 modal.onClose();
+                setDataset([]);
                 trasanctionsFormHandler.resetForm();
             }}
             title="CSHub Transactions"
@@ -130,7 +131,7 @@ const FetchCSHubTransactionForm = ({
                 />
                 <Textfield
                     type="date"
-                    label="Date From"
+                    label="Posting Date From"
                     name="posted_from"
                     required
                     onChange={trasanctionsFormHandler.handleChange}
@@ -139,7 +140,7 @@ const FetchCSHubTransactionForm = ({
                 />
                 <Textfield
                     type="date"
-                    label="Date To"
+                    label="Posting Date To"
                     name="posted_to"
                     required
                     onChange={trasanctionsFormHandler.handleChange}
@@ -165,18 +166,7 @@ const FetchCSHubTransactionForm = ({
                 <Table
                     withCheckBox
                     onCheck={(e) => {
-                        const value = e.target.value;
-
-                        if (e.target.checked) {
-                            setSelectedTransactions(prev => [
-                                ...prev,
-                                value
-                            ]);
-                        } else {
-                            setSelectedTransactions(prev => 
-                                prev.filter(sel => Number(sel) !== Number(value))
-                            );
-                        }
+                        setSelectedTransactions(e);
                     }}
                     columnSettings={columnSettings}
                     dataSet={dataSet}
@@ -198,10 +188,11 @@ const FetchCSHubTransactionForm = ({
 
                                     if (isConfirmed) {
                                         const transactionDataset = dataSet;
+
                                         const transactions =  transactionDataset
-                                        .filter((trans: any) => selectedTransactions.includes(String(trans.id)))
+                                        .filter((trans: any) => selectedTransactions.includes(trans.id))
                                         .map((trans: any) => {
-                                            if (selectedTransactions.includes(String(trans.id))) {
+                                            if (selectedTransactions.includes(trans.id)) {
                                                 return ({
                                                     id: trans.id,
                                                     employee_number: trans.user.employee_number,
@@ -210,7 +201,10 @@ const FetchCSHubTransactionForm = ({
                                                     purpose: trans.purpose ?? trans.procedure,
                                                     amount: trans.amount,
                                                     transaction_type: trans.healthcare_transaction_type.description ?? null,
-                                                    transaction_number: trans.trans_no
+                                                    for_crediting: trans.healthcare_transaction_type.for_crediting ?? null,
+                                                    for_liquidation: trans.healthcare_transaction_type.for_liquidation ?? null,
+                                                    transaction_number: trans.trans_no,
+                                                    type: trasanctionsFormHandler.values.type,
                                                 });
                                             }
                                         });

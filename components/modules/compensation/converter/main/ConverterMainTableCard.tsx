@@ -10,7 +10,7 @@ import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import moment from "moment";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { generateConverter, getAllConverterMain, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
+import { generateConverter, getAllConverterMain, postBatchConverter, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
 import CreateBatchModal from "./CreateBatchModal";
 import ViewBatchModal from "./ViewBatchModal";
 import Badge from "@/components/common/Badge";
@@ -18,11 +18,13 @@ import { useState } from "react";
 import confirm from "@/components/common/Confirm";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "@/components/modules/cards/FilterCard";
+import ResendBatchModalForm from "./ResendBatchModalForm";
 
 const ConverterMainTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
     const createModal = useModal();
+    const resendModal = useModal();
     const viewModal = useModal();
     const [dataSet, setDataSet] = useState<any[]>([]);
     const filterHandler = useFilter();
@@ -58,7 +60,7 @@ const ConverterMainTableCard = () => {
             columnType: COLUMNTYPES.date
         },
         {
-            columnHead: "Batch #",
+            columnHead: "Batch Number",
             path: "batch_number",
             columnType: COLUMNTYPES.string
         },
@@ -83,11 +85,17 @@ const ConverterMainTableCard = () => {
                     case "Pending":
                         status = "warning";
                         break;
+                    case "Posted":
+                        status = "default";
+                        break;
                     case "Generated":
                         status = "success";
                         break;
+                    case "Sent":
+                        status = "success";
+                        break;
                     case "Voided":
-                        status = "default";
+                        status = "danger";
                         break;
                     default:
                         status = "default";
@@ -110,19 +118,35 @@ const ConverterMainTableCard = () => {
 
                 switch (data.status) {
                     case "Pending":
-                        statusActions = tableActions;
+                        statusActions = [
+                            tableActions[0],
+                            tableActions[1],
+                            tableActions[2],
+                        ];
                         break;
-                    case "Generated":
-                        status = "success";
+                    case "Posted":
                         statusActions = [
                             tableActions[0],
                             tableActions[2],
-                            tableActions[3]
+                            tableActions[3],
+                        ];
+                        break;
+                    case "Generated":
+                        statusActions = [
+                            tableActions[0],
+                            tableActions[3],
+                            tableActions[4],
                         ];
                         break;
                     case "Voided":
                         statusActions = [
                             tableActions[0]
+                        ];
+                        break;
+                     case "Sent":
+                        statusActions = [
+                            tableActions[0],
+                            tableActions[5]
                         ];
                         break;
                     default:
@@ -160,6 +184,29 @@ const ConverterMainTableCard = () => {
             }
         },
         {
+            label: "Post",
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Post Batch",
+                    message: "Are you sure you want to save changes?"
+                });
+
+                if (isConfirmed) {
+                    postBatchConverter(data.id)
+                    .then((resp) => {
+                        if (!resp.error) {
+                            toast.success("Batch posted successfully");
+                            api.triggerReload();
+                        } else {
+                            toast.error(resp.data.message);
+                        }
+                    }).catch(() => {
+                        toast.error("Error encountered");
+                    });
+                }
+            }
+        },
+        {
             label: "Void",
             onClick: async (data: any) => {
                 const isConfirmed = await confirm({
@@ -193,6 +240,8 @@ const ConverterMainTableCard = () => {
                 if (isConfirmed) {
                     generateConverter(data.id)
                     .then((resp) => {
+                        api.triggerReload();
+
                         const blob = new Blob([resp.data], {
                             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                         });
@@ -213,7 +262,7 @@ const ConverterMainTableCard = () => {
             label: "Send Email",
             onClick: async (data: any) => {
                 const isConfirmed = await confirm({
-                    title: "Email Batch Converter",
+                    title: "Send Email",
                     message: "Are you sure you want to send email?"
                 });
 
@@ -230,6 +279,13 @@ const ConverterMainTableCard = () => {
                         toast.error("Error encountered");
                     });
                 }
+            }
+        },
+        {
+            label: "Resend Email",
+            onClick: (data: any) => {
+                resendModal.onOpen();
+                setDataSet(data.converter_details);
             }
         }
     ];
@@ -253,8 +309,16 @@ const ConverterMainTableCard = () => {
                         value: "Pending"
                     },
                     {
+                        label: "Posted",
+                        value: "Posted"
+                    },
+                    {
                         label: "Generated",
                         value: "Generated"
+                    },
+                    {
+                        label: "Sent",
+                        value: "Sent"
                     },
 
                 ]}
@@ -280,6 +344,10 @@ const ConverterMainTableCard = () => {
             />
             <ViewBatchModal
                 modal={viewModal}
+                dataSet={dataSet}
+            />
+            <ResendBatchModalForm
+                modal={resendModal}
                 dataSet={dataSet}
             />
         </>

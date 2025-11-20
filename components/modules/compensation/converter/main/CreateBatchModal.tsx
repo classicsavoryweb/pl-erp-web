@@ -49,7 +49,8 @@ const CreateBatchModal = ({
                     setDataset(resp.data.transactions);
                 } else {
                     toast.error(resp.data.message);
-                    setDataset([]);                    
+                    setDataset([]);
+                    trasanctionsFormHandler.resetForm();                 
                 }
             }).catch(() => {
                 toast.error("Error encountered");
@@ -89,6 +90,8 @@ const CreateBatchModal = ({
             isShowing = {modal.isShowing}
             onClose = {() => {
                 modal.onClose();
+                setDataset([]);
+                setSelectedTransactions([]);
                 trasanctionsFormHandler.resetForm();
             }}
             title="Batch Converter"
@@ -134,17 +137,7 @@ const CreateBatchModal = ({
             <Table
                 withCheckBox
                 onCheck={(e) => {
-                    const value = e.target.value;
-                    if (e.target.checked) {
-                        setSelectedTransactions(prev => [
-                            ...prev,
-                            value
-                        ]);
-                    } else {
-                        setSelectedTransactions(prev => 
-                            prev.filter(sel => Number(sel) !== Number(value))
-                        );
-                    }
+                    setSelectedTransactions(e);
                 }}
                 columnSettings={columnSettings}
                 dataSet={dataSet}
@@ -172,6 +165,8 @@ const CreateBatchModal = ({
                                             if (!resp.error) {
                                                 toast.success("Batch successfully created");
                                                 onSubmitCallback();
+                                                setDataset([]);
+                                                setSelectedTransactions([]);
                                                 modal.onClose();
                                             } else {
                                                 toast.error(resp.data.message);

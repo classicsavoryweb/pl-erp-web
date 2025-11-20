@@ -92,6 +92,15 @@ export const voidBatchConverter = async (id:number) => {
     return resData;
 };
 
+export const postBatchConverter = async (id:number) => {
+    const resData = await axiosHelper({
+        func_path: `/post-batch-convereter/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
 export const getCshubAppliedTransactions = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/get-cshub-applied-transactions`,
@@ -116,6 +125,16 @@ export const sendTransactionEmail = async (id:number) => {
     const resData = await axiosHelper({
         func_path: `/send-transaction-email/${id}`,
         method: 'GET',
+    });
+
+    return resData;
+};
+
+export const resendTransactionEmail = async (id:number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/resend-transaction-email/${id}`,
+        method: 'POST',
+        payload: payload
     });
 
     return resData;
