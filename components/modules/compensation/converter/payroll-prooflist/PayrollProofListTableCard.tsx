@@ -117,18 +117,26 @@ const PayrollProofListTableCard = () => {
             if (isConfirmed) {
                 generatePayrollProoflistConverter(values)
                 .then((resp) => {
-                    const blob = new Blob([resp.data], {
-                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    });
-
-                    const downloadUrl = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
+                    if (!resp.error) {
+                        const blob = new Blob([resp.data], {
+                            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        });
     
-                    a.href = downloadUrl;
-                    a.download = `${values.bank_account_type_id == "1" ? "CASH_CARD" : "SAVINGS"}_${values.type}_${moment().format('YYYY-MM-DD')}.xlsm`;
-                    document.body.appendChild(a);
-                    a.click();
-                    a.remove();
+                        const downloadUrl = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+        
+                        a.href = downloadUrl;
+                        a.download = `${values.bank_account_type_id == "1" ? "CASH_CARD" : "SAVINGS"}_${values.type}_${moment().format('YYYY-MM-DD')}.xlsm`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    } else {
+                        if (resp.status === 404) {
+                            toast.error("You cant generate inactive cutoff");
+                        } else if (resp.status === 409) {
+                            toast.error("You cant generate unfinalized cutoff");
+                        }
+                    }
                 });
             }
         }
@@ -222,7 +230,26 @@ const PayrollProofListTableCard = () => {
             <Card>
                 <Table
                     dataSet={api.dataSet}
-                    columnSettings={columnSettings}
+                    columnSettings={
+                        formHandler.values.type === "PAYROLL"
+                        ? columnSettings
+                        : [
+                            columnSettings[0],
+                            columnSettings[1],
+                            {
+                                columnHead: "Deduction Percent",
+                                path: "adjustment_percent",
+                                columnType: COLUMNTYPES.amount
+                            },
+                            {
+                                columnHead: "Additional Incentives",
+                                path: "additional_incentive",
+                                columnType: COLUMNTYPES.amount
+                            },
+                            columnSettings[2],
+                            columnSettings[3],
+                        ]
+                    }
                     loading={api.loading}
                     paginator={paginator}
                     // withActions
