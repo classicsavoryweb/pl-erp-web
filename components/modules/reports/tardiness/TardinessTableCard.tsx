@@ -498,7 +498,6 @@ const TardinessTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    dataKey="tardiness_id"
                     withCheckBox
                     onCheck={(e: any) => {
                         approveBulk.setFieldValue("tardiness_id", e);
