@@ -269,11 +269,17 @@ const Table = ({
                                                         { settings.columnType === COLUMNTYPES.function &&
                                                             settings.function && settings.function(data)
                                                         }
-                                                        { settings.columnType === COLUMNTYPES.amount &&
-                                                            Number(columnData).toLocaleString('en-US', {
-                                                                minimumFractionDigits: 2,
-                                                                maximumFractionDigits: 2,
-                                                            })
+                                                        { settings.columnType === COLUMNTYPES.amount && 
+                                                            <>
+                                                                {
+                                                                    columnData == "" || columnData == null || isNaN(columnData)
+                                                                    ? "—" 
+                                                                    : Number(columnData).toLocaleString('en-US', {
+                                                                        minimumFractionDigits: 2,
+                                                                        maximumFractionDigits: 2,
+                                                                    })
+                                                                }
+                                                            </>
                                                         }
                                                         { settings.columnType === COLUMNTYPES.status &&
                                                             <Badge status={ String(columnData).toLowerCase() === "inactive" ? "danger": "success"} label={columnData}/>
