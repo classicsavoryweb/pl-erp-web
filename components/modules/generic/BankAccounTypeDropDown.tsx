@@ -13,6 +13,7 @@ interface SelectInterface {
     value?: string;
     required?: boolean;
     disabled?: boolean;
+    withCashOption?: boolean;
 }
 
 const BankAccountTypeDropDown = ({
@@ -23,7 +24,8 @@ const BankAccountTypeDropDown = ({
     error,
     value,
     required = false,
-    disabled = false
+    disabled = false,
+    withCashOption = false
 }: SelectInterface) => {
 
     const [bankAccountTypes, setBankAccountTypeData] = useState<any>([]);
@@ -50,7 +52,17 @@ const BankAccountTypeDropDown = ({
             error={error}
             value={value}
             loading={loading}
-            options={bankAccountTypes}
+            options={
+                withCashOption
+                ?[ 
+                    ...bankAccountTypes,
+                    {
+                        label: "Cash or Check",
+                        value: 0
+                    } 
+                ]
+                : bankAccountTypes
+            }
             required={required}
             disabled={disabled}
         />

@@ -7,7 +7,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import Badge from "@/components/common/Badge";
-import { generatePayrollProoflistConverter, getAllPayrollProofList } from "@/api/compensation/payroll-prooflist";
+import { exportPayrollProoflistConverter, generatePayrollProoflistConverter, getAllPayrollProofList } from "@/api/compensation/payroll-prooflist";
 import confirm from "@/components/common/Confirm";
 import { useFormik } from "formik";
 import { getCurrentCutoff } from "@/helper/cutoff";
@@ -108,37 +108,63 @@ const PayrollProofListTableCard = () => {
             bank_account_type_id: Yup.string().required("Bank Account Type is required"),
         }),
         onSubmit: async (values, {setSubmitting}) => {
-            const isConfirmed = await confirm
-            ({
-                title: "Payroll Prooflist",
-                message: "Are you sure you want to generate converter?"
-            });
+            if (values.action === "generate") {
+                const isConfirmed = await confirm
+                ({
+                    title: "Payroll Prooflist",
+                    message: "Are you sure you want to generate converter?"
+                });
 
-            if (isConfirmed) {
-                generatePayrollProoflistConverter(values)
-                .then((resp) => {
-                    if (!resp.error) {
+                if (isConfirmed) {
+                    generatePayrollProoflistConverter(values)
+                    .then((resp) => {
+                        if (!resp.error) {
+                            const blob = new Blob([resp.data], {
+                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                            });
+        
+                            const downloadUrl = window.URL.createObjectURL(blob);
+                            const a = document.createElement('a');
+            
+                            a.href = downloadUrl;
+                            a.download = `${values.bank_account_type_id == "1" ? "CASH_CARD" : "SAVINGS"}_${values.type}_${moment().format('YYYY-MM-DD')}.xlsm`;
+                            document.body.appendChild(a);
+                            a.click();
+                            a.remove();
+                        } else {
+                            if (resp.status === 404) {
+                                toast.error("You cant generate inactive cutoff");
+                            } else if (resp.status === 409) {
+                                toast.error("You cant generate unfinalized cutoff");
+                            }
+                        }
+                    });
+                }
+            }
+
+            if (values.action === "export") {
+                const isConfirmed = await confirm({
+                    title: "Prooflist",
+                    message: "Are you sure you want to export?"
+                });
+
+                if (isConfirmed) {
+                    exportPayrollProoflistConverter(values).then((resp: any) => {
                         const blob = new Blob([resp.data], {
                             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                         });
-    
                         const downloadUrl = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
-        
+
                         a.href = downloadUrl;
-                        a.download = `${values.bank_account_type_id == "1" ? "CASH_CARD" : "SAVINGS"}_${values.type}_${moment().format('YYYY-MM-DD')}.xlsm`;
+                        a.download = `PAYROLL-PROOFLIST-${moment().format('YYYY-MM-DD')}.xls`;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
-                    } else {
-                        if (resp.status === 404) {
-                            toast.error("You cant generate inactive cutoff");
-                        } else if (resp.status === 409) {
-                            toast.error("You cant generate unfinalized cutoff");
-                        }
-                    }
-                });
+                    });
+                }
             }
+            
         }
     });
 
@@ -155,6 +181,7 @@ const PayrollProofListTableCard = () => {
                             value={formHandler.values.bank_account_type_id}
                             error={formHandler.errors.bank_account_type_id}
                             onChange={formHandler.handleChange}
+                            withCashOption
                         />
                         <Dropdown
                             placeholder="select type"
@@ -203,17 +230,19 @@ const PayrollProofListTableCard = () => {
                                 }}
                             />    
                         </div>
-                        <div>
-                            <Button
-                                variant="success"
-                                label="Converter"
-                                type="button"
-                                onClick={() => {
-                                    formHandler.setFieldValue("action", "generate");
-                                    formHandler.submitForm();
-                                }}
-                            />    
-                        </div>
+                        { Number(formHandler.values.bank_account_type_id) !== 0 &&
+                            <div>
+                                <Button
+                                    variant="success"
+                                    label="Converter"
+                                    type="button"
+                                    onClick={() => {
+                                        formHandler.setFieldValue("action", "generate");
+                                        formHandler.submitForm();
+                                    }}
+                                />    
+                            </div>
+                        }
                         <div>
                             <Button
                                 label="Reset"
@@ -222,6 +251,17 @@ const PayrollProofListTableCard = () => {
                                     formHandler.resetForm();
                                 }}
                                 variant="secondary"
+                            />    
+                        </div>
+                        <div>
+                            <Button
+                                variant="success"
+                                label="Export"
+                                type="button"
+                                onClick={async () => {
+                                    formHandler.setFieldValue("action", "export");
+                                    formHandler.submitForm();
+                                }}
                             />    
                         </div>
                     </div>
