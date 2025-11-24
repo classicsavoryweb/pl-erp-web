@@ -12,7 +12,7 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                     <Image
                         alt="classic savory logo"
                         src="/images/classic-savory.png"
-                        width="140"
+                        width="130"
                         height="100"
                         className="invert brightness-0"
                     />
@@ -21,7 +21,7 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                 <Header />
             </div>
             <div className="flex h-[92vh]">
-                <div className="overflow-auto pb-5 shadow bg-zinc-50 min-w-[250px] max-w-[250px]">
+                <div className="overflow-auto pb-5 shadow bg-zinc-50 min-w-[230px] max-w-[230px]">
                     <Sidebar />
                 </div>
                 <div className="flex-1 overflow-auto pb-7 shadow w-full p-4">
