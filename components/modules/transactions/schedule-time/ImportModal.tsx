@@ -73,7 +73,7 @@ const ImportModal = ({
                     setValidationStep('rest_days');
                     
                     const restDayMessage = (
-                        <div className="space-y-4 text-sm">
+                        <div className="space-y-4 ">
                             <p>Employees with 3 or more rest days:</p>
                             <div className="space-y-1">
                                 <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">
@@ -127,7 +127,7 @@ const ImportModal = ({
                     setValidationStep('incentive_leaves');
                     
                     const incentiveLeaveMessage = (
-                        <div className="space-y-4 text-sm">
+                        <div className="space-y-4 ">
                             <p>Employees with 3 or more incentive leaves:</p>
                             <div className="space-y-1">
                                 <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">
@@ -174,7 +174,7 @@ const ImportModal = ({
                 setValidationStep('both_cut_off_has_rest_days');
 
                 const message = (
-                    <div className="space-y-4 text-sm">
+                    <div className="space-y-4 ">
                         <p>Employees with a rest day in both previous and current cutoff:</p>
                         <div className="space-y-1">
                             <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">
@@ -218,7 +218,7 @@ const ImportModal = ({
                 setValidationStep('multiple_rest_days');
 
                 const multipleRestDaysMessage = (
-                    <div className="space-y-4 text-sm">
+                    <div className="space-y-4 ">
                         <p>Employees with more than 1 rest day in a week:</p>
                         <div className="space-y-1">
                             <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">

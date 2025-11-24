@@ -290,7 +290,7 @@ const CreateAdjustmentsModal = ({
                                 {index >= 0 && (
                                     <div className="flex justify-end text-red-500">
                                         <p
-                                            className="z-1 pt-3 mb-[-22px] hover:text-red-800 text-sm hover:cursor-pointer"
+                                            className="z-1 pt-3 mb-[-22px] hover:text-red-800  hover:cursor-pointer"
                                             onClick={() => {
                                                 const updatedPunches = [...formHandler.values.punches];
                                                 updatedPunches.splice(index, 1);

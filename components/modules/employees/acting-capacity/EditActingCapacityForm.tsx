@@ -215,7 +215,7 @@ const EditActingCapacityForm = ({
 
                 { Object.entries(employee).length > 0 &&
                     <div className="pt-3">
-                        <p className="text-sm font-semibold text-gray-500">
+                        <p className=" font-semibold text-gray-500">
                             Employee Details
                         </p>
                         <Grid cols={2}>
@@ -250,7 +250,7 @@ const EditActingCapacityForm = ({
 
                 { formHandler.values.extensions.length === 0 &&
                     <div className="pt-3">
-                        <p className="text-sm font-semibold text-gray-500">
+                        <p className=" font-semibold text-gray-500">
                             Extensions
                         </p>
 
@@ -284,7 +284,7 @@ const EditActingCapacityForm = ({
                     <div className="pt-3">
 
                         <div className="flex justify-between items-center">
-                            <p className="text-sm font-semibold text-gray-500">
+                            <p className=" font-semibold text-gray-500">
                                 Extensions
                             </p>
                             <div>

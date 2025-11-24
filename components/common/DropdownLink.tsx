@@ -41,7 +41,6 @@ const DropdownLink = ({
                     hover:cursor-pointer
                     text-gray-500
                     focus:outline-none
-                    text-sm
                 `}
 
                 onClick={() => {
@@ -91,7 +90,7 @@ const DropdownLink = ({
                                             py-[7px]
                                             items-center
                                             font-medium
-                                            text-[13px]
+                                            text-[12px]
                                             px-3
                                             focus:outline-none
                                             ${active ? "text-red-800" : "text-gray-500"}

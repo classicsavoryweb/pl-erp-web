@@ -39,7 +39,6 @@ const Sidebar = () => {
                                 font-semibold
                                 text-gray-500
                                 focus:outline-none
-                                text-sm
                             `}
                         >
                             <IconComponent

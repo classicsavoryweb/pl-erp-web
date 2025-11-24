@@ -81,7 +81,7 @@ const Table = ({
     };
 
     return (
-        <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-sm"}`}>
+        <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-[13px]"}`}>
             <div className="overflow-x-auto">
             <table className="table-auto w-full rounded-md">
                 <thead className="bg-red-800">

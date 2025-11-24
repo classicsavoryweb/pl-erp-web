@@ -22,7 +22,7 @@ const SummaryCardCount = ({
                 </>
                 :
                 <>
-                    <p className="text-sm">{title}</p>
+                    <p className="">{title}</p>
                     <p className="text-xl font-medium">{displayReport.toLocaleString('en-US')}</p>   
                 </>
             }

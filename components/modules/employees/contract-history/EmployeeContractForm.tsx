@@ -214,7 +214,7 @@ const EmployeeContractForm = ({
 
             { ( data.status === "active" && action === "edit" && formHandler.values.status === "inactive" ) &&
                 <>
-                    <p className="text-sm pt-3 font-semibold text-gray-500">Update Employee Details</p>
+                    <p className=" pt-3 font-semibold text-gray-500">Update Employee Details</p>
                     <ActiveInactiveDropDown
                         label="Employee Status"
                         name="employee_status"

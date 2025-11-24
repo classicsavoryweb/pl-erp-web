@@ -310,7 +310,7 @@ const CreateLogModal = ({
                                         {index >= 0 && (
                                             <div className="flex justify-end text-red-500">
                                                 <p
-                                                    className="z-1 pt-3 mb-[-22px] hover:text-red-800 text-sm hover:cursor-pointer"
+                                                    className="z-1 pt-3 mb-[-22px] hover:text-red-800  hover:cursor-pointer"
                                                     onClick={() => {
                                                         const updatedLogs = [...formHandler.values.time_keeping];
                                                         updatedLogs[key].punches.splice(index, 1)
@@ -349,7 +349,7 @@ const CreateLogModal = ({
                 <div className="pt-7 flex justify-center">
                     <button
                         type="button"
-                        className="font-semibold tracking-wider text-gray-400 hover:text-gray-500 text-sm hover:cursor-pointer"
+                        className="font-semibold tracking-wider text-gray-400 hover:text-gray-500  hover:cursor-pointer"
                         onClick={() => {
                             const newSet = [ ...formHandler.values.time_keeping,
                                 {

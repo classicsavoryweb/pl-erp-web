@@ -108,7 +108,7 @@ const GeneratePromotionConfirmationForm = ({
             title="Generate Promotion Confirmation"
             size="lg"
         >
-            <p className="text-sm  font-semibold text-gray-500">
+            <p className="  font-semibold text-gray-500">
                 Employee Details
             </p>
             <Grid cols={2}>
@@ -131,7 +131,7 @@ const GeneratePromotionConfirmationForm = ({
                 />
             </Grid>
 
-            <p className="text-sm  font-semibold text-gray-500 pt-3">
+            <p className="  font-semibold text-gray-500 pt-3">
                 Acting Capacity
             </p>
             <Grid cols={2}>
@@ -178,7 +178,7 @@ const GeneratePromotionConfirmationForm = ({
 
             { api.data?.extensions && api.data?.extensions.length > 0 &&
                 <>
-                    <p className="text-sm  font-semibold text-gray-500 pt-3">
+                    <p className="  font-semibold text-gray-500 pt-3">
                         Extensions
                     </p>
                     { api.data.extensions.map((extension: any, id: number) => 
@@ -204,7 +204,7 @@ const GeneratePromotionConfirmationForm = ({
                 </>
             }
 
-            <p className="text-sm  font-semibold text-gray-500 pt-3">
+            <p className="  font-semibold text-gray-500 pt-3">
                 Promotion Confirmation
             </p>
 

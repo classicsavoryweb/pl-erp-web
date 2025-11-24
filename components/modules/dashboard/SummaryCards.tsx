@@ -183,22 +183,22 @@ const SummaryCards = () => {
                             <div className="flex gap-x-10">
                                 <div>
                                     <div className="flex justify-start gap-x-1">
-                                        <p className="text-sm font-semibold text-gray-500">Position:</p>
-                                        <p className="text-sm">{userDetails.position || "—"}</p>
+                                        <p className=" font-semibold text-gray-500">Position:</p>
+                                        <p className="">{userDetails.position || "—"}</p>
                                     </div>
                                     <div className="flex justify-start gap-x-1">
-                                        <p className="text-sm font-semibold text-gray-500">Access Role:</p>
-                                        <p className="text-sm">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1) || "—"}</p>
+                                        <p className=" font-semibold text-gray-500">Access Role:</p>
+                                        <p className="">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1) || "—"}</p>
                                     </div>
                                 </div>
                                 <div className="hidden 2xl:block">
                                     <div className="flex justify-start gap-x-1">
-                                        <p className="text-sm font-semibold text-gray-500">Email:</p>
-                                        <p className="text-sm wrap-anywhere">{userDetails.email || "—"}</p>
+                                        <p className=" font-semibold text-gray-500">Email:</p>
+                                        <p className=" wrap-anywhere">{userDetails.email || "—"}</p>
                                     </div>
                                     <div className="flex justify-start gap-x-1">
-                                        <p className="text-sm font-semibold text-gray-500">Contact Number:</p>
-                                        <p className="text-sm">{userDetails.contact_number || "—"}</p>
+                                        <p className=" font-semibold text-gray-500">Contact Number:</p>
+                                        <p className="">{userDetails.contact_number || "—"}</p>
                                     </div>
                                 </div>
                             </div>

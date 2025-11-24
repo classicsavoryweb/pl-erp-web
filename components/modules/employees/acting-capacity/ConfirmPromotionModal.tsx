@@ -82,7 +82,7 @@ const ConfirmPromotionModal = ({
             <form onSubmit={formHandler.handleSubmit}>
                 
                 <div className="flex justify-between items-start">
-                    <p className="text-sm font-semibold text-gray-500">
+                    <p className=" font-semibold text-gray-500">
                         Attachments
                     </p>
                     <div>
@@ -115,7 +115,7 @@ const ConfirmPromotionModal = ({
                             { id > 0 &&
                                 <div className="flex pt-2 mb-[-5px] justify-end col-span-2">
                                     <p
-                                        className="hover:text-gray-800 text-sm hover:cursor-pointer"
+                                        className="hover:text-gray-800  hover:cursor-pointer"
                                         onClick={() => {
                                             const updatedAttachments = [...formHandler.values.attachments];
                                             updatedAttachments.splice(id, 1);

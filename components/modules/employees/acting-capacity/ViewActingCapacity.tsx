@@ -52,7 +52,7 @@ const ViewActingCapacity = ({
             title="View Acting Capacity"
             size="lg"
         >
-            <p className="text-sm  font-semibold text-gray-500">
+            <p className="  font-semibold text-gray-500">
                 Employee Details
             </p>
             <Grid cols={2}>
@@ -75,7 +75,7 @@ const ViewActingCapacity = ({
                 />
             </Grid>
 
-            <p className="text-sm  font-semibold text-gray-500 pt-3">
+            <p className="  font-semibold text-gray-500 pt-3">
                 Acting Capacity
             </p>
             <Grid cols={2}>
@@ -139,7 +139,7 @@ const ViewActingCapacity = ({
 
             { api.data?.status === "Confirmed" &&
                 <>
-                    <p className="text-sm  font-semibold text-gray-500">
+                    <p className="  font-semibold text-gray-500">
                         History
                     </p>
 
@@ -173,7 +173,7 @@ const ViewActingCapacity = ({
 
             { api.data?.extensions && api.data?.extensions.length > 0 &&
                 <>
-                    <p className="text-sm  font-semibold text-gray-500 pt-3">
+                    <p className="  font-semibold text-gray-500 pt-3">
                         Extensions
                     </p>
                     { api.data.extensions.map((extension: any, id: number) => 
@@ -201,7 +201,7 @@ const ViewActingCapacity = ({
 
             { (api.data?.recommendation_letter || (api.data?.attachments && api.data?.attachments.length > 0)) &&
                 <>
-                    <p className="text-sm  font-semibold text-gray-500 pt-3">
+                    <p className="  font-semibold text-gray-500 pt-3">
                         Attachments
                     </p>
 

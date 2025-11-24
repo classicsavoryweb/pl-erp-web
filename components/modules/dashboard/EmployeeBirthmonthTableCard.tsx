@@ -67,7 +67,7 @@ const EmployeeBirthmonthTableCard = () => {
     return (
         <>
             <Card>
-                <p className="text-sm">Birthday Celebrants</p>
+                <p className="">Birthday Celebrants</p>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}

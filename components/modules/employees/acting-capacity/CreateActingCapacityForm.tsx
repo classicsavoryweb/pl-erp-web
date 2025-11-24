@@ -218,7 +218,7 @@ const CreateActingCapacityForm = ({
 
                 { Object.entries(employee).length > 0 &&
                     <div className="pt-3">
-                        <p className="text-sm font-semibold text-gray-500">
+                        <p className=" font-semibold text-gray-500">
                             Employee Details
                         </p>
                         <Grid cols={2}>
@@ -253,7 +253,7 @@ const CreateActingCapacityForm = ({
                 
                 { Object.entries(employee).length > 0 &&
                     <>
-                        <p className="text-sm pt-3 font-semibold text-gray-500">
+                        <p className=" pt-3 font-semibold text-gray-500">
                             Employee Offenses
                         </p>
                         <ActingCapacityOffenseTable

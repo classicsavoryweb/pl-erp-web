@@ -92,7 +92,7 @@ const EmploymentStatusTableCard = () => {
                 reports={reportData}
             />
             <Card>
-                <p className="text-sm font-semibold text-red-800">Filters</p>
+                <p className=" font-semibold text-red-800">Filters</p>
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <BranchDropDown
@@ -173,7 +173,7 @@ const EmploymentStatusTableCard = () => {
                 </form>
             </Card>
             <Card>
-                <p className="text-sm font-semibold text-red-800">Employees</p>
+                <p className=" font-semibold text-red-800">Employees</p>
                 <Table
                     dataSet={dataSet}
                     columnSettings={columnSettings}

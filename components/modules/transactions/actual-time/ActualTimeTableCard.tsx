@@ -238,7 +238,7 @@ const ActualTimeTableCard = ({
     return (
         <>
             <Card>
-                <p className="text-sm font-semibold text-red-800">Filters</p>
+                <p className=" font-semibold text-red-800">Filters</p>
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown

@@ -50,7 +50,7 @@ const Header = () => {
                         style={{ width: '25px', height: '25px' }}
                     />
                     <p
-                        className={`text-slate-50 min-w-[140px] font-semibold font-poppins mr-3 mt-0.5 text-sm`}
+                        className={`text-slate-50 min-w-[140px] font-semibold font-poppins mr-3 mt-0.5 `}
                     >
                         {`${userDetails.employee_number} - ${userDetails.last_name}`}
                     </p>
@@ -73,7 +73,7 @@ const Header = () => {
             {toggle && (
                 <div className="absolute w-full bg-zinc-50 rounded-b-3xl shadow-lg py-2 z-50 overflow-hidden">
                     <p
-                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer text-sm"
+                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer "
                         onClick={() => {router.push("/change-password")}}
                     >
                         <LockOpenOutlinedIcon
@@ -83,7 +83,7 @@ const Header = () => {
                         Change Password
                     </p>
                     <p
-                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer text-sm"
+                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer "
                         onClick={async () => {
                             await logout();
                             Cookies.remove('authToken');
