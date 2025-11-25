@@ -5,7 +5,7 @@ const Page = () => {
     return (
         <>
             <PageTitle
-                title="Entries To Post"
+                title="Entries"
             />
             <EntriesTableCard/>
         </>
