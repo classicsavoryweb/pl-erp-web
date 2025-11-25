@@ -62,6 +62,11 @@ export const reportRoutes: Route[] = [
                 name: "BDO Cash Card",
                 pathname: "/reports/bdo-cash-card",
                 permission: "view_reports_bdo_cash_card",
+            },
+            {
+                name: "13th Month Pay",
+                pathname: "/reports/13th-month-pay",
+                permission: "view_reports_13th_month_pay",
             }
         ]
     }

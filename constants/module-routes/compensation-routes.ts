@@ -96,6 +96,11 @@ export const compensationRoutes: Route[] = [
                     },
                 ]
             },
+            {
+                name: "Last Pay",
+                pathname: "/compensation/last-pay",
+                permission: "view_compensation_last_pay",
+            },
         ]
     }
 ];
