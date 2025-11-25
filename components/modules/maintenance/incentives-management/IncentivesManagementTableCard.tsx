@@ -1,6 +1,5 @@
 "use client";
 
-import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
@@ -22,7 +21,7 @@ const IncentivesManagementTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const editModal = useModal();
-    const [data, setData] = useState({});
+    const [data, setData] = useState<any>(null);
     const paginator = usePagination();
     const filter = useFilter();
 
@@ -83,6 +82,7 @@ const IncentivesManagementTableCard = () => {
                     employee_number: data.employee.employee_number,
                     amount: data.amount,
                     max_amount: data.max_amount,
+                    employee: data.employee
                 });
             }
         },
@@ -122,12 +122,13 @@ const IncentivesManagementTableCard = () => {
                 onSubmitCallback={api.triggerReload}
             />
 
-            <EditIncentivesManagementForm
-                modal={editModal}
-                onSubmitCallback={api.triggerReload}
-                formValue={data}
-            />
-
+            {data?.employee && (
+                <EditIncentivesManagementForm
+                    modal={editModal}
+                    onSubmitCallback={api.triggerReload}
+                    formValue={data}
+                />
+            )}
         </>
     );
 };
