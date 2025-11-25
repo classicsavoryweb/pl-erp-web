@@ -6,13 +6,9 @@ import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import { useState } from "react";
-import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
-import { useApiCall } from "@/hooks/api-call";
-import { useAsyncEffect } from "@/hooks/async-effect";
+import { useEffect } from "react";
 import confirm from "@/components/common/Confirm";
-import { editIncentivesManagement, getIncentivesManagement } from "@/api/maintenance/incentives-management";
-import { getEmployee } from "@/api/employee";
+import { editIncentivesManagement } from "@/api/maintenance/incentives-management";
 
 interface FormModalInterface {
     modal: any;
@@ -26,14 +22,12 @@ const EditIncentivesManagementForm = ({
     formValue,
 }: FormModalInterface) => {
 
-    const [employee, setEmployee] = useState<any>({});
-    const api = useApiCall();
-
     const editFormHandler = useFormik({
         initialValues: {
-            employee_id: "",
-            amount: "",
-            max_amount: "",
+            employee: formValue.employee || {},
+            employee_id: formValue.employee.id,
+            amount: 0,
+            max_amount: 0,
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -52,7 +46,6 @@ const EditIncentivesManagementForm = ({
                 editIncentivesManagement(values, formValue.id).then((resp) => {
                     if(!resp.error) {
                         toast.success("Incentives updated successfully");
-                        setEmployee({});
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -68,26 +61,9 @@ const EditIncentivesManagementForm = ({
         }
     });
 
-    useAsyncEffect(() => {
+    useEffect(() => {
         if (modal.isShowing) {
             editFormHandler.setValues(formValue);
-
-            api.setLoading(true);
-            getEmployee(formValue.employee_number).then((resp: any) => {
-                if (!resp.error && resp.data.employee) {
-                    const employeeData = resp.data.employee;
-                    setEmployee(employeeData);
-                    editFormHandler.setFieldValue("employee_id", employeeData.id);
-                } else {
-                    setEmployee({});
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                setEmployee({});
-                toast.error("Error encountered");
-            }).finally(() => {
-                api.setLoading(false);
-            });
         }
     }, [modal.isShowing]);
 
@@ -103,28 +79,22 @@ const EditIncentivesManagementForm = ({
             size="md"
         >
             <form onSubmit={editFormHandler.handleSubmit}>
-                <SearchEmployeeDropDown
+                <Textfield
                     label="Employee"
-                    placeholder="select employee"
-                    name="employee"
-                    onChange={(e) => {
-                        const selectedEmployee = e.target.value;
-                        setEmployee(selectedEmployee);
-                        editFormHandler.setFieldValue("employee_id", selectedEmployee.id);
-                    }}
-                    value={employee}
-                    error={editFormHandler.errors.employee_id}
-                    required
+                    name="employee_full_name"
+                    value={editFormHandler.values.employee.full_name || ""}
                     disabled
+                    required
                 />
 
-                { Object.entries(employee).length > 0 && employee.current_position &&
+                {editFormHandler.values.employee && editFormHandler.values.employee.current_position &&
                     <Textfield
                         label="Current Position"
-                        value={employee.current_position.description}
+                        value={editFormHandler.values.employee.current_position.description}
                         disabled
                     />
                 }
+                
                 <Textfield
                     label="Amount"
                     placeholder="enter amount"
@@ -148,7 +118,6 @@ const EditIncentivesManagementForm = ({
                             variant="secondary"
                             onClick={() => {
                                 modal.onClose();
-                                setEmployee({});
                                 editFormHandler.resetForm();
                             }}
                         />

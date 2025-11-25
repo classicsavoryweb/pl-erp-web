@@ -20,7 +20,7 @@ const PayrollListTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
     const filter = useFilter();    
-    const [data, setData] = useState({});
+    const [data, setData] = useState<any>(null);
     const createModal = useModal();
     const editModal = useModal();
 
@@ -99,6 +99,7 @@ const PayrollListTableCard = () => {
                     is_bank: data.is_bank,
                     is_hold: data.is_hold,
                     remarks: data.remarks,
+                    employee: data.employee
                 });
             }
         }
@@ -166,11 +167,13 @@ const PayrollListTableCard = () => {
                 onSubmitCallback={api.triggerReload}
             />
 
-            <EditPayrollListForm
-                modal={editModal}
-                onSubmitCallback={api.triggerReload}
-                formValue={data}
-            />
+            {data?.employee && (
+                <EditPayrollListForm
+                    modal={editModal}
+                    onSubmitCallback={api.triggerReload}
+                    formValue={data}
+                />
+            )}
         </>
     );
 };
