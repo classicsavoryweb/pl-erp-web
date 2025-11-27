@@ -1,4 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
+import LastPayTableCard from "@/components/modules/compensation/last-pay/LastPayTableCard";
 
 const Page = () => {
     return (
@@ -6,6 +7,7 @@ const Page = () => {
             <PageTitle
                 title="Last Pay"
             />
+            <LastPayTableCard/>
         </>
     );
 };
