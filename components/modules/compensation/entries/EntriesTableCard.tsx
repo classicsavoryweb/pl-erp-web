@@ -17,10 +17,8 @@ import { AuthContext } from "@/context/AuthProvider";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
 import Dropdown from "@/components/common/Dropdown";
-import moment from "moment";
 import DateRangeConfirmModal from "./DateRangeConfirmModal";
-import { getAllEntries, exportAllEntries, generateEntries} from "@/api/compensation/entries";
-
+import { getAllEntries, exportAllEntries} from "@/api/compensation/entries";
 interface FilterInterface {
     hasExport?: boolean;
     exportPermission?: string;
@@ -36,9 +34,6 @@ const EntriesTableCard = ({
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const dateRangeConfirmModal = useModal();
-    const [payDate, setPayDate] = useState<string>('');
-    const [dateFrom, setDateFrom] = useState<string>('');
-    const [dateTo, setDateTo] = useState<string>('');
 
     const columnSettings = [
         {
@@ -104,25 +99,8 @@ const EntriesTableCard = ({
             ),
         }),
         onSubmit: async (values, {setSubmitting}) => {
-            if (values.action === "generate") {
-                generateEntries({
-                    ...values,
-                    pay_date: payDate,
-                    date_from: dateFrom,
-                    date_to: dateTo,
-                })
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(resp.data.message);
-                    } else {
-                        toast.error(resp.data.message);
-                    }
-                }).catch(() => {
-                    toast.error("Error encountered");
-                }).finally(() => {
-                    setSubmitting(false);
-                });
-            }
+            api.triggerReload();
+            setSubmitting(true);
         }
     });
 
@@ -279,13 +257,6 @@ const EntriesTableCard = ({
 
             <DateRangeConfirmModal 
                 modal={dateRangeConfirmModal}
-                onConfirm={(dates) => {
-                    setPayDate(dates.payDate);
-                    setDateFrom(dates.dateFrom);
-                    setDateTo(dates.dateTo);
-                    formHandler.setFieldValue("action", "generate");
-                    formHandler.submitForm();
-                }}
             />
         </>
     );
