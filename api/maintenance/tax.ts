@@ -53,3 +53,27 @@ export const editTax = async (payload: {}, id: number) => {
 
     return resData;
 };
+
+export const getAnnualTaxTable = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-annual-tax-table',
+        method: 'GET',
+        payload: payload
+    })
+
+    return resData;
+};
+
+export const exportAnnualTaxTable = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-annual-tax-table',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+    });
+
+    return resData;
+};
