@@ -1,13 +1,11 @@
 import PageTitle from "@/components/common/PageTitle";
-import TaxTableCard from "@/components/modules/maintenance/tax/TaxTableCard";
 
 const Page = () => {
     return (
         <>
             <PageTitle
-                title="Tax"
+                title="Annual Tax Table"
             />
-            <TaxTableCard/>
         </>
     );
 };
