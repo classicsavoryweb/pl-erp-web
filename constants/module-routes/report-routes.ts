@@ -67,6 +67,11 @@ export const reportRoutes: Route[] = [
                 name: "13th Month Pay",
                 pathname: "/reports/13th-month-pay",
                 permission: "view_reports_13th_month_pay",
+            },
+            {
+                name: "Pay Slip",
+                pathname: "/reports/pay-slip",
+                permission: "view_reports_pay_slip",
             }
         ]
     }

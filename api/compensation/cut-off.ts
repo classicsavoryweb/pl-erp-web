@@ -10,6 +10,15 @@ export const getAllCutOffs = async (payload: {}) => {
     return resData;
 };
 
+export const getAllFinalizedCutOffs = async () => {
+    const resData = await axiosHelper({
+        func_path: '/get-all-finalized-cut-offs',
+        method: 'GET',
+    });
+
+    return resData;
+};
+
 export const createCutOff = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-cut-off',

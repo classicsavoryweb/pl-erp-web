@@ -80,7 +80,7 @@ export const axiosHelper = async ({
         }
 
         if (response) {
-            const errors = [502, 504, 500, 403, 409, 404];
+            const errors = [502, 504, 500, 403, 409, 404, 405];
             if (errors.includes(response.status)) {
                 return {
                     error: true,
@@ -101,23 +101,23 @@ export const axiosHelper = async ({
 };
 
 function cleanPayload(payload: any): any {
-  if (payload instanceof File || payload instanceof Blob) {
+    if (payload instanceof File || payload instanceof Blob) {
+        return payload;
+    }
+
+    if (Array.isArray(payload)) {
+        return payload
+        .map((item) => cleanPayload(item))
+        .filter((item) => item !== null && item !== '');
+    }
+
+    if (typeof payload === 'object' && payload !== null) {
+        return Object.fromEntries(
+        Object.entries(payload)
+            .map(([key, value]) => [key, cleanPayload(value)])
+            .filter(([_, value]) => value !== null && value !== '')
+        );
+    }
+
     return payload;
-  }
-
-  if (Array.isArray(payload)) {
-    return payload
-      .map((item) => cleanPayload(item))
-      .filter((item) => item !== null && item !== '');
-  }
-
-  if (typeof payload === 'object' && payload !== null) {
-    return Object.fromEntries(
-      Object.entries(payload)
-        .map(([key, value]) => [key, cleanPayload(value)])
-        .filter(([_, value]) => value !== null && value !== '')
-    );
-  }
-
-  return payload;
 }
