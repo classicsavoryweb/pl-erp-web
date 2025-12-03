@@ -92,17 +92,23 @@ const Header = () => {
                     >
                         { theme === "dark"
                             ?
-                            <DarkModeOutlinedIcon
-                                className={`mr-3`}
-                                style={{ width: '16px', height: '16px' }}
-                            /> 
+                            <>
+                                <DarkModeOutlinedIcon
+                                    className={`mr-3`}
+                                    style={{ width: '16px', height: '16px' }}
+                                />
+
+                                Light Mode
+                            </>
                             :
-                            <LightModeOutlinedIcon
-                                className={`mr-3`}
-                                style={{ width: '16px', height: '16px' }}
-                            />
+                            <>
+                                <LightModeOutlinedIcon
+                                    className={`mr-3`}
+                                    style={{ width: '16px', height: '16px' }}
+                                />
+                                Dark Mode
+                            </>
                         }
-                        Light Mode/ Dark Mode
                     </p>
                     <p
                         className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer dark:hover:text-gray-600"
