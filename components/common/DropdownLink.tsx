@@ -40,6 +40,7 @@ const DropdownLink = ({
                     font-semibold
                     hover:cursor-pointer
                     text-gray-500
+                    dark:text-slate-200
                     focus:outline-none
                 `}
 
@@ -86,6 +87,7 @@ const DropdownLink = ({
                                             w-full
                                             flex
                                             hover:bg-red-300/20
+                                            dark:text-slate-300
                                             rounded-md
                                             py-[7px]
                                             items-center

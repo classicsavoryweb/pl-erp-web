@@ -5,6 +5,7 @@ import HolyLoader from "holy-loader";
 import AuthProvider from "@/context/AuthProvider";
 import { Metadata } from "next";
 // import { CookiesProvider } from "react-cookie"
+import { ThemeProvider } from "next-themes"
 
 export const metadata: Metadata = {
   	description: "A web-based entity resource planning application for classic savory",
@@ -16,19 +17,26 @@ export default function RootLayout({
   	children: React.ReactNode;
 }>) {
 	return (
-		<html lang="en">
+		<html lang="en" suppressHydrationWarning>
 			<body>
-				<ToastContainer/>
-				<HolyLoader
-					color="#fda4af"
-					height="3px"
-					speed={250}
-					easing="linear"
-					showSpinner
-				/>
-					<AuthProvider>
-						{children}
-					</AuthProvider>
+				<ThemeProvider
+					attribute="class"
+					defaultTheme="system"
+					enableSystem
+					disableTransitionOnChange
+				>
+					<ToastContainer/>
+					<HolyLoader
+						color="#fda4af"
+						height="3px"
+						speed={250}
+						easing="linear"
+						showSpinner
+					/>
+						<AuthProvider>
+							{children}
+						</AuthProvider>
+				</ThemeProvider>
 			</body>
 		</html>
 	);

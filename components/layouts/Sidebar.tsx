@@ -38,6 +38,7 @@ const Sidebar = () => {
                                 mt-1
                                 font-semibold
                                 text-gray-500
+                                dark:text-slate-200
                                 focus:outline-none
                             `}
                         >

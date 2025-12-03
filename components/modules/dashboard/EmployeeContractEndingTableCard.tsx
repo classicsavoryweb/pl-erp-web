@@ -80,7 +80,7 @@ const EmployeeContractEndingTableCard = () => {
     return (
         <>
             <Card>
-                <p className="">Active Employee Contracts</p>
+                <p>Active Employee Contracts</p>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}

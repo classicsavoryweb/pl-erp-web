@@ -33,7 +33,7 @@ const ConfirmBody = ({ size, title, message, children, proceed, onlyCancel }: In
     return (
         <Modal isShowing={show} onClose={handleCancel} title={title} size={size || "sm"}>
             <div className="space-y-6">
-                <p className="text-gray-700">{message}</p>
+                <p className="text-gray-700 dark:text-slate-300">{message}</p>
                 <div>{children}</div>
                 <div className="flex justify-end gap-2">
                     <Button label="Cancel" variant="secondary" onClick={handleCancel} />

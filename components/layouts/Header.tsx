@@ -11,10 +11,14 @@ import { logout } from '@/api/authentication';
 import Cookies from 'js-cookie';
 import { AuthContext } from '@/context/AuthProvider';
 import { toast } from 'react-toastify';
+import { useTheme } from "next-themes";
+import DarkModeOutlinedIcon from '@mui/icons-material/DarkModeOutlined';
+import LightModeOutlinedIcon from '@mui/icons-material/LightModeOutlined';
 
 const Header = () => {
     const [toggle, setToggle] = useState<boolean>(false);
     const router = useRouter();
+    const { theme, setTheme } = useTheme();
     const { userDetails } = useContext(AuthContext);
     const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -71,9 +75,9 @@ const Header = () => {
             }
 
             {toggle && (
-                <div className="absolute w-full bg-zinc-50 rounded-b-3xl shadow-lg py-2 z-50 overflow-hidden">
+                <div className="absolute w-full bg-zinc-50 dark:bg-neutral-800 dark:text-slate-200 rounded-b-3xl shadow-lg py-2 z-50 overflow-hidden">
                     <p
-                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer "
+                        className="px-4 py-2 flex items-center hover:bg-gray-100 dark:hover:text-gray-600 cursor-pointer "
                         onClick={() => {router.push("/change-password")}}
                     >
                         <LockOpenOutlinedIcon
@@ -83,7 +87,25 @@ const Header = () => {
                         Change Password
                     </p>
                     <p
-                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer "
+                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer text-sm dark:hover:text-gray-600"
+                        onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                    >
+                        { theme === "dark"
+                            ?
+                            <DarkModeOutlinedIcon
+                                className={`mr-3`}
+                                style={{ width: '16px', height: '16px' }}
+                            /> 
+                            :
+                            <LightModeOutlinedIcon
+                                className={`mr-3`}
+                                style={{ width: '16px', height: '16px' }}
+                            />
+                        }
+                        Light Mode/ Dark Mode
+                    </p>
+                    <p
+                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer dark:hover:text-gray-600"
                         onClick={async () => {
                             await logout();
                             Cookies.remove('authToken');

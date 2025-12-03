@@ -40,6 +40,7 @@ const SubDropDown = ({
                     px-3
                     focus:outline-none
                     hover:cursor-pointer
+                    dark:text-slate-200
                     ${active ? "text-red-800" : "text-gray-500"}
                 `}
 
@@ -95,6 +96,7 @@ const SubDropDown = ({
                                         text-[12px]
                                         px-8
                                         focus:outline-none
+                                        dark:text-slate-200
                                         ${subActive ? "text-red-800" : "text-gray-500"}
                                     `}
                                 >

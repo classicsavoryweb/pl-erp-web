@@ -5,7 +5,7 @@ const Guest = ({
 }) => {
     return (
         <div
-            className="h-screen w-full flex justify-center items-center"
+            className="h-screen w-full flex justify-center items-center dark:bg-neutral-800"
         >
             {children}
         </div>

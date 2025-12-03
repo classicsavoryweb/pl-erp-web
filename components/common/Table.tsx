@@ -84,12 +84,12 @@ const Table = ({
 
 <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-[13px]"}`}>
             <div className="overflow-x-auto">
-            <table className="table-auto w-full rounded-md">
+            <table className="table-auto w-full rounded-md dark:text-slate-200 dark:bg-neutral-800">
                 <thead className="bg-red-800">
                     <tr>
                         { withCheckBox &&
                             <th
-                                className="text-left p-2 border-slate-300 border-1 text-zinc-100 hover:cursor-pointer"
+                                className="text-left p-2 border-slate-300 dark:border-neutral-700 border-1 text-zinc-100 hover:cursor-pointer"
                                 onClick={() => {
                                     let newDataset = [];
                                     if (selectedRows.length === dataSet.length) {
@@ -113,7 +113,7 @@ const Table = ({
                                 return (
                                     <th key={key}
                                         className={`
-                                            text-left p-2 border-slate-300 border-1 text-zinc-100
+                                            text-left p-2 border-slate-300 dark:border-neutral-700 border-1 text-zinc-100
                                         `}
                                     >
                                         { canSortColumns 
@@ -171,7 +171,7 @@ const Table = ({
                         }
                         {   withActions &&
                             <th
-                                className="text-left p-2 border-slate-300 border-1 text-zinc-100"
+                                className="text-left p-2 border-slate-300 dark:border-neutral-700 border-1 text-zinc-100"
                             >
                                 Action
                             </th>
@@ -193,7 +193,7 @@ const Table = ({
                                     <tr key={idx}>
                                         { withCheckBox &&
                                             <td
-                                                className={` py-[10px] px-2 border-1 border-slate-300`}
+                                                className={` py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700`}
                                             >
                                                 <div
                                                     className="flex justify-center"
@@ -226,7 +226,7 @@ const Table = ({
                                                 return (
                                                     <td
                                                         key={key}
-                                                        className={`py-[10px] px-2 border-1 border-slate-300 max-w-[350px]`}
+                                                        className={`py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 max-w-[350px]`}
                                                     >
                                                         { settings.columnType === COLUMNTYPES.string &&
                                                             columnData
@@ -292,7 +292,7 @@ const Table = ({
     
                                         { withActions && actions &&
                                             <td
-                                                className="px-2 border-1 border-slate-300 "
+                                                className="px-2 border-1 border-slate-300 dark:border-neutral-700 "
                                             >
                                                 <ActionDropDown
                                                     data={data}
@@ -319,12 +319,12 @@ const Table = ({
                 <div
                     className="w-full  flex justify-between items-center pt-2"
                 >
-                    <p>Showing {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
+                    <p className="dark:text-slate-200">Showing {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
 
                     <div className="flex gap-x-1 justify-end items-center">
                         {currentPage > 1 && (
                             <button
-                                className="px-2  bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                className="px-2 text-gray-600  bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
                                 onClick={() => paginator.onClickSetPageNumber(currentPage - 1)}
                             >
                                 Previous
@@ -342,7 +342,7 @@ const Table = ({
                                     className={`
                                         px-2
                                         
-                                        ${paginator.paginationData.current_page === item ? "bg-red-800 text-slate-50" : "bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
+                                        ${paginator.paginationData.current_page === item ? "bg-red-800 text-slate-50" : "bg-red-200 text-gray-600 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
                                     `}
                                     onClick={() => paginator.paginationData.current_page !== item && paginator.onClickSetPageNumber(Number(item))}
                                 >
@@ -353,7 +353,7 @@ const Table = ({
 
                         {currentPage < totalPages && (
                             <button
-                                className="px-2  bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                className="px-2  bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer text-gray-600"
                                 onClick={() => paginator.onClickSetPageNumber(currentPage + 1)}
                             >
                                 Next

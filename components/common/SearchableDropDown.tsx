@@ -113,6 +113,8 @@ const SearchableDropDown = ({
                 }
                     p-2 text-left
                     ${disabled ? "hover:cursor-not-allowed bg-gray-100" : "hover:cursor-pointer"}
+                    dark:bg-neutral-800 dark:text-slate-300 
+                    dark:border-neutral-700
                     `
                 }
                 onClick={() => setToggle((prev) => !prev)}
@@ -129,7 +131,7 @@ const SearchableDropDown = ({
                 </button>
 
                 {toggle && (
-                <div className="absolute flex flex-col items-start w-full z-50 shadow-lg bg-white rounded-lg overflow-auto max-h-[250px]">
+                <div className="absolute flex flex-col items-start w-full z-50 shadow-lg bg-white rounded-lg overflow-auto max-h-[250px] dark:bg-neutral-800 dark:text-slate-300">
                     <input
                     type="text"
                     placeholder="Search..."
@@ -144,7 +146,7 @@ const SearchableDropDown = ({
                     filteredOptions.map((opt, idx) => (
                         <div
                         key={idx}
-                        className={`w-full border-b border-b-slate-200 px-2 p-[6px] hover:bg-slate-100 hover:cursor-pointer ${
+                        className={`w-full border-b border-b-slate-200 px-2 p-[6px] hover:bg-slate-100 hover:cursor-pointer dark:hover:text-gray-600 ${
                             idx === highlightedIndex ? "bg-slate-100 font-medium" : ""
                         }`}
                         onClick={() => handleSelect(opt)}

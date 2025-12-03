@@ -21,10 +21,10 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                 <Header />
             </div>
             <div className="flex h-[92vh]">
-                <div className="overflow-auto pb-5 shadow bg-zinc-50 min-w-[240px] max-w-[240px] minimal-scroll">
+                <div className="overflow-auto pb-5 shadow bg-zinc-50 min-w-[240px] max-w-[240px] minimal-scroll dark:bg-neutral-900">
                     <Sidebar />
                 </div>
-                <div className="flex-1 overflow-auto pb-7 shadow w-full p-4">
+                <div className="flex-1 overflow-auto pb-7 shadow w-full p-4 dark:bg-neutral-800">
                     {children}
                 </div>
             </div>

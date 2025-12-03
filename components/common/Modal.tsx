@@ -33,14 +33,14 @@ const Modal = ({
 
     return (
         isShowing &&
-        <div className="h-screen w-screen fixed inset-0 z-50 flex justify-center items-start py-5 bg-black/70 overflow-auto">
+        <div className="h-screen w-screen fixed inset-0 z-50 flex justify-center items-start py-5 bg-black/80 overflow-auto">
             <div
-                className={`bg-zinc-50 rounded shadow-lg w-full ${sizeClasses[size]} px-5 py-3 relative`}
+                className={`bg-zinc-50 rounded shadow-lg w-full ${sizeClasses[size]} px-5 py-3 relative dark:bg-neutral-700 dark:text-slate-300`}
             >
-                <div className="flex justify-between items-center border-b border-slate-300 pb-2 mb-4">
+                <div className="flex justify-between items-center border-b border-slate-300 pb-2 mb-4 ">
                     <p className="font-semibold">{title}</p>
                     <button
-                        className="text-gray-500 hover:text-gray-800 text-2xl hover:cursor-pointer"
+                        className="text-gray-500 dark:text-slate-300 dark:hover:text-slate-400 hover:text-gray-800 text-2xl hover:cursor-pointer"
                         onClick={onClose}
                         aria-label="Close"
                     >
