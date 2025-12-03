@@ -13,6 +13,7 @@ interface SelectInterface {
     value?: string | number;
     required?: boolean;
     disabled?: boolean;
+    withAllOption?: boolean;
 }
 
 const BranchDropDown = ({
@@ -23,7 +24,8 @@ const BranchDropDown = ({
     error,
     value,
     required = false,
-    disabled = false
+    disabled = false,
+    withAllOption = false
 }: SelectInterface) => {
 
     const [branchData, setBranchData] = useState<any>([]);
@@ -50,7 +52,11 @@ const BranchDropDown = ({
             error={error}
             value={value}
             loading={loading}
-            options={branchData}
+            options={
+                withAllOption
+                    ? [{label: "All Branches", value: 0},...branchData]
+                    : branchData
+            }
             disabled={disabled}
             required={required}
         />
