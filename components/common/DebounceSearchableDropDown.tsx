@@ -180,7 +180,7 @@ const DebounceSearchableDropDown = ({
                     <div
                     key={idx}
                     className={`w-full border-b border-b-slate-200 px-2 p-[6px] hover:bg-slate-100 hover:cursor-pointer dark:hover:text-gray-600 ${
-                        idx === highlightedIndex ? "bg-slate-100 font-medium" : ""
+                        idx === highlightedIndex ? "bg-slate-100 font-medium dark:text-gray-600" : ""
                     }`}
                     onClick={() => handleSelect(opt)}
                     >
