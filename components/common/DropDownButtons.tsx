@@ -51,7 +51,7 @@ const DropDownButtons = ({
             </button>
             
             { toggle &&
-                 <div className="absolute flex flex-col items-start w-full z-50 bg-gray-200 shadow-lg dark:bg-neutral-800 dark:hover:text-gray-600">
+                 <div className="absolute flex flex-col items-start w-full z-50 bg-gray-200 shadow-lg dark:bg-neutral-800">
                     {actions.map((action, idx) => (
                         <button
                             key={idx}
@@ -59,7 +59,7 @@ const DropDownButtons = ({
                                 action.onClick();
                                 setToggle(false);
                             }}
-                            className="py-2 px-3 hover:cursor-pointer border-b-1 border-slate-300 w-full text-left hover:bg-gray-300"
+                            className="py-2 px-3 hover:cursor-pointer border-b-1 border-slate-300 w-full text-left hover:bg-gray-300 dark:hover:text-gray-600 dark:border-neutral-700"
                         >
                             {action.label}
                         </button>

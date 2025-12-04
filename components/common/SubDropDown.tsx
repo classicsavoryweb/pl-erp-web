@@ -41,7 +41,7 @@ const SubDropDown = ({
                     focus:outline-none
                     hover:cursor-pointer
                     dark:text-slate-300
-                    ${active ? "text-red-80" : "text-gray-500"}
+                    ${active ? "text-red-800" : "text-gray-500"}
                 `}
 
                 onClick={() => {

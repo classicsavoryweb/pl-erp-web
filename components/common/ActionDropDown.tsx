@@ -76,7 +76,7 @@ const ActionDropDown = ({
                                         action.onClick(data);
                                         setToggle(false);
                                     }}
-                                    className="py-1 px-2 hover:cursor-pointer border-b-1 border-slate-300 w-full text-left hover:bg-gray-300 dark:bg-neutral-900 dark:text-slate-300 dark:hover:text-gray-600"
+                                    className="py-1 px-2 hover:cursor-pointer border-b-1 border-slate-300 w-full text-left hover:bg-gray-300 dark:bg-neutral-900 dark:text-slate-300 dark:hover:text-gray-600 dark:border-neutral-700"
                                 >
                                     {action.label}
                                 </button>
