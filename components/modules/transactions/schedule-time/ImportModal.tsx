@@ -76,7 +76,7 @@ const ImportModal = ({
                         <div className="space-y-4 ">
                             <p>Employees with 3 or more rest days:</p>
                             <div className="space-y-1">
-                                <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">
+                                <div className="flex justify-between font-semibold border-b border-slate-300 pb-1">
                                     <span>Employee Name</span>
                                     <span>Rest Day Count</span>
                                 </div>
@@ -130,7 +130,7 @@ const ImportModal = ({
                         <div className="space-y-4 ">
                             <p>Employees with 3 or more incentive leaves:</p>
                             <div className="space-y-1">
-                                <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">
+                                <div className="flex justify-between font-semibold border-b border-slate-300 pb-1">
                                     <span>Employee Name</span>
                                     <span>Incentive Leave Count</span>
                                 </div>
@@ -177,7 +177,7 @@ const ImportModal = ({
                     <div className="space-y-4 ">
                         <p>Employees with a rest day in both previous and current cutoff:</p>
                         <div className="space-y-1">
-                            <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">
+                            <div className="flex justify-between font-semibold border-b border-slate-300 pb-1">
                                 <span>Employee Name</span>
                                 <span>Rest Day Dates</span>
                             </div>
@@ -221,7 +221,7 @@ const ImportModal = ({
                     <div className="space-y-4 ">
                         <p>Employees with more than 1 rest day in a week:</p>
                         <div className="space-y-1">
-                            <div className="flex justify-between text-gray-600 font-semibold border-b border-slate-300 pb-1">
+                            <div className="flex justify-between font-semibold border-b border-slate-300 pb-1">
                                 <span>Employee Name</span>
                                 <span>Multiple Rest Days</span>
                             </div>

@@ -115,7 +115,7 @@ const CreateAdditionalIncomeForm = ({
                         }
                     }}
                 />
-                <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
+                <div className="flex mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Head Office</span>
                 </div>
                 <AccountDropDown
@@ -137,7 +137,7 @@ const CreateAdditionalIncomeForm = ({
                     required
                 />
 
-                <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
+                <div className="flex mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Store</span>
                 </div>
                 <AccountDropDown

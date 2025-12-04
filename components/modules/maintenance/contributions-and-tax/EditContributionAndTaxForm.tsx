@@ -108,7 +108,7 @@ const EditContributionAndTaxForm = ({
             size="md"
         >
             <form onSubmit={editFormHandler.handleSubmit}>
-                <div className="flex text-gray-600 mt-3 font-semibold pb-1 mb-1">
+                <div className="flex mt-3 font-semibold pb-1 mb-1">
                     <span>{contributionType} - {contributionName}</span>
                 </div>
                 <VendorDropDown

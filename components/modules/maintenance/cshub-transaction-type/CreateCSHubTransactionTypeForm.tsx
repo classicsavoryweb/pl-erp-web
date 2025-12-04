@@ -95,7 +95,7 @@ const CreateCSHubTransactionTypeForm = ({
             size="md"
         >
             <form onSubmit={createFormHandler.handleSubmit}>
-                <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
+                <div className="flex mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Transaction Type</span>
                 </div>
                 <Textfield
@@ -225,7 +225,7 @@ const CreateCSHubTransactionTypeForm = ({
                         }}
                     />
                 </Grid>
-                <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
+                <div className="flex  mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>H.O. Entry Setup</span>
                 </div>
                 <div className="flex justify-end">
@@ -263,7 +263,7 @@ const CreateCSHubTransactionTypeForm = ({
                     error={createFormHandler.errors.ho_credit}
                     required
                 />
-                <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
+                <div className="flex  mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Branch Entry Setup</span>
                 </div>
                 <AccountDropDown

@@ -140,7 +140,7 @@ const CreateDeductionForm = ({
                     error={createFormHandler.errors.status}
                 />
 
-                <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
+                <div className="flex mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Deduction Setup</span>
                 </div>
                 <AccountDropDown
@@ -162,7 +162,7 @@ const CreateDeductionForm = ({
                     required
                 />
 
-                <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
+                <div className="flex mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>Amortization Setup</span>
                 </div>
                 <VendorDropDown
@@ -193,7 +193,7 @@ const CreateDeductionForm = ({
                     required
                 />
 
-                <div className="flex text-gray-600 mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
+                <div className="flex mt-3 font-semibold border-b border-slate-300 pb-1 mb-1">
                     <span>End Loan Setup</span>
                 </div>
                 <VendorDropDown
