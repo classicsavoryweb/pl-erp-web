@@ -26,7 +26,7 @@ const EditEmploymentDetails = ({
             loading={loading}
             size='medium'
         >
-            <p className="text-md font-semibold text-red-800">Employment Details</p>
+            <p className="text-md font-semibold text-red-800 dark:text-red-500">Employment Details</p>
             <Grid
                 cols={2}
             >

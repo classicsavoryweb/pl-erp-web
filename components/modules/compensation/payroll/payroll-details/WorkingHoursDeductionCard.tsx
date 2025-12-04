@@ -15,7 +15,7 @@ const WorkingHoursDeductionCard = () => {
             size="small"
             loading={loading}
         >
-            <p className="font-semibold text-red-800">Working Hours Deductions</p>
+            <p className="font-semibold text-red-800 dark:text-red-500">Working Hours Deductions</p>
 
             { (payrollDetails.tardiness_list && payrollDetails.tardiness_list.length > 0) &&
                 <>

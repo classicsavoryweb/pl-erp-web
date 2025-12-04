@@ -13,7 +13,7 @@ const EmployeeDetailCard = () => {
             size="small"
             loading={loading}
         >
-            <p className="font-semibold text-red-800">Employee Details</p>
+            <p className="font-semibold text-red-800 dark:text-red-500">Employee Details</p>
             <Grid cols={3}> 
                 <Textfield
                     disabled

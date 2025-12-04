@@ -14,7 +14,7 @@ const ContributionCard = () => {
             size="medium"
             loading={loading}
         >
-            <p className="font-semibold text-red-800">Contributions</p>
+            <p className="font-semibold text-red-800 dark:text-red-500">Contributions</p>
             <Grid cols={2}>
                 <Textfield
                     disabled

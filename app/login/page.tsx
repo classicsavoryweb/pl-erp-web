@@ -15,15 +15,18 @@ const LoginPage = () => {
                             width={200}
                             height={100}
                             alt="classic savory logo"
+                            className="dark:invert dark:brightness-0"
                         />
                     </div>
 
-                    <p className="text-[16px] font-semibold text-red-800 text-center mt-[-20px] pb-10">{process.env.NEXT_PUBLIC_COMPANY}</p>
+                    <p className="text-[16px] font-semibold text-red-800 text-center mt-[-20px] pb-10 dark:text-slate-100">
+                        {process.env.NEXT_PUBLIC_COMPANY}
+                    </p>
 
                     <hr className="text-slate-300"/>
 
                     <div className="py-5">
-                        <p className="text-[14px] font-semibold text-red-800">Welcome!</p>
+                        <p className="text-[15px] font-semibold text-red-800 dark:text-slate-100">Welcome!</p>
                         <p className="mt-[-5px] ">Please sign in to continue.</p>
                     </div>
 

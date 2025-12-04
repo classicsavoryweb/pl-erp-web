@@ -40,8 +40,8 @@ const SubDropDown = ({
                     px-3
                     focus:outline-none
                     hover:cursor-pointer
-                    dark:text-slate-200
-                    ${active ? "text-red-800" : "text-gray-500"}
+                    dark:text-slate-300
+                    ${active ? "text-red-80" : "text-gray-500"}
                 `}
 
                 onClick={() => {
@@ -96,8 +96,8 @@ const SubDropDown = ({
                                         text-[12px]
                                         px-8
                                         focus:outline-none
-                                        dark:text-slate-200
-                                        ${subActive ? "text-red-800" : "text-gray-500"}
+                                        dark:text-slate-300
+                                        ${subActive ? "text-red-800 dark:text-red-500" : "text-gray-500"}
                                     `}
                                 >
                                         <svg

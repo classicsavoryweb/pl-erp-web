@@ -18,7 +18,7 @@ const NetPayCard = ({ formHandler } : { formHandler: any }) => {
             size="medium"
             loading={loading}
         >
-            <p className="font-semibold text-red-800">Salary</p>
+            <p className="font-semibold text-red-800 dark:text-red-500">Salary</p>
             <Textfield
                 disabled
                 label="Basic Salary"

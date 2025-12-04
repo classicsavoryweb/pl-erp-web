@@ -14,7 +14,7 @@ const AdditionalWorkingHours = () => {
             size="small"
             loading={loading}
         >
-            <p className="font-semibold text-red-800">Additional Working Hours</p>
+            <p className="font-semibold text-red-800 dark:text-red-500">Additional Working Hours</p>
             <Grid cols={3}>
                 <Grid
                     cols={2}

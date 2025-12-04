@@ -83,7 +83,7 @@ const PayrollDeductionTableCard = () => {
                 size="medium"
                 loading={loading}
             >
-                <p className="font-semibold text-red-800">Company Deductions</p>
+                <p className="font-semibold text-red-800 dark:text-red-500">Company Deductions</p>
                 <Table
                     dataSet={dataSet}
                     columnSettings={columnSettings}

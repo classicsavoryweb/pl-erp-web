@@ -39,11 +39,11 @@ const EmployeeDetailsCard = () => {
                             />
                             <div>
                                 <p className="text-2xl font-semibold">{employee.last_name}, {employee.first_name} {employee.middle_name && String(employee.middle_name).charAt(0) + "."}</p>
-                                <p className="text-md font-semibold text-gray-500">{employee.current_position?.description} - {employee.employee_number}</p>
-                                <p className="text-md font-semibold text-gray-500">
+                                <p className="text-md font-semibold text-gray-500 dark:text-gray-300">{employee.current_position?.description} - {employee.employee_number}</p>
+                                <p className="text-md font-semibold text-gray-500 dark:text-gray-300">
                                     {getTenure(employee.date_hired, employee.separation_date)}
                                 </p>
-                                <p className="text-md font-semibold text-gray-500">{employee.employee_status?.description}</p>
+                                <p className="text-md font-semibold text-gray-500 dark:text-gray-300">{employee.employee_status?.description}</p>
                                 <Badge
                                     status={employee.status === "active" ? "success" : "danger"}
                                     label={employee.status}
@@ -62,7 +62,7 @@ const EmployeeDetailsCard = () => {
 
                     <hr className=" text-slate-300" />
                     <div className="py-5">
-                        <p className="text-md font-semibold text-red-800">Employment Details</p>
+                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Employment Details</p>
                             <EmployeeBasicInfo
                                 label="Employee Number"
                                 detail={employee.employee_number}
@@ -103,7 +103,7 @@ const EmployeeDetailsCard = () => {
 
                     <hr className=" text-slate-300" />
                     <div className="py-5">
-                        <p className="text-md font-semibold text-red-800">Personal Details</p>
+                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Personal Details</p>
                             <EmployeeBasicInfo
                                 label="First Name"
                                 detail={employee.first_name}
@@ -144,7 +144,7 @@ const EmployeeDetailsCard = () => {
 
                     <hr className=" text-slate-300" />
                     <div className="py-5">
-                        <p className="text-md font-semibold text-red-800">Contact Details</p>
+                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Contact Details</p>
                         <EmployeeBasicInfo
                             label="Email"
                             detail={employee.email}
@@ -169,7 +169,7 @@ const EmployeeDetailsCard = () => {
 
                     <hr className=" text-slate-300" />
                     <div className="pt-5">
-                        <p className="text-md font-semibold text-red-800">Government Identification</p>
+                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Government Identification</p>
                             <EmployeeBasicInfo
                                 label="TIN"
                                 detail={employee.tin}
@@ -198,7 +198,7 @@ const EmployeeDetailsCard = () => {
                 <Card
                     loading={loading}
                 >
-                    <p className="font-semibold text-red-800">Position</p>
+                    <p className="font-semibold text-red-800 dark:text-red-500">Position</p>
                     <EmployeeBasicInfo
                         label="Description"
                         detail={employee.current_position?.description}
@@ -216,7 +216,7 @@ const EmployeeDetailsCard = () => {
                 <Card
                     loading={loading}
                 >
-                    <p className="font-semibold text-red-800">Branch</p>
+                    <p className="font-semibold text-red-800 dark:text-red-500">Branch</p>
                     <EmployeeBasicInfo
                         label="Current Branch"
                         detail={employee.current_branch?.name}
@@ -251,7 +251,7 @@ const EmployeeDetailsCard = () => {
                         <Card
                             loading={loading}
                         >
-                            <p className="font-semibold text-red-800">Education</p>
+                            <p className="font-semibold text-red-800 dark:text-red-500">Education</p>
                             { employee.education && employee.education?.college &&
                                 <>
                                     <EmployeeBasicInfo
@@ -303,7 +303,7 @@ const EmployeeDetailsCard = () => {
                         <Card
                             loading={loading}
                         >
-                            <p className="font-semibold text-red-800">Dependents</p>
+                            <p className="font-semibold text-red-800 dark:text-red-500">Dependents</p>
                             { employee.dependents &&
                                 employee.dependents.map((dependent: any, idx: number) => {
                                     return (
@@ -330,7 +330,7 @@ const EmployeeDetailsCard = () => {
                 <Card
                     loading={loading}
                 >
-                    <p className="font-semibold text-red-800">Emergency Contact</p>
+                    <p className="font-semibold text-red-800 dark:text-red-500">Emergency Contact</p>
                     <EmployeeBasicInfo
                         label="Contact Name"
                         detail={employee.emergency_contact_name}
@@ -354,7 +354,7 @@ const EmployeeDetailsCard = () => {
                         <Card
                             loading={loading}
                         >
-                            <p className="font-semibold text-red-800">Schedule Details</p>
+                            <p className="font-semibold text-red-800 dark:text-red-500">Schedule Details</p>
                             <EmployeeBasicInfo
                                 label="Schedule Type"
                                 detail={employee.schedule.schedule_type?.name}

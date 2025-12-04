@@ -18,7 +18,7 @@ const EditEducation = ({
             loading={loading}
             size='medium'
         >
-            <p className="text-md font-semibold text-red-800">Education History</p>
+            <p className="text-md font-semibold text-red-800 dark:text-red-500">Education History</p>
             <Textfield
                 onChange={formHandler.handleChange}
                 label='College'
