@@ -135,7 +135,7 @@ const SearchableDropDown = ({
                     <input
                     type="text"
                     placeholder="Search..."
-                    className="w-full p-2 focus:outline-none border border-slate-200"
+                    className="w-full p-2 focus:outline-none border border-slate-200 dark:border-neutral-700"
                     value={keyWord}
                     onChange={(e) => setKeyWord(e.target.value)}
                     onKeyDown={handleKeyDown}

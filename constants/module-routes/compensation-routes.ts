@@ -46,6 +46,11 @@ export const compensationRoutes: Route[] = [
                 permission: "view_compensation_cutoff_setup"
             },
             {
+                name: "Additional Income",
+                pathname: "/compensation/additional-income",
+                permission: "view_compensation_additional_income",
+            },
+            {
                 name: "Employee Deductions",
                 pathname: "/compensation/employee-deductions",
                 permission: "view_compensation_deductions",
