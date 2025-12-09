@@ -59,7 +59,7 @@ const PayrollProofListTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Amount",
+            columnHead: "Net Pay",
             path: "amount",
             columnType: COLUMNTYPES.amount
         },
@@ -286,7 +286,11 @@ const PayrollProofListTableCard = () => {
                                 path: "additional_incentive",
                                 columnType: COLUMNTYPES.amount
                             },
-                            columnSettings[2],
+                            {
+                                columnHead: "Incentive Amount",
+                                path: "amount",
+                                columnType: COLUMNTYPES.amount
+                            },
                             columnSettings[3],
                         ]
                     }
