@@ -51,11 +51,22 @@ const PaySlipReportForm = () => {
                     ? schema.required('Pay Date From is required')
                     : schema.notRequired()
             ),
-            pay_date_to: Yup.string().when('pay_date', (keyWord, schema) => 
-                String(keyWord) === "0"
-                    ? schema.required('Pay Date To is required')
-                    : schema.notRequired()
-            ),
+            pay_date_to: Yup.string().when('pay_date', {
+                is: (value:string) => String(value) === "0",
+                then: schema =>
+                schema
+                    .required("Pay Date To is required")
+                    .test(
+                    "not-greater",
+                    "Pay Date To cannot be earlier",
+                    function (value) {
+                        const { pay_date_from } = this.parent;
+                        if (!pay_date_from || !value) return true;
+                        return Number(pay_date_from) <= Number(value);
+                    }
+                    ),
+                otherwise: schema => schema.notRequired(),
+            }),
         }),
         onSubmit: async (values, {setSubmitting}) => {
             const isConfirmed = await confirm({
