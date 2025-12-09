@@ -6,7 +6,7 @@ import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
-import { getAllPayrollList } from "@/api/compensation/payroll-list";
+import { exportAllPayrollList, getAllPayrollList } from "@/api/compensation/payroll-list";
 import FilterCard from "../../cards/FilterCard";
 import { useState } from "react";
 import { useModal } from "@/hooks/modal";
@@ -15,6 +15,7 @@ import Badge from "@/components/common/Badge";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import CreatePayrollListForm from "./CreatePayrollListForm";
 import EditPayrollListForm from "./EditPayrollListForm";
+import moment from "moment";
 
 const PayrollListTableCard = () => {
     const api = useApiCall();
@@ -117,6 +118,9 @@ const PayrollListTableCard = () => {
     return (
         <>
             <FilterCard
+                hasExport
+                exportFileName={`PAYROLL-LIST-${moment().format('YYYY-MM-DD')}.xls`}
+                api={exportAllPayrollList}
                 columnSettings={[
                     {
                         columnHead: "Employee Name",
@@ -145,6 +149,7 @@ const PayrollListTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
+                
             />
             <Card>
                 <div className="flex justify-end gap-x-3">
