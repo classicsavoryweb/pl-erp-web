@@ -179,8 +179,8 @@ const DebounceSearchableDropDown = ({
                 options.map((opt, idx) => (
                     <div
                     key={idx}
-                    className={`w-full border-b border-b-slate-200 px-2 p-[6px] hover:bg-slate-100 hover:cursor-pointer dark:hover:text-gray-600 ${
-                        idx === highlightedIndex ? "bg-slate-100 font-medium dark:text-gray-600 dark:border-neutral-700" : ""
+                    className={`w-full border-b border-b-slate-200 px-2 p-[6px] hover:bg-slate-100 hover:cursor-pointer dark:border-neutral-700 dark:hover:text-gray-600 ${
+                        idx === highlightedIndex ? "bg-slate-100 font-medium dark:text-gray-600" : ""
                     }`}
                     onClick={() => handleSelect(opt)}
                     >
