@@ -157,7 +157,7 @@ const PayrollProofListTableCard = () => {
                         const a = document.createElement('a');
 
                         a.href = downloadUrl;
-                        a.download = `PAYROLL-PROOFLIST-${moment().format('YYYY-MM-DD')}.xls`;
+                        a.download = `${formHandler.values.type}-PROOFLIST-${moment().format('YYYY-MM-DD')}.xls`;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
@@ -199,7 +199,10 @@ const PayrollProofListTableCard = () => {
                                     value: "PAYROLL"
                                 }
                             ]}
-                            onChange={formHandler.handleChange}
+                            onChange={(e) => {
+                                formHandler.handleChange(e);
+                                api.setDataSet([]);
+                            }}
                         />
                         <CutOffDropDown
                             value={formHandler.values.selected_cutoff}
@@ -285,6 +288,16 @@ const PayrollProofListTableCard = () => {
                                 columnHead: "Additional Incentives",
                                 path: "additional_incentive",
                                 columnType: COLUMNTYPES.amount
+                            },
+                            {
+                                columnHead: "1st Cutoff Worked Days",
+                                path: "first_cut_off_worked_days",
+                                columnType: COLUMNTYPES.string
+                            },
+                            {
+                                columnHead: "2nd Cutoff Worked Days",
+                                path: "second_cut_off_worked_days",
+                                columnType: COLUMNTYPES.string
                             },
                             {
                                 columnHead: "Incentive Amount",
