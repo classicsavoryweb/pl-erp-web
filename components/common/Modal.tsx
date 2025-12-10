@@ -18,7 +18,7 @@ const sizeClasses = {
     lg: "min-w-[700px] max-w-[700px]",
     xl: "min-w-[900px] max-w-[900px]",
     xxl: "min-w-[1200px] max-w-[1200px]",
-    entireScreen: "min-w-[75%] max-w-[75%]",
+    entireScreen: "min-w-[90%] max-w-[90%]",
 };
 
 const Modal = ({

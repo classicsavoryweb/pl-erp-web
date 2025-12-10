@@ -1,4 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
+import ThirteenthMonthTableCard from "@/components/modules/reports/13th-month-pay/ThirteenthMonthTableCard";
 
 const Page = () => {
     return (
@@ -6,6 +7,8 @@ const Page = () => {
             <PageTitle
                 title="13th Month Pay"
             />
+
+            <ThirteenthMonthTableCard/>
         </>
     );
 };
