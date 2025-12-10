@@ -72,7 +72,7 @@ const ViewLastPayModal = ({
                 />
                 <Textfield
                     label="13th Month"
-                    value={ formatNumber(data["13th_month"])}
+                    value={ formatNumber(data["thirteenth_month"])}
                     disabled
                 />
                 <Textfield
