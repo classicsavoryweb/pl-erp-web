@@ -1,6 +1,5 @@
 // "use client";
 import "./globals.css";
-import { ToastContainer } from 'react-toastify';
 import HolyLoader from "holy-loader";
 import AuthProvider from "@/context/AuthProvider";
 import { Metadata } from "next";
@@ -25,7 +24,6 @@ export default function RootLayout({
 					enableSystem
 					disableTransitionOnChange
 				>
-					<ToastContainer/>
 					<HolyLoader
 						color="#fda4af"
 						height="3px"

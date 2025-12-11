@@ -23,7 +23,7 @@ body {
 }
 
 .Toastify__toast--success .Toastify__toast-icon {
-    background-color: #166534;
+    background-color: transparent;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -32,7 +32,7 @@ body {
 }
 
 .Toastify__toast--error .Toastify__toast-icon {
-    background-color: #991b1b;
+    background-color: transparent;
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -42,12 +42,10 @@ body {
 
 .Toastify__toast--success .Toastify__toast-icon svg {
     fill: #166534;
-    background-color:#f1f5f9;
 }
 
 .Toastify__toast--error .Toastify__toast-icon svg {
     fill: #991b1b;
-    background-color:#f1f5f9;
 }
 
 .minimal-scroll {

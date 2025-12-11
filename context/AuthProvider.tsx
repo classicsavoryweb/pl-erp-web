@@ -2,7 +2,8 @@
 import { createContext, useEffect, useState } from "react";
 import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
-import { toast } from "react-toastify";
+import { toast, ToastContainer } from "react-toastify";
+import { useTheme } from "next-themes";
 
 interface UserDetails {
     gender: string,
@@ -56,6 +57,7 @@ const AuthProvider = ({
     const pathName = usePathname();
     const [userDetails, setUserDetails] = useState<UserDetails>(defaultUserDetails);
     const [permissions, setPermissions] = useState<any>([]);
+    const { theme } = useTheme();
     
     useEffect(() => {
         const userDetailsCookie = Cookies.get('userDetails');
@@ -84,6 +86,9 @@ const AuthProvider = ({
             userDetails,
             permissions
         }}>
+            <ToastContainer
+                theme={theme}
+            />
             {children}
         </AuthContext.Provider>
     );
