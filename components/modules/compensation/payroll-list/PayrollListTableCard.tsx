@@ -16,6 +16,7 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import CreatePayrollListForm from "./CreatePayrollListForm";
 import EditPayrollListForm from "./EditPayrollListForm";
 import moment from "moment";
+import Link from "next/link";
 
 const PayrollListTableCard = () => {
     const api = useApiCall();
@@ -58,7 +59,18 @@ const PayrollListTableCard = () => {
         {
             columnHead: "Employee Number",
             path: "employee.employee_number",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                return (
+                    <Link
+                        href={`/employees/${data.employee.employee_number}`}
+                        target="_blank"
+                        className="text-blue-700 underline"
+                    >
+                        {data.employee.employee_number}
+                    </Link>
+                )
+            }
         },
         {
             columnHead: "Payroll Status",
