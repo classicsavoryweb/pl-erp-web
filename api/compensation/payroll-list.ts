@@ -10,6 +10,16 @@ export const getAllPayrollList = async (payload: {}) => {
     return resData;
 };
 
+export const getBankDetails = async (id: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-bank-details/${id}`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const exportAllPayrollList = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/export-all-payroll-list',
