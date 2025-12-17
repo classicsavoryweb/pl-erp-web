@@ -47,6 +47,16 @@ export const validateImportTransactionsScheduleTime = async (payload: {}) => {
     return resData;
 };
 
+export const fetchTransactionScheduleTime = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/fetch-transactions-schedule-time',
+        method: 'POST',
+        payload: payload,
+    });
+
+    return resData;
+};
+
 export const importTransactionsScheduleTime = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/import-transactions-schedule-time',
