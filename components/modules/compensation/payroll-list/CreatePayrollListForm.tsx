@@ -9,12 +9,11 @@ import { useState } from "react";
 import { toast } from "react-toastify";
 import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
 import confirm from "@/components/common/Confirm";
-import { createPayrollList } from "@/api/compensation/payroll-list";
+import { createPayrollList, getBankDetails } from "@/api/compensation/payroll-list";
 import Dropdown from "@/components/common/Dropdown";
 import TextArea from "@/components/common/TextArea";
 import Grid from "@/components/common/Grid";
 import Checkbox from "@/components/common/Checkbox";
-import { getEmployeeBankDetailsHistory } from "@/api/employee";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
 
@@ -29,7 +28,7 @@ const CreatePayrollListForm = ({
 }: FormModalInterface) => {
 
     const [employee, setEmployee] = useState<any>(null);
-    const [employeeBankAccount, setemployeeBankAccount] = useState<any[]>([]);
+    const [employeeBankAccount, setemployeeBankAccount] = useState<any>(null);
     const api = useApiCall();
 
     const createFormHandler = useFormik({
@@ -42,6 +41,8 @@ const CreatePayrollListForm = ({
             is_bank: 1,
             is_hold: 0,
             remarks: "",
+            description: "",
+            account_no: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -62,7 +63,6 @@ const CreatePayrollListForm = ({
                     if(!resp.error) {
                         toast.success("Payroll created successfully");
                         setEmployee({});
-                        setemployeeBankAccount([]);
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -79,28 +79,23 @@ const CreatePayrollListForm = ({
     });
 
     useAsyncEffect(() => {
-        if (modal.isShowing) {
+        api.setLoading(false);
+
+        if (modal.isShowing && employee) {
             api.setLoading(true);
-            if (!employee || !employee.employee_number) return;
-            getEmployeeBankDetailsHistory(String(employee?.employee_number),{
-                page: 1,
-                per_page: 1
-            })
+            getBankDetails(employee.id, {})
             .then((resp) => {
-                if (resp.error) {
-                    toast.error("Error fetching bank details");
+                if (!resp.error) {
+                    setemployeeBankAccount(resp.data);
                 } else {
-                    setemployeeBankAccount(resp.data.data);
+                    setemployeeBankAccount(null);
                 }
             })
-            .catch(() => {
-                toast.error("Error encountered");
-            })
             .finally(() => {
-                api.setLoading(false); 
+                api.setLoading(false);
             });
         }
-    }, [employee?.employee_number, api.reload, modal.isShowing]);
+    }, [employee, modal.isShowing]);
 
     return (
         <Modal
@@ -109,7 +104,7 @@ const CreatePayrollListForm = ({
             onClose={() => {
                 modal.onClose();
                 setEmployee({});
-                setemployeeBankAccount([]);
+                setemployeeBankAccount({});
                 createFormHandler.resetForm();
             }}
             loading={modal.loading}
@@ -204,7 +199,7 @@ const CreatePayrollListForm = ({
                 <p className="mb-[-2px]">
                     Transaction Mode<span className="text-red-400">*</span>
                 </p>
-                <Grid cols={2}>
+                <Grid cols={3}>
                     <Checkbox
                         label="Bank"
                         checked={createFormHandler.values.is_bank === 1}
@@ -243,25 +238,22 @@ const CreatePayrollListForm = ({
                     />
                 </Grid>
 
-                {createFormHandler.values.is_bank === 1 &&
-                    employeeBankAccount.length > 0 &&
-                    employeeBankAccount.map((bank, index) => (
-                        <Grid cols={2} key={index}>
-                            <Textfield
-                                disabled
-                                label="Account Type"
-                                name="description"
-                                value={bank.bank_account_type?.description || ""}
-                            />
-                            <Textfield
-                                disabled
-                                label="Account No."
-                                name="account_no"
-                                value={bank.bank_number || ""}
-                            />
-                        </Grid>
-                    ))
-                }
+                {createFormHandler.values.is_bank === 1 && employeeBankAccount && (
+                    <Grid cols={2}>
+                        <Textfield
+                            disabled
+                            label="Account Type"
+                            name="description"
+                            value={employeeBankAccount?.bank_account_type?.description}
+                        />
+                        <Textfield
+                            disabled
+                            label="Account No."
+                            name="account_no"
+                            value={employeeBankAccount?.bank_number}
+                        />
+                    </Grid>
+                )}
 
                 <TextArea
                     label="Remarks"
@@ -280,7 +272,7 @@ const CreatePayrollListForm = ({
                             onClick={() => {
                                 modal.onClose();
                                 setEmployee({});
-                                setemployeeBankAccount([]);
+                                setemployeeBankAccount({});
                                 createFormHandler.resetForm();
                             }}
                         />

@@ -25,6 +25,7 @@ import Dropdown from "@/components/common/Dropdown";
 import { useFilter } from "@/hooks/use-filter";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
+import FetchScheduleModal from "./FetchScheduleModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -41,6 +42,7 @@ const ScheduleTimeTableCard = ({
 }: FilterInterface) => {
     const api = useApiCall();
     const importModal = useModal();
+    const fetchModal = useModal();
     const paginator = usePagination(20);
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
@@ -94,6 +96,12 @@ const ScheduleTimeTableCard = ({
             label: "Import Actual Schedule",
             onClick: () => {
                 importModal.onOpen();
+            }
+        },
+        {
+            label: "Fetch Actual Schedule",
+            onClick: () => {
+                fetchModal.onOpen();
             }
         }
     ];
@@ -296,6 +304,10 @@ const ScheduleTimeTableCard = ({
             <ImportModal
                 modal={importModal}
                 api={api}
+            />
+
+            <FetchScheduleModal
+                modal={fetchModal}
             />
         </>
     );
