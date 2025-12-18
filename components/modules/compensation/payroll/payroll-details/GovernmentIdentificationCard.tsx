@@ -16,22 +16,22 @@ const GovernmentIdentificationCard = () => {
             <Textfield
                 disabled
                 label="SSS"
-                value={payrollDetails.employee.sss}
+                value={payrollDetails.employee.sss ?? ""}
             />
             <Textfield
                 disabled
                 label="Pagibig"
-                value={payrollDetails.employee.pagibig}
+                value={payrollDetails.employee.pagibig ?? ""}
             />
             <Textfield
                 disabled
                 label="Philhealth"
-                value={payrollDetails.employee.philhealth}
+                value={payrollDetails.employee.philhealth ?? ""}
             />
             <Textfield
                 disabled
                 label="TIN"
-                value={payrollDetails.employee.tin}
+                value={payrollDetails.employee.tin ?? ""}
             />
         </Card>
     );

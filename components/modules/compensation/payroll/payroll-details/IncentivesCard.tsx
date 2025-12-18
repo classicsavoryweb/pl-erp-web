@@ -32,13 +32,13 @@ const IncentivesCard = () => {
     }, [incentivesDetails, oldAdjustmentDays, oldAdjustmentPercent]);
     
     const amountDeductedByPercentage = 
-        (Number(incentivesDetails.amount_rate)) 
-        * (Number(incentivesDetails.adjustment_percent) / 100);
+        (Number(incentivesDetails.amount_rate ?? 0)) 
+        * (Number(incentivesDetails.adjustment_percent ?? 0) / 100);
     
     const amountDeductedByDays = 
-        ((Number(incentivesDetails.amount_rate)) 
-        / Number(monthShouldBeWorkDays)) 
-        * Number(incentivesDetails.adjustment_days);
+        ((Number(incentivesDetails.amount_rate ?? 0)) 
+        / Number(monthShouldBeWorkDays ?? 0)) 
+        * Number(incentivesDetails.adjustment_days ?? 0);
 
     interface IncentiveFormValues {
         adjustment_days: number;
@@ -108,7 +108,7 @@ const IncentivesCard = () => {
                             <Textfield
                                 disabled
                                 label="Monthly Incentive Amount"
-                                value={formatNumber(incentivesDetails.amount_rate)}
+                                value={formatNumber(incentivesDetails.amount_rate ?? 0)}
                             />
                             <div className="col-span-1">
                                 <Textfield
@@ -116,7 +116,7 @@ const IncentivesCard = () => {
                                     name="additional_incentive"
                                     onChange={incentivesformHandler.handleChange}
                                     label="Additional Incentive"
-                                    value={incentivesformHandler.values.additional_incentive}
+                                    value={incentivesformHandler.values.additional_incentive ?? 0}
                                     error={incentivesformHandler.errors.additional_incentive}
                                 />
                             </div>
@@ -125,7 +125,7 @@ const IncentivesCard = () => {
                                 name="adjustment_percent"
                                 label="Tardiness Deduction Percent"
                                 disabled
-                                value={`${incentivesformHandler.values.adjustment_percent}%`}
+                                value={`${incentivesformHandler.values.adjustment_percent ?? 0}%`}
                                 error={incentivesformHandler.errors.adjustment_percent}
                             />
                             <Textfield
@@ -139,7 +139,7 @@ const IncentivesCard = () => {
                                 onChange={incentivesformHandler.handleChange}
                                 label="Absent Days"
                                 disabled
-                                value={incentivesformHandler.values.adjustment_days}
+                                value={incentivesformHandler.values.adjustment_days ?? 0}
                                 error={incentivesformHandler.errors.adjustment_days}
                             />
                             <Textfield
@@ -161,7 +161,7 @@ const IncentivesCard = () => {
                                     disabled
                                     label="Final Incentive Amount"
                                     name ="incentive_amount"
-                                    value={formatNumber(incentivesDetails.incentive_amount)}
+                                    value={formatNumber(incentivesDetails.incentive_amount ?? 0)}
                                 />
                             </div>
                             <div className="col-span-2 gap-x-4">
