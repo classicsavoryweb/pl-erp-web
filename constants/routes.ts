@@ -44,8 +44,8 @@ export const routes: Route[] = [
     },
     ...hrRoutes,
     ...transactionRoutes,
-    ...reportRoutes,
     ...compensationRoutes,
+    ...reportRoutes,
     ...maintenanceRoutes,
     ...adminRoutes,
 ];

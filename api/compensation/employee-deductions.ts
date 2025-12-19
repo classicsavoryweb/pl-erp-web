@@ -10,6 +10,16 @@ export const getAllEmployeeDeductions = async (payload?: {}) => {
     return resData;
 };
 
+export const getAllEmployeeATDs = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-all-employee-atds',
+        method: 'GET',
+        payload: payload
+    })
+
+    return resData;
+};
+
 export const exportAllEmployeeDeductions = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/export-all-employee-deductions',
@@ -57,6 +67,26 @@ export const editEmployeeDeduction = async (payload: {}, id: number) => {
 export const endLoanTransaction = async (payload: {}, id: number) => {
     const resData = await axiosHelper({
         func_path: `/end-loan-transaction/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getCSHubATDS = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-cshub-atds',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const createCSHubATDs = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/create-cshub-atds`,
         method: 'POST',
         payload: payload
     });

@@ -51,6 +51,11 @@ export const compensationRoutes: Route[] = [
                 permission: "view_compensation_additional_income",
             },
             {
+                name: "Authority To Deduct",
+                pathname: "/compensation/authority-to-deduct",
+                permission: "view_compensation_atd",
+            },
+            {
                 name: "Employee Deductions",
                 pathname: "/compensation/employee-deductions",
                 permission: "view_compensation_deductions",
