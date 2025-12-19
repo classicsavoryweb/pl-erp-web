@@ -36,6 +36,7 @@ const CreateLastPayModal = ({
             total_deductions : 0,
             last_pay : 0,
             year : 0,
+            sss_loans: ""
         },
         validationSchema: Yup.object().shape({
             tax_refund: Yup.number().required("Tax Refund is required").min(0, "Amount cannot be negative"),
@@ -68,6 +69,7 @@ const CreateLastPayModal = ({
                             total_deductions : resp.data.total_deductions,
                             last_pay : resp.data.last_pay,
                             year : resp.data.year,
+                            sss_loans: ""
                         });
                         callBack();
                     } else {
