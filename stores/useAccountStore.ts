@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { getAccounts } from "@/api/accounting/accounts";
-getAccounts
 
 interface AccountStore {
     accounts: any[];

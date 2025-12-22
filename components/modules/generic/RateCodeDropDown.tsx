@@ -5,6 +5,8 @@ import { getAllRoles } from "@/api/roles-and-permissions";
 import Dropdown from "@/components/common/Dropdown";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import { useRatesStore } from "@/stores/useRateStore";
+import { useState } from "react";
 interface SelectInterface {
     label: string;
     placeholder?: string;
@@ -25,26 +27,20 @@ const RateCodeDropDown = ({
     required = false
 }: SelectInterface) => {
 
-    const roles = useApiCall();
+    const [rateData, setRateData] = useState<any>([]);
+    const {rates, loading, getRates} = useRatesStore();
 
-    useAsyncEffect(() => {
-        roles.setLoading(true);
-        getRates()
-        .then((resp) => {
-            if (!resp.error) {
-                const newSetOfRoles = resp.data.rates.map((role: any) => {
-                    return {
-                        label: role.code,
-                        value: role.code
-                    };
-                });
-                roles.setDataSet(newSetOfRoles);
-            }
-        })
-        .finally(() => {
-            roles.setLoading(false);
-        });
-    }, []);
+    useAsyncEffect(() => {        
+        getRates();
+        if (rates.length > 0) {
+            const newDataset = rates.map((rate: any) => ({
+                label: rate.code,
+                value: rate.code,
+                obj: rate,
+            }));
+            setRateData(newDataset);
+        }
+    }, [rates]);
 
     return (
         <Dropdown
@@ -54,8 +50,8 @@ const RateCodeDropDown = ({
             onChange={onChange}
             error={error}
             value={value}
-            loading={roles.loading}
-            options={roles.dataSet}
+            loading={loading}
+            options={rateData}
             required={required}
         />
     );
