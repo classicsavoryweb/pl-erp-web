@@ -2,7 +2,6 @@
 
 import { deleteRole, getAllRolesAndPermissions } from "@/api/roles-and-permissions";
 import Badge from "@/components/common/Badge";
-import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
@@ -22,7 +21,7 @@ const RolesAndPermissionTableCard = () => {
     const createModal = useModal();
     const [data, setData] = useState<any>({});
     const editModal = useModal();
-    const paginator = usePagination(5);
+    const paginator = usePagination(10);
 
     useAsyncEffect(() => {
         roles.setLoading(true);

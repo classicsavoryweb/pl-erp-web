@@ -4,16 +4,13 @@ import Button from "@/components/common/Button";
 import confirm from "@/components/common/Confirm";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import {createCShubAppliedTransactions, getCshubAppliedTransactions } from "@/api/compensation/converter";
 import { toast } from "react-toastify";
 import Grid from "@/components/common/Grid";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useState } from "react";
-import Dropdown from "@/components/common/Dropdown";
-import { useApiCall } from "@/hooks/api-call";
-import { useAsyncEffect } from "@/hooks/async-effect";
 import { createCSHubATDs, getCSHubATDS } from "@/api/compensation/employee-deductions";
+import BranchDropDown from "../../generic/BranchDropDown";
 
 interface ModalInterface {
     modal: any;
@@ -25,27 +22,36 @@ const FetchATDCshubModal = ({
     onSubmitCallback
 }: ModalInterface) => {
 
-    const api = useApiCall();
+    const [dataSet, setDataSet] = useState<any[]>([]);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
 
-    useAsyncEffect(() => {
-        if (modal.isShowing) {
-            api.setLoading(true);
+    const formHandler = useFormik({
+        initialValues: {
+            branch_id : "",
+            transaction_number : "",
+            date_from : "",
+            date_to : ""
+        },
+        validateOnChange: false,
+        validationSchema: Yup.object().shape({
 
-            getCSHubATDS()
+        }),
+        onSubmit: (values, {setSubmitting, resetForm}) => {
+            setSubmitting(true);
+            getCSHubATDS(values)
             .then((resp) => {
                 if (!resp.error) {
-                    api.setDataSet(resp.data.transactions);
+                    setDataSet(resp.data.transactions);
                 } else {
                     toast.error(resp.data.message);
                 }
             }).catch(() => {
                 toast.error("Error encountered");
             }).finally(() => {
-                api.setLoading(false);
+                setSubmitting(false);
             })
         }
-    }, [modal.isShowing]);
+    });
 
     const columnSettings = [
         {
@@ -91,13 +97,59 @@ const FetchATDCshubModal = ({
             isShowing = {modal.isShowing}
             onClose = {() => {
                 modal.onClose();
-                api.setDataSet([]);
+                setDataSet([]);
+                formHandler.resetForm();
             }}
             title="CSHub ATD Records"
         >
+            <form onSubmit={formHandler.handleSubmit}>
+                <Grid cols={4}>
+                    <Textfield
+                        label="Transaction Date From"
+                        name="date_from"
+                        type="date"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.date_from}
+                        error={formHandler.errors.date_from}
+                    />
+                    <Textfield
+                        label="Transaction Date To"
+                        name="date_to"
+                        type="date"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.date_to}
+                        error={formHandler.errors.date_to}
+                    />
+                    <BranchDropDown
+                        label="Branch"
+                        name="branch_id"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.branch_id}
+                        placeholder="select branch"
+                    />
+                    <Textfield
+                        label="Transaction Number"
+                        name="transaction_number"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.transaction_number}
+                        placeholder="enter transaction number"
+                    />
+                </Grid>
+                <div className="mt-1 w-full flex justify-end items-center">
+                    <div>
+                        <Button
+                            type="submit"
+                            label="Submit"
+                            onClick={() => {}}
+                        />
+                    </div>
+                </div>
+            </form>
+
+            <p className="my-3">Details</p>
             <Table
-                dataSet={api.dataSet}
-                loading={api.loading}
+                dataSet={dataSet}
+                loading={formHandler.isSubmitting}
                 columnSettings={columnSettings}
                 smallText
                 withCheckBox
@@ -118,7 +170,7 @@ const FetchATDCshubModal = ({
                             });
 
                             if (isConfirm) {
-                                const transactions =  api.dataSet
+                                const transactions =  dataSet
                                 .filter((trans: any) => selectedTransactions.includes(trans.atd_employee_id))
                                 .map((trans: any) => {
                                     if (selectedTransactions.includes(trans.atd_employee_id)) {
@@ -133,6 +185,8 @@ const FetchATDCshubModal = ({
                                         onSubmitCallback();
                                         setSelectedTransactions([]);
                                         modal.onClose();
+                                        formHandler.resetForm();
+                                        setDataSet([]);
                                         toast.success("ATD successfully created");
                                     } else {
                                         toast.error(resp.data.message);

@@ -160,8 +160,7 @@ const FetchCSHubTransactionForm = ({
             </div>
             </form>
 
-            <hr className="text-slate-300 my-3"/>
-            <p>Details</p>
+            <p className="my-3">Details</p>
             <div className="max-h-[500px] overflow-hidden overflow-y-auto">
                 <Table
                     withCheckBox
