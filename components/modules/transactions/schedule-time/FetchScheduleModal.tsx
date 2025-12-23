@@ -34,6 +34,7 @@ const FetchScheduleModal = ({
                 .then((resp) => {
                     if (!resp.error) {
                         resetForm();
+                        modal.onClose();
                         toast.info(resp.data.message);
                     } else {
                         toast.error(resp.data.message);
