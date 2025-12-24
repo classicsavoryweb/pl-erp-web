@@ -52,8 +52,18 @@ const ATDTableCard = ({
 
     const columnSettings = [
         {
+            columnHead: "Transaction Number",
+            path: "transaction_number",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Employee Name",
             path: "employee.full_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Branch",
+            path: "branch.short_name",
             columnType: COLUMNTYPES.string
         },
         {
@@ -113,16 +123,6 @@ const ATDTableCard = ({
                         maximumFractionDigits: 2
                     });
             }
-        },
-        {
-            columnHead: "Date Start",
-            path: "start_date",
-            columnType: COLUMNTYPES.date
-        },
-        {
-            columnHead: "Date End",
-            path: "end_date",
-            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Approved Status",
