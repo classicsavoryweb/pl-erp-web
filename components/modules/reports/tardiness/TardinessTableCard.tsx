@@ -483,9 +483,9 @@ const TardinessTableCard = () => {
                 withBranch
                 withMonth
                 withYear
-                // hasExport
-                // api={exportReportTardiness}
-                // exportFileName={`TARDINESS-${moment().format('YYYY-MM-DD')}.xls`}
+                hasExport
+                api={exportReportTardiness}
+                exportFileName={`TARDINESS-${moment().format("YYYY-MM-DD")}.xls`}
             />
             <Card>
                 <div className="flex justify-end gap-x-3">
