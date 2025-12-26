@@ -11,6 +11,7 @@ import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useState } from "react";
 import Dropdown from "@/components/common/Dropdown";
+import moment from "moment";
 
 interface ModalInterface {
     modal: any;
@@ -28,8 +29,8 @@ const FetchCSHubTransactionForm = ({
     const trasanctionsFormHandler = useFormik({
         initialValues: {
             type: "",
-            posted_from: "",
-            posted_to: ""
+            posted_from: moment().subtract(1).format("YYYY-MM-DD"),
+            posted_to: moment().format("YYYY-MM-DD"),
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
