@@ -10,8 +10,9 @@ import { toast } from "react-toastify";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import Link from "next/link";
-import { getAllReportsVaccination } from "@/api/reports/reports-vaccination";
+import { exportAllReportsVaccination, getAllReportsVaccination } from "@/api/reports/reports-vaccination";
 import Badge from "@/components/common/Badge";
+import moment from "moment";
 
 const ReportVaccinationTableCard = () => {
     const api = useApiCall();
@@ -130,6 +131,11 @@ const ReportVaccinationTableCard = () => {
                 ]}
                 filterHandler={filter}
                 withStatus
+                hasDateRange
+                isExpanded
+                hasExport
+                api={exportAllReportsVaccination}
+                exportFileName={`EMPLOYEE-VACCINATION-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="employee.full_name"
                 statusOption={[
                     {
@@ -141,8 +147,6 @@ const ReportVaccinationTableCard = () => {
                         value: "PENDING"
                     }
                 ]}
-                hasDateRange
-                isExpanded
                 callBack={() => {
                     paginator.setPage(1);
                 }}
