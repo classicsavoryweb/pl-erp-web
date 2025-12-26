@@ -40,6 +40,16 @@ body {
     height: 18px;
 }
 
+.Toastify__toast-theme--light {
+    background-color:#ffffff;
+    color: #4b5563;
+}
+
+.Toastify__toast-theme--dark {
+    background-color: #171717;
+    color: #f9fafb;
+}
+
 .Toastify__toast--success .Toastify__toast-icon svg {
     fill: #166534;
 }
