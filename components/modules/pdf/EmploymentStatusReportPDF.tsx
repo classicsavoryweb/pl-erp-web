@@ -103,7 +103,7 @@ const EmploymentStatusReportPDF = ({
                                 fontSize: 14,
                             }}
                         >
-                            Savory Fastfood Incorporated
+                            {process.env.NEXT_PUBLIC_COMPANY}
                         </Text>
                     </View>
                     <Text

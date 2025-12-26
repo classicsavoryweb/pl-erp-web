@@ -47,7 +47,7 @@ const TardinessNOD = ({
         <Document>
             <Page size="LETTER" style={styles.page}>
                 <View style={styles.header}>
-                    <Text style={styles.bold}>SAVORY FASTFOOD INC.</Text>
+                    <Text style={styles.bold}>{process.env.NEXT_PUBLIC_COMPANY}.</Text>
                     <Text style={styles.bold}>DISCIPLINARY ACTION FORM</Text>
                 </View>
 
@@ -702,7 +702,7 @@ const TardinessNOD = ({
                 </View>
                 
                 <View style={styles.section}>
-                    <Text>SAVORY FASTFOOD INC.</Text>
+                    <Text>{process.env.NEXT_PUBLIC_COMPANY}.</Text>
                 </View>
             </Page>
         </Document>

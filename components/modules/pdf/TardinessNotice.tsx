@@ -43,7 +43,7 @@ const TardinessNotice = ({
 		<Document>
 			<Page size="LETTER" style={styles.page}>
 				<View style={styles.header}>
-					<Text style={styles.bold}>SAVORY FASTFOOD INC.</Text>
+					<Text style={styles.bold}>{process.env.NEXT_PUBLIC_COMPANY}.</Text>
 					<Text style={{...styles.bold, marginTop: -3}}>HEAD OFFICE</Text>
 					<Text style={{ fontSize: 8, marginTop: -3}}>#84 Sto. Domingo St.cor. N.S. Amoranto</Text>
 					<Text style={{ fontSize: 8, marginTop: -4}} >Brgy. Sto. Domingo, Quezon City</Text>

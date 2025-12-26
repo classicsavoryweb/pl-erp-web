@@ -286,7 +286,7 @@ const FirstContract = ({
                             paddingBottom: 10
                         }}
                     >
-                        During the effectivity of this contract, you agree to keep all confidential information either directly or indirectly, as confidential including all proprietary information, trade secrets, and any other sensitive information obtained during the period of your employment. You shall not divulge to third parties such confidential information about the company, its officers and employees. This obligation remains in perpetuity and includes refraining from disclosing or using such information for any purpose other than the benefit of Savory Fastfood Inc.
+                        During the effectivity of this contract, you agree to keep all confidential information either directly or indirectly, as confidential including all proprietary information, trade secrets, and any other sensitive information obtained during the period of your employment. You shall not divulge to third parties such confidential information about the company, its officers and employees. This obligation remains in perpetuity and includes refraining from disclosing or using such information for any purpose other than the benefit of {process.env.NEXT_PUBLIC_COMPANY}.
                     </Text>
                 </View>
 
@@ -341,7 +341,7 @@ const FirstContract = ({
                             paddingBottom: 10
                         }}
                     >
-                        In the event of resignation or termination of employment, you must not for a period of five (5) years following your departure, to initiate contact with the employee of Savory Fastfood Inc.,in order to solicit or induce any employee of the Savory Fastfood Inc.to terminate an employment relationship with Savory Fastfood Inc. to accept employment with you or any business or company that you may be connected with or discuss with any employees on any other matters regarding their employment with and operations of Savory Fastfood Inc.
+                        In the event of resignation or termination of employment, you must not for a period of five (5) years following your departure, to initiate contact with the employee of {process.env.NEXT_PUBLIC_COMPANY}.,in order to solicit or induce any employee of the {process.env.NEXT_PUBLIC_COMPANY}.to terminate an employment relationship with {process.env.NEXT_PUBLIC_COMPANY}. to accept employment with you or any business or company that you may be connected with or discuss with any employees on any other matters regarding their employment with and operations of {process.env.NEXT_PUBLIC_COMPANY}.
                     </Text>
 
                     <Text
@@ -390,7 +390,7 @@ const FirstContract = ({
                         
                         }}
                     >
-                        SAVORY FASTFOOD INC.
+                        {process.env.NEXT_PUBLIC_COMPANY}.
                     </Text>
                 </View>
 

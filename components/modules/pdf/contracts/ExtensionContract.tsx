@@ -103,7 +103,7 @@ const ExtensionContract = ({
                             paddingBottom: 10
                         }}
                     >
-                        You were initially employed as a probationary employee on {moment(data.date_hired).format('MMMM DD, YYYY')}. You were designated as {data.position} under the Savory Fastfood Incorporated and was assigned at Classic Savory {data.branch}. Your duties and responsibilities as Cashier were made known to you at the time of your engagement. You agreed that you may be ordered to perform such tasks and/or be stationed/assigned to another location or department other than that your initial assignment as the exigencies of the service may require.<br/>Your position and place of appointment are continued under this Contract.
+                        You were initially employed as a probationary employee on {moment(data.date_hired).format('MMMM DD, YYYY')}. You were designated as {data.position} under the {process.env.NEXT_PUBLIC_COMPANY} and was assigned at Classic Savory {data.branch}. Your duties and responsibilities as Cashier were made known to you at the time of your engagement. You agreed that you may be ordered to perform such tasks and/or be stationed/assigned to another location or department other than that your initial assignment as the exigencies of the service may require.<br/>Your position and place of appointment are continued under this Contract.
                     </Text>
                 </View>
 
@@ -124,7 +124,7 @@ const ExtensionContract = ({
                             paddingBottom: 10
                         }}
                     >
-                        We both agree to extend your probationary period for another ({data.duration}) months to give you enough time to improve your performance standards based on the duties and responsibilities of your position. The extension of the probationary period gives you another chance to meet the standards of the company, which were made known to you at the time of your engagement as a probationary employee. The extension of your probationary period will start on {moment(data.contract_start_date).format('MMMM DD, YYYY')} and will end on {moment(data.contract_end_date).format('MMMM DD, YYYY')}. You agree not to engage in other services that will directly compete with those being ordered by the Savory Fastfood Incorporated. You likewise agree to keep all information obtained during the period of your employment either directly or indirectly, as confidential. You shall not divulge to third parties such confidential information about the company, its officers and employees. A violation of this provision shall make you liable to the company for liquidated damages in the amount of at least Php100,000.00
+                        We both agree to extend your probationary period for another ({data.duration}) months to give you enough time to improve your performance standards based on the duties and responsibilities of your position. The extension of the probationary period gives you another chance to meet the standards of the company, which were made known to you at the time of your engagement as a probationary employee. The extension of your probationary period will start on {moment(data.contract_start_date).format('MMMM DD, YYYY')} and will end on {moment(data.contract_end_date).format('MMMM DD, YYYY')}. You agree not to engage in other services that will directly compete with those being ordered by the {process.env.NEXT_PUBLIC_COMPANY}. You likewise agree to keep all information obtained during the period of your employment either directly or indirectly, as confidential. You shall not divulge to third parties such confidential information about the company, its officers and employees. A violation of this provision shall make you liable to the company for liquidated damages in the amount of at least Php100,000.00
                     </Text>
                 </View>
 
@@ -275,7 +275,7 @@ const ExtensionContract = ({
                         
                         }}
                     >
-                        SAVORY FASTFOOD INC.
+                        {process.env.NEXT_PUBLIC_COMPANY}.
                     </Text>
                 </View>
 
@@ -464,7 +464,7 @@ const ExtensionContract = ({
                     style={styles.section}
                 >
                     <Text>
-                        I, {data.proper_full_name}, currently a probationary employee of Savory Fastfood Incorporated and holding the position of {data.position}. My probationary period as {data.position} will expire on {moment(data.previous_contract_end_date).format('MMMM DD, YYYY')}. I understand and agree that I still need to improve on certain areas. I agree that my probationary period will be extended for another ({data.duration}) months which will start on {moment(data.contract_start_date).format('MMMM DD, YYYY')} and will expire on {moment(data.contract_end_date).format('MMMM DD, YYYY')}. I agree that during the extension of my probationary period, I will occupy the position of {data.position}. This extension period will give me a chance to improve on my performance appraisal based on my duties and responsibilities. I agree that I need to pass my next performance appraisal. Savory Fastfood Incorporated will make a final decision of my employment on {moment(data.contract_end_date).format('MMMM DD, YYYY')}.
+                        I, {data.proper_full_name}, currently a probationary employee of {process.env.NEXT_PUBLIC_COMPANY} and holding the position of {data.position}. My probationary period as {data.position} will expire on {moment(data.previous_contract_end_date).format('MMMM DD, YYYY')}. I understand and agree that I still need to improve on certain areas. I agree that my probationary period will be extended for another ({data.duration}) months which will start on {moment(data.contract_start_date).format('MMMM DD, YYYY')} and will expire on {moment(data.contract_end_date).format('MMMM DD, YYYY')}. I agree that during the extension of my probationary period, I will occupy the position of {data.position}. This extension period will give me a chance to improve on my performance appraisal based on my duties and responsibilities. I agree that I need to pass my next performance appraisal. {process.env.NEXT_PUBLIC_COMPANY} will make a final decision of my employment on {moment(data.contract_end_date).format('MMMM DD, YYYY')}.
                     </Text>
                 </View>
 
