@@ -95,7 +95,15 @@ const EditTardinessModal = ({
             loading={api.loading}
             size="md"
         >
-            <form onSubmit={editMinutes.handleSubmit}>
+            <Textfield
+                disabled
+                label="Employee"
+                value={api.data?.employee?.full_name}
+            />
+            <form
+                className="mt-2"
+                onSubmit={editMinutes.handleSubmit}
+            >
                 <p className="font-semibold">Total Tardy: {minutes}</p>
                 { editMinutes.values.tardiness_minutes  && editMinutes.values.tardiness_minutes.map((minutes: any, idx: number) => {
                     return (

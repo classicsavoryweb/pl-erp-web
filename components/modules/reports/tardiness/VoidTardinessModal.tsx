@@ -6,17 +6,20 @@ import * as Yup from "yup";
 import confirm from "@/components/common/Confirm";
 import { voidTardiness } from "@/api/reports/reports-tardiness";
 import TextArea from "@/components/common/TextArea";
+import Textfield from "@/components/common/Textfield";
 
 interface FormModalInterface {
     modal: any;
     id: number;
     onSubmitCallBack: () => void;
+    data: any;
 };
 
 const VoidTardinessModal = ({
     modal,
     id,
-    onSubmitCallBack
+    onSubmitCallBack,
+    data
 }: FormModalInterface) => {
 
     const voidTardinessHandler = useFormik({
@@ -59,7 +62,15 @@ const VoidTardinessModal = ({
             }}
             size="md"
         >
-            <form onSubmit={voidTardinessHandler.handleSubmit}>
+            <Textfield
+                disabled
+                label="Employee"
+                value={data?.employee?.full_name}
+            />
+            <form
+                className="mt-2"
+                onSubmit={voidTardinessHandler.handleSubmit}
+            >
                 <TextArea
                     name="reason"
                     label="Reason"

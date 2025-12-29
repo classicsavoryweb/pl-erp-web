@@ -250,7 +250,7 @@ const TardinessTableCard = () => {
             onClick: async (data: any) => {
                 const isConfirmed = await confirm({
                     title: "Approve Tardiness",
-                    message: "Are you sure you want to approve this tardiness?",
+                    message: `Are you sure you want to approve the tardiness of ${data?.employee?.full_name}?`,
                 });
 
                 isConfirmed &&
@@ -272,6 +272,7 @@ const TardinessTableCard = () => {
             onClick: async (data: any) => {
                 setId(data.id);
                 voidModal.onOpen();
+                api.setData(data);
             },
             permission: "void_all_records_tardiness"
         },
@@ -525,6 +526,7 @@ const TardinessTableCard = () => {
                     voidModal.onClose();
                     api.triggerReload();
                 }}
+                data={api.data}
             />
 
             <TardinessNTEModal

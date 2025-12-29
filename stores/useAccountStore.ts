@@ -18,7 +18,7 @@ export const useAccountStore = create<AccountStore>()((set, get) => ({
                 });
                 const resp = await getAccounts();
                 set({
-                    accounts: resp.data.accounts,
+                    accounts: resp?.data?.accounts ?? [],
                     loading: false
                 });
             } catch {
