@@ -20,6 +20,20 @@ export const getAllEmployeeATDs = async (payload?: {}) => {
     return resData;
 };
 
+export const exportAllATDs = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-atds',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+    });
+
+    return resData;
+};
+
 export const exportAllEmployeeDeductions = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/export-all-employee-deductions',

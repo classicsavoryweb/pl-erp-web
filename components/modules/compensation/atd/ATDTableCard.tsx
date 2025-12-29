@@ -20,7 +20,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { exportAllEmployeeDeductions, getAllEmployeeATDs, getAllEmployeeDeductions } from "@/api/compensation/employee-deductions";
+import { exportAllATDs, exportAllEmployeeDeductions, getAllEmployeeATDs, getAllEmployeeDeductions } from "@/api/compensation/employee-deductions";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
 import EndLoanTransactionForm from "../employee-deductions/EndLoanTransactionForm";
@@ -35,9 +35,9 @@ interface ATDTableInterface {
 };
 
 const ATDTableCard = ({
-    unique_api = exportAllEmployeeDeductions,
+    unique_api = exportAllATDs,
     hasExport = true,
-    exportPermission = "export_all_compensation_deductions",
+    exportPermission = "export_all_atds",
 
 }: ATDTableInterface) => {
     const api = useApiCall();
