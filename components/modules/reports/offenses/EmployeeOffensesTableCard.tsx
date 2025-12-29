@@ -64,6 +64,16 @@ const EmployeeOffensesTableCard = () => {
             }
         },
         {
+            columnHead: "Repetition",
+            path: "repetition",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Transgression",
+            path: "transgression",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Date Committed",
             path: "date_committed",
             columnType: COLUMNTYPES.date
@@ -77,6 +87,16 @@ const EmployeeOffensesTableCard = () => {
             columnHead: "Summary",
             path: "summary",
             columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Sanction",
+            path: "sanction.description",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Date Served",
+            path: "date_served_ao",
+            columnType: COLUMNTYPES.date
         },
     ];
 
