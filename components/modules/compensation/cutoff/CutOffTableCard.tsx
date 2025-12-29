@@ -62,6 +62,11 @@ const CutOffTableCard = () => {
             columnType: COLUMNTYPES.date
         },
         {
+            columnHead: "Part",
+            path: "part",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status

@@ -33,14 +33,16 @@ const EditCutOffModal = ({
             selected_cutoff: getCurrentCutoff().range,
             year: moment().year(),
             pay_date: "",
-            initialize: "Yes"
+            initialize: "Yes",
+            part: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             year: Yup.string().required("Year is required"),
             selected_cutoff: Yup.string().required("Selected cutoff is required"),
             pay_date: Yup.string().required("Pay date is required"),
-            initialize: Yup.string().required("Initialization is required")
+            initialize: Yup.string().required("Initialization is required"),
+            part: Yup.string().required("Part is required")
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
             const isConfirmed = await confirm({
@@ -84,7 +86,8 @@ const EditCutOffModal = ({
                 selected_cutoff: range,
                 year: data.year,
                 pay_date: data.pay_date,
-                initialize: data.initialize
+                initialize: data.initialize,
+                part: data.part
             });
         }
     }, [modal.isShowing]);
@@ -132,6 +135,25 @@ const EditCutOffModal = ({
                     value={formHandler.values.pay_date}
                     error={formHandler.errors.pay_date}
                     required
+                />
+                <Dropdown
+                    placeholder="select part"
+                    label="Part"
+                    name="part"
+                    value={String(formHandler.values.part)}
+                    onChange={formHandler.handleChange}
+                    options={[
+                        {
+                            label: "Part 1",
+                            value: 1,
+                        },
+                        {
+                            label: "Part 2",
+                            value: 2
+                        }
+                    ]}
+                    required
+                    error={formHandler.errors.part}
                 />
                 <Dropdown
                     label="Initialization"
