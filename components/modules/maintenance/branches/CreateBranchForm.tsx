@@ -254,6 +254,7 @@ const CreateBranchForm = ({
                     />
                 </Grid>
 
+                <p className="mt-3">Timekeeping</p>
                 <Grid
                     cols={2}
                 >
@@ -278,6 +279,7 @@ const CreateBranchForm = ({
                     />
                 </Grid>
 
+                <p className="mt-3">Accounts</p>
                 <Grid cols={2}>
                     <AccountDropDown
                         label="Expense Debit"

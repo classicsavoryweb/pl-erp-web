@@ -137,7 +137,7 @@ const EditBranchForm = ({
             size="lg"
         >
             <form onSubmit={editBranchFormHandler.handleSubmit}>
-            <Grid cols={2}>
+                <Grid cols={2}>
                     <Textfield
                         label="Branch Name"
                         placeholder="enter branch name"
@@ -156,6 +156,8 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.short_name}
                     />
+                </Grid>
+                <Grid cols={2}>
                     <Textfield
                         label="Branch Number"
                         placeholder="enter branch number"
@@ -174,6 +176,8 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.address}
                     />
+                </Grid>
+                <Grid cols={2}>
                     <Textfield
                         label="Location"
                         placeholder="enter location"
@@ -183,7 +187,6 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.location}
                     />
-
                     <Textfield
                         label="Date Opened"
                         placeholder="enter date opened"
@@ -194,6 +197,8 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.date_open}
                     />
+                </Grid>
+                <Grid cols={2}>
                     <CompanyDropDown
                         label="Company"
                         placeholder="select company"
@@ -203,7 +208,6 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.company}
                     />
-
                     <Textfield
                         label="Branch Email"
                         placeholder="enter branch email"
@@ -213,6 +217,8 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_email}
                     />
+                </Grid>
+                <Grid cols={2}>
                     <RateCodeDropDown
                         label="Rate Code"
                         placeholder="select rate code"
@@ -232,6 +238,8 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_head_employee_number}
                     />
+                </Grid>
+                <Grid cols={2}>
                     <EmployeeDropDown
                         label="Group Head"
                         placeholder="select group head"
@@ -241,7 +249,6 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.group_head_employee_number}
                     />
-
                     <EmployeeDropDown
                         label="Kitchen OIC"
                         placeholder="select kitchen oic"
@@ -250,6 +257,8 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.kitchen_oic_employee_number}
                     />
+                </Grid>
+                <Grid cols={2}>
                     <EmployeeDropDown
                         label="Mancom"
                         placeholder="select mancom"
@@ -259,7 +268,10 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.mancom_employee_number}
                     />
+                </Grid>
 
+                <p className="mt-3">Timekeeping</p>
+                <Grid cols={2}>
                     <Textfield
                         type="number"
                         label="Travel Time"
@@ -279,6 +291,10 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.device_name}
                     />
+                </Grid>
+
+                <p className="mt-3">Accounts</p>
+                <Grid cols={2}>
                     <AccountDropDown
                         label="Expense Debit"
                         placeholder="select debit account"
@@ -297,6 +313,8 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.expense_credit}
                         required
                     />
+                </Grid>
+                <Grid cols={2}>
                     <AccountDropDown
                         label="Advance Debit"
                         placeholder="select debit account"
@@ -315,6 +333,8 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.advance_credit}
                         required
                     />
+                </Grid>
+                <Grid cols={2}>
                     <AccountDropDown
                         label="13th Monthly Allocation (HO/HO) Debit"
                         placeholder="select debit account"
@@ -333,6 +353,8 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.ho_13th_debit_1}
                         required
                     />
+                </Grid>
+                <Grid cols={2}>
                     <AccountDropDown
                         label="13th Monthly Allocation (HO/HO) Credit"
                         placeholder="select credit account"
@@ -351,6 +373,8 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.branch_ho_13th_debit}
                         required
                     />
+                </Grid>
+                <Grid cols={2}>
                     <AccountDropDown
                         label="13th Monthly Allocation (Branch/HO) Debit"
                         placeholder="select debit account"
@@ -369,6 +393,9 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.branch_ho_13th_credit}
                         required
                     />
+                </Grid>
+
+                <Grid cols={2}>
                     <AccountDropDown
                         label="Statutory Allocation (Branch/HO) Debit"
                         placeholder="select debit account"
@@ -387,6 +414,9 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.branch_ho_stat_credit}
                         required
                     />
+                </Grid>
+
+                <Grid cols={2}>
                     <Dropdown
                         label="Type"
                         placeholder="select type"
