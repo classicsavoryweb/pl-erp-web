@@ -50,6 +50,19 @@ export const createConverterDetails = async (payload: {}) => {
     return resData;
 };
 
+export const importConverterTransactions = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/import-converter-transactions',
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: payload.hasOwnProperty('transactions_file')
+            ? { "Content-Type": "multipart/form-data" }
+            : {}
+    });
+
+    return resData;
+};
+
 export const editConverterDetails = async (payload: {}, id: number) => {
     const resData = await axiosHelper({
         func_path: `/edit-converter-details/${id}`,

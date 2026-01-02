@@ -18,6 +18,7 @@ import FilterCard from "@/components/modules/cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import Badge from "@/components/common/Badge";
 import FetchCSHubTransactionForm from "./FetchCSHubTransactionForm";
+import ImportConverterTransactionForm from "./ImportConverterTransactionForm";
 
 const ConverterDetailsTableCard = () => {
     const api = useApiCall();
@@ -26,6 +27,7 @@ const ConverterDetailsTableCard = () => {
     const createModal = useModal();
     const editModal = useModal();
     const fetchModal = useModal();
+    const importModal = useModal();
     const filterHandler = useFilter();
 
     useAsyncEffect(() => {
@@ -197,6 +199,12 @@ const ConverterDetailsTableCard = () => {
                                     onClick: () => {
                                         fetchModal.onOpen();
                                     }
+                                },
+                                {
+                                    label: "Import Transactions",
+                                    onClick: () => {
+                                        importModal.onOpen();
+                                    }
                                 }
                             ]}
                         />
@@ -220,6 +228,10 @@ const ConverterDetailsTableCard = () => {
             />
             <FetchCSHubTransactionForm
                 modal={fetchModal}
+                onSubmitCallback={api.triggerReload}
+            />
+            <ImportConverterTransactionForm
+                modal={importModal}
                 onSubmitCallback={api.triggerReload}
             />
         </>
