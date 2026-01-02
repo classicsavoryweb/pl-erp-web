@@ -94,11 +94,23 @@ const EmployeeOffensesTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Date Served",
+            columnHead: "Date Served AO",
             path: "date_served_ao",
             columnType: COLUMNTYPES.date
         },
+        {
+            columnHead: "Date Served DA",
+            path: "date_served_da",
+            columnType: COLUMNTYPES.date
+        },
+        {
+            columnHead: "Case Status",
+            path: "offense_action",
+            columnType: COLUMNTYPES.string
+        },
     ];
+
+    // offense_action
 
     return (
         <>
