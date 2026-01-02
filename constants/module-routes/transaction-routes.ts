@@ -29,7 +29,7 @@ export type Route = LinkRoute | DropdownRoute;
 
 export const transactionRoutes: Route[] = [
     {
-        name: "Transactions",
+        name: "Attendance & Timekeeping",
         icon: "ArticleOutlined",
         type: "dropdown",
         permission: "view_transactions_module",

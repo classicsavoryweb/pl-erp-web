@@ -40,6 +40,7 @@ const Sidebar = () => {
                                 text-gray-500
                                 dark:text-slate-200
                                 focus:outline-none
+                                text-[12px]
                             `}
                         >
                             <IconComponent
