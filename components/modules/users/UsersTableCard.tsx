@@ -19,7 +19,7 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 const UsersTableCard = () => {
 
     const users = useApiCall();
-    const paginator = usePagination();
+    const paginator = usePagination(25);
     const createUser = useModal();
     const editUser = useModal();
     const [data, setData] = useState<any>({});
