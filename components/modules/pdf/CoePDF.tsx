@@ -86,7 +86,7 @@ const CoePDF = ({
                             <View style={styles.section}>
                                 <Text style={styles.paragraph} hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
-                                    This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + data.last_name}</Text> is an employee of <Text style={styles.bold}>{process.env.NEXT_PUBLIC_COMPANY}</Text> since {data.date_of_stay}. {data.gender === "Male" ? "He" : "She."} is currently holding the position
+                                    This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + data.last_name}</Text> is an employee of <Text style={styles.bold}>{process.env.NEXT_PUBLIC_COMPANY}</Text> since {data.date_of_stay}. {data.gender === "Male" ? "He" : "She"} is currently holding the position
                                     of <Text style={styles.bold}>{data.current_position}</Text>.
                                 </Text>
                             </View>
