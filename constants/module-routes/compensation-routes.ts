@@ -68,7 +68,7 @@ export const compensationRoutes: Route[] = [
             {
                 name: "Entries",
                 pathname: "/compensation/entries",
-                permission: "",
+                permission: "view_compensation_entries",
             },
             {
                 name: "Converter",
