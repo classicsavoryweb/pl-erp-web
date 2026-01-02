@@ -11,11 +11,13 @@ import TextArea from "@/components/common/TextArea";
 interface FormModalInterface {
     modal: any;
     id: number;
+    data: any;
 };
 
 const TardinessDetailsModal = ({
     modal,
-    id
+    id,
+    data
 }: FormModalInterface) => {
     const api = useApiCall();
 
@@ -47,6 +49,11 @@ const TardinessDetailsModal = ({
             loading={api.loading}
             size="md"
         >
+            <Textfield
+                disabled
+                label="Employee"
+                value={data?.employee?.full_name}
+            />
 
             { api.data.reason && 
                 <div

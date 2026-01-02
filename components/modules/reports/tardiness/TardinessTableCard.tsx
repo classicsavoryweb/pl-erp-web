@@ -325,6 +325,7 @@ const TardinessTableCard = () => {
         {
             label: "View",
             onClick: async (data: any) => {
+                api.setData(data);
                 setId(data.id);
                 viewTardiness.onOpen();
             }
@@ -540,6 +541,7 @@ const TardinessTableCard = () => {
             />
 
             <TardinessDetailsModal
+                data={api.data}
                 modal={viewTardiness}
                 id={id}
             />
