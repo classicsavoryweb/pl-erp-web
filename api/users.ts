@@ -10,6 +10,20 @@ export const getAllUsers = async (payload: {}) => {
     return resData;
 };
 
+export const exportAllUsers = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-admin-users',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 export const createUser = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-user',

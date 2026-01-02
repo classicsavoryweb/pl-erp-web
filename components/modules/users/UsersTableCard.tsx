@@ -1,6 +1,6 @@
 "use client";
 
-import { getAllUsers } from "@/api/users";
+import { exportAllUsers, getAllUsers } from "@/api/users";
 import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { useApiCall } from "@/hooks/api-call";
@@ -15,6 +15,9 @@ import CreateUsersForm from "./CreateUsersForm";
 import EditUsersForm from "./EditUsersForm";
 import { useState } from "react";
 import DropDownButtons from "@/components/common/DropDownButtons";
+import { useFilter } from "@/hooks/use-filter";
+import FilterCard from "../cards/FilterCard";
+import moment from "moment";
 
 const UsersTableCard = () => {
 
@@ -23,12 +26,14 @@ const UsersTableCard = () => {
     const createUser = useModal();
     const editUser = useModal();
     const [data, setData] = useState<any>({});
+    const filter = useFilter();
     
     useAsyncEffect(() => {
         users.setLoading(true);
         getAllUsers({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters
         })
         .then((resp) => {
             if (resp.error) {
@@ -45,7 +50,7 @@ const UsersTableCard = () => {
         .finally(() => {
             users.setLoading(false);
         });
-    }, [paginator.reload, users.reload]);
+    }, [paginator.reload, users.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -107,6 +112,17 @@ const UsersTableCard = () => {
 
     return (
         <>
+            <FilterCard
+                filterHandler={filter}
+                columnSettings={columnSettings}
+                hasExport
+                api={exportAllUsers}
+                exportFileName={`ADMINISTRATORS-USERS-${moment().format("YYYY-MM-DD")}.xls`}
+                withStatus
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
+            />
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
