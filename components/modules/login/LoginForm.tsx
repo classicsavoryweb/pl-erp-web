@@ -31,13 +31,13 @@ const LoginForm = () => {
                     } else {
                         const expiresInHours = 12 / 24;
                         const user = resp.data.user;
-                        const {
-                            employee_status,
-                            home_branch,
-                            schedule,
-                            current_position,
-                            ...filteredData
-                        } = user;
+                        // const {
+                        //     employee_status,
+                        //     home_branch,
+                        //     schedule,
+                        //     current_position,
+                        //     ...filteredData
+                        // } = user;
 
                         const permissions = resp.data.permissions || [];
                         const chunkSize = 100;
@@ -51,7 +51,7 @@ const LoginForm = () => {
                             Cookies.set(`permissions_${index}`, JSON.stringify(chunk), { path: '/', expires: expiresInHours });
                         });
                         Cookies.set('authToken', resp.data.token, { path: '/', expires: expiresInHours });
-                        Cookies.set('userDetails', JSON.stringify(filteredData), { path: '/', expires: expiresInHours });
+                        Cookies.set('userDetails', JSON.stringify(user), { path: '/', expires: expiresInHours });
 
                         router.push("/");
                     }

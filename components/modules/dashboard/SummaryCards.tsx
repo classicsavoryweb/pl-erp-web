@@ -164,73 +164,29 @@ const SummaryCards = () => {
 
     return (
         <>
-            <Grid cols={2}>
-                <Card>
-                <div className="flex justify-between">
-                    <div className="flex justify-start items-center gap-x-5">
-                        <Image
-                            src={userDetails.gender === "Male" 
-                                ? "/images/profile-pic-male.svg"
-                                : "/images/profile-pic-female.svg"
-                            }
-                            width={120}
-                            height={120}
-                            alt="profile picture"
-                        />
-                        <div>
-                            <p className="text-2xl font-semibold text-red-700 pb-3">{userDetails.last_name && userDetails.last_name + ","} {userDetails.first_name} {userDetails.middle_name && String(userDetails.middle_name).charAt(0) + "."}</p>
-                            
-                            <div className="flex gap-x-10">
-                                <div>
-                                    <div className="flex justify-start gap-x-1">
-                                        <p className=" font-semibold text-gray-500">Position:</p>
-                                        <p className="">{userDetails.position || "—"}</p>
-                                    </div>
-                                    <div className="flex justify-start gap-x-1">
-                                        <p className=" font-semibold text-gray-500">Access Role:</p>
-                                        <p className="">{String(userDetails.role_name).charAt(0).toUpperCase() + String(userDetails.role_name).slice(1) || "—"}</p>
-                                    </div>
-                                </div>
-                                <div className="hidden 2xl:block">
-                                    <div className="flex justify-start gap-x-1">
-                                        <p className=" font-semibold text-gray-500">Email:</p>
-                                        <p className=" wrap-anywhere">{userDetails.email || "—"}</p>
-                                    </div>
-                                    <div className="flex justify-start gap-x-1">
-                                        <p className=" font-semibold text-gray-500">Contact Number:</p>
-                                        <p className="">{userDetails.contact_number || "—"}</p>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                </Card>
-                
-                <Grid
-                    cols={2}
-                >
-                    <SummaryCardCount
-                        title="Pending Employees"
-                        displayReport={data.pending_employees || 0}
-                        loading={loading}
-                    />
-                    <SummaryCardCount
-                        title="Probationary Employees"
-                        displayReport={data.probationary_employees || 0}
-                        loading={loading}
-                    />
-                    <SummaryCardCount
-                        title="Regular Employees"
-                        displayReport={data.regular_employees || 0}
-                        loading={loading}
-                    />
-                    <SummaryCardCount
-                        title="Contractual Employees"
-                        displayReport={data.contractual_employees || 0}
-                        loading={loading}
-                    />
-                </Grid>
+            <Grid
+                cols={4}
+            >
+                <SummaryCardCount
+                    title="Pending Employees"
+                    displayReport={data.pending_employees || 0}
+                    loading={loading}
+                />
+                <SummaryCardCount
+                    title="Probationary Employees"
+                    displayReport={data.probationary_employees || 0}
+                    loading={loading}
+                />
+                <SummaryCardCount
+                    title="Regular Employees"
+                    displayReport={data.regular_employees || 0}
+                    loading={loading}
+                />
+                <SummaryCardCount
+                    title="Contractual Employees"
+                    displayReport={data.contractual_employees || 0}
+                    loading={loading}
+                />
             </Grid>
         
             <Grid cols={3}>
