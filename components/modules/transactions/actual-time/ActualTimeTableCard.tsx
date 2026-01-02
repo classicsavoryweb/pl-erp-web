@@ -112,19 +112,19 @@ const ActualTimeTableCard = ({
                 createLogModal.onOpen();
             }
         },
-        {
-            label: "Fetch Biotime",
-            onClick: async () => {
-                const isConfirmed = await confirm({
-                    message: "Are you sure?",
-                    title: "Biotime Logs"
-                });
+        // {
+        //     label: "Fetch Biotime",
+        //     onClick: async () => {
+        //         const isConfirmed = await confirm({
+        //             message: "Are you sure?",
+        //             title: "Biotime Logs"
+        //         });
 
-                if (isConfirmed) {
-                    triggerFetchBiotime();
-                }
-            }
-        },
+        //         if (isConfirmed) {
+        //             triggerFetchBiotime();
+        //         }
+        //     }
+        // },
         // {
         //     label: "Import Biotime Logs",
         //     onClick: async () => {
