@@ -32,6 +32,7 @@ import { AuthContext } from "@/context/AuthProvider";
 import Dropdown from "@/components/common/Dropdown";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
+import FetchBiotimeLogsModal from "./FetchBiotimeLogs";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -49,6 +50,7 @@ const ActualTimeTableCard = ({
     const api = useApiCall();
     const viewModal = useModal();
     const createLogModal = useModal();
+    const fetchLogModal = useModal();
     const editModal = useModal();
     const importModal = useModal();
     const [data, setData] = useState<any[]>([]);
@@ -112,19 +114,12 @@ const ActualTimeTableCard = ({
                 createLogModal.onOpen();
             }
         },
-        // {
-        //     label: "Fetch Biotime",
-        //     onClick: async () => {
-        //         const isConfirmed = await confirm({
-        //             message: "Are you sure?",
-        //             title: "Biotime Logs"
-        //         });
-
-        //         if (isConfirmed) {
-        //             triggerFetchBiotime();
-        //         }
-        //     }
-        // },
+        {
+            label: "Fetch Biotime",
+            onClick: () => {
+                fetchLogModal.onOpen();
+            }
+        },
         // {
         //     label: "Import Biotime Logs",
         //     onClick: async () => {
@@ -376,6 +371,10 @@ const ActualTimeTableCard = ({
 
             <ImportBiotimeLog
                 modal={importModal}
+            />
+
+            <FetchBiotimeLogsModal
+                modal={fetchLogModal}
             />
         </>
     );

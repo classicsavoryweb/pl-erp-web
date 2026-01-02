@@ -56,3 +56,13 @@ export const importTransactionsActualLogs = async (payload: {}) => {
 
     return resData;
 };
+
+export const fetchBranchBiotimeLogs = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/fetch-biotime-logs",
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
