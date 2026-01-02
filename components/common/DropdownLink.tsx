@@ -33,7 +33,7 @@ const DropdownLink = ({
                     flex
                     ${isActive ? "bg-red-800 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
                     rounded-md
-                    px-3
+                    px-2
                     py-[10px]
                     justify-between
                     items-center
@@ -94,7 +94,7 @@ const DropdownLink = ({
                                             items-center
                                             font-medium
                                             text-[12px]
-                                            px-3
+                                            px-2
                                             focus:outline-none
                                             ${active ? "text-red-800" : "text-gray-500"}
                                         `}

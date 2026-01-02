@@ -37,7 +37,7 @@ const SubDropDown = ({
                     py-[7px]
                     items-center
                     text-[12px]
-                    px-3
+                    px-2
                     focus:outline-none
                     hover:cursor-pointer
                     dark:text-slate-300

@@ -13,7 +13,7 @@ const Sidebar = () => {
     const { permissions } = useContext(AuthContext);
 
     return (
-        <div className="relative mt-3 px-3">
+        <div className="relative mt-3 px-2">
             {routes.map((route, index) => {
                 const IconComponent = Icons[route.icon as keyof typeof Icons];
                 if (route.type === "link") {
@@ -30,7 +30,7 @@ const Sidebar = () => {
                                 gap-2
                                 ${isActive ? "bg-red-800 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
                                 rounded-md
-                                px-3
+                                px-2
                                 py-[10px]
                                 flex
                                 items-center
