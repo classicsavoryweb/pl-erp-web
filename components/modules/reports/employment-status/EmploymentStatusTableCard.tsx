@@ -14,6 +14,7 @@ import BranchDropDown from "../../generic/BranchDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import { useModal } from "@/hooks/modal";
 import EmploymentStatusModal from "./EmploymentStatusModal";
+import Link from "next/link";
 
 const EmploymentStatusTableCard = () => {
     const [reportData, setReport] = useState<any[]>([]);
@@ -23,7 +24,18 @@ const EmploymentStatusTableCard = () => {
         {
             columnHead: "Employee Number",
             path: "employee_number",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                return (
+                    <Link
+                        href={`/employees/${data.employee_number}`}
+                        target="_blank"
+                        className="text-blue-700 underline"
+                    >
+                        {data.employee_number}
+                    </Link>
+                )
+            }
         },
         {
             columnHead: "Employee Name",

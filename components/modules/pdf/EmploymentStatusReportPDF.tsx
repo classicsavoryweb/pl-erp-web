@@ -163,7 +163,7 @@ const EmploymentStatusReportPDF = ({
                                 fontWeight: "bold"
                             }}
                         >
-                            {data.branch_oic.gender === "Male" ? "Mr. " : "Ms. "}{_.capitalize(_.lowerCase(data.branch_oic.first_name))} {data.branch_oic.middle_name && _.toUpper(data.branch_oic.middle_name.charAt(0)) + '.'} {_.capitalize(_.lowerCase(data.branch_oic.last_name))}
+                            {data.branch_oic.formal_full_name}
                         </Text>
                         <Text>
                             {data.branch_oic.current_position.description}/ {data.branch.name}
@@ -360,7 +360,7 @@ const EmploymentStatusReportPDF = ({
                             fontWeight: "bold"
                         }}
                     >
-                        {data.recommended_by.gender === "Male" ? "Mr. " : "Ms. "}{_.words(data.recommended_by.first_name).map(_.capitalize).join(' ')} {data.recommended_by.middle_name && _.toUpper(data.recommended_by.middle_name.charAt(0)) + '.'} {_.words(data.recommended_by.last_name).map(_.capitalize).join(' ')}
+                        {data.recommended_by.formal_full_name}
                     </Text>
                     <Text>
                         {data.recommended_by.current_position.description}
@@ -393,7 +393,7 @@ const EmploymentStatusReportPDF = ({
                                     fontWeight: "bold"
                                 }}
                             >
-                                {data.noted_by.gender === "Male" ? "Mr. " : "Ms. "}{_.words(data.noted_by.first_name).map(_.capitalize).join(' ')} {data.noted_by.middle_name && _.toUpper(data.noted_by.middle_name.charAt(0)) + '.'} {_.words(data.noted_by.last_name).map(_.capitalize).join(' ')}
+                                {data.noted_by.formal_full_name}
                             </Text>
                             <Text>
                                 {data.noted_by.current_position.description}
@@ -415,7 +415,7 @@ const EmploymentStatusReportPDF = ({
                                             fontWeight: "bold"
                                         }}
                                     >
-                                        {data.noted_by_1.gender === "Male" ? "Mr. " : "Ms. "}{_.words(data.noted_by_1.first_name).map(_.capitalize).join(' ')} {data.noted_by_1.middle_name && _.toUpper(data.noted_by_1.middle_name.charAt(0)) + '.'} {_.words(data.noted_by_1.last_name).map(_.capitalize).join(' ')}
+                                        {data.noted_by_1.formal_full_name}
                                     </Text>
                                     <Text>
                                         {data.noted_by_1.current_position.description}
