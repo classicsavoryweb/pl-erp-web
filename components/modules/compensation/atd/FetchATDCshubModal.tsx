@@ -11,6 +11,7 @@ import { COLUMNTYPES } from "@/constants/column";
 import { useState } from "react";
 import { createCSHubATDs, getCSHubATDS } from "@/api/compensation/employee-deductions";
 import BranchDropDown from "../../generic/BranchDropDown";
+import moment from "moment";
 
 interface ModalInterface {
     modal: any;
@@ -29,8 +30,8 @@ const FetchATDCshubModal = ({
         initialValues: {
             branch_id : "",
             transaction_number : "",
-            date_from : "",
-            date_to : ""
+            date_from: moment().subtract(1).format("YYYY-MM-DD"),
+            date_to: moment().format("YYYY-MM-DD"),
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
