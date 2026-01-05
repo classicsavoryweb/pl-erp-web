@@ -295,7 +295,7 @@ const EmployeeDeductionsTableCard = ({
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <SearchEmployeeDropDown
-                            status=""
+                            status="all"
                             label="Employee"
                             placeholder="select employee"
                             name="employee_id"

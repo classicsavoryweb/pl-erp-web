@@ -250,6 +250,7 @@ const ATDTableCard = ({
                             label="Employee"
                             placeholder="select employee"
                             name="employee_id"
+                            status="all"
                             onChange={(e) => {
                                 const selectedEmployee = e.target.value;
                                 setEmployee(selectedEmployee);
