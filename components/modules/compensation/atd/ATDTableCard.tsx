@@ -28,6 +28,7 @@ import EditEmployeeDeductionForm from "../employee-deductions/EditEmployeeDeduct
 import FetchCSHubTransactionForm from "../converter/details/FetchCSHubTransactionForm";
 import FetchATDCshubModal from "./FetchATDCshubModal";
 import ViewATDModal from "./ViewATDModal";
+import BranchDropDown from "../../generic/BranchDropDown";
 
 interface ATDTableInterface {
     hasExport?: boolean;
@@ -38,7 +39,7 @@ interface ATDTableInterface {
 const ATDTableCard = ({
     unique_api = exportAllATDs,
     hasExport = true,
-    exportPermission = "export_all_atds",
+    exportPermission = "export_compensation_atd",
 
 }: ATDTableInterface) => {
     const api = useApiCall();
@@ -62,7 +63,7 @@ const ATDTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Branch",
+            columnHead: "ATD Branch",
             path: "branch.short_name",
             columnType: COLUMNTYPES.string
         },
@@ -165,8 +166,9 @@ const ATDTableCard = ({
     const formHandler = useFormik({
         initialValues: {
             key_word: "",
-            column_type: "",
+            column_type: "transaction_number",
             employee_id: "",
+            branch_id: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -233,7 +235,7 @@ const ATDTableCard = ({
                     const a = document.createElement('a');
 
                     a.href = downloadUrl;
-                    a.download = `EMPLOYEE-DEDUCTIONS-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `ATD-${moment().format('YYYY-MM-DD')}.xls`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
@@ -282,6 +284,13 @@ const ATDTableCard = ({
                             label="Keyword"
                             placeholder="enter keyword"
                             value={formHandler.values.key_word}
+                            onChange={formHandler.handleChange}
+                        />
+                        <BranchDropDown
+                            name="branch_id"
+                            label="Branch"
+                            placeholder="select branch"
+                            value={formHandler.values.branch_id}
                             onChange={formHandler.handleChange}
                         />
                     </Grid>

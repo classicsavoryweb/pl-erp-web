@@ -61,7 +61,7 @@ const FetchATDCshubModal = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Branch",
+            columnHead: "ATD Branch",
             path: "branch_name",
             columnType: COLUMNTYPES.string
         },
