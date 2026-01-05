@@ -12,7 +12,7 @@ interface SelectInterface {
     value?: any;
     required?: boolean;
     disabled?: boolean;
-    status?: "active" | "inactive"
+    status?: "active" | "inactive" | "";
 }
 
 const SearchEmployeeDropDown = ({

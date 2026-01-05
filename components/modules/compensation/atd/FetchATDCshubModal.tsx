@@ -82,7 +82,7 @@ const FetchATDCshubModal = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Amount",
+            columnHead: "ATD Amount",
             path: "amount",
             columnType: COLUMNTYPES.amount
         },

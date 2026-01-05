@@ -61,11 +61,16 @@ const ATDTableCard = ({
         {
             columnHead: "Transaction Date",
             path: "date_created",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.date
         },
         {
             columnHead: "Employee Name",
             path: "employee.full_name",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Employee Number",
+            path: "employee.employee_number",
             columnType: COLUMNTYPES.string
         },
         {
@@ -79,18 +84,9 @@ const ATDTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Loan Amount",
+            columnHead: "ATD Amount",
             path: "amount",
-            columnType: COLUMNTYPES.function,
-            function: (data:any) => {
-                const value = Number(data.amount);
-                return !value || value === 0
-                    ? '-'
-                    : value.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-            }
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Month(s)",
@@ -106,30 +102,12 @@ const ATDTableCard = ({
         {
             columnHead: "Monthly Amortization",
             path: "monthly_amortization",
-            columnType: COLUMNTYPES.function,
-            function: (data:any) => {
-                const value = Number(data.monthly_amortization);
-                return !value || value === 0
-                    ? '-'
-                    : value.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-            }
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Balance",
             path: "balance",
-            columnType: COLUMNTYPES.function,
-            function: (data:any) => {
-                const value = Number(data.balance);
-                return !value || value === 0
-                    ? '-'
-                    : value.toLocaleString('en-US', {
-                        minimumFractionDigits: 2,
-                        maximumFractionDigits: 2
-                    });
-            }
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Approved Status",
