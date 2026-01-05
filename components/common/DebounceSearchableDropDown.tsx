@@ -19,7 +19,7 @@ interface SelectInterface {
     api: (payload: any) => Promise<any>;
     mapResponse: (item: any) => Option;
     transformResponse?: (resp: any) => any[];
-    status?: "active" | "inactive";
+    status?: "active" | "inactive" | "all";
     disabled?: boolean;
 }
 
