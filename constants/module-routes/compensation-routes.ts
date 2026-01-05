@@ -29,7 +29,7 @@ export type Route = LinkRoute | DropdownRoute;
 
 export const compensationRoutes: Route[] = [
     {
-        name: "Compensation",
+        name: "Compensation & Payroll",
         icon: "PaymentsOutlined",
         type: "dropdown",
         permission: "view_compensation_module",
