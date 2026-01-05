@@ -29,6 +29,7 @@ import FetchCSHubTransactionForm from "../converter/details/FetchCSHubTransactio
 import FetchATDCshubModal from "./FetchATDCshubModal";
 import ViewATDModal from "./ViewATDModal";
 import BranchDropDown from "../../generic/BranchDropDown";
+import DeductionDropDown from "../../generic/DeductionDropDown";
 
 interface ATDTableInterface {
     hasExport?: boolean;
@@ -169,6 +170,7 @@ const ATDTableCard = ({
             column_type: "transaction_number",
             employee_id: "",
             branch_id: "",
+            deduction_id: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -218,6 +220,8 @@ const ATDTableCard = ({
             key_word: '',
             column_type: "",
             employee_id: "",
+            branch_id: "",
+            deduction_id: "",
         },
         validateOnChange: false,
         onSubmit: async (values) => {
@@ -247,7 +251,7 @@ const ATDTableCard = ({
     return (
         <>
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+                <p className=" font-semibold text-cyan-900 dark:text-cyan-700">Filters</p>
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <SearchEmployeeDropDown
@@ -291,6 +295,13 @@ const ATDTableCard = ({
                             label="Branch"
                             placeholder="select branch"
                             value={formHandler.values.branch_id}
+                            onChange={formHandler.handleChange}
+                        />
+                        <DeductionDropDown
+                            name="deduction_id"
+                            label="Deduction Type"
+                            placeholder="select deduction"
+                            value={formHandler.values.deduction_id}
                             onChange={formHandler.handleChange}
                         />
                     </Grid>
