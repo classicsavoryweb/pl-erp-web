@@ -30,7 +30,7 @@ const FetchATDCshubModal = ({
         initialValues: {
             branch_id : "",
             transaction_number : "",
-            date_from: moment().subtract(1).format("YYYY-MM-DD"),
+            date_from: moment().subtract(1, "month").startOf("month").format("YYYY-MM-DD"),
             date_to: moment().format("YYYY-MM-DD"),
         },
         validateOnChange: false,
@@ -140,7 +140,7 @@ const FetchATDCshubModal = ({
                     <div>
                         <Button
                             type="submit"
-                            label="Submit"
+                            label="Search"
                             onClick={() => {}}
                         />
                     </div>

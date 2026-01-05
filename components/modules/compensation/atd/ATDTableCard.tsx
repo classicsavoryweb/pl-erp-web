@@ -27,6 +27,7 @@ import EndLoanTransactionForm from "../employee-deductions/EndLoanTransactionFor
 import EditEmployeeDeductionForm from "../employee-deductions/EditEmployeeDeductionForm";
 import FetchCSHubTransactionForm from "../converter/details/FetchCSHubTransactionForm";
 import FetchATDCshubModal from "./FetchATDCshubModal";
+import ViewATDModal from "./ViewATDModal";
 
 interface ATDTableInterface {
     hasExport?: boolean;
@@ -42,8 +43,7 @@ const ATDTableCard = ({
 }: ATDTableInterface) => {
     const api = useApiCall();
     const fetchModal = useModal();
-    const editModal = useModal();
-    const editLoanModal = useModal();
+    const viewModal = useModal();
     const [data, setData] = useState({});
     const [employee, setEmployee] = useState<any>({});
     const { permissions } = useContext(AuthContext);
@@ -137,45 +137,12 @@ const ATDTableCard = ({
                 const actions = [];
 
                 actions.push({
-                    label: "Edit",
+                    label: "View",
                     onClick: () => {
-                        editModal.onOpen();
-                        setData({
-                        id: data.id,
-                        employee_id: data.employee_id,
-                        employee_number: data.employee.employee_number,
-                        deduction_id: data.deduction_id,
-                        months: data.months,
-                        amount: data.amount,
-                        start_date: data.start_date,
-                        end_date: data.end_date,
-                        monthly_amortization: data.monthly_amortization,
-                        balance: data.balance,
-                        remarks: data.remarks,
-                        branch_id: data.branch_id,
-                        block_payment: data.block_payment,
-                        });
+                        viewModal.onOpen();
+                        setData(data);
                     }
                 });
-
-                const balance = parseFloat(data.balance);
-                const status = data.end_loan_status;
-
-                if (balance > 0  && status !== "Yes") {
-                    actions.push({
-                            label: "End Loan Transaction",
-                            onClick: () => {
-                            editLoanModal.onOpen();
-                            setData({
-                                id: data.id,
-                                amount: data.amount,
-                                balance: data.balance,
-                                end_loan_reason: data.end_loan_reason,
-                                end_loan_status: data.end_loan_status,
-                            });
-                        }
-                    });
-                }
 
                 return actions.length > 0 ? 
                 <ActionDropDown 
@@ -376,16 +343,9 @@ const ATDTableCard = ({
                 />
             </Card>
 
-            <EditEmployeeDeductionForm
-                modal={editModal}
-                onSubmitCallback={api.triggerReload}
-                formValue={data}
-            />
-
-            <EndLoanTransactionForm
-                modal={editLoanModal}
-                onSubmitCallback={api.triggerReload}
-                formValue={data}
+            <ViewATDModal
+                modal={viewModal}
+                data={data}
             />
 
             <FetchATDCshubModal

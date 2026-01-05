@@ -26,6 +26,7 @@ import EndLoanTransactionForm from "./EndLoanTransactionForm";
 import { exportAllEmployeeDeductions, getAllEmployeeDeductions } from "@/api/compensation/employee-deductions";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
+import ViewEmployeeDeduction from "./ViewEmployeeDeduction";
 
 interface EmployeeDeductionsInterface {
     hasExport?: boolean;
@@ -42,6 +43,7 @@ const EmployeeDeductionsTableCard = ({
     const api = useApiCall();
     const createModal = useModal();
     const editModal = useModal();
+    const viewModal = useModal();
     const editLoanModal = useModal();
     const [data, setData] = useState({});
     const [employee, setEmployee] = useState<any>({});
@@ -133,7 +135,7 @@ const EmployeeDeductionsTableCard = ({
             path: "action",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
-                const actions = [];
+                let actions = [];
 
                 actions.push({
                     label: "Edit",
@@ -174,6 +176,18 @@ const EmployeeDeductionsTableCard = ({
                             });
                         }
                     });
+                }
+
+                if (balance == 0  || status == "Yes") {
+                    actions = [
+                        {
+                            label: "View",
+                            onClick: () => {
+                                viewModal.onOpen();
+                                setData(data);
+                            }
+                        }
+                    ];
                 }
 
                 return actions.length > 0 ? 
@@ -390,6 +404,11 @@ const EmployeeDeductionsTableCard = ({
                 modal={editLoanModal}
                 onSubmitCallback={api.triggerReload}
                 formValue={data}
+            />
+
+            <ViewEmployeeDeduction
+                modal={viewModal}
+                data={data}
             />
         </>
     );
