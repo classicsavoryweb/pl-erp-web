@@ -59,6 +59,11 @@ const ATDTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Transaction Date",
+            path: "date_created",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Employee Name",
             path: "employee.full_name",
             columnType: COLUMNTYPES.string
@@ -171,6 +176,8 @@ const ATDTableCard = ({
             employee_id: "",
             branch_id: "",
             deduction_id: "",
+            date_created_from: "",
+            date_created_to: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -179,6 +186,11 @@ const ATDTableCard = ({
             column_type: Yup.string().when('key_word', (keyWord, schema) => 
                 String(keyWord) !== ""
                     ? schema.required('Column type is required')
+                    : schema.notRequired()
+            ),
+            date_created_to: Yup.string().when('date_created_from', (keyWord, schema) => 
+                String(keyWord) !== ""
+                    ? schema.required('Transaction Date To is required')
                     : schema.notRequired()
             ),
         }),
@@ -222,6 +234,8 @@ const ATDTableCard = ({
             employee_id: "",
             branch_id: "",
             deduction_id: "",
+            date_created_from: "",
+            date_created_to: "",
         },
         validateOnChange: false,
         onSubmit: async (values) => {
@@ -302,6 +316,21 @@ const ATDTableCard = ({
                             label="Deduction Type"
                             placeholder="select deduction"
                             value={formHandler.values.deduction_id}
+                            onChange={formHandler.handleChange}
+                        />
+                        <Textfield
+                            name="date_created_from"
+                            label="Transaction Date From"
+                            type="date"
+                            value={formHandler.values.date_created_from}
+                            onChange={formHandler.handleChange}
+                        />
+                        <Textfield
+                            name="date_created_to"
+                            label="Transaction Date To"
+                            type="date"
+                            value={formHandler.values.date_created_to}
+                            error={formHandler.errors.date_created_to}
                             onChange={formHandler.handleChange}
                         />
                     </Grid>

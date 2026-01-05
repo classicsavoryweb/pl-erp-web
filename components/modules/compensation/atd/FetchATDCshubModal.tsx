@@ -25,6 +25,7 @@ const FetchATDCshubModal = ({
 
     const [dataSet, setDataSet] = useState<any[]>([]);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const formHandler = useFormik({
         initialValues: {
@@ -164,6 +165,8 @@ const FetchATDCshubModal = ({
                 <div>
                     <Button
                         label="Import ATDs"
+                        loading={loading}
+                        disabled={loading}
                         onClick={async () => {
                             const isConfirm = await confirm({
                                 title: "Import ATDS",
@@ -178,7 +181,7 @@ const FetchATDCshubModal = ({
                                         return trans;
                                     }
                                 });
-    
+                                setLoading(true);
                                 createCSHubATDs({
                                     transactions
                                 }).then((resp) => {
@@ -194,6 +197,8 @@ const FetchATDCshubModal = ({
                                     }
                                 }).catch(() => {
                                     toast.error("Error encountered");
+                                }).finally(() => {
+                                    setLoading(false);
                                 })
                             }
                         }}
