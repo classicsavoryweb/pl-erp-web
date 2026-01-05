@@ -97,6 +97,12 @@ const ViewATDModal = ({
                 value="block_payment"
                 onChange={() => {}}
             />
+            <Textfield
+                label="Imported By"
+                name="months"
+                value={data.created_by}
+                disabled
+            />
             <TextArea
                 label="Remarks"
                 name="remarks"
