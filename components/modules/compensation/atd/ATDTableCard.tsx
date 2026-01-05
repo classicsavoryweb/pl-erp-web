@@ -69,8 +69,8 @@ const ATDTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "ATD Branch",
-            path: "branch.short_name",
+            columnHead: "Branch",
+            path: "employee.current_branch.name",
             columnType: COLUMNTYPES.string
         },
         {
