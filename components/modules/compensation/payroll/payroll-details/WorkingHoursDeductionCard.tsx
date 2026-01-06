@@ -36,7 +36,7 @@ const WorkingHoursDeductionCard = () => {
                                     <Textfield
                                         disabled
                                         label={"Amount"}
-                                        value={formatNumber(tardy.payment.tardiness_deduction)}
+                                        value={formatNumber(tardy.payment?.tardiness_deduction ?? 0)}
                                     />
                                 </Grid>
                             );
