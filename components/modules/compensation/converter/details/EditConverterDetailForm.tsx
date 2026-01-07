@@ -29,10 +29,12 @@ const EditConverterDetailForm = ({
         initialValues: {
             amount: "",
             remarks: "",
+            transaction_type_id: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             amount: Yup.string().required("Amount is required"),
+            transaction_type_id: Yup.string().required("Transaction type is required"),
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
             const isConfirmed = await confirm({
@@ -65,7 +67,8 @@ const EditConverterDetailForm = ({
         if (modal.isShowing) {
             formHandler.setValues({
                 remarks: data.remarks,
-                amount: data.amount
+                amount: data.amount,
+                transaction_type_id: data.transaction_type_id
             });
         }
     }, [modal.isShowing]);
@@ -93,12 +96,24 @@ const EditConverterDetailForm = ({
                     required
                     value={data.terms ?? ""}
                 />
-                <Textfield
-                    label="Transaction Type"
-                    disabled
-                    required
-                    value={data.transaction_type?.description ?? ""}
-                />
+                { data.source && data.source.toUpperCase() === "MANUAL"
+                    ?
+                        <CSHubTransactionTypeDropDown
+                            label="Transaction Type"
+                            required
+                            name="transaction_type_id"
+                            value={Number(formHandler.values.transaction_type_id) ?? ""}
+                            error={formHandler.errors.transaction_type_id}
+                            onChange={formHandler.handleChange}
+                        />
+                    :
+                    <Textfield
+                        label="Transaction Type"
+                        disabled
+                        required
+                        value={data.transaction_type?.description ?? ""}
+                    />
+                }
                 <Textfield
                     label="Amount"
                     name="amount"

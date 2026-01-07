@@ -66,12 +66,17 @@ const ConverterDetailsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Transaction Number",
+            path: "transaction_number",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Transaction Type",
             path: "transaction_type.description",
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Amount",
+            columnHead: "Approved Amount",
             path: "amount",
             columnType: COLUMNTYPES.amount
         },

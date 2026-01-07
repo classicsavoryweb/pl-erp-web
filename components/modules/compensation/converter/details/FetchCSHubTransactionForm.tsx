@@ -29,7 +29,7 @@ const FetchCSHubTransactionForm = ({
     const trasanctionsFormHandler = useFormik({
         initialValues: {
             type: "",
-            posted_from: moment().subtract(1).format("YYYY-MM-DD"),
+            posted_from: moment().subtract(1, "month").format("YYYY-MM-DD"),
             posted_to: moment().format("YYYY-MM-DD"),
         },
         validateOnChange: false,
@@ -75,7 +75,7 @@ const FetchCSHubTransactionForm = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Amount",
+            columnHead: "Approved Amount",
             path: "original_amount",
             columnType: COLUMNTYPES.function,
             function: (data:any) => {
@@ -210,7 +210,7 @@ const FetchCSHubTransactionForm = ({
                                                     purpose: trans.purpose ?? trans.procedure,
                                                     amount: trans.original_amount ?? trans.orig_amount,
                                                     transaction_type: trans.healthcare_transaction_type.description ?? null,
-                                                    for_crediting: trans.healthcare_transaction_type.for_crediting ?? null,
+                                                    for_crediting: trans.healthcare_transaction_type.for_credit ?? trans.healthcare_transaction_type.for_crediting ?? null,
                                                     for_liquidation: trans.healthcare_transaction_type.for_liquidation ?? null,
                                                     transaction_number: trans.trans_no,
                                                     type: trasanctionsFormHandler.values.type,
