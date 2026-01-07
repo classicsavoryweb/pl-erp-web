@@ -65,14 +65,23 @@ const FetchCSHubTransactionForm = ({
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Transaction Number",
+            path: "trans_no",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Transaction Type",
             path: "healthcare_transaction_type.description",
             columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Amount",
-            path: "amount",
-            columnType: COLUMNTYPES.amount
+            path: "original_amount",
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+
+                return data.original_amount ?? data.orig_amount;
+            }
         },
         {
             columnHead: "Posting Date",
@@ -197,9 +206,9 @@ const FetchCSHubTransactionForm = ({
                                                     id: trans.id,
                                                     employee_number: trans.user.employee_number,
                                                     branch_number: trans.branch_id,
-                                                    terms: trans.terms,
+                                                    terms: trans.terms ?? 0,
                                                     purpose: trans.purpose ?? trans.procedure,
-                                                    amount: trans.amount,
+                                                    amount: trans.original_amount ?? trans.orig_amount,
                                                     transaction_type: trans.healthcare_transaction_type.description ?? null,
                                                     for_crediting: trans.healthcare_transaction_type.for_crediting ?? null,
                                                     for_liquidation: trans.healthcare_transaction_type.for_liquidation ?? null,

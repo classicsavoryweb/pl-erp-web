@@ -118,6 +118,7 @@ const IncentivesCard = () => {
                                     label="Additional Incentive"
                                     value={incentivesformHandler.values.additional_incentive ?? 0}
                                     error={incentivesformHandler.errors.additional_incentive}
+                                    disabled={payrollDetails.status == "final"}
                                 />
                             </div>
                             <Textfield
@@ -171,22 +172,25 @@ const IncentivesCard = () => {
                                     name="remarks"
                                     value={incentivesformHandler.values.remarks ?? ""}
                                     error={incentivesformHandler.errors.remarks}
+                                    disabled={payrollDetails.status == "final"}
                                 />
                             </div>
                         </div>
                     </div>
                 </Grid>
-                <Grid cols={3}>
-                    <div />
-                    <div />
-                    <div className="justify-end">
-                        <Button
-                            type="submit"
-                            onClick={() => {}}
-                            label="Save changes"
-                        />
-                    </div>
-                </Grid>
+                { payrollDetails.status == "final" &&
+                    <Grid cols={3}>
+                        <div />
+                        <div />
+                        <div className="justify-end">
+                            <Button
+                                type="submit"
+                                onClick={() => {}}
+                                label="Save changes"
+                            />
+                        </div>
+                    </Grid>
+                }
             </form>
         </Card>
     );
