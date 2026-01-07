@@ -107,3 +107,12 @@ export const createCSHubATDs = async (payload: {}) => {
 
     return resData;
 };
+
+export const getATDAllowedDeductions = async () => {
+    const resData = await axiosHelper({
+        func_path: '/get-atd-allowed-deductions',
+        method: 'GET',
+    });
+
+    return resData;
+};
