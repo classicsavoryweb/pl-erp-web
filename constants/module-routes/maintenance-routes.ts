@@ -284,7 +284,7 @@ export const maintenanceRoutes: Route[] = [
                     {
                         name: "ATD Access Type",
                         pathname: "/maintenance/payroll/atd-access-type",
-                        permission: "",//view_atd_access_type
+                        permission: "view_atd_access_type",
                     },
                 ]
             },
