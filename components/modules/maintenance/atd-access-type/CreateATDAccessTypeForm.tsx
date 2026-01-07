@@ -1,9 +1,9 @@
 "use client";
 
 import Button from "@/components/common/Button";
-import Dropdown from "@/components/common/Dropdown";
 import Modal from "@/components/common/Modal";
 import ActiveInactiveDropDown from "@/components/modules/generic/ActiveInactiveDropDown";
+import DeductionDropDown from "@/components/modules/generic/DeductionDropDown";
 import confirm from "@/components/common/Confirm";
 import { createATDAccessType } from "@/api/maintenance/atd-access-type";
 import { getAllRoles } from "@/api/roles-and-permissions";
@@ -44,13 +44,13 @@ const CreateATDAccessTypeForm = ({
 
     const formHandler = useFormik({
         initialValues: {
-            category: "",
+            deduction_id: "",
             roles: [] as string[],
             status: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            category: Yup.string().required("Category is required."),
+            deduction_id: Yup.string().required("Deduction is required."),
             roles: Yup.array().min(1, "Select at least one role."),
             status: Yup.string().required("Status is required."),
         }),
@@ -95,21 +95,14 @@ const CreateATDAccessTypeForm = ({
             size="lg"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <Dropdown
-                    label="Category"
-                    placeholder="select category"
-                    name="category"
-                    value={formHandler.values.category}
+                <DeductionDropDown
+                    label="Deduction"
+                    placeholder="select deduction"
+                    name="deduction_id"
+                    value={formHandler.values.deduction_id}
                     required
                     onChange={formHandler.handleChange}
-                    error={formHandler.errors.category}
-                    options={[
-                        { label: "SSS", value: "SSS" },
-                        { label: "Pag-ibig", value: "Pag-ibig" },
-                        { label: "Philhealth", value: "Philhealth" },
-                        { label: "Company", value: "Company" },
-                        { label: "N/A", value: "N/A" },
-                    ]}
+                    error={formHandler.errors.deduction_id}
                 />
 
                 <div className="mt-3">

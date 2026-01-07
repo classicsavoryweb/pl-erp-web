@@ -11,9 +11,9 @@ import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import Dropdown from "@/components/common/Dropdown";
 import Checkbox from "@/components/common/Checkbox";
 import Grid from "@/components/common/Grid";
+import DeductionDropDown from "@/components/modules/generic/DeductionDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -47,13 +47,13 @@ const EditATDAccessTypeForm = ({
     const formHandler = useFormik({
         initialValues: {
             id: "",
-            category: "",
+            deduction_id: "",
             roles: [] as string[],
             status: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            category: Yup.string().required("Category is required."),
+            deduction_id: Yup.string().required("Deduction is required."),
             roles: Yup.array().min(1, "Select at least one role."),
             status: Yup.string().required("Status is required."),
         }),
@@ -90,7 +90,7 @@ const EditATDAccessTypeForm = ({
         if (modal.isShowing) {
             formHandler.setValues({
                 id: formValue?.id || "",
-                category: formValue?.category || "",
+                deduction_id: formValue?.deduction_id || formValue?.deduction?.id || "",
                 roles: Array.isArray(formValue?.roles)
                     ? formValue.roles.map((r: any) => String(typeof r === "object" ? r.id ?? r.value ?? r : r))
                     : formValue?.role
@@ -113,21 +113,14 @@ const EditATDAccessTypeForm = ({
             size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <Dropdown
-                    label="Category"
-                    placeholder="select category"
-                    name="category"
-                    value={formHandler.values.category}
+                <DeductionDropDown
+                    label="Deduction"
+                    placeholder="select deduction"
+                    name="deduction_id"
+                    value={formHandler.values.deduction_id}
                     required
                     onChange={formHandler.handleChange}
-                    error={formHandler.errors.category}
-                    options={[
-                        { label: "SSS", value: "SSS" },
-                        { label: "Pag-ibig", value: "Pag-ibig" },
-                        { label: "Philhealth", value: "Philhealth" },
-                        { label: "Company", value: "Company" },
-                        { label: "N/A", value: "N/A" },
-                    ]}
+                    error={formHandler.errors.deduction_id}
                 />
                 <div className="mt-3">
                     <p className="mb-[-2px]">

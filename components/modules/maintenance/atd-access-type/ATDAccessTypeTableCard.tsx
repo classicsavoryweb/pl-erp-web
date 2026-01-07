@@ -55,8 +55,8 @@ const ATDAccessTypeTableCard = () => {
 
     const columnSettings = [
         {
-            columnHead: "Category",
-            path: "category",
+            columnHead: "Deduction",
+            path: "deduction.description",
             columnType: COLUMNTYPES.string,
         },
         {
@@ -104,8 +104,7 @@ const ATDAccessTypeTableCard = () => {
                 editModal.onOpen();
                 setData({
                     id: row.id,
-                    description: row.description,
-                    category: row.category,
+                    deduction_id: row.deduction_id || row.deduction?.id || "",
                     role_id: row.role_id || (row.role && row.role.id) || "",
                     role: row.role,
                     roles: row.roles,
@@ -120,8 +119,8 @@ const ATDAccessTypeTableCard = () => {
             <FilterCard
                 columnSettings={[
                     {
-                        columnHead: "Category",
-                        path: "category",
+                        columnHead: "Deduction",
+                        path: "deduction.description",
                         columnType: COLUMNTYPES.string,
                     },
                 ]}
@@ -129,7 +128,7 @@ const ATDAccessTypeTableCard = () => {
                 hasExport
                 api={exportAllATDAccessTypes}
                 exportFileName={`ATD-ACCESS-TYPES-${moment().format("YYYY-MM-DD")}.xls`}
-                defaultColumnSelected="category"
+                defaultColumnSelected="deduction.description"
                 callBack={() => {
                     paginator.setPage(1);
                 }}
