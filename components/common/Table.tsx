@@ -9,7 +9,7 @@ import EmptyState from "./EmptyState";
 import Checkbox from "./Checkbox";
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
 import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface columnSetting {
     columnHead: string;
@@ -38,6 +38,7 @@ interface TableInterface {
     onSort?: (e: any) => void;
     smallText?: boolean;
     initialSelectedRows?: any[];
+    resetRows?: boolean;
 };
 
 const Table = ({
@@ -54,6 +55,7 @@ const Table = ({
     onSort,
     smallText,
     initialSelectedRows = [],
+    resetRows = false,
 }: TableInterface) => {
 
     const currentPage = paginator && paginator.paginationData.current_page;
@@ -80,9 +82,13 @@ const Table = ({
         return pages;
     };
 
+    useEffect(() => {
+        setSelectedRows(initialSelectedRows);
+    }, [resetRows]);
+
     return (
 
-<div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-[13px]"}`}>
+        <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-[13px]"}`}>
             <div className="overflow-x-auto">
             <table className="table-auto w-full rounded-md dark:text-slate-200 dark:bg-neutral-800">
                 <thead className="bg-red-800">

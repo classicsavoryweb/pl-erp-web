@@ -25,11 +25,12 @@ const FetchCSHubTransactionForm = ({
 
     const [dataSet, setDataset] = useState<any[]>([]);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
+    const [resetRows, setReset] = useState<boolean>(false);
 
     const trasanctionsFormHandler = useFormik({
         initialValues: {
             type: "",
-            posted_from: moment().subtract(1, "month").format("YYYY-MM-DD"),
+            posted_from: moment().subtract(4, "month").format("YYYY-MM-DD"),
             posted_to: moment().format("YYYY-MM-DD"),
         },
         validateOnChange: false,
@@ -41,6 +42,8 @@ const FetchCSHubTransactionForm = ({
         onSubmit: (values, {setSubmitting, resetForm}) => {
             setSubmitting(true);
             setSelectedTransactions([]);
+            setReset(prev => !prev);
+
             getCshubAppliedTransactions(values)
             .then((resp) => {
                 if (!resp.error) {
@@ -112,6 +115,7 @@ const FetchCSHubTransactionForm = ({
             onClose = {() => {
                 modal.onClose();
                 setDataset([]);
+                setReset(prev => !prev);
                 trasanctionsFormHandler.resetForm();
             }}
             title="CSHub Transactions"
@@ -170,7 +174,7 @@ const FetchCSHubTransactionForm = ({
             </div>
             </form>
 
-            <p className="my-3">Details</p>
+            <p className="mt-3">Details</p>
             <div className="max-h-[500px] overflow-hidden overflow-y-auto">
                 <Table
                     withCheckBox
@@ -181,6 +185,7 @@ const FetchCSHubTransactionForm = ({
                     dataSet={dataSet}
                     loading={trasanctionsFormHandler.isSubmitting}
                     smallText
+                    resetRows={resetRows}
                 />
             </div>
 
@@ -223,6 +228,13 @@ const FetchCSHubTransactionForm = ({
                                         }).then((resp) => {
                                             if (!resp.error) {
                                                 toast.success("Transactions successfully created");
+
+                                                if (transactionDataset.length == selectedTransactions.length) {
+                                                    modal.onClose();
+                                                    setDataset([]);
+                                                    trasanctionsFormHandler.resetForm();
+                                                }
+
                                                 onSubmitCallback();
                                             } else {
                                                 toast.error(resp.data.message);
