@@ -60,6 +60,15 @@ export const generateThirteenthMonthMonthlyAllocation = async (payload: {}) => {
     return resData;
 };
 
+export const generateThirteenthMonthMonthlyAllocationEntries = async (id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/generate-thirteenth-month-monthly-allocation-entries/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
 export const downloadExcelFile = async (filename: string) => {
     const resData = await axiosHelper({
         func_path: `/download-excel-file/${filename}`,

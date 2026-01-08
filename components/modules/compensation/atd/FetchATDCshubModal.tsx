@@ -26,6 +26,7 @@ const FetchATDCshubModal = ({
     const [dataSet, setDataSet] = useState<any[]>([]);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+    const [resetRows, setReset] = useState<boolean>(false);
 
     const formHandler = useFormik({
         initialValues: {
@@ -40,6 +41,9 @@ const FetchATDCshubModal = ({
         }),
         onSubmit: (values, {setSubmitting, resetForm}) => {
             setSubmitting(true);
+            setSelectedTransactions([]);
+            setReset(prev => !prev);
+
             getCSHubATDS(values)
             .then((resp) => {
                 if (!resp.error) {
@@ -100,6 +104,7 @@ const FetchATDCshubModal = ({
             onClose = {() => {
                 modal.onClose();
                 setDataSet([]);
+                setReset(prev => !prev);
                 formHandler.resetForm();
             }}
             title="CSHub ATD Records"
@@ -148,7 +153,7 @@ const FetchATDCshubModal = ({
                 </div>
             </form>
 
-            <p className="my-3">Details</p>
+            <p className="mt-3">Details</p>
             <Table
                 dataSet={dataSet}
                 loading={formHandler.isSubmitting}
@@ -156,6 +161,7 @@ const FetchATDCshubModal = ({
                 smallText
                 withCheckBox
                 dataKey="atd_employee_id"
+                resetRows={resetRows}
                 onCheck={(e) => {
                     setSelectedTransactions(e);
                 }}
@@ -191,6 +197,7 @@ const FetchATDCshubModal = ({
                                         modal.onClose();
                                         formHandler.resetForm();
                                         setDataSet([]);
+                                        setReset(prev => !prev);
                                         toast.success("ATD successfully created");
                                     } else {
                                         toast.error(resp.data.message);
