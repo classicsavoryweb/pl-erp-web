@@ -240,7 +240,6 @@ const ConverterMainTableCard = () => {
                 if (isConfirmed) {
                     generateConverter(data.id)
                     .then((resp) => {
-                        api.triggerReload();
 
                         const blob = new Blob([resp.data], {
                             type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',

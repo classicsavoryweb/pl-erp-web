@@ -6,6 +6,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { importConverterTransactions } from "@/api/compensation/converter";
 import { toast } from "react-toastify";
+import { useState } from "react";
 
 interface ModalInterface {
     modal: any;
@@ -17,6 +18,7 @@ const ImportConverterTransactionForm = ({
     onSubmitCallback
 }: ModalInterface) => {
 
+    const [loading, setLoading] = useState<boolean>(false);
     const formHandler = useFormik({
         initialValues: {
             transactions_file: "",
@@ -32,6 +34,7 @@ const ImportConverterTransactionForm = ({
             });
 
             if (isConfirmed) {
+                setLoading(true);
                 setSubmitting(true);
                 importConverterTransactions(values)
                 .then((resp) => {
@@ -47,6 +50,7 @@ const ImportConverterTransactionForm = ({
                     toast.error("Error encountered");
                 }).finally(() => {
                     setSubmitting(false);
+                    setLoading(false);
                 });
             }
         }
@@ -78,7 +82,7 @@ const ImportConverterTransactionForm = ({
                 <Button
                     type="submit"
                     label="Submit"
-                    loading={formHandler.isSubmitting}
+                    loading={loading}
                     onClick={() => {}}
                 />
             </form>
