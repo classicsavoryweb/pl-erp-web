@@ -12,6 +12,7 @@ import { COLUMNTYPES } from "@/constants/column";
 import { useState } from "react";
 import Dropdown from "@/components/common/Dropdown";
 import moment from "moment";
+import { formatNumber } from "@/helper/amount";
 
 interface ModalInterface {
     modal: any;
@@ -82,8 +83,9 @@ const FetchCSHubTransactionForm = ({
             path: "original_amount",
             columnType: COLUMNTYPES.function,
             function: (data:any) => {
+                const amount =  data.original_amount ?? data.orig_amount;
 
-                return data.original_amount ?? data.orig_amount;
+                return formatNumber(amount);
             }
         },
         {

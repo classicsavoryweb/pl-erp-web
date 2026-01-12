@@ -9,7 +9,7 @@ import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { getAllConverterDetails, voidConverterDetails } from "@/api/compensation/converter";
+import { exportConverterDetails, getAllConverterDetails, voidConverterDetails } from "@/api/compensation/converter";
 import CreateConverterDetailForm from "./CreateConverterDetailForm";
 import EditConverterDetailForm from "./EditConverterDetailForm";
 import { useState } from "react";
@@ -19,6 +19,7 @@ import { useFilter } from "@/hooks/use-filter";
 import Badge from "@/components/common/Badge";
 import FetchCSHubTransactionForm from "./FetchCSHubTransactionForm";
 import ImportConverterTransactionForm from "./ImportConverterTransactionForm";
+import moment from "moment";
 
 const ConverterDetailsTableCard = () => {
     const api = useApiCall();
@@ -187,6 +188,9 @@ const ConverterDetailsTableCard = () => {
                     },
 
                 ]}
+                hasExport
+                exportFileName={`CONVERTER-TRANSACTION-LIST-${moment().format('YYYY-MM-DD')}.xls`}
+                api={exportConverterDetails}
             />
             <Card>
                 <div className="flex justify-end">

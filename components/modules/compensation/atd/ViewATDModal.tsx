@@ -4,6 +4,7 @@ import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import Checkbox from "@/components/common/Checkbox";
 import TextArea from "@/components/common/TextArea";
+import moment from "moment";
 interface FormModalInterface {
     modal: any;
     data: any;
@@ -101,6 +102,12 @@ const ViewATDModal = ({
                 label="Imported By"
                 name="months"
                 value={data.created_by}
+                disabled
+            />
+            <Textfield
+                label="Date Imported"
+                name="months"
+                value={moment(data.created_at).format("MMMM DD, YYYY HH:mm:ss A")}
                 disabled
             />
             <TextArea

@@ -123,6 +123,7 @@ const EditConverterDetailForm = ({
                     value={formHandler.values.amount}
                     error={formHandler.errors.amount}
                     onChange={formHandler.handleChange}
+                    disabled={data.source && data.source.toUpperCase() === "MANUAL"}
                 />
                 <TextArea
                     label="Remarks"

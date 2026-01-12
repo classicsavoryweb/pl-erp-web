@@ -178,7 +178,7 @@ const IncentivesCard = () => {
                         </div>
                     </div>
                 </Grid>
-                { payrollDetails.status == "final" &&
+                { payrollDetails.status != "final" &&
                     <Grid cols={3}>
                         <div />
                         <div />
