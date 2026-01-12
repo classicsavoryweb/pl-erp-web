@@ -14,7 +14,8 @@ import Grid from "@/components/common/Grid";
 import BankAccountTypeDropDown from "@/components/modules/generic/BankAccounTypeDropDown";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
+import { formatNumber } from "@/helper/amount";
 
 interface ModalInterface {
     modal: any;
@@ -28,6 +29,8 @@ const CreateBatchModal = ({
 
     const [dataSet, setDataset] = useState<any[]>([]);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
+    const [loading, setLoading] = useState<boolean>(false);
+    const [count, setCount] = useState<number>(0);
 
     const trasanctionsFormHandler = useFormik({
         initialValues: {
@@ -60,6 +63,19 @@ const CreateBatchModal = ({
             });
         }
     });
+
+    const amount = useMemo(() => {
+        setCount(selectedTransactions.length);
+
+        let computedTotalAmount = 0;
+
+        dataSet.filter((trans: any) => selectedTransactions.includes(trans.id))
+        .forEach((trans) => {
+            computedTotalAmount += Number(trans.amount);
+        });
+
+        return computedTotalAmount;
+    }, [selectedTransactions.length]);
 
     const columnSettings = [
         {
@@ -131,19 +147,22 @@ const CreateBatchModal = ({
             </div>
             </form>
 
-            <hr className="text-slate-300 my-3"/>
-            <p>Details</p>
-
-            <Table
-                withCheckBox
-                onCheck={(e) => {
-                    setSelectedTransactions(e);
-                }}
-                columnSettings={columnSettings}
-                dataSet={dataSet}
-                loading={trasanctionsFormHandler.isSubmitting}
-                smallText
-            />
+            <div className="mt-3">
+                <p>Count: {count}</p>
+                <p>Total Amount: { formatNumber(amount)}</p>
+            </div>
+            <div className="max-h-[500px] overflow-hidden overflow-y-auto">
+                <Table
+                    withCheckBox
+                    onCheck={(e) => {
+                        setSelectedTransactions(e);
+                    }}
+                    columnSettings={columnSettings}
+                    dataSet={dataSet}
+                    loading={trasanctionsFormHandler.isSubmitting}
+                    smallText
+                />
+            </div>
 
             { dataSet.length > 0 &&
                 (
@@ -157,6 +176,7 @@ const CreateBatchModal = ({
                                     });
 
                                     if (isConfirmed) {
+                                        setLoading(true);
                                         createConverterMain({
                                             selected_transactions: selectedTransactions,
                                             bank_account_type_id: trasanctionsFormHandler.values.bank_account_type_id,
@@ -173,10 +193,13 @@ const CreateBatchModal = ({
                                             }
                                         }).catch(() => {
                                             toast.error("Error encountered");
+                                        }).finally(() => {
+                                            setLoading(false);
                                         });
                                     }
                                 }}
                                 label="Create Batch"
+                                loading={loading}
                             />
                         </div>
                     </div>

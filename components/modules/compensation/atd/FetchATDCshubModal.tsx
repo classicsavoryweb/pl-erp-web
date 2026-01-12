@@ -154,18 +154,20 @@ const FetchATDCshubModal = ({
             </form>
 
             <p className="mt-3">Details</p>
-            <Table
-                dataSet={dataSet}
-                loading={formHandler.isSubmitting}
-                columnSettings={columnSettings}
-                smallText
-                withCheckBox
-                dataKey="atd_employee_id"
-                resetRows={resetRows}
-                onCheck={(e) => {
-                    setSelectedTransactions(e);
-                }}
-            />
+            <div className="max-h-[500px] overflow-hidden overflow-y-auto">
+                <Table
+                    dataSet={dataSet}
+                    loading={formHandler.isSubmitting}
+                    columnSettings={columnSettings}
+                    smallText
+                    withCheckBox
+                    dataKey="atd_employee_id"
+                    resetRows={resetRows}
+                    onCheck={(e) => {
+                        setSelectedTransactions(e);
+                    }}
+                />
+            </div>
 
             <div className="flex justify-end items-center mt-2">
                 <div>

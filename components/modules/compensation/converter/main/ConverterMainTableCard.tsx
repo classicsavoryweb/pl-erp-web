@@ -10,7 +10,7 @@ import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import moment from "moment";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { generateConverter, getAllConverterMain, postBatchConverter, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
+import { exportConverterDetails, generateConverter, getAllConverterMain, postBatchConverter, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
 import CreateBatchModal from "./CreateBatchModal";
 import ViewBatchModal from "./ViewBatchModal";
 import Badge from "@/components/common/Badge";
@@ -19,6 +19,7 @@ import confirm from "@/components/common/Confirm";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import ResendBatchModalForm from "./ResendBatchModalForm";
+import ViewLogsModal from "./ViewLogsModal";
 
 const ConverterMainTableCard = () => {
     const api = useApiCall();
@@ -26,6 +27,8 @@ const ConverterMainTableCard = () => {
     const createModal = useModal();
     const resendModal = useModal();
     const viewModal = useModal();
+    const exportModal = useModal();
+    const logsModal = useModal();
     const [dataSet, setDataSet] = useState<any[]>([]);
     const filterHandler = useFilter();
 
@@ -122,6 +125,8 @@ const ConverterMainTableCard = () => {
                             tableActions[0],
                             tableActions[1],
                             tableActions[2],
+                            tableActions[6],
+                            tableActions[7],
                         ];
                         break;
                     case "Posted":
@@ -129,6 +134,8 @@ const ConverterMainTableCard = () => {
                             tableActions[0],
                             tableActions[2],
                             tableActions[3],
+                            tableActions[6],
+                            tableActions[7],
                         ];
                         break;
                     case "Generated":
@@ -136,22 +143,26 @@ const ConverterMainTableCard = () => {
                             tableActions[0],
                             tableActions[3],
                             tableActions[4],
+                            tableActions[6],
+                            tableActions[7],
                         ];
                         break;
                     case "Voided":
                         statusActions = [
-                            tableActions[0]
+                            tableActions[7],
                         ];
                         break;
                      case "Sent":
                         statusActions = [
                             tableActions[0],
-                            tableActions[5]
+                            tableActions[5],
+                            tableActions[6],
+                            tableActions[7],
                         ];
                         break;
                     default:
                         statusActions = [
-                            tableActions[0]
+                            tableActions[0],
                         ];
                         break;
                 }
@@ -181,6 +192,7 @@ const ConverterMainTableCard = () => {
             onClick: (data: any) => {
                 viewModal.onOpen();
                 setDataSet(data.converter_details);
+                api.setData(data);
             }
         },
         {
@@ -286,7 +298,43 @@ const ConverterMainTableCard = () => {
                 resendModal.onOpen();
                 setDataSet(data.converter_details);
             }
-        }
+        },
+        {
+            label: "Export Transactions",
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Export Transactions",
+                    message: "Are you sure you want to export?"
+                });
+
+                if (isConfirmed) {
+                    exportConverterDetails({
+                        converter_main_id: data.id
+                    }).then((resp) => {
+                        const blob = new Blob([resp.data], {
+                            type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                        });
+                        const downloadUrl = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.href = downloadUrl;
+                        a.download = `TRANSACTIONS-${data.batch_number}.xls`;
+                        document.body.appendChild(a);
+                        a.click();
+                        a.remove();
+                    }).catch(() => {
+                        toast.error("Error encountered");
+                    })
+
+                }
+            }
+        },
+        {
+            label: "Logs",
+            onClick: (data: any) => {
+                logsModal.onOpen();
+                api.setData(data);
+            }
+        },
     ];
 
     return (
@@ -319,7 +367,6 @@ const ConverterMainTableCard = () => {
                         label: "Sent",
                         value: "Sent"
                     },
-
                 ]}
             />
             <Card>
@@ -344,10 +391,15 @@ const ConverterMainTableCard = () => {
             <ViewBatchModal
                 modal={viewModal}
                 dataSet={dataSet}
+                data={api.data}
             />
             <ResendBatchModalForm
                 modal={resendModal}
                 dataSet={dataSet}
+            />
+            <ViewLogsModal
+                modal={logsModal}
+                data={api.data}
             />
         </>
     );

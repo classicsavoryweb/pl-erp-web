@@ -1,17 +1,22 @@
+import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
+import Textfield from "@/components/common/Textfield";
 import { COLUMNTYPES } from "@/constants/column";
+import { formatNumber } from "@/helper/amount";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 
 interface ModalInterface {
     modal: any;
     dataSet: any[];
+    data: any;
 }
 
 const ViewBatchModal = ({
     modal,
-    dataSet = []
+    dataSet = [],
+    data = {}
 }: ModalInterface) => {
 
     const formHandler = useFormik({
@@ -58,11 +63,26 @@ const ViewBatchModal = ({
             }}
             title="Batch Converter Details"
         >
-            <Table
-                smallText
-                dataSet={dataSet}
-                columnSettings={columnSettings}
-            />
+            <Grid cols={2}>
+                <Textfield
+                    label="Count"
+                    disabled
+                    value={data?.count ?? 0}
+                />
+                <Textfield
+                    label="Total Amount"
+                    disabled
+                    value={formatNumber(data?.total_amount ?? 0)}
+                />
+            </Grid>
+            <p className="mt-3">Details</p>
+            <div className="max-h-[500px] overflow-hidden overflow-y-auto">
+                <Table
+                    smallText
+                    dataSet={dataSet}
+                    columnSettings={columnSettings}
+                />
+            </div>
         </Modal>
     );
 };
