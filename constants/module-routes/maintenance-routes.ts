@@ -281,6 +281,11 @@ export const maintenanceRoutes: Route[] = [
                         pathname: "/maintenance/payroll/cshub-transaction-type",
                         permission: "view_cshub_transaction_type",
                     },
+                    {
+                        name: "ATD Access Type",
+                        pathname: "/maintenance/payroll/atd-access-type",
+                        permission: "view_atd_access_type",
+                    },
                 ]
             },
         ]

@@ -29,7 +29,7 @@ import FetchCSHubTransactionForm from "../converter/details/FetchCSHubTransactio
 import FetchATDCshubModal from "./FetchATDCshubModal";
 import ViewATDModal from "./ViewATDModal";
 import BranchDropDown from "../../generic/BranchDropDown";
-import DeductionDropDown from "../../generic/DeductionDropDown";
+import ATDDeductionDropDown from "../../generic/ATDDeductionDropDown";
 
 interface ATDTableInterface {
     hasExport?: boolean;
@@ -290,7 +290,7 @@ const ATDTableCard = ({
                             value={formHandler.values.branch_id}
                             onChange={formHandler.handleChange}
                         />
-                        <DeductionDropDown
+                        <ATDDeductionDropDown
                             name="deduction_id"
                             label="Deduction Type"
                             placeholder="select deduction"
