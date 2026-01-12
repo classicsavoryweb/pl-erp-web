@@ -285,7 +285,7 @@ const EditEmployeeDeductionForm = ({
                 <TextArea
                     label="Remarks"
                     name="remarks"
-                    value={editFormHandler.values.remarks}
+                    value={editFormHandler.values.remarks ?? ""}
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.remarks}
                 />
