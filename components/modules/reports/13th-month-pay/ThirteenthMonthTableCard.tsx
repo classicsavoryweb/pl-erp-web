@@ -47,11 +47,23 @@ const ThirteenthMonthTableCard = () => {
         }
     ];
 
+    const monthNames = [
+    "January", "February", "March", "April", "May", "June",
+    "July", "August", "September", "October", "November", "December"
+    ];
+
     const columnSettings = [
         {
             columnHead: "Year",
             path: "year",
             columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Month",
+            path: "month",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => 
+                monthNames[data.month - 1] || "-"
         },
         {
             columnHead: "File Name",
@@ -168,6 +180,7 @@ const ThirteenthMonthTableCard = () => {
     const formHandler = useFormik({
         initialValues: {
             type: "",
+            month: "",
             year: moment().year(),
         },
         validateOnChange: false,
@@ -222,6 +235,27 @@ const ThirteenthMonthTableCard = () => {
                                     return { label: year.toString(), value: year.toString() };
                                 }
                             )}
+                        />
+                        <Dropdown
+                            placeholder="select month"
+                            label="Month"
+                            name="month"
+                            value={formHandler.values.month}
+                            onChange={formHandler.handleChange}
+                            options={[
+                                { label: "January", value: "01" },
+                                { label: "February", value: "02" },
+                                { label: "March", value: "03" },
+                                { label: "April", value: "04" },
+                                { label: "May", value: "05" },
+                                { label: "June", value: "06" },
+                                { label: "July", value: "07" },
+                                { label: "August", value: "08" },
+                                { label: "September", value: "09" },
+                                { label: "October", value: "10" },
+                                { label: "November", value: "11" },
+                                { label: "December", value: "12" },
+                            ]}
                         />
                         <Dropdown
                             placeholder="select type"
