@@ -13,7 +13,7 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import Checkbox from "@/components/common/Checkbox";
 import Grid from "@/components/common/Grid";
-import DeductionDropDown from "@/components/modules/generic/DeductionDropDown";
+import { useDeductionStore } from "@/stores/useDeductionStore";
 
 interface FormModalInterface {
     modal: any;
@@ -27,6 +27,8 @@ const EditATDAccessTypeForm = ({
     formValue,
 }: FormModalInterface) => {
     const [roles, setRoles] = useState<any[]>([]);
+    const [deductions, setDeductions] = useState<any[]>([]);
+    const { deductions: deductionData, getDeduction } = useDeductionStore();
 
     useAsyncEffect(() => {
         getAllRoles()
@@ -43,17 +45,26 @@ const EditATDAccessTypeForm = ({
             setRoles([]);
         });
     }, []);
-
+    useAsyncEffect(() => {
+        getDeduction();
+        if (deductionData.length > 0) {
+            const mapped = deductionData.map((deduction: any) => ({
+                label: deduction.description,
+                value: deduction.id,
+            }));
+            setDeductions(mapped);
+        }
+    }, [deductionData]);
     const formHandler = useFormik({
         initialValues: {
             id: "",
-            deduction_id: "",
+            deduction_ids: [] as string[],
             roles: [] as string[],
             status: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            deduction_id: Yup.string().required("Deduction is required."),
+            deduction_ids: Yup.array().min(1, "Select at least one deduction."),
             roles: Yup.array().min(1, "Select at least one role."),
             status: Yup.string().required("Status is required."),
         }),
@@ -88,18 +99,19 @@ const EditATDAccessTypeForm = ({
 
     useEffect(() => {
         if (modal.isShowing) {
-            formHandler.setValues({
-                id: formValue?.id || "",
-                deduction_id: formValue?.deduction_id || formValue?.deduction?.id || "",
-                roles: Array.isArray(formValue?.roles)
-                    ? formValue.roles.map((r: any) => String(typeof r === "object" ? r.id ?? r.value ?? r : r))
-                    : formValue?.role
-                        ? [String(formValue.role.id ?? formValue.role)]
-                        : [],
-                status: formValue?.status || "",
-            });
-        }
-    }, [modal.isShowing, formValue]);
+                const deductionIds = formValue?.deduction_ids
+                    ? formValue.deduction_ids.map((id: any) => String(id))
+                    : formValue?.deduction_id || formValue?.deduction?.id
+                        ? [String(formValue?.deduction_id || formValue?.deduction?.id)]
+                        : [];
+                formHandler.setValues({
+                    id: formValue?.id || "",
+                    deduction_ids: deductionIds,
+                    roles: formValue?.role_id || formValue?.role?.id ? [String(formValue.role_id || formValue.role?.id)] : [],
+                    status: formValue?.status || "",
+                });
+            }
+        }, [modal.isShowing, formValue]);
 
     return (
         <Modal
@@ -113,15 +125,6 @@ const EditATDAccessTypeForm = ({
             size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <DeductionDropDown
-                    label="Deduction"
-                    placeholder="select deduction"
-                    name="deduction_id"
-                    value={formHandler.values.deduction_id}
-                    required
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.deduction_id}
-                />
                 <div className="mt-3">
                     <p className="mb-[-2px]">
                         Roles <span className="text-red-400">*</span>
@@ -151,6 +154,34 @@ const EditATDAccessTypeForm = ({
                     )}
                 </div>
 
+                <div className="mt-3">
+                    <p className="mb-[-2px]">
+                        Deduction <span className="text-red-400">*</span>
+                    </p>
+                    <div className="border border-slate-200 rounded-md p-2 dark:border-neutral-700">
+                        <Grid cols={2}>
+                        {deductions.map((deduction) => (
+                            <Checkbox
+                                key={deduction.value}
+                                label={deduction.label}
+                                value={deduction.value}
+                                checked={formHandler.values.deduction_ids.includes(String(deduction.value))}
+                                onChange={(e: any) => {
+                                    const val = String(e.target.value);
+                                    const has = formHandler.values.deduction_ids.includes(val);
+                                    const next = has
+                                        ? formHandler.values.deduction_ids.filter((d) => d !== val)
+                                        : [...formHandler.values.deduction_ids, val];
+                                    formHandler.setFieldValue("deduction_ids", next);
+                                }}
+                            />
+                        ))}
+                        </Grid>
+                    </div>
+                    {formHandler.errors.deduction_ids && (
+                        <p className="text-red-400 text-sm">{String(formHandler.errors.deduction_ids)}</p>
+                    )}
+                </div>
 
                 <ActiveInactiveDropDown
                     label="Status"
