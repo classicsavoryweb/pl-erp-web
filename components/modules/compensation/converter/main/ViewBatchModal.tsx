@@ -1,3 +1,4 @@
+import Badge from "@/components/common/Badge";
 import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
@@ -61,8 +62,14 @@ const ViewBatchModal = ({
                 modal.onClose();
                 formHandler.resetForm();
             }}
-            title="Batch Converter Details"
+            title={data?.batch_number ?? ""}
         >
+            <div className="flex justify-end pb-2">
+                <Badge
+                    label={data?.status ?? ""}
+                    status={data?.status == "Generated" ? "success" : "warning"}
+                />
+            </div>
             <Grid cols={2}>
                 <Textfield
                     label="Count"

@@ -46,6 +46,7 @@ const EditEmployeeDeductionForm = ({
             remarks: "",
             branch_id: "",
             block_payment: "",
+            created_by: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -281,6 +282,12 @@ const EditEmployeeDeductionForm = ({
                     onChange={(e) => {
                         editFormHandler.setFieldValue("block_payment", e.target.checked ? "Yes" : "No");
                     }}
+                />
+                <Textfield
+                    label="Created By"
+                    name="created_by"
+                    disabled
+                    value={editFormHandler.values.created_by}
                 />
                 <TextArea
                     label="Remarks"

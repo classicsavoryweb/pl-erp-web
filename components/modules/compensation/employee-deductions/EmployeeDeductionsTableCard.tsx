@@ -160,6 +160,7 @@ const EmployeeDeductionsTableCard = ({
                         remarks: data.remarks,
                         branch_id: data.branch_id,
                         block_payment: data.block_payment,
+                        created_by: data.created_by,
                         });
                     }
                 });
