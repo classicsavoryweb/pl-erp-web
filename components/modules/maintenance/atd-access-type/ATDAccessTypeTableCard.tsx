@@ -8,7 +8,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
@@ -32,8 +32,8 @@ const ATDAccessTypeTableCard = () => {
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllATDAccessTypes({
-            page: paginator.page,
-            per_page: paginator.per_page,
+            page: 1,
+            per_page: 1000,
             ...filter.filters,
         })
         .then((resp) => {
@@ -51,31 +51,122 @@ const ATDAccessTypeTableCard = () => {
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload, filter.reload]);
+    }, [api.reload, filter.reload]);
+
+    const groupedData = useMemo(() => {
+        if (!Array.isArray(api.dataSet)) {
+            return [];
+        }
+
+        const grouped = new Map<string | number, any>();
+
+        api.dataSet.forEach((item) => {
+            const roleId = item.role_id ?? item.role?.id ?? "unknown";
+            const roleKey = roleId ?? "unknown";
+            const existing = grouped.get(roleKey);
+
+            if (!existing) {
+                grouped.set(roleKey, {
+                    role: item.role,
+                    role_id: roleId,
+                    items: [],
+                    deductions: [],
+                    deductionIds: [],
+                    statuses: [],
+                });
+            }
+
+            const entry = grouped.get(roleKey);
+            entry.items.push(item);
+
+            if (item.deduction?.description) {
+                entry.deductions.push(item.deduction.description);
+            }
+
+            if (item.deduction_id || item.deduction?.id) {
+                entry.deductionIds.push(item.deduction_id || item.deduction?.id);
+            }
+
+            if (item.status) {
+                entry.statuses.push(item.status);
+            }
+        });
+
+        return Array.from(grouped.values()).map((entry) => {
+            const uniqueDeductions = Array.from(new Set(entry.deductions));
+            const uniqueDeductionIds = Array.from(new Set(entry.deductionIds));
+            const uniqueStatuses = Array.from(new Set(entry.statuses.map((status: string) => String(status).toLowerCase())));
+            const statusLabel = uniqueStatuses.length === 1 ? entry.statuses[0] : "Mixed";
+
+            return {
+                ...entry,
+                id: entry.items[0]?.id,
+                deductions: uniqueDeductions,
+                deduction_ids: uniqueDeductionIds,
+                status: statusLabel,
+            };
+        });
+    }, [api.dataSet]);
+
+    const paginatedGroupedData = useMemo(() => {
+        const total = groupedData.length;
+        const currentPage = paginator.page;
+        const perPage = paginator.per_page;
+        const start = (currentPage - 1) * perPage;
+        const end = start + perPage;
+
+        return {
+            data: groupedData.slice(start, end),
+            paginationData: {
+                current_page: currentPage,
+                last_page: Math.max(1, Math.ceil(total / perPage)),
+                per_page: perPage,
+                total,
+                from: total === 0 ? 0 : start + 1,
+                to: total === 0 ? 0 : Math.min(end, total),
+            },
+        };
+    }, [groupedData, paginator.page, paginator.per_page]);
+
+    const tablePaginator = useMemo(() => {
+        return {
+            ...paginator,
+            paginationData: paginatedGroupedData.paginationData,
+        };
+    }, [paginator, paginatedGroupedData.paginationData]);
+
+    useEffect(() => {
+        const lastPage = paginatedGroupedData.paginationData.last_page;
+        if (paginator.page > lastPage) {
+            paginator.setPage(lastPage);
+        } else if (paginatedGroupedData.paginationData.total === 0 && paginator.page !== 1) {
+            paginator.setPage(1);
+        }
+    }, [paginatedGroupedData.paginationData.last_page, paginatedGroupedData.paginationData.total, paginator.page, paginator.setPage]);
 
     const columnSettings = [
-        {
-            columnHead: "Deduction",
-            path: "deduction.description",
-            columnType: COLUMNTYPES.string,
-        },
         {
             columnHead: "Role",
             path: "",
             columnType: COLUMNTYPES.function,
             function: (row: any) => {
-                const roles =
-                    (row.roles_display && [].concat(row.roles_display)) ||
-                    (row.roles && [].concat(row.roles)) ||
-                    (row.role ? [].concat(row.role) : []);
-                if (roles.length === 0) return "N/A";
+                const roleName = row.role?.name ?? "";
+                return roleName === "" ? "N/A" : roleName;
+            },
+        },
+        {
+            columnHead: "Deduction",
+            path: "",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => {
+                if (!row.deductions || row.deductions.length === 0) {
+                    return "N/A";
+                }
+
                 return (
-                    <div className="flex flex-wrap gap-1 max-h-[160px] overflow-y-auto">
-                        {roles.map((role: any, idx: number) => (
-                            <Badge
-                                key={idx}
-                                label={typeof role === "string" ? role : role.name ?? role.label ?? ""}
-                            />
+                    <div className="max-h-[120px] overflow-y-auto">
+                        {row.deductions.map((deduction: string, idx: number) => (
+                            <Badge key={`${deduction}-${idx}`} label={deduction} />
                         ))}
                     </div>
                 );
@@ -83,8 +174,20 @@ const ATDAccessTypeTableCard = () => {
         },
         {
             columnHead: "Status",
-            path: "status",
-            columnType: COLUMNTYPES.status,
+            path: "",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => {
+                const label = row.status ?? "N/A";
+                if (label === "N/A") {
+                    return label;
+                }
+
+                const lowered = String(label).toLowerCase();
+                const badgeStatus =
+                    lowered === "inactive" ? "danger" : lowered === "mixed" ? "warning" : "success";
+
+                return <Badge status={badgeStatus} label={label} />;
+            },
         },
     ];
 
@@ -101,14 +204,14 @@ const ATDAccessTypeTableCard = () => {
         {
             label: "Edit",
             onClick: (row: any) => {
+                const target = row.items?.[0] ?? row;
                 editModal.onOpen();
                 setData({
-                    id: row.id,
-                    deduction_id: row.deduction_id || row.deduction?.id || "",
-                    role_id: row.role_id || (row.role && row.role.id) || "",
-                    role: row.role,
-                    roles: row.roles,
-                    status: row.status,
+                    id: target.id,
+                    deduction_ids: row.deduction_ids || [],
+                    role_id: target.role_id || (target.role && target.role.id) || "",
+                    role: target.role,
+                    status: target.status,
                 });
             },
         },
@@ -119,6 +222,11 @@ const ATDAccessTypeTableCard = () => {
             <FilterCard
                 columnSettings={[
                     {
+                        columnHead: "Role",
+                        path: "role.name",
+                        columnType: COLUMNTYPES.string,
+                    },
+                    {
                         columnHead: "Deduction",
                         path: "deduction.description",
                         columnType: COLUMNTYPES.string,
@@ -128,7 +236,7 @@ const ATDAccessTypeTableCard = () => {
                 hasExport
                 api={exportAllATDAccessTypes}
                 exportFileName={`ATD-ACCESS-TYPES-${moment().format("YYYY-MM-DD")}.xls`}
-                defaultColumnSelected="deduction.description"
+                defaultColumnSelected="role.name"
                 callBack={() => {
                     paginator.setPage(1);
                 }}
@@ -140,10 +248,10 @@ const ATDAccessTypeTableCard = () => {
                     <DropDownButtons actions={actionSettings} />
                 </div>
                 <Table
-                    dataSet={api.dataSet}
+                    dataSet={paginatedGroupedData.data}
                     columnSettings={columnSettings}
                     loading={api.loading}
-                    paginator={paginator}
+                    paginator={tablePaginator}
                     withActions
                     actions={tableActions}
                 />
