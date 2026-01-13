@@ -3,7 +3,6 @@
 import Button from "@/components/common/Button";
 import Modal from "@/components/common/Modal";
 import ActiveInactiveDropDown from "@/components/modules/generic/ActiveInactiveDropDown";
-import DeductionDropDown from "@/components/modules/generic/DeductionDropDown";
 import confirm from "@/components/common/Confirm";
 import { createATDAccessType } from "@/api/maintenance/atd-access-type";
 import { getAllRoles } from "@/api/roles-and-permissions";
@@ -14,6 +13,7 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import Checkbox from "@/components/common/Checkbox";
 import Grid from "@/components/common/Grid";
+import { useDeductionStore } from "@/stores/useDeductionStore";
 
 interface FormModalInterface {
     modal: any;
@@ -25,6 +25,8 @@ const CreateATDAccessTypeForm = ({
     onSubmitCallback,
 }: FormModalInterface) => {
     const [roles, setRoles] = useState<any[]>([]);
+    const [deductions, setDeductions] = useState<any[]>([]);
+    const { deductions: deductionData, getDeduction } = useDeductionStore();
 
     useAsyncEffect(() => {
         getAllRoles()
@@ -41,16 +43,25 @@ const CreateATDAccessTypeForm = ({
             setRoles([]);
         });
     }, []);
-
+    useAsyncEffect(() => {
+        getDeduction();
+        if (deductionData.length > 0) {
+            const mapped = deductionData.map((deduction: any) => ({
+                label: deduction.description,
+                value: deduction.id,
+            }));
+            setDeductions(mapped);
+        }
+    }, [deductionData]);
     const formHandler = useFormik({
         initialValues: {
-            deduction_id: "",
+            deduction_ids: [] as string[],
             roles: [] as string[],
             status: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            deduction_id: Yup.string().required("Deduction is required."),
+            deduction_ids: Yup.array().min(1, "Select at least one deduction."),
             roles: Yup.array().min(1, "Select at least one role."),
             status: Yup.string().required("Status is required."),
         }),
@@ -92,19 +103,9 @@ const CreateATDAccessTypeForm = ({
                 formHandler.resetForm();
             }}
             loading={modal.loading}
-            size="lg"
+            size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <DeductionDropDown
-                    label="Deduction"
-                    placeholder="select deduction"
-                    name="deduction_id"
-                    value={formHandler.values.deduction_id}
-                    required
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.deduction_id}
-                />
-
                 <div className="mt-3">
                     <p className="mb-[-2px]">
                         Roles <span className="text-red-400">*</span>
@@ -131,6 +132,35 @@ const CreateATDAccessTypeForm = ({
                     </div>
                     {formHandler.errors.roles && (
                         <p className="text-red-400 text-sm">{String(formHandler.errors.roles)}</p>
+                    )}
+                </div>
+
+                <div className="mt-3">
+                    <p className="mb-[-2px]">
+                        Deduction <span className="text-red-400">*</span>
+                    </p>
+                    <div className="border border-slate-200 rounded-md p-2 dark:border-neutral-700">
+                        <Grid cols={2}>
+                        {deductions.map((deduction) => (
+                            <Checkbox
+                                key={deduction.value}
+                                label={deduction.label}
+                                value={deduction.value}
+                                checked={formHandler.values.deduction_ids.includes(String(deduction.value))}
+                                onChange={(e: any) => {
+                                    const val = String(e.target.value);
+                                    const has = formHandler.values.deduction_ids.includes(val);
+                                    const next = has
+                                        ? formHandler.values.deduction_ids.filter((d) => d !== val)
+                                        : [...formHandler.values.deduction_ids, val];
+                                    formHandler.setFieldValue("deduction_ids", next);
+                                }}
+                            />
+                        ))}
+                        </Grid>
+                    </div>
+                    {formHandler.errors.deduction_ids && (
+                        <p className="text-red-400 text-sm">{String(formHandler.errors.deduction_ids)}</p>
                     )}
                 </div>
 
