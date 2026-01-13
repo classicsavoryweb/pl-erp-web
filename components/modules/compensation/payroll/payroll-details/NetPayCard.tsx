@@ -74,7 +74,7 @@ const NetPayCard = ({ formHandler } : { formHandler: any }) => {
                 value={formatNumber(payrollDetails.net_pay)}
             />
             <TextArea
-                disabled = {!permissions.includes("perform_compensation_payroll")}
+                disabled = { payrollDetails.status == "final" || !permissions.includes("perform_compensation_payroll")}
                 label="Remarks"
                 onChange={formHandler.handleChange}
                 name="remarks"

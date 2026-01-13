@@ -47,6 +47,8 @@ const EditEmployeeDeductionForm = ({
             branch_id: "",
             block_payment: "",
             created_by: "",
+            branch: "",
+            deduction_type: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -179,7 +181,7 @@ const EditEmployeeDeductionForm = ({
                     required
                     disabled
                 />
-                <DeductionDropDown
+                {/* <DeductionDropDown
                     label="Deduction Type"
                     required
                     name="deduction_id"
@@ -187,6 +189,12 @@ const EditEmployeeDeductionForm = ({
                     error={editFormHandler.errors.deduction_id}
                     onChange={editFormHandler.handleChange}
                     placeholder="select deduction type"
+                /> */}
+                <Textfield
+                    label="Deduction Type"
+                    disabled
+                    name="deduction_type"
+                    value={editFormHandler.values.deduction_type ?? ""}
                 />
                 <Textfield
                     label="Month(s)"
@@ -262,7 +270,7 @@ const EditEmployeeDeductionForm = ({
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.balance}
                 />
-                <BranchDropDown
+                {/* <BranchDropDown
                     placeholder="select branch"
                     label="Branch"
                     name="branch_id"
@@ -274,6 +282,12 @@ const EditEmployeeDeductionForm = ({
                         editFormHandler.setFieldValue("branch_id", Number(branch.id));
                     }}
                     error={editFormHandler.errors.branch_id}
+                /> */}
+                <Textfield
+                    label="Branch"
+                    disabled
+                    name="branch"
+                    value={editFormHandler.values.branch ?? ""}
                 />
                 <Checkbox
                     label="Block Payment"

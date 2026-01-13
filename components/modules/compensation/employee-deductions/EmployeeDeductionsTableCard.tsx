@@ -58,8 +58,8 @@ const EmployeeDeductionsTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Branch",
-            path: "branch.short_name",
+            columnHead: "Current Branch",
+            path: "employee.current_branch.short_name",
             columnType: COLUMNTYPES.string
         },
         {
@@ -147,20 +147,22 @@ const EmployeeDeductionsTableCard = ({
                     onClick: () => {
                         editModal.onOpen();
                         setData({
-                        id: data.id,
-                        employee_id: data.employee_id,
-                        employee_number: data.employee.employee_number,
-                        deduction_id: data.deduction_id,
-                        months: data.months,
-                        amount: data.amount,
-                        start_date: data.start_date,
-                        end_date: data.end_date,
-                        monthly_amortization: data.monthly_amortization,
-                        balance: data.balance,
-                        remarks: data.remarks,
-                        branch_id: data.branch_id,
-                        block_payment: data.block_payment,
-                        created_by: data.created_by,
+                            id: data.id,
+                            employee_id: data.employee_id,
+                            employee_number: data.employee.employee_number,
+                            deduction_id: data.deduction_id,
+                            months: data.months,
+                            amount: data.amount,
+                            start_date: data.start_date,
+                            end_date: data.end_date,
+                            monthly_amortization: data.monthly_amortization,
+                            balance: data.balance,
+                            remarks: data.remarks,
+                            branch_id: data.branch_id,
+                            block_payment: data.block_payment,
+                            created_by: data.created_by,
+                            branch: data.branch.name,
+                            deduction_type: data.deduction.description,
                         });
                     }
                 });
