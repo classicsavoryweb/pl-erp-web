@@ -25,6 +25,21 @@ export const exportConverterDetails = async (payload?: {}) => {
     return resData;
 };
 
+export const exportConverterBatchTransactions = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-converter-batch-transactions',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+    });
+
+    return resData;
+};
+
+
 export const getAllConverterMain = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-all-converter-main',

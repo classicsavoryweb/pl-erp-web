@@ -10,7 +10,7 @@ import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import moment from "moment";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { exportConverterDetails, generateConverter, getAllConverterMain, postBatchConverter, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
+import { exportConverterBatchTransactions, exportConverterDetails, generateConverter, getAllConverterMain, postBatchConverter, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
 import CreateBatchModal from "./CreateBatchModal";
 import ViewBatchModal from "./ViewBatchModal";
 import Badge from "@/components/common/Badge";
@@ -346,6 +346,9 @@ const ConverterMainTableCard = () => {
                 dateLabel="Created"
                 withBranch
                 withStatus
+                hasExport
+                exportFileName={`CONVERTER-TRANSACTIONS-LIST-${moment().format('YYYY-MM-DD')}.xls`}
+                api={exportConverterBatchTransactions}
                 statusOption={[
                     {
                         label: "Voided",
