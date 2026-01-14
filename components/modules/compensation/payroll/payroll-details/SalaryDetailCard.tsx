@@ -60,7 +60,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     value={formatNumber(payrollDetails?.timekeeping_summary?.adjustment_amount ?? 0)}
                 />
                 <Textfield
-                    disabled = {!permissions.includes("perform_compensation_payroll")}
+                    disabled = {payrollDetails.status == "final" || !permissions.includes("perform_compensation_payroll")}
                     label="Non-taxable Adjustment"
                     name="non_taxable_adjustment"
                     type="number"
