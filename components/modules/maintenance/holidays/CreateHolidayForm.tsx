@@ -41,7 +41,7 @@ const CreateHolidayForm = ({
             branch_id: [], 
             description: "",
             required_days: "",
-            required_for: "",
+            required_for: "BRANCH",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
