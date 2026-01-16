@@ -7,7 +7,7 @@ import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import confirm from "@/components/common/Confirm";
 import { getAllThirteenthMonth, generateThirteenthMonthMonthlyAllocationEntries, downloadExcelFile } from "@/api/reports/reports-13th-month";
@@ -23,6 +23,7 @@ import Dropdown from "@/components/common/Dropdown";
 import Button from "@/components/common/Button";
 import ViewThirteenthMonthMonthlyAllocationModal from "./ViewThirteenthMonthMonthlyAllocationModal";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import { AuthContext } from "@/context/AuthProvider";
 
 const ThirteenthMonthTableCard = () => {
     const api = useApiCall();
@@ -35,6 +36,7 @@ const ThirteenthMonthTableCard = () => {
     const yearSelectionModal = useModal();
     const [selectedMonthPayId, setSelectedMonthPayId] = useState<string | null>(null);
     const [selectedMonthlyAllocationId, setSelectedMonthlyAllocationId] = useState<string | null>(null);
+    const {permissions} = useContext(AuthContext);
 
     const typeOption = [
         {
@@ -125,7 +127,7 @@ const ThirteenthMonthTableCard = () => {
 
                 const type = data.type;
 
-                if (type === "thirteenth_month_monthly_allocation") {
+                if (type === "thirteenth_month_monthly_allocation" && permissions.includes("perform_reports_13th_month_pay_entries")) {
                     actions.push({
                         label: "Generate Entry",
                         onClick: async () => {

@@ -136,7 +136,7 @@ const ViewThirteenthMonthMonthlyAllocationModal = ({
             columnType: COLUMNTYPES.amount
         },
         {
-            columnHead: "Net Claim (Additional 3.5%)",
+            columnHead: "Net Claim (Additional 6%)",
             path: "net_claim_additional",
             columnType: COLUMNTYPES.amount
         },
@@ -159,7 +159,7 @@ const ViewThirteenthMonthMonthlyAllocationModal = ({
             columnType: COLUMNTYPES.amount
         },
         {
-            columnHead: "Branch Net Claim (Additional 3.5%)",
+            columnHead: "Branch Net Claim (Additional 6%)",
             path: "branch_net_claim_additional",
             columnType: COLUMNTYPES.amount
         },
