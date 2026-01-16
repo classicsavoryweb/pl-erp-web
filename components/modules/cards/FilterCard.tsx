@@ -18,6 +18,7 @@ import { useModal } from "@/hooks/modal";
 import Modal from "@/components/common/Modal";
 import Checkbox from "@/components/common/Checkbox";
 import moment from "moment";
+import FilterBranchDropDown from "../generic/FilterBranchDropDown";
 
 interface FilterInterface {
     hasDateRange?: boolean;
@@ -26,6 +27,7 @@ interface FilterInterface {
     columnSettings?: any;
     filterHandler: any;
     withBranch?: boolean;
+    withFilterBranch?: boolean;
     withPosition?: boolean;
     withEmploymentStatus?: boolean;
     withEmployeeType?: boolean;
@@ -55,6 +57,7 @@ const FilterCard = ({
     withStatus = false,
     withHolidayType = false,
     withBranch = false,
+    withFilterBranch = false,
     withPosition = false,
     withEmploymentStatus = false,
     withEmployeeType = false,
@@ -258,6 +261,15 @@ const FilterCard = ({
 
                         { withBranch &&
                             <BranchDropDown
+                                placeholder="select branch"
+                                label="Branch"
+                                name="branch_id"
+                                value={formHandler.values.branch_id}
+                                onChange={formHandler.handleChange}
+                            />
+                        }
+                        { withFilterBranch &&
+                            <FilterBranchDropDown
                                 placeholder="select branch"
                                 label="Branch"
                                 name="branch_id"

@@ -34,6 +34,16 @@ export const getBranches = async (payload?: {}) => {
     return resData;
 };
 
+export const getFilterBranches = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-filter-branches',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const createBranch = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-branch',
