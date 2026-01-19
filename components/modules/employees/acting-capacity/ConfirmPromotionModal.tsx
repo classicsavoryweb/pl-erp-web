@@ -20,16 +20,16 @@ import moment from "moment";
 interface FormModalInterface {
     modal: any;
     id: string;
+    startDate?: string;
     onSubmitCallBack: () => void;
 };
 
 const ConfirmPromotionModal = ({
     modal,
     id,
+    startDate,
     onSubmitCallBack
 }: FormModalInterface) => {
-
-    const api = useApiCall();
 
     const formHandler = useFormik({
         initialValues: {
@@ -47,9 +47,8 @@ const ConfirmPromotionModal = ({
                 .required("Effectivity date is required")
                 .test(
                     "min-start-date",
-                    `Effectivity date must be after ${api.data?.acting_capacity?.start_date}`,
+                    `Effectivity date must be after ${startDate}`,
                     function (value) {
-                        const startDate = api.data?.acting_capacity?.start_date;
                         if (!value || !startDate) return true;
 
                         return moment(value).isAfter(moment(startDate), "day");
@@ -86,26 +85,8 @@ const ConfirmPromotionModal = ({
         }
     });
 
-    useAsyncEffect(() => {
-        if (modal.isShowing) {
-            api.setLoading(true);
-            getACF(id).then((resp) => {
-                if (!resp.error) {
-                    api.setData(resp.data);
-                } else {
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                toast.error("Error encountered");
-            }).finally(() => {
-                api.setLoading(false);
-            });
-        }
-    }, [modal.isShowing, id]);
-
     return (
         <Modal
-            loading={api.loading}
             isShowing={modal.isShowing}
             onClose={() => {
                 modal.onClose();
