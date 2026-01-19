@@ -35,7 +35,7 @@ const ViewAdjustmentModal = ({
             function: (data: any) => {
                 return (
                     <p className="font-semibold">
-                        {Math.floor(data.worked_hours * 2) / 2 }
+                        {Math.floor((data.worked_hours ?? 0) * 2) / 2 }
                     </p>
                 );
             }
@@ -47,7 +47,7 @@ const ViewAdjustmentModal = ({
             function: (data: any) => {
                 return (
                     <p className="font-semibold">
-                        {Math.floor(data.final_worked_hours * 2) / 2 }
+                        {Math.floor((data.final_worked_hours ?? 0) * 2) / 2 }
                     </p>
                 );
             }
@@ -57,7 +57,7 @@ const ViewAdjustmentModal = ({
             path: "tardiness",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
-                if (data.tardiness == 0) {
+                if (data.tardiness == 0 || data.tardiness == null) {
                     return "—";
                 }
 
@@ -73,7 +73,7 @@ const ViewAdjustmentModal = ({
             path: "undertime",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
-                if (data.undertime == 0) {
+                if (data.undertime == 0 || data.undertime == null) {
                     return "—";
                 }
 
