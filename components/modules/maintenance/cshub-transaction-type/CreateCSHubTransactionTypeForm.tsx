@@ -53,8 +53,6 @@ const CreateCSHubTransactionTypeForm = ({
             transaction_type: Yup.string().required("CS hub transaction type is required."),
             deduction_id: Yup.string().required("Payroll deduction id is required."),
             ho_credit: Yup.string().required("HO credit account is required."),
-            branch_debit: Yup.string().required("Branch debit is required."),
-            branch_credit: Yup.string().required("Branch credit is required."),
             status: Yup.string().required("Status is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
@@ -273,7 +271,6 @@ const CreateCSHubTransactionTypeForm = ({
                     onChange={createFormHandler.handleChange}
                     value={createFormHandler.values.branch_debit}
                     error={createFormHandler.errors.branch_debit}
-                    required
                 />
                 <AccountDropDown
                     label="Credit Account"
@@ -282,7 +279,6 @@ const CreateCSHubTransactionTypeForm = ({
                     onChange={createFormHandler.handleChange}
                     value={createFormHandler.values.branch_credit}
                     error={createFormHandler.errors.branch_credit}
-                    required
                 />
                 
                 <hr className="mt-6 pb-2 text-slate-300"/>
