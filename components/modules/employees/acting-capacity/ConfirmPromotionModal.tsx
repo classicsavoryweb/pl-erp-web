@@ -15,6 +15,7 @@ import confirm from "@/components/common/Confirm";
 import TextArea from "@/components/common/TextArea";
 import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
+import moment from "moment";
 
 interface FormModalInterface {
     modal: any;
@@ -28,6 +29,8 @@ const ConfirmPromotionModal = ({
     onSubmitCallBack
 }: FormModalInterface) => {
 
+    const api = useApiCall();
+
     const formHandler = useFormik({
         initialValues: {
             effectivity_date: "",
@@ -40,7 +43,18 @@ const ConfirmPromotionModal = ({
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            effectivity_date: Yup.string().required("Effectivity date is required"),
+            effectivity_date: Yup.string()
+                .required("Effectivity date is required")
+                .test(
+                    "min-start-date",
+                    `Effectivity date must be same or after ${api.data?.acting_capacity?.start_date}`,
+                    function (value) {
+                        const startDate = api.data?.acting_capacity?.start_date;
+                        if (!value || !startDate) return true;
+
+                        return moment(value).isSameOrAfter(moment(startDate), "day");
+                    }
+                ),
             attachments: Yup.array().of(
                 Yup.object().shape({
                     file_type: Yup.string().required("File type is required"),
@@ -72,8 +86,26 @@ const ConfirmPromotionModal = ({
         }
     });
 
+    useAsyncEffect(() => {
+        if (modal.isShowing) {
+            api.setLoading(true);
+            getACF(id).then((resp) => {
+                if (!resp.error) {
+                    api.setData(resp.data);
+                } else {
+                    toast.error(resp.data.message);
+                }
+            }).catch(() => {
+                toast.error("Error encountered");
+            }).finally(() => {
+                api.setLoading(false);
+            });
+        }
+    }, [modal.isShowing, id]);
+
     return (
         <Modal
+            loading={api.loading}
             isShowing={modal.isShowing}
             onClose={() => {
                 modal.onClose();
