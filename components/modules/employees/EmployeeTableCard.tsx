@@ -234,7 +234,7 @@ const EmployeeTableCard = () => {
                 hasDateRange
                 withStatus
                 filterHandler={filter}
-                withBranch
+                withFilterBranch
                 withEmployeeType
                 withEmploymentStatus
                 withPosition
