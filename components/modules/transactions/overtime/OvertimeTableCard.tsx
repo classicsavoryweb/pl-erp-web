@@ -29,6 +29,7 @@ import CutOffDropDown from "../../generic/CutOffDropDown";
 import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime, voidOvertime, forceAdjustOvertime, fetchOvertime } from "@/api/transactions/overtime";
 import ViewTimeKeepingModal from "./ViewTimeKeepingModal";
 import ChooseTimeKeepingModal from "./ChooseTimeKeepingModal";
+import FetchOvertimeModal from "./FetchOvertimeModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -45,6 +46,7 @@ const OvertimeTableCard = ({
     const api = useApiCall();
     const importModal = useModal();
     const viewModal = useModal();
+    const fetchModal = useModal();
     const timekeepingModal = useModal();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
@@ -255,22 +257,7 @@ const OvertimeTableCard = ({
         {
             label: "Fetch Overtime",
             onClick: async () => {
-                const isConfirmed = await confirm({
-                    message: "Are you sure you want to fetch overtime?",
-                    title: "Fetch Overtime"
-                });
-
-                isConfirmed &&
-                    fetchOvertime()
-                    .then((resp) => {
-                        if (!resp.error) {
-                            toast.success(resp.data.message);
-                        } else {
-                            toast.error(resp.data.message);
-                        }
-                    }).catch(() => {
-                        toast.error("Error encountered");
-                    });
+                fetchModal.onOpen();
             }
         },
     ];
@@ -499,6 +486,10 @@ const OvertimeTableCard = ({
                     timekeepingModal.onClose();
                     api.triggerReload();
                 }}
+            />
+
+            <FetchOvertimeModal
+                modal={fetchModal}
             />
         </>
     );
