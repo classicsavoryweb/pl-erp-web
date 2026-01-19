@@ -47,12 +47,12 @@ const ConfirmPromotionModal = ({
                 .required("Effectivity date is required")
                 .test(
                     "min-start-date",
-                    `Effectivity date must be same or after ${api.data?.acting_capacity?.start_date}`,
+                    `Effectivity date must be after ${api.data?.acting_capacity?.start_date}`,
                     function (value) {
                         const startDate = api.data?.acting_capacity?.start_date;
                         if (!value || !startDate) return true;
 
-                        return moment(value).isSameOrAfter(moment(startDate), "day");
+                        return moment(value).isAfter(moment(startDate), "day");
                     }
                 ),
             attachments: Yup.array().of(
