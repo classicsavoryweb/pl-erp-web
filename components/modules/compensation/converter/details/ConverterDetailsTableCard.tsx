@@ -191,6 +191,9 @@ const ConverterDetailsTableCard = () => {
                 hasExport
                 exportFileName={`CONVERTER-TRANSACTION-LIST-${moment().format('YYYY-MM-DD')}.xls`}
                 api={exportConverterDetails}
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end">
