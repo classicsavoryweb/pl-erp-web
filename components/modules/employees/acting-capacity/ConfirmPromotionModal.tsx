@@ -30,6 +30,7 @@ const ConfirmPromotionModal = ({
 
     const formHandler = useFormik({
         initialValues: {
+            effectivity_date: "",
             attachments: [
                 {
                     "file": "",
@@ -39,6 +40,7 @@ const ConfirmPromotionModal = ({
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
+            effectivity_date: Yup.string().required("Effectivity date is required"),
             attachments: Yup.array().of(
                 Yup.object().shape({
                     file_type: Yup.string().required("File type is required"),
@@ -80,7 +82,16 @@ const ConfirmPromotionModal = ({
             size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                
+                <Textfield
+                    type="date"
+                    label="Effectivity Date"
+                    name="effectivity_date"
+                    value={formHandler.values.effectivity_date}
+                    error={formHandler.errors.effectivity_date}
+                    onChange={formHandler.handleChange}
+                    required
+                />
+
                 <div className="flex justify-between items-start">
                     <p className=" font-semibold text-gray-500">
                         Attachments
