@@ -112,7 +112,7 @@ const EmploymentStatusReportPDF = ({
                             fontSize: 9
                         }}
                     >
-                        # 84 Sto. Domingo Street, Brgy. Sto. Domingo, Quezon City
+                        {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
                     </Text>
                     <Text
                         style={{
@@ -120,7 +120,7 @@ const EmploymentStatusReportPDF = ({
                             fontSize: 9
                         }}
                     >
-                        8230-9888 loc. 208
+                        {process.env.NEXT_PUBLIC_COMPANY_CONTACT}
                     </Text>
                      <Text
                         style={{
@@ -128,7 +128,7 @@ const EmploymentStatusReportPDF = ({
                             fontSize: 9
                         }}
                     >
-                        sfirecords@classicsavory.com
+                        {process.env.NEXT_PUBLIC_HR_EMAIL}
                     </Text>
                     <Text style={{
                         ...styles.bold,
