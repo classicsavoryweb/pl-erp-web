@@ -17,19 +17,22 @@ interface FormModalInterface {
     modal: any;
     data: any[];
     selectedLog: string;
+    allowRemoveExisting: boolean;
     onSubmitCallBack: () => void;
 }
 
 type PunchFormValues = {
-    punches: { punch_time: string, newPunch?: boolean, branch_id: string }[]; 
+    punches: { id?: number, punch_time: string, newPunch?: boolean, branch_id: string }[]; 
     punches_count: string;
     date: string;
+    deleted_punch_ids: number[];
 };
 
 const EditActualTimeModal = ({
     modal,
     data = [],
     selectedLog,
+    allowRemoveExisting,
     onSubmitCallBack
 }: FormModalInterface) => {
 
@@ -38,6 +41,7 @@ const EditActualTimeModal = ({
             punches: [{ punch_time: "", newPunch: true, branch_id: "" }],
             punches_count: "",
             date: "",
+            deleted_punch_ids: [],
         },
         validationSchema: Yup.object().shape({
             punches: Yup.array().of(
@@ -180,13 +184,20 @@ const EditActualTimeModal = ({
             <form onSubmit={formHandler.handleSubmit}>
                 {formHandler.values.punches.map((punch: any, index) => (
                     <div key={index}>
-                        {punch.newPunch && (
+                        {(punch.newPunch || (allowRemoveExisting && punch.id)) && (
                             <div className="flex justify-end text-red-500">
                                 <p
                                     className="z-1 pt-3 mb-[-22px] hover:text-red-800 dark:text-red-500  hover:cursor-pointer"
                                     onClick={() => {
                                         const updatedPunches = [...formHandler.values.punches];
-                                        updatedPunches.splice(index, 1);
+                                        const removed = updatedPunches.splice(index, 1)[0];
+                                        if (removed?.id) {
+                                            formHandler.setFieldValue(
+                                                "deleted_punch_ids",
+                                                [...formHandler.values.deleted_punch_ids, removed.id],
+                                                false
+                                            );
+                                        }
                                         formHandler.setFieldValue("punches", updatedPunches, false);
                                     }}
                                 >
