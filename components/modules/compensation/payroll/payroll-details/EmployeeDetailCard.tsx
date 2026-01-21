@@ -18,27 +18,27 @@ const EmployeeDetailCard = () => {
                 <Textfield
                     disabled
                     label="Employee"
-                    value={payrollDetails.employee.full_name}
+                    value={payrollDetails.employee.full_name ?? ""}
                 />
                 <Textfield
                     disabled
                     label="Employee Number"
-                    value={payrollDetails.employee.employee_number}
+                    value={payrollDetails.employee.employee_number ?? ""}
                 />
                 <Textfield
                     disabled
                     label="Position"
-                    value={payrollDetails?.employee?.current_position?.description}
+                    value={payrollDetails?.employee?.current_position?.description ?? ""}
                 />
                 <Textfield
                     disabled
                     label="Home Branch"
-                    value={payrollDetails?.employee?.current_branch?.name}
+                    value={payrollDetails?.employee?.current_branch?.name ?? ""}
                 />
                 <Textfield
                     disabled
                     label="Timekeeping Branch"
-                    value={payrollDetails?.employee?.current_branch?.name}
+                    value={payrollDetails?.employee?.current_branch?.name ?? ""}
                 />
                 <Textfield
                     disabled
@@ -48,12 +48,12 @@ const EmployeeDetailCard = () => {
                 <Textfield
                     disabled
                     label="Payment Type"
-                    value={payrollDetails.pay_type}
+                    value={payrollDetails.pay_type ?? ""}
                 />
                 <Textfield
                     disabled
                     label="Tax Type"
-                    value={payrollDetails.tax_status}
+                    value={payrollDetails.tax_status ?? ""}
                 />
             </Grid>
         </Card>

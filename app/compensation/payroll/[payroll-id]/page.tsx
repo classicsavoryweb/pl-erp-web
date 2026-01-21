@@ -30,6 +30,7 @@ const Page = () => {
         formHandler.setValues({
             non_taxable_adjustment: payrollDetails.non_taxable_adjustment,
             manual_deductions: payrollDetails.manual_deductions,
+            taxable_adjustment: payrollDetails.taxable_adjustment,
             remarks: payrollDetails.remarks
         });
     }, [payrollDetails]);
@@ -37,6 +38,7 @@ const Page = () => {
     const formHandler = useFormik({
         initialValues: {
             non_taxable_adjustment: payrollDetails.non_taxable_adjustment,
+            taxable_adjustment: payrollDetails.taxable_adjustment,
             manual_deductions: payrollDetails.manual_deductions,
             remarks: payrollDetails.remarks
         },
