@@ -40,6 +40,11 @@ const ViewLastPayModal = ({
             path: "balance",
             columnType: COLUMNTYPES.amount
         },
+        {
+            columnHead: "Amount",
+            path: "amount",
+            columnType: COLUMNTYPES.amount
+        },
     ];
 
     return (

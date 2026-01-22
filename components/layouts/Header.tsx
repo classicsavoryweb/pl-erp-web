@@ -10,7 +10,7 @@ import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
 import { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/api/authentication';
-import { getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead } from '@/api/notifications';
+import { getNotifications, markAllNotificationsRead, markNotificationRead } from '@/api/notifications';
 import Cookies from 'js-cookie';
 import { AuthContext } from '@/context/AuthProvider';
 import { toast } from 'react-toastify';
@@ -63,17 +63,11 @@ const Header = () => {
 
         setIsRefreshing(true);
 
-        const [listResp, countResp] = await Promise.all([
-            getNotifications({ limit: 10 }),
-            getUnreadNotificationCount()
-        ]);
+        const listResp = await getNotifications({ limit: 10 });
 
         if (!listResp?.error) {
-            setNotifications(listResp?.data ?? []);
-        }
-
-        if (!countResp?.error) {
-            setUnreadCount(countResp?.data?.count ?? 0);
+            setNotifications(listResp?.data?.notifications ?? []);
+            setUnreadCount(listResp?.data?.unread_count ?? 0);
         }
         setIsRefreshing(false);
     }, [isLoggedIn]);
