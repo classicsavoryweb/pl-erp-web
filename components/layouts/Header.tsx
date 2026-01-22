@@ -6,7 +6,8 @@ import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import LockOpenOutlinedIcon from '@mui/icons-material/LockOpenOutlined';
 import NotificationsNoneOutlinedIcon from '@mui/icons-material/NotificationsNoneOutlined';
-import { useState, useContext, useEffect, useRef } from 'react';
+import RefreshOutlinedIcon from '@mui/icons-material/RefreshOutlined';
+import { useState, useContext, useEffect, useRef, useCallback } from 'react';
 import { useRouter } from 'next/navigation';
 import { logout } from '@/api/authentication';
 import { getNotifications, getUnreadNotificationCount, markAllNotificationsRead, markNotificationRead } from '@/api/notifications';
@@ -29,6 +30,7 @@ const Header = () => {
     const [notificationOpen, setNotificationOpen] = useState<boolean>(false);
     const [notifications, setNotifications] = useState<NotificationItem[]>([]);
     const [unreadCount, setUnreadCount] = useState<number>(0);
+    const [isRefreshing, setIsRefreshing] = useState<boolean>(false);
     const router = useRouter();
     const { theme, setTheme } = useTheme();
     const { userDetails } = useContext(AuthContext);
@@ -54,6 +56,28 @@ const Header = () => {
 
     }, []);
 
+    const loadNotifications = useCallback(async () => {
+        if (!isLoggedIn) {
+            return;
+        }
+
+        setIsRefreshing(true);
+
+        const [listResp, countResp] = await Promise.all([
+            getNotifications({ limit: 10 }),
+            getUnreadNotificationCount()
+        ]);
+
+        if (!listResp?.error) {
+            setNotifications(listResp?.data ?? []);
+        }
+
+        if (!countResp?.error) {
+            setUnreadCount(countResp?.data?.count ?? 0);
+        }
+        setIsRefreshing(false);
+    }, [isLoggedIn]);
+
     useEffect(() => {
         if (!isLoggedIn) {
             setNotifications([]);
@@ -61,26 +85,11 @@ const Header = () => {
             return;
         }
 
-        const loadNotifications = async () => {
-            const [listResp, countResp] = await Promise.all([
-                getNotifications({ limit: 1000 }),
-                getUnreadNotificationCount()
-            ]);
-
-            if (!listResp?.error) {
-                setNotifications(listResp?.data ?? []);
-            }
-
-            if (!countResp?.error) {
-                setUnreadCount(countResp?.data?.count ?? 0);
-            }
-        };
-
         loadNotifications();
         const intervalId = setInterval(loadNotifications, 120000);
 
         return () => clearInterval(intervalId);
-    }, [isLoggedIn]);
+    }, [isLoggedIn, loadNotifications]);
 
     return (
         <div className="relative flex items-center gap-x-3" ref={dropdownRef}>
@@ -105,7 +114,21 @@ const Header = () => {
                     {notificationOpen && (
                         <div className="absolute right-0 mt-2 w-80 bg-zinc-50 dark:bg-neutral-800 dark:text-slate-200 rounded-2xl shadow-lg py-2 z-50 overflow-hidden">
                             <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-200/60 dark:border-neutral-700">
-                                <p className="text-sm font-semibold">Notifications</p>
+                                <div className="flex items-center gap-1">
+                                    <p className="text-sm font-semibold">Notifications</p>
+                                    <button
+                                        type="button"
+                                        className="p-1 rounded hover:bg-zinc-100 dark:hover:bg-neutral-700 disabled:opacity-60"
+                                        title="Refresh"
+                                        onClick={loadNotifications}
+                                        disabled={isRefreshing}
+                                    >
+                                        <RefreshOutlinedIcon
+                                            className={`text-slate-500 ${isRefreshing ? "animate-spin" : ""}`}
+                                            style={{ width: "16px", height: "16px" }}
+                                        />
+                                    </button>
+                                </div>
                                 <button
                                     type="button"
                                     className="text-xs text-red-600 hover:underline"
