@@ -17,11 +17,41 @@ import RateCodeDropDown from "../../generic/RateCodeDropDown";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
 import confirm from "@/components/common/Confirm";
 
+
+
 interface FormModalInterface {
     modal: any;
     onSubmitCallback: () => void;
     formValue: any;
 };
+
+
+const EDITABLE_FIELDS = [
+  "company",
+  "branch_email",
+  "rate_code",
+  "branch_head_employee_number",
+  "group_head_employee_number",
+  "kitchen_oic_employee_number",
+  "mancom_employee_number",
+  "travel_time",
+  "device_name",
+  "expense_debit",
+  "expense_credit",
+  "advance_debit",
+  "advance_credit",
+  "ho_13th_debit",
+  "ho_13th_debit_1",
+  "ho_13th_credit",
+  "branch_ho_13th_debit",
+  "branch_ho_13th_debit_1",
+  "branch_ho_13th_credit",
+  "branch_ho_stat_debit",
+  "branch_ho_stat_credit",
+];
+
+
+const isEditable = (field: string) => EDITABLE_FIELDS.includes(field);
 
 const EditBranchForm = ({
     modal,
@@ -146,6 +176,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.name}
+                        disabled={!isEditable("name")} 
                     />
                     <Textfield
                         label="Short Name"
@@ -155,6 +186,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.short_name}
+                        disabled={!isEditable("short_name")} 
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -166,6 +198,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_number}
+                        disabled={!isEditable("branch_number")} 
                     />
                     <Textfield
                         label="Address"
@@ -175,6 +208,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.address}
+                        disabled={!isEditable("address")} 
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -186,6 +220,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.location}
+                        disabled={!isEditable("location")} 
                     />
                     <Textfield
                         label="Date Opened"
@@ -196,6 +231,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.date_open}
+                        disabled={!isEditable("date_open")} 
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -207,6 +243,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.company}
+                        disabled={!isEditable("company")}
                     />
                     <Textfield
                         label="Branch Email"
@@ -216,6 +253,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_email}
+                        disabled={!isEditable("branch_email")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -227,6 +265,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.rate_code}
+                        disabled={!isEditable("rate_code")}
                     />
 
                     <EmployeeDropDown
@@ -237,6 +276,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_head_employee_number}
+                        disabled={!isEditable("branch_head_employee_number")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -248,6 +288,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.group_head_employee_number}
+                        disabled={!isEditable("group_head_employee_number")}
                     />
                     <EmployeeDropDown
                         label="Kitchen OIC"
@@ -256,6 +297,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.kitchen_oic_employee_number || ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.kitchen_oic_employee_number}
+                        disabled={!isEditable("kitchen_oic_employee_number")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -267,6 +309,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.mancom_employee_number}
+                        disabled={!isEditable("mancom_employee_number")}
                     />
                 </Grid>
 
@@ -281,6 +324,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.travel_time}
+                        disabled={!isEditable("travel_time")}
                     />
                     <Textfield
                         label="Device Name"
@@ -290,6 +334,8 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.device_name}
+                        disabled={!isEditable("device_name")}
+                        
                     />
                 </Grid>
 
@@ -303,6 +349,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.expense_debit}
                         error={editBranchFormHandler.errors.expense_debit}
                         required
+                        disabled={!isEditable("expense_debit")}
                     />
                     <AccountDropDown
                         label="Expense credit"
@@ -312,6 +359,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.expense_credit}
                         error={editBranchFormHandler.errors.expense_credit}
                         required
+                        disabled={!isEditable("expense_credit")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -323,6 +371,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.advance_debit}
                         error={editBranchFormHandler.errors.advance_debit}
                         required
+                        disabled={!isEditable("advance_debit")}
                     />
                     <AccountDropDown
                         label="Advance credit"
@@ -332,6 +381,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.advance_credit}
                         error={editBranchFormHandler.errors.advance_credit}
                         required
+                        disabled={!isEditable("advance_credit")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -343,6 +393,8 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_debit}
                         error={editBranchFormHandler.errors.ho_13th_debit}
                         required
+                        disabled={!isEditable("ho_13th_debit")}
+                       
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (HO/HO) Debit"
@@ -352,6 +404,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_debit_1}
                         error={editBranchFormHandler.errors.ho_13th_debit_1}
                         required
+                        disabled={!isEditable("ho_13th_debit_1")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -363,6 +416,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_credit}
                         error={editBranchFormHandler.errors.ho_13th_credit}
                         required
+                        disabled={!isEditable("ho_13th_credit")}
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (Branch/HO) Debit"
@@ -372,6 +426,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_debit}
                         error={editBranchFormHandler.errors.branch_ho_13th_debit}
                         required
+                        disabled={!isEditable("branch_ho_13th_debit")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -383,6 +438,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_debit_1}
                         error={editBranchFormHandler.errors.branch_ho_13th_debit_1}
                         required
+                        disabled={!isEditable("branch_ho_13th_debit_1")}
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (Branch/HO) Credit"
@@ -392,6 +448,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_credit}
                         error={editBranchFormHandler.errors.branch_ho_13th_credit}
                         required
+                        disabled={!isEditable("branch_ho_13th_credit")}
                     />
                 </Grid>
 
@@ -404,6 +461,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_stat_debit}
                         error={editBranchFormHandler.errors.branch_ho_stat_debit}
                         required
+                        disabled={!isEditable("branch_ho_stat_credit")}
                     />
                     <AccountDropDown
                         label="Statutory Allocation (Branch/HO) Credit"
@@ -413,6 +471,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_stat_credit}
                         error={editBranchFormHandler.errors.branch_ho_stat_credit}
                         required
+                        disabled={!isEditable("branch_ho_stat_credit")}
                     />
                 </Grid>
 
@@ -425,6 +484,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.type}
+                        disabled={!isEditable("type")} 
                         options={[
                             {
                                 label: "Head Office",
@@ -444,6 +504,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.status}
+                        disabled={!isEditable("status")} 
                     />
                 </Grid>
 
