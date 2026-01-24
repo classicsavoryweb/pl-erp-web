@@ -53,6 +53,16 @@ export const getTimeKeeping = async (payload?: {}) => {
     return resData;
 };
 
+export const updateTimeKeepingUndertime = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/update-time-keeping-undertime",
+        method: "POST",
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const generateTimeKeepingSummary = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: "/generate-time-keeping-summary",

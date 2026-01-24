@@ -21,6 +21,8 @@ import moment from "moment";
 import Dropdown from "@/components/common/Dropdown";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import { getCurrentCutoff } from "@/helper/cutoff";
+import { useModal } from "@/hooks/modal";
+import EditUndertimeModal from "./EditUndertimeModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -35,8 +37,10 @@ const TimeKeepingTableCard = ({
 }: FilterInterface) => {
     const paginator = usePagination(20);
     const api = useApiCall();
+    const editModal = useModal();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
+    const [selectedTimekeeping, setSelectedTimekeeping] = useState<any>({});
 
     const columnSettings = [
         {
@@ -219,6 +223,16 @@ const TimeKeepingTableCard = ({
         }
     });
 
+    const tableActions = [
+        {
+            label: "Edit",
+            onClick: (data: any) => {
+                setSelectedTimekeeping(data);
+                editModal.onOpen();
+            }
+        },
+    ];
+
     const exportHandler = useFormik({
         initialValues: {
             key_word: '',
@@ -397,8 +411,18 @@ const TimeKeepingTableCard = ({
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
+                    withActions
+                    actions={tableActions}
                 />
             </Card>
+
+            <EditUndertimeModal
+                modal={editModal}
+                data={selectedTimekeeping}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                }}
+            />
         </>
     );
 };
