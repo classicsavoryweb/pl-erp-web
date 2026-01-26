@@ -376,6 +376,7 @@ const TimeKeepingSummaryTableCard = ({
             <Card>
                 <p className=" font-semibold text-red-800 dark:text-red-500">Timekeeping Summary</p>
                 <Table
+                    smallText
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
                     loading={api.loading}
