@@ -55,6 +55,8 @@ const ActualTimeTableCard = ({
     const importModal = useModal();
     const [data, setData] = useState<any[]>([]);
     const [selectedLog, setSelectedLog] = useState<string>("0");
+    const [selectedStatus, setSelectedStatus] = useState<string>("");
+    const [selectedPunchCount, setSelectedPunchCount] = useState<number>(0);
     const [branch, setBranch] = useState<any>({});
     const { permissions } = useContext(AuthContext);
     const paginator = usePagination(20);
@@ -142,6 +144,8 @@ const ActualTimeTableCard = ({
             onClick: (data: any) => {
                 setSelectedLog(data.id);
                 setData(data.punches);
+                setSelectedStatus(data.status);
+                setSelectedPunchCount(Array.isArray(data.punches) ? data.punches.length : 0);
                 editModal.onOpen();
             }
         },
@@ -357,6 +361,10 @@ const ActualTimeTableCard = ({
                 modal={editModal}
                 data={data}
                 selectedLog={selectedLog}
+                allowRemoveExisting={
+                    selectedStatus === "MULTIPLE LOGS" ||
+                    (selectedStatus === "INCOMPLETE" && selectedPunchCount === 3)
+                }
                 onSubmitCallBack={() => {
                     api.triggerReload();
                 }}

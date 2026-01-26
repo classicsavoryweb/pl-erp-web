@@ -67,6 +67,11 @@ const LastPayDetails = ({
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Balance",
+            path: "balance",
+            columnType: COLUMNTYPES.amount
+        },
+        {
             columnHead: "Amount",
             path: "amount",
             columnType: COLUMNTYPES.amount
@@ -252,6 +257,11 @@ const LastPayDetails = ({
                             columnHead: "Type",
                             path: "deduction.description",
                             columnType: COLUMNTYPES.string
+                        },
+                        {
+                            columnHead: "Balance",
+                            path: "balance",
+                            columnType: COLUMNTYPES.amount
                         },
                         {
                             columnHead: "Amount",

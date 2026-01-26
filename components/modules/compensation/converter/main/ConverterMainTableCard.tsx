@@ -371,6 +371,9 @@ const ConverterMainTableCard = () => {
                         value: "Sent"
                     },
                 ]}
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
             <Card>
                 <div className="flex justify-end">

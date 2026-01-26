@@ -211,6 +211,9 @@ const LastPayTableCard = () => {
                         value: "Unposted"
                     }
                 ]}
+                callBack={() => {
+                    paginator.setPage(1);
+                }}
             />
 
             <Card>

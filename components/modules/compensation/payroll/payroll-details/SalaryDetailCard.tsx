@@ -55,9 +55,13 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
             <p className="font-semibold text-red-800 dark:text-red-500 mt-3">Other Adjustments</p>
             <Grid cols={2}>
                 <Textfield
-                    disabled
+                    disabled = {payrollDetails.status == "final" || !permissions.includes("perform_compensation_payroll")}
                     label="Taxable Adjustment"
-                    value={formatNumber(payrollDetails?.timekeeping_summary?.adjustment_amount ?? 0)}
+                    name="taxable_adjustment"
+                    type="number"
+                    onChange={formHandler.handleChange}
+                    value={formHandler.values.taxable_adjustment}
+                    error={formHandler.errors.taxable_adjustment}
                 />
                 <Textfield
                     disabled = {payrollDetails.status == "final" || !permissions.includes("perform_compensation_payroll")}

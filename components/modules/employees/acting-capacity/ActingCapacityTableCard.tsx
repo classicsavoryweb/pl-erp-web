@@ -30,6 +30,7 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 const ActingCapacityTableCard = () => {
     const api = useApiCall();
     const [id, setId] = useState<number>(0);
+    const [startDate, setStartDate] = useState<string>("");
     const viewModal = useModal();
     const viewACF = useModal();
     const editModal = useModal();
@@ -218,6 +219,7 @@ const ActingCapacityTableCard = () => {
             onClick: (data: any) => {
                 confirmPromotion.onOpen();
                 setId(data.id);
+                setStartDate(data.start_date ?? "");
             },
             permission: "approve_acting_capacity"
         },
@@ -353,6 +355,7 @@ const ActingCapacityTableCard = () => {
             <ConfirmPromotionModal
                 modal={confirmPromotion}
                 id={String(id)}
+                startDate={startDate}
                 onSubmitCallBack={() => {
                     api.triggerReload();
                     confirmPromotion.onClose();

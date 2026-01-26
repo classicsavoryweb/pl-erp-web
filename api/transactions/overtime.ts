@@ -10,10 +10,11 @@ export const getAllOvertime = async (payload?: {}) => {
     return resData;
 };
 
-export const fetchOvertime = async () => {
+export const fetchOvertime = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/fetch-overtime',
         method: 'GET',
+        payload: payload
     })
 
     return resData;
