@@ -25,7 +25,7 @@ interface FormModalInterface {
     formValue: any;
 };
 
-
+//ADDED
 const EDITABLE_FIELDS = [
   "company",
   "branch_email",
