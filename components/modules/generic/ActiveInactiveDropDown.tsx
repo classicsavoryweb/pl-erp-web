@@ -12,7 +12,7 @@ interface SelectInterface {
     error?: string;
     value?: string;
     required?: boolean;
-    disabled?: boolean; //ADDED
+    disabled?: boolean; 
 }
 
 const ActiveInactiveDropDown = ({
@@ -23,7 +23,7 @@ const ActiveInactiveDropDown = ({
     error,
     value,
     required = false,
-    disabled = false, //ADDED
+    disabled = false, 
     
 }: SelectInterface) => {
 
@@ -46,7 +46,7 @@ const ActiveInactiveDropDown = ({
                 }
             ]}
             required={required}
-            disabled={disabled} //ADDED
+            disabled={disabled} 
         />
     );
 };
