@@ -16,6 +16,10 @@ import CompanyDropDown from "../../generic/CompanyDropDown";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
 import confirm from "@/components/common/Confirm";
+import { AuthContext } from "@/context/AuthProvider";
+import { useContext } from "react";
+
+
 
 interface FormModalInterface {
     modal: any;
@@ -28,6 +32,8 @@ const EditBranchForm = ({
     onSubmitCallback,
     formValue
 }: FormModalInterface) => {
+
+    const { permissions } = useContext(AuthContext); 
 
     const editBranchFormHandler = useFormik({
         initialValues: {
@@ -146,6 +152,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.name}
+                        disabled={!permissions.includes("perform_branches")}
                     />
                     <Textfield
                         label="Short Name"
@@ -155,6 +162,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.short_name}
+                        disabled={!permissions.includes("perform_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -166,6 +174,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_number}
+                        disabled={!permissions.includes("perform_branches")}
                     />
                     <Textfield
                         label="Address"
@@ -175,6 +184,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.address}
+                        disabled={!permissions.includes("perform_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -186,6 +196,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.location}
+                        disabled={!permissions.includes("perform_branches")}
                     />
                     <Textfield
                         label="Date Opened"
@@ -196,6 +207,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.date_open}
+                        disabled={!permissions.includes("perform_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -207,6 +219,8 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.company}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        
                     />
                     <Textfield
                         label="Branch Email"
@@ -216,6 +230,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_email}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -227,6 +242,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.rate_code}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
 
                     <EmployeeDropDown
@@ -237,6 +253,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_head_employee_number}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -248,6 +265,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.group_head_employee_number}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                     <EmployeeDropDown
                         label="Kitchen OIC"
@@ -256,6 +274,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.kitchen_oic_employee_number || ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.kitchen_oic_employee_number}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -267,6 +286,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.mancom_employee_number}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
 
@@ -281,6 +301,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.travel_time}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                     <Textfield
                         label="Device Name"
@@ -290,6 +311,8 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.device_name}
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        
                     />
                 </Grid>
 
@@ -303,6 +326,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.expense_debit}
                         error={editBranchFormHandler.errors.expense_debit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                     <AccountDropDown
                         label="Expense credit"
@@ -312,6 +336,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.expense_credit}
                         error={editBranchFormHandler.errors.expense_credit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -323,6 +348,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.advance_debit}
                         error={editBranchFormHandler.errors.advance_debit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                     <AccountDropDown
                         label="Advance credit"
@@ -332,6 +358,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.advance_credit}
                         error={editBranchFormHandler.errors.advance_credit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -343,6 +370,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_debit}
                         error={editBranchFormHandler.errors.ho_13th_debit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (HO/HO) Debit"
@@ -352,6 +380,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_debit_1}
                         error={editBranchFormHandler.errors.ho_13th_debit_1}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -363,6 +392,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_credit}
                         error={editBranchFormHandler.errors.ho_13th_credit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (Branch/HO) Debit"
@@ -372,6 +402,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_debit}
                         error={editBranchFormHandler.errors.branch_ho_13th_debit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -383,6 +414,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_debit_1}
                         error={editBranchFormHandler.errors.branch_ho_13th_debit_1}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (Branch/HO) Credit"
@@ -392,6 +424,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_credit}
                         error={editBranchFormHandler.errors.branch_ho_13th_credit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
 
@@ -404,6 +437,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_stat_debit}
                         error={editBranchFormHandler.errors.branch_ho_stat_debit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                     <AccountDropDown
                         label="Statutory Allocation (Branch/HO) Credit"
@@ -413,6 +447,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_stat_credit}
                         error={editBranchFormHandler.errors.branch_ho_stat_credit}
                         required
+                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
                     />
                 </Grid>
 
@@ -425,6 +460,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.type}
+                        disabled={!permissions.includes("perform_branches")}
                         options={[
                             {
                                 label: "Head Office",
@@ -444,6 +480,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.status}
+                        disabled={!permissions.includes("perform_branches")}
                     />
                 </Grid>
 
