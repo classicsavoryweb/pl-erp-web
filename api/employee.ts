@@ -264,6 +264,7 @@ export const getEmployeeTrainings = async (employeeNumber: string, payload: {}) 
     const resData = await axiosHelper({
         func_path: `/get-employee-trainings/${employeeNumber}`,
         method: 'GET',
+        payload: payload
     });
 
     return resData;
