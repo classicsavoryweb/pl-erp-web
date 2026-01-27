@@ -9,6 +9,7 @@ interface SelectInterface {
     error?: string;
     value?: string;
     required?: boolean;
+    disabled?: boolean; 
 }
 
 const CompanyDropDown = ({
@@ -18,7 +19,8 @@ const CompanyDropDown = ({
     onChange,
     error,
     value,
-    required = false
+    required = false,
+    disabled = false, 
 }: SelectInterface) => {
 
     return (
@@ -40,6 +42,7 @@ const CompanyDropDown = ({
                 }
             ]}
             required={required}
+            disabled={disabled}
         />
     );
 };

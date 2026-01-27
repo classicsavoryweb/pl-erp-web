@@ -12,6 +12,7 @@ interface SelectInterface {
     error?: string;
     value?: string | number;
     required?: boolean;
+    disabled?: boolean;
 }
 
 const EmployeeDropDown = ({
@@ -21,7 +22,8 @@ const EmployeeDropDown = ({
     onChange,
     error,
     value,
-    required = false
+    required = false,
+    disabled = false,
 }: SelectInterface) => {
 
     const {employees, loading, getEmployees} = useEmployeeStore();
@@ -51,6 +53,7 @@ const EmployeeDropDown = ({
             loading={loading}
             options={dataSet}
             required={required}
+            disabled={disabled}
         />
     );
 };

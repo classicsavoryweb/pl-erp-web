@@ -15,6 +15,7 @@ interface SelectInterface {
     error?: string;
     value?: string;
     required?: boolean;
+    disabled?: boolean; 
 }
 
 const RateCodeDropDown = ({
@@ -24,7 +25,8 @@ const RateCodeDropDown = ({
     onChange,
     error,
     value,
-    required = false
+    required = false,
+    disabled = false,
 }: SelectInterface) => {
 
     const [rateData, setRateData] = useState<any>([]);
@@ -53,6 +55,7 @@ const RateCodeDropDown = ({
             loading={loading}
             options={rateData}
             required={required}
+            disabled={disabled}
         />
     );
 };
