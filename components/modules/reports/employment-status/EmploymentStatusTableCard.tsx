@@ -3,7 +3,7 @@
 import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Button from "@/components/common/Button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -15,10 +15,13 @@ import Dropdown from "@/components/common/Dropdown";
 import { useModal } from "@/hooks/modal";
 import EmploymentStatusModal from "./EmploymentStatusModal";
 import Link from "next/link";
+import usePagination from "@/hooks/pagination"; 
+import { useEffect } from "react"; 
 
 const EmploymentStatusTableCard = () => {
     const [reportData, setReport] = useState<any[]>([]);
     const [dataSet, setDataSet] = useState<any[]>([]);
+    const paginator = usePagination(10); 
 
     const columnSettings = [
         {
@@ -95,6 +98,13 @@ const EmploymentStatusTableCard = () => {
         }
     });
 
+       useEffect(() => {
+            if (formHandler.values.branch_id && formHandler.values.month && formHandler.values.year) {
+        formHandler.submitForm();
+        }
+    }, [paginator.page, formHandler.values.branch_id, formHandler.values.month, formHandler.values.year]);
+
+
     const printModal = useModal();
 
     return (
@@ -156,6 +166,9 @@ const EmploymentStatusTableCard = () => {
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                                callBack={() => {
+                                paginator.setPage(1);
+                                }}
                             />    
                         </div>
                         <div className="w-[100px]">
@@ -177,6 +190,7 @@ const EmploymentStatusTableCard = () => {
                                 onClick={() => {
                                     setDataSet([]);
                                     formHandler.resetForm();
+                                    paginator.setPage(1);
                                 }}
                                 variant="secondary"
                             />    
@@ -190,6 +204,7 @@ const EmploymentStatusTableCard = () => {
                     dataSet={dataSet}
                     columnSettings={columnSettings}
                     loading={formHandler.isSubmitting}
+                    paginator={paginator} 
                 />
             </Card>
         </>

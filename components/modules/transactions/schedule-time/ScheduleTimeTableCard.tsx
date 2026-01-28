@@ -249,6 +249,9 @@ const ScheduleTimeTableCard = ({
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                                callBack={() => {
+                                paginator.setPage(1);
+                                }}
                             />    
                         </div>
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&

@@ -231,6 +231,9 @@ const PayrollProofListTableCard = () => {
                                 onClick={() => {
                                     api.triggerReload();
                                 }}
+                                callBack={() => {
+                                paginator.setPage(1);
+                                }}
                             />    
                         </div>
                         { Number(formHandler.values.bank_account_type_id) !== 0 &&

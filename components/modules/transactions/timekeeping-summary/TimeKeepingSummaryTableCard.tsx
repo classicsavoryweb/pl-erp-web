@@ -326,6 +326,9 @@ const TimeKeepingSummaryTableCard = ({
                                     formHandler.submitForm();
                                     api.triggerReload();
                                 }}
+                                callBack={() => {
+                                paginator.setPage(1);
+                                }}
                             />    
                         </div>
                         <div className="w-[100px]">
