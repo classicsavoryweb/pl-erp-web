@@ -62,8 +62,8 @@ const CreateBranchForm = ({
             name: Yup.string().required("Branch name is required."),
             branch_email: Yup.string().required("Branch email is required."),
             status: Yup.string().required("Status is required."),
-            travel_time: Yup.string().required("Travel time is required."),
-            device_name: Yup.string().required("Device name is required."),
+            //travel_time: Yup.string().required("Travel time is required."),
+            //device_name: Yup.string().required("Device name is required."),
             short_name: Yup.string().required("Short name is required."),
             type: Yup.string().required("Type is required."),
             address: Yup.string().required("Address is required."),
@@ -264,7 +264,6 @@ const CreateBranchForm = ({
                         placeholder="enter travel time"
                         name="travel_time"
                         value={createBranchFormHandler.values.travel_time}
-                        required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.travel_time}
                     />
@@ -273,7 +272,6 @@ const CreateBranchForm = ({
                         placeholder="enter device name"
                         name="device_name"
                         value={createBranchFormHandler.values.device_name}
-                        required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.device_name}
                     />

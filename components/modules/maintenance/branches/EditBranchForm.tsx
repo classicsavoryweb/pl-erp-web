@@ -73,8 +73,8 @@ const EditBranchForm = ({
             branch_number: Yup.string().required("Branch number is required."),
             branch_email: Yup.string().required("Branch email is required."),
             status: Yup.string().required("Status is required."),
-            travel_time: Yup.string().required("Travel time is required."),
-            device_name: Yup.string().required("Device name is required."),
+            //travel_time: Yup.string().required("Travel time is required."),
+            //device_name: Yup.string().required("Device name is required."),
             short_name: Yup.string().required("Short name is required."),
             type: Yup.string().required("Type is required."),
             address: Yup.string().required("Address is required."),
@@ -298,7 +298,6 @@ const EditBranchForm = ({
                         placeholder="enter travel time"
                         name="travel_time"
                         value={editBranchFormHandler.values.travel_time ?? ""}
-                        required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.travel_time}
                         disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
@@ -308,7 +307,6 @@ const EditBranchForm = ({
                         placeholder="enter device name"
                         name="device_name"
                         value={editBranchFormHandler.values.device_name ?? ""}
-                        required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.device_name}
                         disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
