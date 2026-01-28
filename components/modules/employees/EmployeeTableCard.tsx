@@ -63,7 +63,7 @@ const EmployeeTableCard = () => {
         },
         {
             columnHead: "Agency",
-            path: "agency_id",
+            path: "agency.name",
             columnType: COLUMNTYPES.string,
         },
         {
