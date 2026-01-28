@@ -62,6 +62,11 @@ const EmployeeTableCard = () => {
             sort: true
         },
         {
+            columnHead: "Agency",
+            path: "agency_id",
+            columnType: COLUMNTYPES.string,
+        },
+        {
             columnHead: "Position",
             path: "current_position.description",
             columnType: COLUMNTYPES.string
