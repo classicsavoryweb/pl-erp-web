@@ -20,6 +20,7 @@ import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import ResendBatchModalForm from "./ResendBatchModalForm";
 import ViewLogsModal from "./ViewLogsModal";
+import ViewExcludedTransactions from "./ViewExcludedTransactions";
 
 const ConverterMainTableCard = () => {
     const api = useApiCall();
@@ -27,10 +28,12 @@ const ConverterMainTableCard = () => {
     const createModal = useModal();
     const resendModal = useModal();
     const viewModal = useModal();
+    const excludedTransactionModal = useModal();
     const exportModal = useModal();
     const logsModal = useModal();
     const [dataSet, setDataSet] = useState<any[]>([]);
     const filterHandler = useFilter();
+    const [excludedTransactions, setExcludedTransactions] = useState<any[]>([]);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -75,6 +78,11 @@ const ConverterMainTableCard = () => {
         {
             columnHead: "Count",
             path: "count",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Type",
+            path: "bank_account_type.description",
             columnType: COLUMNTYPES.string
         },
         {
@@ -393,6 +401,12 @@ const ConverterMainTableCard = () => {
             <CreateBatchModal
                 modal={createModal}
                 onSubmitCallback={api.triggerReload}
+                callBack={(resp:any) => {
+                    if (resp.data.has_excluded_transactions) {
+                        excludedTransactionModal.onOpen();
+                        setExcludedTransactions(resp.data.transactions)
+                    }
+                }}
             />
             <ViewBatchModal
                 modal={viewModal}
@@ -406,6 +420,13 @@ const ConverterMainTableCard = () => {
             <ViewLogsModal
                 modal={logsModal}
                 data={api.data}
+            />
+            <ViewExcludedTransactions
+                modal={excludedTransactionModal}
+                dataSet={excludedTransactions}
+                onCloseCallBack={() => {
+                    setExcludedTransactions([]);
+                }}
             />
         </>
     );
