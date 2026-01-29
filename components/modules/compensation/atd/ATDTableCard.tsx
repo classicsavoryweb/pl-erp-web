@@ -60,7 +60,7 @@ const ATDTableCard = ({
         },
         {
             columnHead: "Transaction Date",
-            path: "date_created",
+            path: "created_at",
             columnType: COLUMNTYPES.date
         },
         {
@@ -154,8 +154,8 @@ const ATDTableCard = ({
             employee_id: "",
             branch_id: "",
             deduction_id: "",
-            date_created_from: "",
-            date_created_to: "",
+            created_at_from: "", 
+            created_at_to: "",   
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -166,9 +166,9 @@ const ATDTableCard = ({
                     ? schema.required('Column type is required')
                     : schema.notRequired()
             ),
-            date_created_to: Yup.string().when('date_created_from', (keyWord, schema) => 
+            created_at_to: Yup.string().when('created_at_from', (keyWord, schema) => 
                 String(keyWord) !== ""
-                    ? schema.required('Transaction Date To is required')
+                    ? schema.required('Date Imported To is required')
                     : schema.notRequired()
             ),
         }),
@@ -204,7 +204,8 @@ const ATDTableCard = ({
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload, filter.reload, formHandler.values.employee_id]);
+    }, [paginator.reload, api.reload, filter.reload, formHandler.values.employee_id,
+         formHandler.values.created_at_from, formHandler.values.created_at_to]);
 
     const exportHandler = useFormik({
         initialValues: {
@@ -213,8 +214,8 @@ const ATDTableCard = ({
             employee_id: "",
             branch_id: "",
             deduction_id: "",
-            date_created_from: "",
-            date_created_to: "",
+            created_at_from: "", 
+            created_at_to: "",   
         },
         validateOnChange: false,
         onSubmit: async (values) => {
@@ -299,18 +300,18 @@ const ATDTableCard = ({
                             onChange={formHandler.handleChange}
                         />
                         <Textfield
-                            name="date_created_from"
-                            label="Transaction Date From"
+                            name="created_at_from"
+                            label="Date Imported From" 
                             type="date"
-                            value={formHandler.values.date_created_from}
+                            value={formHandler.values.created_at_from}
                             onChange={formHandler.handleChange}
                         />
                         <Textfield
-                            name="date_created_to"
-                            label="Transaction Date To"
+                            name="created_at_to"
+                            label="Date Imported To" 
                             type="date"
-                            value={formHandler.values.date_created_to}
-                            error={formHandler.errors.date_created_to}
+                            value={formHandler.values.created_at_to}
+                            error={formHandler.errors.created_at_to}
                             onChange={formHandler.handleChange}
                         />
                     </Grid>
