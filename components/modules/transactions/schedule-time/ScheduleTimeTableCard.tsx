@@ -127,6 +127,7 @@ const ScheduleTimeTableCard = ({
             ),
         }),
         onSubmit: async (values, { setSubmitting }) => {
+            paginator.setPage(1);
             api.triggerReload();
             filter.onReload();
             filter.setFilters(values);

@@ -3,7 +3,7 @@
 import Card from "@/components/common/Card";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import Button from "@/components/common/Button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -15,6 +15,7 @@ import Dropdown from "@/components/common/Dropdown";
 import { useModal } from "@/hooks/modal";
 import EmploymentStatusModal from "./EmploymentStatusModal";
 import Link from "next/link";
+import { useEffect } from "react"; 
 
 const EmploymentStatusTableCard = () => {
     const [reportData, setReport] = useState<any[]>([]);

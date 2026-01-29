@@ -17,7 +17,7 @@ const Button = ({
     loading = false,
     type = "button",
     disabled = false,
-    variant = "primary"
+    variant = "primary",
 }: ButtonInterface) => {
 
     const isDisabled = disabled || loading;
