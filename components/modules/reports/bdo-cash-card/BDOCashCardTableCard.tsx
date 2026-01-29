@@ -201,8 +201,8 @@ const BDOCashCardTableCard = () => {
                                 onClick={() => {
                                     formHandler.setFieldValue("action", "search");
                                     formHandler.submitForm();
-                                    api.triggerReload();
                                     paginator.setPage(1);
+                                    api.triggerReload();
                                 }}
                             />    
                         </div>

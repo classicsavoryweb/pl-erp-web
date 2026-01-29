@@ -229,8 +229,8 @@ const PayrollProofListTableCard = () => {
                                 label="Search"
                                 type="button"
                                 onClick={() => {
-                                    api.triggerReload();
                                     paginator.setPage(1);
+                                    api.triggerReload();
                                 }}
                             />    
                         </div>

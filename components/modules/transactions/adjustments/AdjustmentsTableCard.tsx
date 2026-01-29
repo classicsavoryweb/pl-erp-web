@@ -256,6 +256,7 @@ const AdjustmentsTableCard = () => {
             ),
         }),
         onSubmit: async (values, { setSubmitting }) => {
+            paginator.setPage(1);
             api.triggerReload();
             filter.onReload();
             filter.setFilters(values);
@@ -346,9 +347,7 @@ const AdjustmentsTableCard = () => {
                             <Button
                                 type="submit"
                                 label="Search"
-                                onClick={() => {
-                                    paginator.setPage(1);
-                                }}
+                                onClick={() => {}}
                             />    
                         </div>
                         <div className="w-[100px]">

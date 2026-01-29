@@ -233,6 +233,7 @@ const EmployeeDeductionsTableCard = ({
             ),
         }),
         onSubmit: async (values, { setSubmitting }) => {
+            paginator.setPage(1);
             api.triggerReload();
             filter.onReload();
             filter.setFilters(values);
@@ -345,9 +346,7 @@ const EmployeeDeductionsTableCard = ({
                             <Button
                                 type="submit"
                                 label="Search"
-                                onClick={() => {
-                                    paginator.setPage(1);
-                                }}
+                                onClick={() => {}}
                             />    
                         </div>
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&

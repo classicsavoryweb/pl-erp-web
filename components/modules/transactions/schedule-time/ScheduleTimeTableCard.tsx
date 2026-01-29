@@ -127,6 +127,7 @@ const ScheduleTimeTableCard = ({
             ),
         }),
         onSubmit: async (values, { setSubmitting }) => {
+            paginator.setPage(1);
             api.triggerReload();
             filter.onReload();
             filter.setFilters(values);
@@ -248,9 +249,7 @@ const ScheduleTimeTableCard = ({
                             <Button
                                 type="submit"
                                 label="Search"
-                                onClick={() => {
-                                    paginator.setPage(1);
-                                }}
+                                onClick={() => {}}
                             />    
                         </div>
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&

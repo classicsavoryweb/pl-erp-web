@@ -15,13 +15,11 @@ import Dropdown from "@/components/common/Dropdown";
 import { useModal } from "@/hooks/modal";
 import EmploymentStatusModal from "./EmploymentStatusModal";
 import Link from "next/link";
-import usePagination from "@/hooks/pagination"; 
 import { useEffect } from "react"; 
 
 const EmploymentStatusTableCard = () => {
     const [reportData, setReport] = useState<any[]>([]);
     const [dataSet, setDataSet] = useState<any[]>([]);
-    const paginator = usePagination(10); 
 
     const columnSettings = [
         {
@@ -98,13 +96,6 @@ const EmploymentStatusTableCard = () => {
         }
     });
 
-       useEffect(() => {
-            if (formHandler.values.branch_id && formHandler.values.month && formHandler.values.year) {
-        formHandler.submitForm();
-        }
-    }, [paginator.page, formHandler.values.branch_id, formHandler.values.month, formHandler.values.year]);
-
-
     const printModal = useModal();
 
     return (
@@ -165,9 +156,7 @@ const EmploymentStatusTableCard = () => {
                             <Button
                                 type="submit"
                                 label="Search"
-                                onClick={() => {
-                                    paginator.setPage(1);
-                                }}
+                                onClick={() => {}}
                             />    
                         </div>
                         <div className="w-[100px]">
@@ -189,7 +178,6 @@ const EmploymentStatusTableCard = () => {
                                 onClick={() => {
                                     setDataSet([]);
                                     formHandler.resetForm();
-                                    paginator.setPage(1);
                                 }}
                                 variant="secondary"
                             />    
@@ -203,7 +191,6 @@ const EmploymentStatusTableCard = () => {
                     dataSet={dataSet}
                     columnSettings={columnSettings}
                     loading={formHandler.isSubmitting}
-                    paginator={paginator} 
                 />
             </Card>
         </>
