@@ -70,7 +70,8 @@ const CreateLastPayModal = ({
                             total_deductions : resp.data.total_deductions,
                             last_pay : resp.data.last_pay,
                             year : resp.data.year,
-                            sss_loans: ""
+                            sss_loans: resp.data.sss_loans ?? "No",
+                            sss_loans_details: []
                         });
                         callBack();
                     } else {

@@ -71,6 +71,7 @@ const EditLastPayModal = ({
                             last_pay : resp.data.last_pay,
                             year : resp.data.year,
                             sss_loans: resp.data.sss_loans ?? "No",
+                            sss_loans_details: formHandler.values.sss_loans_details ?? [],
                         });
                         onUpdated?.();
                         modal.onClose();
