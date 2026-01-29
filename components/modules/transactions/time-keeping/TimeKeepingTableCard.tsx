@@ -356,6 +356,7 @@ const TimeKeepingTableCard = ({
                                     formHandler.setFieldValue("action", "search");
                                     formHandler.submitForm();
                                     api.triggerReload();
+                                    paginator.setPage(1);
                                 }}
                             />    
                         </div>

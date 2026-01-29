@@ -325,9 +325,7 @@ const TimeKeepingSummaryTableCard = ({
                                     formHandler.setFieldValue("action", "search");
                                     formHandler.submitForm();
                                     api.triggerReload();
-                                }}
-                                callBack={() => {
-                                paginator.setPage(1);
+                                    paginator.setPage(1);
                                 }}
                             />    
                         </div>

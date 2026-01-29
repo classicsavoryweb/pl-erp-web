@@ -230,9 +230,7 @@ const PayrollProofListTableCard = () => {
                                 type="button"
                                 onClick={() => {
                                     api.triggerReload();
-                                }}
-                                callBack={() => {
-                                paginator.setPage(1);
+                                    paginator.setPage(1);
                                 }}
                             />    
                         </div>

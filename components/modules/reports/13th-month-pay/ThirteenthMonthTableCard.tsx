@@ -273,10 +273,9 @@ const ThirteenthMonthTableCard = () => {
                             <Button
                                 type="submit"
                                 label="Search"
-                                onClick={() => {}}
-                                callBack={() => {
-                                paginator.setPage(1);
-                                }}
+                                onClick={() => {
+                                    paginator.setPage(1);
+                                }} 
                             />    
                         </div>
                         <div className="w-[100px]">
