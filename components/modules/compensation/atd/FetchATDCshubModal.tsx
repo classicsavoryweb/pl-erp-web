@@ -167,7 +167,7 @@ const FetchATDCshubModal = ({
             <div className="mt-3 flex items-center justify-between">
                 <p>Details</p>
                 <p>
-                    Total Count: {dataSet.length} | Total: {formatNumber(totalAmount)}
+                    Count: {dataSet.length} | Total: {formatNumber(totalAmount)}
                 </p>
             </div>
             <div className="max-h-[500px] overflow-hidden overflow-y-auto">
