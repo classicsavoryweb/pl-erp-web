@@ -36,7 +36,8 @@ const CreateLastPayModal = ({
             total_deductions : 0,
             last_pay : 0,
             year : 0,
-            sss_loans: ""
+            sss_loans: "No",
+            sss_loans_details: []
         },
         validationSchema: Yup.object().shape({
             tax_refund: Yup.number().required("Tax Refund is required").min(0, "Amount cannot be negative"),
@@ -106,10 +107,11 @@ const CreateLastPayModal = ({
                 value={selectedEmployee}
             />
             { show &&
-                <LastPayDetails
-                    employeeNumber={selectedEmployee.employee_number}
-                    formHandler={formHandler}
-                />
+            <LastPayDetails
+                employeeNumber={selectedEmployee.employee_number}
+                formHandler={formHandler}
+                isOpen={modal.isShowing}
+            />
             }
 
         </Modal>

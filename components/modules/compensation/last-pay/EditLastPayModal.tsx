@@ -13,12 +13,14 @@ import { editLastPayRecord } from "@/api/compensation/last-pay";
 
 interface ModalInterface {
     modal: any;
-    data: any
+    data: any;
+    onUpdated?: () => void;
 }
 
 const EditLastPayModal = ({
     modal,
-    data
+    data,
+    onUpdated
 }: ModalInterface
 ) => {
 
@@ -34,6 +36,8 @@ const EditLastPayModal = ({
             total_deductions : 0,
             last_pay : 0,
             year : 0,
+            sss_loans: "No",
+            sss_loans_details: [],
         },
         validationSchema: Yup.object().shape({
             tax_refund: Yup.number().required("Tax Refund is required").min(0, "Amount cannot be negative"),
@@ -66,7 +70,10 @@ const EditLastPayModal = ({
                             total_deductions : resp.data.total_deductions,
                             last_pay : resp.data.last_pay,
                             year : resp.data.year,
+                            sss_loans: resp.data.sss_loans ?? "No",
                         });
+                        onUpdated?.();
+                        modal.onClose();
                     } else {
                         toast.error(resp.data.message);
                     }
@@ -97,6 +104,7 @@ const EditLastPayModal = ({
             <LastPayDetails
                 employeeNumber={data.employee?.employee_number}
                 formHandler={formHandler}
+                isOpen={modal.isShowing}
             />
         </Modal>
     );

@@ -247,6 +247,9 @@ const LastPayTableCard = () => {
             <EditLastPayModal
                 modal={editModal}
                 data={data}
+                onUpdated={() => {
+                    api.triggerReload();
+                }}
             />
         </>
     );
