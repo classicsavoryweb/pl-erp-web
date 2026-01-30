@@ -252,9 +252,7 @@ const EmployeeDeductionsTableCard = ({
             page: paginator.page,
             per_page: paginator.per_page,
             ...filter.filters,
-            employee_id: formHandler.values.employee_id,
-            date_created_from: formHandler.values.date_created_from, 
-            date_created_to: formHandler.values.date_created_to, 
+            employee_id: formHandler.values.employee_id, 
         })
         .then((resp) => {
             if (resp.error) {
@@ -271,8 +269,7 @@ const EmployeeDeductionsTableCard = ({
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload, filter.reload, formHandler.values.employee_id, 
-        formHandler.values.date_created_from, formHandler.values.date_created_to ]);
+    }, [paginator.reload, api.reload, filter.reload, formHandler.values.employee_id]);
 
     const exportHandler = useFormik({
         initialValues: {
