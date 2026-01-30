@@ -56,6 +56,11 @@ export const adminRoutes: Route[] = [
                 pathname: "/administrators/database-backups",
                 permission: "view_database_backups"
             },
+            {
+                name: "Tardiness Disabler",
+                pathname: "/administrators/tardiness-disabler",
+                permission: "view_tardiness_disabler"
+            },
         ]
     },
 ];

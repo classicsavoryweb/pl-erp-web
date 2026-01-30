@@ -22,6 +22,7 @@ interface columnSetting {
 type ActionType = {
     label: string;
     onClick: (data: any) => void;
+    disabled?: boolean;
 };
 
 interface TableInterface {
