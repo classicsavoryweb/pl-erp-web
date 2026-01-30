@@ -221,6 +221,8 @@ const EmployeeDeductionsTableCard = ({
             key_word: "",
             column_type: "",
             employee_id: "",
+            date_created_from: "", 
+            date_created_to: "", 
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -231,6 +233,9 @@ const EmployeeDeductionsTableCard = ({
                     ? schema.required('Column type is required')
                     : schema.notRequired()
             ),
+            date_created_from: Yup.date().nullable(), 
+            date_created_to: Yup.date().nullable(), 
+
         }),
         onSubmit: async (values, { setSubmitting }) => {
             paginator.setPage(1);
@@ -248,6 +253,8 @@ const EmployeeDeductionsTableCard = ({
             per_page: paginator.per_page,
             ...filter.filters,
             employee_id: formHandler.values.employee_id,
+            date_created_from: formHandler.values.date_created_from, 
+            date_created_to: formHandler.values.date_created_to, 
         })
         .then((resp) => {
             if (resp.error) {
@@ -264,7 +271,8 @@ const EmployeeDeductionsTableCard = ({
         .finally(() => {
             api.setLoading(false);
         });
-    }, [paginator.reload, api.reload, filter.reload, formHandler.values.employee_id]);
+    }, [paginator.reload, api.reload, filter.reload, formHandler.values.employee_id, 
+        formHandler.values.date_created_from, formHandler.values.date_created_to ]);
 
     const exportHandler = useFormik({
         initialValues: {
@@ -340,6 +348,21 @@ const EmployeeDeductionsTableCard = ({
                             value={formHandler.values.key_word}
                             onChange={formHandler.handleChange}
                         />
+                        
+                        <Textfield
+                            name="date_created_from"
+                            label="Date Created From"
+                            type="date"
+                            value={formHandler.values.date_created_from}
+                            onChange={formHandler.handleChange}
+                        /> 
+                        <Textfield
+                            name="date_created_to"
+                            label="Date Created To"
+                            type="date"
+                            value={formHandler.values.date_created_to}
+                            onChange={formHandler.handleChange}
+                        /> 
                     </Grid>
                     <div className="flex justify-end gap-x-2">
                         <div className="w-[100px]">
