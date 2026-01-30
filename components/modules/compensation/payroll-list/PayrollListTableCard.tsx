@@ -73,6 +73,11 @@ const PayrollListTableCard = () => {
             }
         },
         {
+            columnHead: "Status",
+            path: "employee.status",
+            columnType: COLUMNTYPES.status,
+        },
+        {
             columnHead: "Payroll Status",
             path: "is_included",
             columnType: COLUMNTYPES.function,
