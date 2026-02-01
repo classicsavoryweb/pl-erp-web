@@ -6,6 +6,13 @@ import * as Yup from "yup";
 import confirm from "@/components/common/Confirm";
 import BranchDropDown from "../../generic/BranchDropDown";
 import { fetchBranchBiotimeLogs } from "@/api/transactions/actual-time";
+import Grid from "@/components/common/Grid";
+import Checkbox from "@/components/common/Checkbox";
+import Textfield from "@/components/common/Textfield";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import { useBranchStore } from "@/stores/useBranchStore";
+import { useState } from "react";
+import { useApiCall } from "@/hooks/api-call";
 
 interface FormModalInterface {
     modal: any;
@@ -15,13 +22,68 @@ const FetchBiotimeLogsModal = ({
     modal,
 }: FormModalInterface) => {
 
-    const formHandler = useFormik({
+    const [filteredBranches, setFilteredBranches] = useState<any[]>([]);
+    const {branches, loading, getBranches} = useBranchStore();
+    const api = useApiCall();
+
+    useAsyncEffect(() => {    
+        if (modal.isShowing) {
+            getBranches();
+            if (branches.length > 0) {
+                api.setDataSet(branches);
+                setFilteredBranches(branches);
+            }
+        }    
+    }, [modal.isShowing]);
+
+    const getIdsByBranchType = (typeLabel: string) =>
+        api.dataSet
+            .filter((branch: any) => String(branch.type).toLowerCase() === typeLabel.toLowerCase())
+            .map((branch: any) => branch.id);
+
+    const areAllTypeSelected = (typeLabel: string) => {
+        const ids = getIdsByBranchType(typeLabel);
+        return ids.length > 0 && ids.every((id: number) => formHandler.values.branch_id.includes(id));
+    };
+
+    const handleTypeToggle = (typeLabel: string, checked: boolean) => {
+        const ids = getIdsByBranchType(typeLabel);
+        const current = formHandler.values.branch_id;
+        if (checked) {
+            const merged = Array.from(new Set([...current, ...ids]));
+            formHandler.setFieldValue("branch_id", merged);
+        } else {
+            const removed = current.filter((id) => !ids.includes(id));
+            formHandler.setFieldValue("branch_id", removed);
+        }
+    };
+
+    const handleCheckboxChange = (e: React.ChangeEvent<HTMLInputElement>, value: number) => {
+        const current = [...formHandler.values.branch_id];
+        if (e.target.checked) {
+            if (!current.includes(value)) {
+                current.push(value);
+            }
+        } else {
+            const index = current.indexOf(value);
+            if (index !== -1) {
+                current.splice(index, 1);
+            }
+        }
+        formHandler.setFieldValue("branch_id", current);
+    };
+
+    const formHandler = useFormik<{
+        key_word: string,
+        branch_id: number[],
+    }>({
         initialValues: {
-            branch_id: ""
+            key_word: "",
+            branch_id: []
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            branch_id: Yup.string().required("Branch is required"),
+            branch_id: Yup.array().required("Branch is required"),
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
             const isConfirm = await confirm({
@@ -53,17 +115,75 @@ const FetchBiotimeLogsModal = ({
             onClose={() => {
                 modal.onClose();
             }}
-            size="md"
+            size="lg"
+            loading={loading}
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <BranchDropDown
-                    label="Branch"
-                    placeholder="select branch"
-                    name="branch_id"
-                    onChange={formHandler.handleChange}
-                    value={formHandler.values.branch_id}
-                    error={formHandler.errors.branch_id}
-                />
+                
+                <div className="py-3">
+                    <div className="flex justify-between items-center">
+                        <p>Branches</p>
+                        <div className="flex gap-2">
+                            <Checkbox
+                                label={"Branch"}
+                                value="branch"
+                                checked={areAllTypeSelected("Branch")}
+                                onChange={(e) => handleTypeToggle("Branch", e.target.checked)}
+                            />
+                            <Checkbox
+                                label={"Head Office"}
+                                value="head_office"
+                                checked={areAllTypeSelected("Head Office")}
+                                onChange={(e) => handleTypeToggle("Head Office", e.target.checked)}
+                            />
+                            <Checkbox
+                                label={"Select All"}
+                                value="select_all"
+                                checked={api.dataSet.length > 0 && formHandler.values.branch_id.length === api.dataSet.length}
+                                onChange={(e) => {
+                                    if (e.target.checked) {
+                                        const allBranchIds = api.dataSet.map((data) => data.id);
+                                        formHandler.setFieldValue("branch_id", allBranchIds);
+                                    } else {
+                                        formHandler.setFieldValue("branch_id", []);
+                                    }
+                                }}
+                            />
+                        </div>
+                    </div>
+                    <Textfield
+                        name="key_word"
+                        label=""
+                        placeholder="search for branch"
+                        value={formHandler.values.key_word}
+                        onChange={(e) => {
+                            formHandler.setFieldValue("key_word", e.target.value);
+                            const keyword = e.target.value.trim().toLowerCase();
+                            if (keyword) {
+                                const filtered = api.dataSet.filter((branch) =>
+                                    String(branch.name).toLowerCase().includes(keyword)
+                                );
+                                setFilteredBranches(filtered);
+                            } else {
+                                setFilteredBranches(api.dataSet);
+                            }
+                        }}
+                    />
+                    <div className="max-h-[350px] overflow-hidden overflow-y-auto p-3">
+                        <Grid cols={2}>
+                            {filteredBranches.map((data, key) => (
+                                <Checkbox
+                                    label={data.name}
+                                    key={key}
+                                    value={data.id}
+                                    checked={formHandler.values.branch_id.includes(data.id)}
+                                    onChange={(e) => handleCheckboxChange(e, data.id)}
+                                />
+                            ))}
+                        </Grid>
+                    </div>
+                </div>
+
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">
