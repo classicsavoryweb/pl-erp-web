@@ -113,6 +113,7 @@ const CreateReportCoeRequestForm = ({
                     }}
                     value={createFormHandler.values.employee}
                     error={createFormHandler.errors.employee_number}
+                    status="all"
                 />
                 { createFormHandler.values.employee &&
                     <div className="flex gap-x-2 items-center">
