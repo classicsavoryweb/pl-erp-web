@@ -11,7 +11,7 @@ import { createBranch } from "@/api/branches";
 import AccountDropDown from "../../generic/AccountDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import CompanyDropDown from "../../generic/CompanyDropDown";
-import EmployeeDropDown from "../../generic/EmployeeDropDown";
+import BranchEmployeeDropDown from "../../generic/BranchEmployeeDropDown";
 import Grid from "@/components/common/Grid";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
 import confirm from "@/components/common/Confirm";
@@ -214,7 +214,7 @@ const CreateBranchForm = ({
                 </Grid>
 
                 <Grid cols={2}>
-                    <EmployeeDropDown
+                    <BranchEmployeeDropDown
                         label="Branch OIC"
                         placeholder="select branch oic"
                         name="branch_head_employee_number"
@@ -223,7 +223,7 @@ const CreateBranchForm = ({
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.branch_head_employee_number}
                     />
-                    <EmployeeDropDown
+                    <BranchEmployeeDropDown
                         label="Group Head"
                         placeholder="select group head"
                         name="group_head_employee_number"
@@ -235,7 +235,7 @@ const CreateBranchForm = ({
                 </Grid>
 
                 <Grid cols={2}>
-                    <EmployeeDropDown
+                    <BranchEmployeeDropDown
                         label="Kitchen OIC"
                         placeholder="select kitchen oic"
                         name="kitchen_oic_employee_number"
@@ -243,7 +243,7 @@ const CreateBranchForm = ({
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.kitchen_oic_employee_number}
                     />
-                    <EmployeeDropDown
+                    <BranchEmployeeDropDown
                         label="Mancom"
                         placeholder="select mancom"
                         name="mancom_employee_number"
