@@ -96,6 +96,7 @@ const ViewCutOffModal = ({
                     value={data.pay_date}
                 />
             </Grid>
+
             { data.initializations &&
                 <>
                     <div className="flex items-center justify-between mt-5">
@@ -106,31 +107,34 @@ const ViewCutOffModal = ({
                             />
                         </div>
                     </div>
-                    <Timeline
-                        data={
-                            value.initializations &&
-                            JSON.parse(value.initializations)
-                                .flatMap((item: any) => {
-                                    const result: any[] = [];
 
-                                    if (item.initialized_at) {
-                                        result.push({
-                                            timeline_title: moment(item.initialized_at).format("MMM. DD, YYYY hh:mm A"),
-                                            description: `Initialized by ${item.initialized_by}`
-                                        });
-                                    }
+                    <div className="max-h-[500px] overflow-hidden overflow-y-auto">
+                        <Timeline
+                            data={
+                                value.initializations &&
+                                JSON.parse(value.initializations)
+                                    .flatMap((item: any) => {
+                                        const result: any[] = [];
 
-                                    if (item.finalized_at) {
-                                        result.push({
-                                            timeline_title: moment(item.finalized_at).format("MMM. DD, YYYY hh:mm A"),
-                                            description: `Finalized by ${item.finalized_by}`
-                                        });
-                                    }
+                                        if (item.initialized_at) {
+                                            result.push({
+                                                timeline_title: moment(item.initialized_at).format("MMM. DD, YYYY hh:mm A"),
+                                                description: `Initialized by ${item.initialized_by}`
+                                            });
+                                        }
 
-                                    return result;
-                                })
-                        }
-                    />
+                                        if (item.finalized_at) {
+                                            result.push({
+                                                timeline_title: moment(item.finalized_at).format("MMM. DD, YYYY hh:mm A"),
+                                                description: `Finalized by ${item.finalized_by}`
+                                            });
+                                        }
+
+                                        return result;
+                                    })
+                            }
+                        />
+                    </div>
                 </>
             }
         </Modal>
