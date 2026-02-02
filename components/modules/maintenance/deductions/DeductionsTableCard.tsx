@@ -57,6 +57,11 @@ const DeductionsTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Payroll Slip Deduction",
+            path: "payslip_description",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Category",
             path: "category",
             columnType: COLUMNTYPES.string
@@ -95,6 +100,7 @@ const DeductionsTableCard = () => {
                     end_loan_debit_id: data.end_loan_debit_id,
                     end_loan_credit_id: data.end_loan_credit_id,
                     status: data.status,
+                    payslip_description: data.payslip_description,
                 });
             }
         },
