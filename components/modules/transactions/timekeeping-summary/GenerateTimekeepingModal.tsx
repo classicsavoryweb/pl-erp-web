@@ -201,7 +201,7 @@ const GenerateTimeKeepingModal = ({
                         <Button
                             type="submit"
                             label="Submit"
-                            loading={loading}
+                            loading={formHandler.isSubmitting}
                             onClick={() => {}}
                         />
                     </div>              
