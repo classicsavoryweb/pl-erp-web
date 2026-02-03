@@ -7,9 +7,8 @@ import moment from 'moment';
 import Badge from "./Badge";
 import EmptyState from "./EmptyState";
 import Checkbox from "./Checkbox";
-import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
-import ExpandLessOutlinedIcon from '@mui/icons-material/ExpandLessOutlined';
 import { useEffect, useState } from "react";
+import SortColumn from "./SortColumn";
 
 interface columnSetting {
     columnHead: string;
@@ -61,7 +60,6 @@ const Table = ({
 
     const currentPage = paginator && paginator.paginationData.current_page;
     const totalPages = paginator && paginator.paginationData.last_page;
-    const [order, setOrder] = useState<"ASC" | "DESC" | "" >("");
     const [selectedRows, setSelectedRows] = useState<any[]>(initialSelectedRows);
     moment.locale('eng');
 
@@ -130,41 +128,12 @@ const Table = ({
                                                     {settings.columnHead}
                                                 </p>
                                                 { (canSortColumns && settings.sort) &&
-                                                    <div className="flex justify-start -space-x-1.5">
-                                                        <button
-                                                            className={`hover:cursor-pointer`}
-                                                            onClick={() => {
-                                                                setOrder("ASC");
-                                                                onSort && onSort({
-                                                                    sortColumn: settings.path,
-                                                                    sort: "ASC",
-                                                                    submit: true,
-                                                                });
-                                                            }}
-                                                        >
-                                                            <ExpandLessOutlinedIcon
-                                                                className={`${order === "ASC" ? "text-slate-100" : "text-slate-400"}`}
-                                                                style={{ width: '25px', height: '25px' }}
-                                                            />
-                                                        </button>
-
-                                                        <button
-                                                            className={`hover:cursor-pointer`}
-                                                            onClick={() => {
-                                                                setOrder("DESC");
-                                                                onSort && onSort({
-                                                                    sortColumn: settings.path,
-                                                                    sort: "DESC",
-                                                                    submit: true,
-                                                                });
-                                                            }}
-                                                        >
-                                                            <ExpandMoreOutlinedIcon
-                                                                className={`${order === "DESC" ? "text-slate-100" : "text-slate-400"}`}
-                                                                style={{ width: '25px', height: '25px' }}
-                                                            />
-                                                        </button>
-                                                    </div>
+                                                    <SortColumn
+                                                        sortColumn={(sortSetting) => {
+                                                            onSort && onSort(sortSetting);
+                                                        }}
+                                                        path={settings.path}
+                                                    />
                                                 }
                                             </div>
                                             :
