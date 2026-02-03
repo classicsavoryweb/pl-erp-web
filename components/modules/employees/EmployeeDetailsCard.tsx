@@ -91,7 +91,7 @@ const EmployeeDetailsCard = () => {
                                     />
                                     <EmployeeBasicInfo
                                         label="Separation Reason"
-                                        detail={employee.separation_reason}
+                                        detail={employee.separation?.description}
                                     />
                                 </>
                             }

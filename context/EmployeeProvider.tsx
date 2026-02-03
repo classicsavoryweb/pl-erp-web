@@ -52,6 +52,7 @@ interface EmployeeContextType {
         current_branch: any,
         station: any,
         employee_status: any,
+        separation: any,
         home_branch: any,
         branches: any[],
         positions: any[],
@@ -117,6 +118,7 @@ const EmployeeInitialValue = {
     home_branch: {},
     branches: [],
     positions: [],
+    separation: {},
     education: {
         employee_id: "",
         employee_number: "",
