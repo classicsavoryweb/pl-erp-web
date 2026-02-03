@@ -112,3 +112,13 @@ export const importOvertime = async (payload: {}) => {
 
     return resData;
 };
+
+export const bulkForceAdjustOvertimes = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/force-adjust-bulk-overtime`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};

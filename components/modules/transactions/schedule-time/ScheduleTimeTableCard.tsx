@@ -100,7 +100,7 @@ const ScheduleTimeTableCard = ({
                 const {start_time, end_time} = getCurrentCutoff();
                 const date = moment(data.date);
 
-                if (date.isBetween(moment(start_time), moment(end_time))) {
+                if (date.isBetween(moment(start_time), moment(end_time), undefined, "[]")) {
                     return (
                         <ActionDropDown
                             data={data}
