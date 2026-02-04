@@ -109,10 +109,6 @@ const PayrollProofListTableCard = () => {
         }),
         onSubmit: async (values, {setSubmitting}) => {
             if (values.action === "generate") {
-                if (values.bank_account_type_id === "0") {
-                    toast.error("Cannot generate converter for All Bank Account Types");
-                    return;
-                } 
                 const isConfirmed = await confirm
                 ({
                     title: "Payroll Prooflist",
@@ -161,7 +157,7 @@ const PayrollProofListTableCard = () => {
                         const a = document.createElement('a');
 
                         a.href = downloadUrl;
-                        a.download = `${values.bank_account_type_id === "0" ? "ALL" : (values.bank_account_type_id === "1" ? "CASH_CARD" : "SAVINGS")}_${values.type}_PROOFLIST_${moment().format('YYYY-MM-DD')}.xls`;
+                        a.download = `${formHandler.values.type}-PROOFLIST-${moment().format('YYYY-MM-DD')}.xls`;
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
@@ -186,7 +182,7 @@ const PayrollProofListTableCard = () => {
                             error={formHandler.errors.bank_account_type_id}
                             onChange={formHandler.handleChange}
                             withCashOption
-                            includeAllOption={true} 
+                            withAllOption 
                         />
                         <Dropdown
                             placeholder="select type"
@@ -239,7 +235,7 @@ const PayrollProofListTableCard = () => {
                                 }}
                             />    
                         </div>
-                        { Number(formHandler.values.bank_account_type_id) !== 0 &&
+                        { formHandler.values.bank_account_type_id !== "ALL" && Number(formHandler.values.bank_account_type_id) !== 0 &&
                             <div>
                                 <Button
                                     variant="success"
