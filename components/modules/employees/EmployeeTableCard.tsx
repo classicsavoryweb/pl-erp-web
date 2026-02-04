@@ -246,7 +246,7 @@ const EmployeeTableCard = () => {
                 isExpanded
                 hasExport
                 api={exportEmployeeList}
-                exportFileName={`EMPLOYEES-${moment().format('YYYY-MM-DD')}.xls`}
+                exportFileName={`EMPLOYEES-${moment().format('MM-DD-YYYY')}.xls`}
                 defaultColumnSelected="full_name"
                 dateLabel="Date Hired"
                 columnSettings={[
