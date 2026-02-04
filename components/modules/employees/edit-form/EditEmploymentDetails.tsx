@@ -6,7 +6,7 @@ import Grid from '@/components/common/Grid';
 import Textfield from '@/components/common/Textfield';
 import Badge from '@/components/common/Badge';
 import { getTenure } from '@/helper/tenure';
-import { useContext } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { EmployeeContext } from '@/context/EmployeeProvider';
 
 interface FormInterface {
@@ -20,6 +20,21 @@ const EditEmploymentDetails = ({
 }: FormInterface) => {
 
     const {employee} = useContext(EmployeeContext);
+    const [imagePreviewUrl, setImagePreviewUrl] = useState<string | null>(null);
+
+    useEffect(() => {
+        const file = formHandler.values.image;
+        if (file instanceof File) {
+            const objectUrl = URL.createObjectURL(file);
+            setImagePreviewUrl(objectUrl);
+            return () => {
+                URL.revokeObjectURL(objectUrl);
+            };
+        }
+
+        setImagePreviewUrl(null);
+        return undefined;
+    }, [formHandler.values.image]);
 
     return (
         <Card
@@ -34,11 +49,13 @@ const EditEmploymentDetails = ({
                     <div className="flex justify-between pb-5">
                         <div className="flex justify-start items-center gap-x-10">
                             <img
-                                src={ employee.profile_picture 
-                                    ? employee.profile_picture 
-                                    : employee.gender === "Male" 
-                                        ? "/images/profile-pic-male.svg"
-                                        : "/images/profile-pic-female.svg"
+                                src={ imagePreviewUrl 
+                                    ? imagePreviewUrl
+                                    : employee.profile_picture 
+                                        ? employee.profile_picture 
+                                        : employee.gender === "Male" 
+                                            ? "/images/profile-pic-male.svg"
+                                            : "/images/profile-pic-female.svg"
                                 }
                                 // width={140}
                                 // height={140}
