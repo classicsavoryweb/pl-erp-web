@@ -19,6 +19,7 @@ import Modal from "@/components/common/Modal";
 import Checkbox from "@/components/common/Checkbox";
 import moment from "moment";
 import FilterBranchDropDown from "../generic/FilterBranchDropDown";
+import AgencyDropDown from "../generic/AgencyDropDown";
 
 interface FilterInterface {
     hasDateRange?: boolean;
@@ -110,6 +111,7 @@ const FilterCard = ({
             position_id: "",
             employee_status_id: "",
             type: "",
+            agency: "", 
             year: moment().year(),
             month: "",
             sortColumn: "",
@@ -331,6 +333,7 @@ const FilterCard = ({
                         </>
                         }
                         { withEmployeeType &&
+                        <>
                             <EmployeeTypeDropDown
                                 placeholder="select employment type"
                                 label="Employment Type"
@@ -338,6 +341,17 @@ const FilterCard = ({
                                 value={formHandler.values.type}
                                 onChange={formHandler.handleChange}
                             />
+                            { formHandler.values.type === "Agency" &&
+                            <AgencyDropDown
+                                label="Agency"
+                                name="agency"
+                                placeholder="select agency"
+                                onChange={formHandler.handleChange}
+                                value={formHandler.values.agency}
+                                error={formHandler.errors.agency}
+                            />
+                            }
+                        </>
                         }
                         { withMonth &&
                             <Dropdown

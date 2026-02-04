@@ -182,6 +182,7 @@ const PayrollProofListTableCard = () => {
                             error={formHandler.errors.bank_account_type_id}
                             onChange={formHandler.handleChange}
                             withCashOption
+                            withAllOption 
                         />
                         <Dropdown
                             placeholder="select type"
@@ -234,7 +235,7 @@ const PayrollProofListTableCard = () => {
                                 }}
                             />    
                         </div>
-                        { Number(formHandler.values.bank_account_type_id) !== 0 &&
+                        { formHandler.values.bank_account_type_id !== "ALL" && Number(formHandler.values.bank_account_type_id) !== 0 &&
                             <div>
                                 <Button
                                     variant="success"
