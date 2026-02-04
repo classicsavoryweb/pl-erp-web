@@ -10,6 +10,7 @@ interface SelectInterface {
     error?: string;
     value?: string;
     required?: boolean;
+    disabled?: boolean; 
 }
 
 const TaxTypeDropDown = ({
@@ -19,7 +20,8 @@ const TaxTypeDropDown = ({
     onChange,
     error,
     value,
-    required = false
+    required = false,
+    disabled = false, 
 }: SelectInterface) => {
 
     return (
@@ -30,6 +32,7 @@ const TaxTypeDropDown = ({
             onChange={onChange}
             error={error}
             value={value}
+            disabled={disabled} 
             options={[
                 {
                     label: "Z",

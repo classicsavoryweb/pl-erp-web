@@ -25,6 +25,7 @@ const EditGovernmentIdentification = ({
                 value={formHandler.values.sss || ""}
                 placeholder='enter sss'
                 required
+                disabled 
             />
             <Textfield
                 onChange={formHandler.handleChange}
@@ -33,6 +34,7 @@ const EditGovernmentIdentification = ({
                 value={formHandler.values.pagibig || ""}
                 placeholder='enter pagibig'
                 required
+                disabled 
             />
             <Textfield
                 onChange={formHandler.handleChange}
@@ -41,6 +43,7 @@ const EditGovernmentIdentification = ({
                 value={formHandler.values.philhealth || ""}
                 placeholder='enter philhealth'
                 required
+                disabled
             />
             <Textfield
                 onChange={formHandler.handleChange}
@@ -49,6 +52,7 @@ const EditGovernmentIdentification = ({
                 placeholder='enter tin'
                 value={formHandler.values.tin || ""}
                 required
+                disabled 
             />
             <TaxTypeDropDown
                 onChange={formHandler.handleChange}
@@ -57,6 +61,7 @@ const EditGovernmentIdentification = ({
                 value={formHandler.values.tax_type || ""}
                 placeholder='select tax type'
                 required
+                disabled 
             />
         </Card>
     );
