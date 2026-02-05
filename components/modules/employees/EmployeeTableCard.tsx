@@ -88,6 +88,12 @@ const EmployeeTableCard = () => {
             sort: true
         },
         {
+            columnHead: "Employment Status",
+            path: "employee_status.description",
+            columnType: COLUMNTYPES.string,
+            sort: true
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status,
