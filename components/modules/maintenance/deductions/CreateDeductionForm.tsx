@@ -36,6 +36,7 @@ const CreateDeductionForm = ({
             end_loan_debit_id: "",
             end_loan_credit_id: "",
             status: "",
+            payslip_description: "", 
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -50,6 +51,7 @@ const CreateDeductionForm = ({
             end_loan_debit_id: Yup.string().required("End loan debit is required."),
             end_loan_credit_id: Yup.string().required("End loan credit is required."),
             status: Yup.string().required("Status is required."),
+            payslip_description: Yup.string().required("Payroll Slip Deduction is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -98,6 +100,16 @@ const CreateDeductionForm = ({
                     required
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.description}
+                />
+               <Textfield
+                    label="Payroll Slip Deduction"
+                    placeholder="enter payroll slip deduction"
+                    name="payslip_description"
+                    type="text"
+                    value={createFormHandler.values.payslip_description}
+                    required
+                    onChange={createFormHandler.handleChange}
+                    error={createFormHandler.errors.payslip_description} 
                 />
                 <Dropdown
                     label="Category"
