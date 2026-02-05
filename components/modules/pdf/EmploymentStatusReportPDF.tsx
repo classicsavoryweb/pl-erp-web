@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
         paddingTop: 50,
         paddingLeft: 30,
         paddingRight: 30,
-        fontSize: 8,
+        fontSize: 8.5, 
         lineHeight: 1.25,
         textAlign: 'justify'
     },
@@ -100,7 +100,7 @@ const EmploymentStatusReportPDF = ({
                         <Text
                             style={{
                                 fontWeight: "bold",
-                                fontSize: 14,
+                                fontSize: 15.5, 
                             }}
                         >
                             {process.env.NEXT_PUBLIC_COMPANY}
@@ -133,7 +133,7 @@ const EmploymentStatusReportPDF = ({
                     <Text style={{
                         ...styles.bold,
                         paddingTop: 15,
-                        fontSize: 11
+                        fontSize: 11.5 
                     }}>
                         Employment Status Report
                     </Text>
@@ -149,7 +149,8 @@ const EmploymentStatusReportPDF = ({
                 >
                     <Text
                         style={{
-                            width: 40
+                            width: 40,
+                            fontSize: 8.5 
                         }}
                     >
                         TO
@@ -160,13 +161,18 @@ const EmploymentStatusReportPDF = ({
                     <View>
                         <Text
                             style={{
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                fontSize: 8.5 
                             }}
                         >
-                            {data.branch_oic.formal_full_name}
+                            {data.branch_oic.formal_full_name} 
                         </Text>
-                        <Text>
-                            {data.branch_oic.current_position.description}/ {data.branch.name}
+                        <Text
+                            style={{
+                                fontSize: 8.5 
+                            }} 
+                        >
+                            {data.branch_oic.current_position.description}/ {data.branch.name} 
                         </Text>
                     </View>
                 </View>
@@ -181,7 +187,8 @@ const EmploymentStatusReportPDF = ({
                 >
                     <Text
                         style={{
-                            width: 40
+                            width: 40,
+                            fontSize: 8.5 
                         }}
                     >
                         FROM
@@ -192,12 +199,17 @@ const EmploymentStatusReportPDF = ({
                     <View>
                         <Text
                             style={{
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                fontSize: 8.5 
                             }}
                         >
-                            Mr. Wilhim T. Ong
+                            Mr. Wilhim T. Ong               
                         </Text>
-                        <Text>
+                         <Text
+                            style={{
+                                fontSize: 8.5 
+                            }} 
+                        >
                             Human Resources Head
                         </Text>
                     </View>
@@ -213,7 +225,8 @@ const EmploymentStatusReportPDF = ({
                 >
                     <Text
                         style={{
-                            width: 40
+                            width: 40,
+                            fontSize: 8.5 
                         }}
                     >
                         DATE
@@ -224,7 +237,8 @@ const EmploymentStatusReportPDF = ({
                     <View>
                         <Text
                             style={{
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                fontSize: 8.5 
                             }}
                         >
                             {moment(data.date).format('MMMM DD, YYYY')}
@@ -242,7 +256,8 @@ const EmploymentStatusReportPDF = ({
                 >
                     <Text
                         style={{
-                            width: 40
+                            width: 40,
+                            fontSize: 8.5 
                         }}
                     >
                         SUBJECT
@@ -253,7 +268,8 @@ const EmploymentStatusReportPDF = ({
                     <View>
                         <Text
                             style={{
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                fontSize: 8.5 
                             }}
                         >
                             Employment Status Report ({data.month + " " + data.year})
@@ -315,8 +331,8 @@ const EmploymentStatusReportPDF = ({
                                     <Text style={{ color: color }} hyphenationCallback={(word: string) => [word]} >{employee.full_name}</Text>
                                 </View>
                                 <View style={styles.tableCol}><Text>{employee.current_position.description}</Text></View>
-                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_start_date).format('MMMM DD, YYYY')}</Text></View>
-                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_end_date).format('MMMM DD, YYYY')}</Text></View>
+                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_start_date).format('MM/DD/YYYY')}</Text></View> 
+                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_end_date).format('MM/DD/YYYY')}</Text></View> 
                                 <View style={styles.tableCol}><Text hyphenationCallback={(word: string) => [word]}>{employee.latest_contract.remarks}</Text></View>
                             </View>
                         );
