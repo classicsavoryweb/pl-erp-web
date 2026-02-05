@@ -34,6 +34,15 @@ export const editBiotimePunches = async (payload: {}, id: string) => {
     return resData;
 };
 
+export const getBiotimePunchDeletionLogs = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/get-biotime-punch-deletion-logs/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
 export const createBiotimeLog = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: "/create-biotime-punch",

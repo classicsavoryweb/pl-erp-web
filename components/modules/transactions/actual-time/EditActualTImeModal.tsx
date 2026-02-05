@@ -1,17 +1,19 @@
 "use client";
 
-import { editBiotimePunches } from "@/api/transactions/actual-time";
+import { editBiotimePunches, getBiotimePunchDeletionLogs } from "@/api/transactions/actual-time";
 import Button from "@/components/common/Button";
 import confirm from "@/components/common/Confirm";
+import Accordion from "@/components/common/Accordion";
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import BranchDropDown from "../../generic/BranchDropDown";
 import Grid from "@/components/common/Grid";
+import Timeline from "../../generic/Timeline";
 
 interface FormModalInterface {
     modal: any;
@@ -35,6 +37,8 @@ const EditActualTimeModal = ({
     allowRemoveExisting,
     onSubmitCallBack
 }: FormModalInterface) => {
+    const [deletedLogs, setDeletedLogs] = useState<any[]>([]);
+    const [deletedLogsLoading, setDeletedLogsLoading] = useState<boolean>(false);
 
     const formHandler = useFormik<PunchFormValues>({
         initialValues: {
@@ -144,9 +148,59 @@ const EditActualTimeModal = ({
                 const firstPunchDate = moment(punchesWithFlag[0].punch_time).format('YYYY-MM-DD');
                 formHandler.setFieldValue("date", firstPunchDate);
                 formHandler.setFieldValue("punches", punchesWithFlag);
+                formHandler.setFieldValue("deleted_punch_ids", [], false);
             }
         } 
     }, [data, selectedLog]);
+
+    useEffect(() => {
+        if (!modal.isShowing || !selectedLog || selectedLog === "0") {
+            setDeletedLogs([]);
+            return;
+        }
+
+        let isMounted = true;
+        setDeletedLogsLoading(true);
+        getBiotimePunchDeletionLogs(selectedLog)
+            .then((resp) => {
+                if (!isMounted) return;
+                if (resp.error) {
+                    toast.error("Error fetching deleted punch logs");
+                    setDeletedLogs([]);
+                } else {
+                    setDeletedLogs(resp.data ?? []);
+                }
+            })
+            .catch(() => {
+                if (!isMounted) return;
+                toast.error("Error encountered");
+                setDeletedLogs([]);
+            })
+            .finally(() => {
+                if (!isMounted) return;
+                setDeletedLogsLoading(false);
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, [modal.isShowing, selectedLog]);
+
+    const deletedLogTimelineData = (deletedLogs || []).map((log: any) => {
+        const deletedAt = log?.created_at
+            ? moment(log.created_at).format("MMMM DD, YYYY h:mm:ss A")
+            : "—";
+        const punchTime = log?.properties?.punch_time
+            ? moment(log.properties.punch_time).format("MMMM DD, YYYY h:mm:ss A")
+            : "—";
+        const deletedBy = log?.causer?.proper_full_name || "—";
+        const branchName = log?.properties?.branch_name || "Head Office";
+
+        return {
+            timeline_title: `${deletedAt}`,
+            description: `${branchName}: ${punchTime}\nBy: ${deletedBy}`
+        };
+    });
 
     return (
         <Modal
@@ -242,6 +296,15 @@ const EditActualTimeModal = ({
                         </Grid>
                     </div>
                 ))}
+
+                <div className="mt-4">
+                    <Accordion title="Deleted Punch Logs">
+                        { deletedLogsLoading
+                            ? <p className="text-[12px] text-slate-500">Loading...</p>
+                            : <Timeline data={deletedLogTimelineData} />
+                        }
+                    </Accordion>
+                </div>
 
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <div className="flex justify-end gap-x-2">
