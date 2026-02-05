@@ -11,6 +11,7 @@ import Badge from "@/components/common/Badge";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "../../cards/FilterCard";
 import { getAllLastPays, postLastPay } from "@/api/compensation/last-pay";
+import { getEmployee } from "@/api/employee";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { useModal } from "@/hooks/modal";
 import CreateLastPayModal from "./CreateLastPayModal";
@@ -18,6 +19,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import { useState } from "react";
 import ViewLastPayModal from "./ViewLastPayModal";
 import EditLastPayModal from "./EditLastPayModal";
+import LastPayComputationModal from "./LastPayComputationModal";
 
 const LastPayTableCard = () => {
     const api = useApiCall();
@@ -27,6 +29,51 @@ const LastPayTableCard = () => {
     const createModal = useModal();
     const viewModal = useModal();
     const editModal = useModal();
+    const computationModal = useModal();
+
+    const enrichEmployeePositions = async (records: any[]) => {
+        const employeeNumbers = Array.from(
+            new Set(
+                (records ?? [])
+                    .map((item: any) => item?.employee?.employee_number)
+                    .filter(Boolean)
+            )
+        );
+
+        if (employeeNumbers.length === 0) return records;
+
+        const results = await Promise.all(
+            employeeNumbers.map(async (employeeNumber: string) => {
+                try {
+                    const resp = await getEmployee(employeeNumber);
+                    if (!resp.error && resp.data?.employee) {
+                        return [employeeNumber, resp.data.employee] as const;
+                    }
+                } catch {
+                    return null;
+                }
+                return null;
+            })
+        );
+
+        const employeeMap = new Map<string, any>(
+            results.filter(Boolean) as Array<readonly [string, any]>
+        );
+
+        return (records ?? []).map((record: any) => {
+            const employee = record?.employee;
+            const enriched = employeeMap.get(employee?.employee_number);
+            if (!enriched) return record;
+
+            return {
+                ...record,
+                employee: {
+                    ...employee,
+                    current_position: enriched.current_position ?? employee?.current_position,
+                },
+            };
+        });
+    };
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -35,11 +82,12 @@ const LastPayTableCard = () => {
             per_page: paginator.per_page,
             ...filter.filters
         })
-        .then((resp) => {
+        .then(async (resp) => {
             if (resp.error) {
                 toast.error("Error fetching last pay");
             } else {
-                api.setDataSet(resp.data.data);
+                const enrichedData = await enrichEmployeePositions(resp.data.data ?? []);
+                api.setDataSet(enrichedData);
                 paginator.setPage(resp.data.current_page);
                 paginator.setPaginationData(resp.data);
             }
@@ -114,6 +162,7 @@ const LastPayTableCard = () => {
                     case "Posted": 
                         actions = [
                             actionSettings[0],
+                            actionSettings[1],
                         ];
                         break;
                     case "Unposted":
@@ -121,6 +170,7 @@ const LastPayTableCard = () => {
                             actionSettings[0],
                             actionSettings[1],
                             actionSettings[2],
+                            actionSettings[3],
                         ];
                         break;
                 };
@@ -138,6 +188,13 @@ const LastPayTableCard = () => {
             label: "View",
             onClick: (data:any) => {
                 viewModal.onOpen();
+                setData(data);
+            }
+        },
+        {
+            label: "Computation PDF",
+            onClick: (data:any) => {
+                computationModal.onOpen();
                 setData(data);
             }
         },
@@ -250,6 +307,11 @@ const LastPayTableCard = () => {
                 onUpdated={() => {
                     api.triggerReload();
                 }}
+            />
+
+            <LastPayComputationModal
+                modal={computationModal}
+                data={data}
             />
         </>
     );
