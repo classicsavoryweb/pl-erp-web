@@ -118,9 +118,9 @@ const CoePDF = ({
                     <View style={styles.section}>
                         <Text hyphenationCallback={(word: string) => [word]}>
                             {INDENT}
-                            This certification is being issued upon the request of {data.gender === "Male" ? "Mr." : "Ms."} {data.last_name} {data.purpose === "whatever legal purpose it may serve" ? "for" : "in relation to"}{data.purpose !== "whatever legal purpose it may serve" && (data.gender === "Male" ? " his" : " her")}
+                            This certification is being issued upon the request of {data.gender === "Male" ? "Mr." : "Ms."} {normalizeLastName(data.last_name)} {data.purpose === "whatever legal purpose it may serve" ? "for" : "in relation to"}{data.purpose !== "whatever legal purpose it may serve" && (data.gender === "Male" ? " his" : " her")}
                             {" " + data.purpose}.
-                        </Text>
+                        </Text> 
                     </View>
                 </>}
 
