@@ -20,31 +20,44 @@ const LastPayComputationModal = ({
 }: LastPayComputationModalProps) => {
     const api = useApiCall();
     const [details, setDetails] = useState<any>({});
+    const [preparedByEmployee, setPreparedByEmployee] = useState<any>(null);
     const { userDetails } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         if (!modal.isShowing) return;
         const employeeNumber = data?.employee?.employee_number;
+        const preparerEmployeeNumber = userDetails?.employee_number;
         if (!employeeNumber) return;
 
         api.setLoading(true);
         Promise.all([
             getInitialLastPay(employeeNumber),
             getEmployee(employeeNumber),
+            preparerEmployeeNumber && preparerEmployeeNumber !== employeeNumber
+                ? getEmployee(preparerEmployeeNumber)
+                : Promise.resolve(null),
         ])
-            .then(([lastPayResp, employeeResp]) => {
+            .then(([lastPayResp, employeeResp, preparerResp]) => {
                 if (!lastPayResp.error) {
                     const employeeData = !employeeResp.error ? employeeResp.data?.employee : undefined;
                     setDetails({
                         ...lastPayResp.data,
                         employee: employeeData ?? lastPayResp.data?.employee,
                     });
+
+                    if (preparerEmployeeNumber === employeeNumber) {
+                        setPreparedByEmployee(employeeData ?? null);
+                    }
                 } else {
                     toast.error(lastPayResp.data?.message ?? "Error fetching last pay details");
                 }
 
                 if (employeeResp.error) {
                     toast.error(employeeResp.data?.message ?? "Error fetching employee details");
+                }
+
+                if (preparerResp && !preparerResp.error) {
+                    setPreparedByEmployee(preparerResp.data?.employee ?? null);
                 }
             })
             .catch(() => {
@@ -53,7 +66,7 @@ const LastPayComputationModal = ({
             .finally(() => {
                 api.setLoading(false);
             });
-    }, [modal.isShowing, data?.employee?.employee_number]);
+    }, [modal.isShowing, data?.employee?.employee_number, userDetails?.employee_number]);
 
     const preparedBy = useMemo(() => {
         if (userDetails?.proper_full_name) return userDetails.proper_full_name;
@@ -64,12 +77,12 @@ const LastPayComputationModal = ({
 
     const preparedByTitle = useMemo(() => {
         return (
-            userDetails?.current_position?.description
+            preparedByEmployee?.current_position?.description
+            ?? userDetails?.current_position?.description
             ?? userDetails?.position
-            ?? userDetails?.role_name
             ?? ""
         );
-    }, [userDetails]);
+    }, [preparedByEmployee, userDetails]);
 
     const mergedData = useMemo(() => {
         return {
