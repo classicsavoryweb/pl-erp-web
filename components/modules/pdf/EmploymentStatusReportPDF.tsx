@@ -2,6 +2,16 @@ import React from 'react';
 import { Document, Page, Text, View, PDFViewer, StyleSheet, Image } from '@react-pdf/renderer';
 import moment from 'moment';
 import _ from 'lodash';
+import { Font } from '@react-pdf/renderer';
+
+Font.register({
+  family: 'Tahoma',
+  fonts: [
+    { src: '/fonts/Tahoma.ttf', fontWeight: 'normal' },
+    { src: '/fonts/Tahoma-Bold.ttf', fontWeight: 'bold' },
+  ],
+}); 
+
 
 const styles = StyleSheet.create({
     fullPage: {
@@ -12,9 +22,9 @@ const styles = StyleSheet.create({
         paddingTop: 50,
         paddingLeft: 30,
         paddingRight: 30,
-        fontSize: 8,
+        fontSize: 8.5, 
         lineHeight: 1.25,
-        textAlign: 'justify'
+        textAlign: 'justify',
     },
     bold: {
         fontWeight: "bold"
@@ -27,13 +37,13 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignContent: "center",
         textAlign: "center",
-        paddingBottom: 20
+        paddingBottom: 20,
     },
     image: {
         width: 150,
     },
     linedText: {
-        textDecoration: "underline"
+        textDecoration: "underline",
     },
     boldedLinedText: {
         textDecoration: "underline",
@@ -44,7 +54,7 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         width: "100%",  
         flexDirection: "row",
-        gap: 5
+        gap: 5,
     },
     table: {
         width: "auto",
@@ -63,7 +73,8 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderRightWidth: 1,
         padding: 5,
-        textAlign: "center"
+        textAlign: "center",
+        fontWeight: 'bold',
     },
     tableCol: {
         width: "33.33%",
@@ -71,8 +82,16 @@ const styles = StyleSheet.create({
         borderBottomWidth: 1,
         borderRightWidth: 1,
         padding: 5,
-        textAlign: "center"
+        textAlign: "center",
     },
+    tahoma: {
+        fontFamily: 'Tahoma',
+    }, 
+    tahomaBold: {
+        fontFamily: 'Tahoma',
+        fontWeight: 'bold',
+    },
+
 });
 
 const INDENT = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
@@ -87,7 +106,7 @@ const EmploymentStatusReportPDF = ({
         <Document>
 
             { reports && reports.map((data, idx) => 
-                <Page size={[612, 936]} style={styles.page} key={idx}>
+                <Page size="A4" style={styles.page} key={idx}>
                 <View
                     style={styles.sectionCenter}
                 >   
@@ -100,7 +119,7 @@ const EmploymentStatusReportPDF = ({
                         <Text
                             style={{
                                 fontWeight: "bold",
-                                fontSize: 14,
+                                fontSize: 15.5, 
                             }}
                         >
                             {process.env.NEXT_PUBLIC_COMPANY}
@@ -109,7 +128,7 @@ const EmploymentStatusReportPDF = ({
                     <Text
                         style={{
                             marginTop: 10,
-                            fontSize: 9
+                            fontSize: 9.5 
                         }}
                     >
                         {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
@@ -117,7 +136,7 @@ const EmploymentStatusReportPDF = ({
                     <Text
                         style={{
                             marginTop: 1,
-                            fontSize: 9
+                            fontSize: 9.5 
                         }}
                     >
                         {process.env.NEXT_PUBLIC_COMPANY_CONTACT}
@@ -125,20 +144,20 @@ const EmploymentStatusReportPDF = ({
                      <Text
                         style={{
                             marginTop: 1,
-                            fontSize: 9
+                            fontSize: 9.5 
                         }}
                     >
                         {process.env.NEXT_PUBLIC_HR_EMAIL}
                     </Text>
                     <Text style={{
-                        ...styles.bold,
+                        ...styles.tahomaBold, 
                         paddingTop: 15,
-                        fontSize: 11
+                        fontSize: 11.5, 
                     }}>
                         Employment Status Report
                     </Text>
                 </View>
-
+            <View style={styles.tahoma}>
                 <View
                     style={{
                         paddingTop: 20,
@@ -149,7 +168,8 @@ const EmploymentStatusReportPDF = ({
                 >
                     <Text
                         style={{
-                            width: 40
+                            width: 40,
+                            fontSize: 8.5 
                         }}
                     >
                         TO
@@ -160,13 +180,18 @@ const EmploymentStatusReportPDF = ({
                     <View>
                         <Text
                             style={{
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                fontSize: 8.5,
                             }}
                         >
-                            {data.branch_oic.formal_full_name}
+                            {data.branch_oic.formal_full_name} 
                         </Text>
-                        <Text>
-                            {data.branch_oic.current_position.description}/ {data.branch.name}
+                        <Text
+                            style={{
+                                fontSize: 8.5 
+                            }} 
+                        >
+                            {data.branch_oic.current_position.description}/ {data.branch.name} 
                         </Text>
                     </View>
                 </View>
@@ -181,7 +206,8 @@ const EmploymentStatusReportPDF = ({
                 >
                     <Text
                         style={{
-                            width: 40
+                            width: 40,
+                            fontSize: 8.5 
                         }}
                     >
                         FROM
@@ -192,12 +218,17 @@ const EmploymentStatusReportPDF = ({
                     <View>
                         <Text
                             style={{
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                fontSize: 8.5 
                             }}
                         >
-                            Mr. Wilhim T. Ong
+                            Mr. Wilhim T. Ong               
                         </Text>
-                        <Text>
+                         <Text
+                            style={{
+                                fontSize: 8.5 
+                            }} 
+                        >
                             Human Resources Head
                         </Text>
                     </View>
@@ -213,7 +244,8 @@ const EmploymentStatusReportPDF = ({
                 >
                     <Text
                         style={{
-                            width: 40
+                            width: 40,
+                            fontSize: 8.5 
                         }}
                     >
                         DATE
@@ -224,7 +256,8 @@ const EmploymentStatusReportPDF = ({
                     <View>
                         <Text
                             style={{
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                fontSize: 8.5 
                             }}
                         >
                             {moment(data.date).format('MMMM DD, YYYY')}
@@ -242,7 +275,8 @@ const EmploymentStatusReportPDF = ({
                 >
                     <Text
                         style={{
-                            width: 40
+                            width: 40,
+                            fontSize: 8.5 
                         }}
                     >
                         SUBJECT
@@ -253,7 +287,8 @@ const EmploymentStatusReportPDF = ({
                     <View>
                         <Text
                             style={{
-                                fontWeight: "bold"
+                                fontWeight: "bold",
+                                fontSize: 8.5 
                             }}
                         >
                             Employment Status Report ({data.month + " " + data.year})
@@ -315,8 +350,8 @@ const EmploymentStatusReportPDF = ({
                                     <Text style={{ color: color }} hyphenationCallback={(word: string) => [word]} >{employee.full_name}</Text>
                                 </View>
                                 <View style={styles.tableCol}><Text>{employee.current_position.description}</Text></View>
-                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_start_date).format('MMMM DD, YYYY')}</Text></View>
-                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_end_date).format('MMMM DD, YYYY')}</Text></View>
+                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_start_date).format('MM/DD/YYYY')}</Text></View> 
+                                <View style={styles.tableCol}><Text>{moment(employee.latest_contract.contract_end_date).format('MM/DD/YYYY')}</Text></View> 
                                 <View style={styles.tableCol}><Text hyphenationCallback={(word: string) => [word]}>{employee.latest_contract.remarks}</Text></View>
                             </View>
                         );
@@ -424,7 +459,8 @@ const EmploymentStatusReportPDF = ({
                             </>
                         }
                     </View>
-                </View>
+                 </View>
+              </View>
             </Page>
             )}
         </Document>
