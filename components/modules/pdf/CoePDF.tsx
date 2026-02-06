@@ -54,10 +54,6 @@ const INDENT = '\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0\u00A0';
 interface CoeInterface {
     data: any;
 }
-const normalizeLastName = (lastName: string) => {
-    if (!lastName) return "";
-    return lastName.replace(/Ñ/g, "ñ");
-}; 
 
 const CoePDF = ({
     data
@@ -91,7 +87,7 @@ const CoePDF = ({
                             <View style={styles.section}>
                                 <Text style={styles.paragraph} hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
-                                    This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + normalizeLastName(data.last_name)}</Text> is an employee of <Text style={styles.bold}>{process.env.NEXT_PUBLIC_COMPANY}</Text> since {data.date_of_stay}. {data.gender === "Male" ? "He" : "She"} is currently holding the position
+                                    This is to certify that <Text style={styles.bold}>{data.gender === "Male" ? "Mr." : "Ms."} {data.first_name + " " + data.last_name}</Text> is an employee of <Text style={styles.bold}>{process.env.NEXT_PUBLIC_COMPANY}</Text> since {data.date_of_stay}. {data.gender === "Male" ? "He" : "She"} is currently holding the position
                                     of <Text style={styles.bold}>{data.current_position}</Text>.
                                 </Text>
                             </View> 
@@ -118,7 +114,7 @@ const CoePDF = ({
                     <View style={styles.section}>
                         <Text hyphenationCallback={(word: string) => [word]}>
                             {INDENT}
-                            This certification is being issued upon the request of {data.gender === "Male" ? "Mr." : "Ms."} {normalizeLastName(data.last_name)} {data.purpose === "whatever legal purpose it may serve" ? "for" : "in relation to"}{data.purpose !== "whatever legal purpose it may serve" && (data.gender === "Male" ? " his" : " her")}
+                            This certification is being issued upon the request of {data.gender === "Male" ? "Mr." : "Ms."} {data.last_name} {data.purpose === "whatever legal purpose it may serve" ? "for" : "in relation to"}{data.purpose !== "whatever legal purpose it may serve" && (data.gender === "Male" ? " his" : " her")}
                             {" " + data.purpose}.
                         </Text> 
                     </View>
