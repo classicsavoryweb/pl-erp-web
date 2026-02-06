@@ -5,8 +5,9 @@ import { getInitialLastPay } from "@/api/compensation/last-pay";
 import { getEmployee } from "@/api/employee";
 import { PDFViewer } from "@react-pdf/renderer";
 import { toast } from "react-toastify";
-import { useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import LastPayComputationPDF from "@/components/modules/pdf/LastPayComputationPDF";
+import { AuthContext } from "@/context/AuthProvider";
 
 interface LastPayComputationModalProps {
     modal: any;
@@ -19,6 +20,7 @@ const LastPayComputationModal = ({
 }: LastPayComputationModalProps) => {
     const api = useApiCall();
     const [details, setDetails] = useState<any>({});
+    const { userDetails } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         if (!modal.isShowing) return;
@@ -53,6 +55,22 @@ const LastPayComputationModal = ({
             });
     }, [modal.isShowing, data?.employee?.employee_number]);
 
+    const preparedBy = useMemo(() => {
+        if (userDetails?.proper_full_name) return userDetails.proper_full_name;
+        if (userDetails?.full_name) return userDetails.full_name;
+        const parts = [userDetails?.first_name, userDetails?.middle_name, userDetails?.last_name].filter(Boolean);
+        return parts.join(" ");
+    }, [userDetails]);
+
+    const preparedByTitle = useMemo(() => {
+        return (
+            userDetails?.current_position?.description
+            ?? userDetails?.position
+            ?? userDetails?.role_name
+            ?? ""
+        );
+    }, [userDetails]);
+
     const mergedData = useMemo(() => {
         return {
             ...details,
@@ -68,8 +86,10 @@ const LastPayComputationModal = ({
             total_deductions: data?.total_deductions ?? details?.total_deductions,
             last_pay: data?.last_pay ?? details?.last_pay,
             employee: details?.employee ?? data?.employee,
+            prepared_by: preparedBy || data?.prepared_by || details?.prepared_by,
+            prepared_by_title: preparedByTitle || data?.prepared_by_title || details?.prepared_by_title,
         };
-    }, [data, details]);
+    }, [data, details, preparedBy, preparedByTitle]);
 
     return (
         <Modal
