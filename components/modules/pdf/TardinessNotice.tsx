@@ -170,7 +170,7 @@ const TardinessNotice = ({
 								borderBottom: 1
 							}}
 						>
-						Mr. Wilhim T. Ong
+						{`${process.env.NEXT_PUBLIC_HR_PREFIX} ${process.env.NEXT_PUBLIC_HR_SIGNATORY}`} 
 						</Text>
 						<Text>Head of Human Resources</Text>
 						<Text style={{ fontStyle: "italic", fontSize: 6 }}>
