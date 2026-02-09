@@ -102,6 +102,16 @@ export const getEmployeeContractHistory = async (employeeNumber: string, payload
     return resData;
 };
 
+export const voidEmployeeContract = async (contractId: number) => {
+    const resData = await axiosHelper({
+        func_path: `/employee/contracts/${contractId}/void`,
+        method: 'POST',
+    });
+
+    return resData;
+};
+
+
 export const updateEmployee = async ( employeeNumber: string, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/update-employee/${employeeNumber}`,
