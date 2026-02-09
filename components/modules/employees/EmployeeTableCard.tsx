@@ -231,6 +231,10 @@ const EmployeeTableCard = () => {
             label: "Flexible Schedule",
             value: "schedule.flexible_schedule",
         },
+        {
+            label: "Age",
+            value: "age",
+        }
     ];
 
     return (
