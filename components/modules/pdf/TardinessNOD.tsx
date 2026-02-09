@@ -687,7 +687,7 @@ const TardinessNOD = ({
                             borderBottom: 1,
                         }}
                     >
-                        Mr. Wilhim T. Ong
+                        {`${process.env.NEXT_PUBLIC_HR_PREFIX} ${process.env.NEXT_PUBLIC_HR_SIGNATORY}`} 
                     </Text>
                     <Text style={{ fontStyle: "italic", fontSize: 7 }}>
                         Note: This document is computer generated. No signature is required.

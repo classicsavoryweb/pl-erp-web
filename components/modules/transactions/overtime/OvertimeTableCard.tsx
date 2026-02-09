@@ -26,7 +26,13 @@ import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
-import { approveBulkOvertime, exportAllOvertime, getAllOvertime, approveOvertime, unapproveOvertime, voidOvertime, forceAdjustOvertime, fetchOvertime } from "@/api/transactions/overtime";
+import {
+    exportAllOvertime,
+    getAllOvertime,
+    voidOvertime,
+    forceAdjustOvertime,
+    bulkForceAdjustOvertimes 
+} from "@/api/transactions/overtime";
 import ViewTimeKeepingModal from "./ViewTimeKeepingModal";
 import ChooseTimeKeepingModal from "./ChooseTimeKeepingModal";
 import FetchOvertimeModal from "./FetchOvertimeModal";
@@ -54,6 +60,7 @@ const OvertimeTableCard = ({
     const filter = useFilter();
     const [data, setData] = useState<any>({});
     const [dataSet, setDataSet] = useState<any[]>([]);
+    const [selectedOvertime, setSelectedOvertime] = useState<number[]>([]);
 
     const statusOption = [
         {
@@ -260,6 +267,33 @@ const OvertimeTableCard = ({
                 fetchModal.onOpen();
             }
         },
+        {
+            label: "Force Adjust Selected",
+            permissions: "force_adjust_all_transactions_overtime",
+            onClick: async () => {
+                const isConfirmed = await confirm({
+                    title: "Adjust Overtime",
+                    message: "Are you sure you want to adjust selected overtime?"
+                });
+
+                if (isConfirmed) {
+                    try {
+                        const resp = await bulkForceAdjustOvertimes({
+                            overtime_id: selectedOvertime
+                        });
+
+                        if (!resp.error) {
+                            toast.success(resp.data.message);
+                            api.triggerReload();
+                        } else {
+                            toast.error(resp.data.message);
+                        }
+                    } catch (error) {
+                        toast.error("Error encountered");
+                    }
+                }
+            }
+        }
     ];
 
     const formHandler = useFormik({
@@ -464,6 +498,11 @@ const OvertimeTableCard = ({
                     />
                 </div>
                 <Table
+                    resetRows={api.reload}
+                    withCheckBox
+                    onCheck={(overtimeIdArray) => {
+                        setSelectedOvertime(overtimeIdArray);
+                    }}
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
                     loading={api.loading}

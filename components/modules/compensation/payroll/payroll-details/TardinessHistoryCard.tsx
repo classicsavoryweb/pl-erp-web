@@ -18,6 +18,11 @@ const TardinessHistoryCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Year",
+            path: "year",
+            columnType: COLUMNTYPES.string,
+        },
+        {
             columnHead: "Month",
             path: "month",
             columnType: COLUMNTYPES.function,

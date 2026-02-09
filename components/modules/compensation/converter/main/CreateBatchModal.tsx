@@ -20,11 +20,13 @@ import { formatNumber } from "@/helper/amount";
 interface ModalInterface {
     modal: any;
     onSubmitCallback: () => void;
+    callBack: (resp: any) => void;
 }
 
 const CreateBatchModal = ({
     modal,
-    onSubmitCallback
+    onSubmitCallback,
+    callBack
 }: ModalInterface) => {
 
     const [dataSet, setDataset] = useState<any[]>([]);
@@ -188,6 +190,10 @@ const CreateBatchModal = ({
                                                 setDataset([]);
                                                 setSelectedTransactions([]);
                                                 modal.onClose();
+
+                                                if (resp.data.has_excluded_transactions) {
+                                                    callBack(resp);
+                                                }
                                             } else {
                                                 toast.error(resp.data.message);
                                             }

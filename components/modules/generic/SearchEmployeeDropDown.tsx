@@ -40,7 +40,7 @@ const SearchEmployeeDropDown = ({
             status={status}
             disabled={disabled}
             mapResponse={(emp: any) => ({
-                label: `${emp.last_name}, ${emp.first_name} ${emp.middle_name || ""}`,
+                label: `${emp.last_name}, ${emp.first_name} ${emp.middle_name || ""} - ${emp.employee_number}`,
                 value: emp,
             })}
             transformResponse={(resp: any) => resp?.data || []}

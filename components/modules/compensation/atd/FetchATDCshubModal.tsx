@@ -12,6 +12,8 @@ import { useState } from "react";
 import { createCSHubATDs, getCSHubATDS } from "@/api/compensation/employee-deductions";
 import BranchDropDown from "../../generic/BranchDropDown";
 import moment from "moment";
+import ATDDeductionDropDown from "../../generic/ATDDeductionDropDown";
+import { formatNumber } from "@/helper/amount";
 
 interface ModalInterface {
     modal: any;
@@ -27,11 +29,13 @@ const FetchATDCshubModal = ({
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
     const [resetRows, setReset] = useState<boolean>(false);
+    const totalAmount = dataSet.reduce((sum, item) => sum + Number(item?.amount ?? 0), 0);
 
     const formHandler = useFormik({
         initialValues: {
             branch_id : "",
             transaction_number : "",
+            deduction_id: "",
             date_from: moment().subtract(2, "month").startOf("month").format("YYYY-MM-DD"),
             date_to: moment().format("YYYY-MM-DD"),
         },
@@ -127,6 +131,13 @@ const FetchATDCshubModal = ({
                         value={formHandler.values.date_to}
                         error={formHandler.errors.date_to}
                     />
+                    <ATDDeductionDropDown
+                        label="Deduction Type"
+                        name="deduction_id"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.deduction_id}
+                        placeholder="select deduction"
+                    />
                     <BranchDropDown
                         label="Branch"
                         name="branch_id"
@@ -153,7 +164,12 @@ const FetchATDCshubModal = ({
                 </div>
             </form>
 
-            <p className="mt-3">Details</p>
+            <div className="mt-3 flex items-center justify-between">
+                <p>Details</p>
+                <p>
+                    Count: {dataSet.length} | Total: {formatNumber(totalAmount)}
+                </p>
+            </div>
             <div className="max-h-[500px] overflow-hidden overflow-y-auto">
                 <Table
                     dataSet={dataSet}

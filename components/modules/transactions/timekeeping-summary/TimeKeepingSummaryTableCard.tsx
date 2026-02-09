@@ -21,6 +21,9 @@ import Dropdown from "@/components/common/Dropdown";
 import moment from "moment";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
+import DropDownButtons from "@/components/common/DropDownButtons";
+import { useModal } from "@/hooks/modal";
+import GenerateTimeKeepingModal from "./GenerateTimekeepingModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -37,6 +40,7 @@ const TimeKeepingSummaryTableCard = ({
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
+    const generateModal= useModal();
 
     const columnSettings = [
         {
@@ -259,6 +263,15 @@ const TimeKeepingSummaryTableCard = ({
         }
     });
 
+    const actionSettings = [
+        {
+            label: "Generate Timekeeping",
+            onClick: () => {
+                generateModal.onOpen();
+            }
+        },
+    ];
+
     return (
         <>
             <Card>
@@ -331,15 +344,6 @@ const TimeKeepingSummaryTableCard = ({
                         </div>
                         <div className="w-[100px]">
                             <Button
-                                label="Generate"
-                                onClick={() => {
-                                    formHandler.setFieldValue("action", "generate");
-                                    formHandler.submitForm();
-                                }}
-                            />    
-                        </div>
-                        <div className="w-[100px]">
-                            <Button
                                 label="Reset"
                                 type="button"
                                 onClick={() => {
@@ -374,8 +378,13 @@ const TimeKeepingSummaryTableCard = ({
                     </div>
                 </form>
             </Card>
+
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Timekeeping Summary</p>
+                <div className="flex justify-end gap-x-3">
+                    <DropDownButtons
+                        actions={actionSettings}
+                    />
+                </div>
                 <Table
                     smallText
                     dataSet={api.dataSet}
@@ -384,6 +393,10 @@ const TimeKeepingSummaryTableCard = ({
                     paginator={paginator}
                 />
             </Card>
+
+            <GenerateTimeKeepingModal
+                modal={generateModal}
+            />
         </>
     );
 };

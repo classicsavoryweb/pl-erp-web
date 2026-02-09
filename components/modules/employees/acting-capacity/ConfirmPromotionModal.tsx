@@ -106,7 +106,7 @@ const ConfirmPromotionModal = ({
                 />
 
                 <div className="flex justify-between items-start">
-                    <p className=" font-semibold text-gray-500">
+                    <p className="font-semibold text-gray-500 dark:text-gray-300">
                         Attachments
                     </p>
                     <div>

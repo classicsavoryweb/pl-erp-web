@@ -42,6 +42,16 @@ export const getEmployees = async (payload?: {}) => {
     return resData;
 };
 
+export const getBranchEmployees = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-branch-employees',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const addEmployee = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/add-employee',

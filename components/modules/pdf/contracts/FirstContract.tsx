@@ -423,7 +423,7 @@ const FirstContract = ({
                             textAlign: "center"
                         }}
                     >
-                        WILHIM T. ONG
+                        {process.env.NEXT_PUBLIC_HR_SIGNATORY?.toUpperCase()}
                     </Text>
                 </View>
 

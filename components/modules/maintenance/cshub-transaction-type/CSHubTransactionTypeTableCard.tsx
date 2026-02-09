@@ -52,6 +52,11 @@ const CSHubTransactionTypeTableCard = () => {
 
     const columnSettings = [
         {
+            columnHead: "ID",
+            path: "id",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Description",
             path: "description",
             columnType: COLUMNTYPES.string

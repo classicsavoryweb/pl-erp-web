@@ -25,7 +25,7 @@ const EditEmergencyContactDetails = ({
                 value={formHandler.values.emergency_contact_name || ""}
                 placeholder='enter name'
                 required
-                disabled
+                disabled={formHandler.values.type == "Agency"}
             />
             <Textfield
                 onChange={formHandler.handleChange}
@@ -34,7 +34,7 @@ const EditEmergencyContactDetails = ({
                 placeholder='enter contact number'
                 value={formHandler.values.emergency_contact_number || ""}
                 required
-                disabled
+                disabled={formHandler.values.type == "Agency"}
             />
             <Textfield
                 onChange={formHandler.handleChange}
@@ -43,7 +43,7 @@ const EditEmergencyContactDetails = ({
                 placeholder='enter relationship'
                 value={formHandler.values.emergency_contact_relationship || ""}
                 required
-                disabled
+                disabled={formHandler.values.type == "Agency"}
             />
             <TextArea
                 onChange={formHandler.handleChange}
@@ -52,7 +52,7 @@ const EditEmergencyContactDetails = ({
                 placeholder='enter address'
                 value={formHandler.values.emergency_contact_address || ""}
                 required
-                disabled
+                disabled={formHandler.values.type == "Agency"}
             />
         </Card>
     );

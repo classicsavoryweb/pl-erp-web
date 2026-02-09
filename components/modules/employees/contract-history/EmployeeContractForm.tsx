@@ -80,16 +80,6 @@ const EmployeeContractForm = ({
                     if (!value || !contract_start_date) return true;
 
                     return moment(value).isAfter(moment(contract_start_date));
-                })
-                .test(
-                'same-day',
-                'Contract end date must be the same day as the start date',
-                function (value) {
-                    const { contract_start_date } = this.parent;
-                    if (!value || !contract_start_date) return true;
-                    const isSame = moment(value).format("DD") === moment(contract_start_date).format("DD"); 
-
-                    return isSame;
                 }),
             status: Yup.string().required("Status is required"),
             employee_status: Yup.string().when("status", (status, schema) => 

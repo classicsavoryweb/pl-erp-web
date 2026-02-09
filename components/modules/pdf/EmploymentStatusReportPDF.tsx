@@ -222,7 +222,7 @@ const EmploymentStatusReportPDF = ({
                                 fontSize: 8.5 
                             }}
                         >
-                            Mr. Wilhim T. Ong               
+                            {`${process.env.NEXT_PUBLIC_HR_PREFIX} ${process.env.NEXT_PUBLIC_HR_SIGNATORY}`}               
                         </Text>
                          <Text
                             style={{

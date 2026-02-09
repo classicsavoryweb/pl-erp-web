@@ -10,6 +10,7 @@ import { toast } from "react-toastify";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import { approveBulkTardiness, approveTardiness, exportReportTardiness, getAllReportsTardiness, getNTEDetaills, sendTardinessNTE } from "@/api/reports/reports-tardiness";
+import { getAllTardinessDisablers } from "@/api/tardiness-disabler";
 import Link from "next/link";
 import Badge from "@/components/common/Badge";
 import ActionDropDown from "@/components/common/ActionDropDown";
@@ -34,6 +35,7 @@ const TardinessTableCard = () => {
     const paginator = usePagination();
     const importModal = useModal();
     const [id, setId] = useState<number>(0);
+    const [disabledMonths, setDisabledMonths] = useState<any[]>([]);
     const editModal = useModal();
     const voidModal = useModal();
     const filter = useFilter();
@@ -65,6 +67,44 @@ const TardinessTableCard = () => {
             api.setLoading(false);
         });
     }, [paginator.reload, api.reload, filter.reload]);
+
+    useAsyncEffect(() => {
+        getAllTardinessDisablers({
+            only_disabled: true
+        })
+        .then((resp) => {
+            if (!resp.error) {
+                setDisabledMonths(resp.data);
+            }
+        })
+        .catch(() => {
+        });
+    }, [api.reload]);
+
+    const isMonthDisabled = (month: number, year: number, list = disabledMonths) => {
+        const m = Number(month);
+        const y = Number(year);
+        return list.some((item) => Number(item.month) === m && Number(item.year) === y && item.is_disabled);
+    };
+
+    const isMonthDisabledAsync = async (month: number, year: number) => {
+        if (disabledMonths.length > 0) {
+            return isMonthDisabled(month, year);
+        }
+
+        const resp = await getAllTardinessDisablers({ only_disabled: true });
+        if (!resp.error) {
+            setDisabledMonths(resp.data);
+            return isMonthDisabled(month, year, resp.data);
+        }
+
+        return false;
+    };
+
+    const shouldBlockAction = async (data: any, label: string) => {
+        if (!["Edit", "Approve", "Void"].includes(label)) return false;
+        return await isMonthDisabledAsync(data.month, data.year);
+    };
 
     const columnSettings = [
         {
@@ -241,13 +281,21 @@ const TardinessTableCard = () => {
         {
             label: "Edit",
             onClick: async (data: any) => {
+                if (await shouldBlockAction(data, "Edit")) {
+                    toast.error("This Month is Disabled");
+                    return;
+                }
                 setId(data.id);
                 editModal.onOpen();
             }
         },
-                {
+        {
             label: "Approve",
             onClick: async (data: any) => {
+                if (await shouldBlockAction(data, "Approve")) {
+                    toast.error("This Month is Disabled");
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: "Approve Tardiness",
                     message: `Are you sure you want to approve the tardiness of ${data?.employee?.full_name}?`,
@@ -270,6 +318,10 @@ const TardinessTableCard = () => {
         {
             label: "Void",
             onClick: async (data: any) => {
+                if (await shouldBlockAction(data, "Void")) {
+                    toast.error("This Month is Disabled");
+                    return;
+                }
                 setId(data.id);
                 voidModal.onOpen();
                 api.setData(data);
@@ -332,9 +384,9 @@ const TardinessTableCard = () => {
         },
     ];
 
-    const approveBulk = useFormik({
+    const approveBulk = useFormik<{ tardiness_id: number[] }>({
         initialValues: {
-            tardiness_id: []
+            tardiness_id: [] as number[]
         },
         validateOnChange: false,
         onSubmit:async (values, {resetForm}) => {
@@ -368,6 +420,22 @@ const TardinessTableCard = () => {
         {
             label: "Approve Selected",
             onClick: async () => {
+                let disabledList = disabledMonths;
+                if (disabledList.length === 0) {
+                    const resp = await getAllTardinessDisablers({ only_disabled: true });
+                    if (!resp.error) {
+                        disabledList = resp.data;
+                        setDisabledMonths(resp.data);
+                    }
+                }
+
+                const hasDisabled = api.dataSet?.some((row: any) => {
+                    return approveBulk.values.tardiness_id.includes(Number(row.id)) && isMonthDisabled(row.month, row.year, disabledList);
+                });
+                if (hasDisabled) {
+                    toast.error("This Month is Disabled");
+                    return;
+                }
                 const isConfirm = await confirm({
                     title: "Approve Bulk Tardiness",
                     message: "Are you sure you want to approve this tardiness?"

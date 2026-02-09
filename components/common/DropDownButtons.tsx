@@ -6,6 +6,7 @@ import { useEffect, useRef, useState } from 'react';
 type ActionType = {
     label: string;
     onClick: () => void;
+    disabled?: boolean;
 };
 
 interface DropdownInterface {
@@ -52,18 +53,28 @@ const DropDownButtons = ({
             
             { toggle &&
                  <div className="absolute flex flex-col items-start w-full z-50 bg-gray-200 shadow-lg dark:bg-neutral-800">
-                    {actions.map((action, idx) => (
-                        <button
-                            key={idx}
-                            onClick={() => {
-                                action.onClick();
-                                setToggle(false);
-                            }}
-                            className="py-2 px-3 hover:cursor-pointer border-b-1 border-slate-300 w-full text-left hover:bg-gray-300 dark:hover:text-gray-600 dark:border-neutral-700"
-                        >
-                            {action.label}
-                        </button>
-                    ))}
+                    {actions.map((action, idx) => {
+                        const isDisabled = action.disabled === true;
+
+                        return (
+                            <button
+                                key={idx}
+                                disabled={isDisabled}
+                                onClick={() => {
+                                    if (isDisabled) return;
+                                    action.onClick();
+                                    setToggle(false);
+                                }}
+                                className={`
+                                    py-2 px-3 border-b-1 border-slate-300 w-full text-left
+                                    ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:cursor-pointer hover:bg-gray-300"}
+                                    dark:hover:text-gray-600 dark:border-neutral-700
+                                `}
+                            >
+                                {action.label}
+                            </button>
+                        );
+                    })}
                 </div>
             }
         </div>

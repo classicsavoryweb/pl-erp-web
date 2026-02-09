@@ -48,12 +48,14 @@ const EmployeeTableCard = () => {
         {
             columnHead: "Employee Number",
             path: "employee_number",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Biometric Number",
             path: "biometric_number",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Employee Name",
@@ -65,21 +67,31 @@ const EmployeeTableCard = () => {
             columnHead: "Agency",
             path: "agency.name",
             columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Position",
             path: "current_position.description",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Branch",
             path: "current_branch.name",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Date Hired",
             path: "date_hired",
-            columnType: COLUMNTYPES.date
+            columnType: COLUMNTYPES.date,
+            sort: true
+        },
+        {
+            columnHead: "Employment Status",
+            path: "employee_status.description",
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Status",

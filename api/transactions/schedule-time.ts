@@ -34,6 +34,16 @@ export const getTransactionsScheduleTime = async (payload?: {}) => {
     return resData;
 };
 
+export const transferTimeKeepingBranch = async (payload: {}, schedule_id : number | string) => {
+    const resData = await axiosHelper({
+        func_path: `/transfer-timekeeping-branch/${schedule_id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const validateImportTransactionsScheduleTime = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/validate-import-transactions-schedule-time',

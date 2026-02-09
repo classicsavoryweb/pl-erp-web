@@ -26,6 +26,8 @@ import { useFilter } from "@/hooks/use-filter";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import FetchScheduleModal from "./FetchScheduleModal";
+import ActionDropDown from "@/components/common/ActionDropDown";
+import TransferTimeKeepingBranchModal from "./TransferTimeKeepingBranchModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -43,6 +45,7 @@ const ScheduleTimeTableCard = ({
     const api = useApiCall();
     const importModal = useModal();
     const fetchModal = useModal();
+    const transferModal = useModal();
     const paginator = usePagination(20);
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
@@ -88,6 +91,34 @@ const ScheduleTimeTableCard = ({
             columnHead: "Check Out",
             path: "check_out",
             columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Action",
+            path: "check_out",
+            columnType: COLUMNTYPES.function,
+            function: (data:any) => {
+                const {start_time, end_time} = getCurrentCutoff();
+                const date = moment(data.date);
+
+                if (date.isBetween(moment(start_time), moment(end_time), undefined, "[]")) {
+                    return (
+                        <ActionDropDown
+                            data={data}
+                            actions={[
+                                {
+                                    label: "Transfer Branch",
+                                    onClick: (data) => {
+                                        transferModal.onOpen();
+                                        api.setData(data);
+                                    }
+                                }
+                            ]}
+                        />
+                    );
+                }
+
+                return "—";
+            }
         }
     ];
 
@@ -309,6 +340,14 @@ const ScheduleTimeTableCard = ({
 
             <FetchScheduleModal
                 modal={fetchModal}
+            />
+
+            <TransferTimeKeepingBranchModal
+                modal={transferModal}
+                data={api.data}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                }}
             />
         </>
     );
