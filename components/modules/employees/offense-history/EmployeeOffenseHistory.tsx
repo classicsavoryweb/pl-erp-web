@@ -81,6 +81,11 @@ const EmployeeOffenseHistory = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Sanction",
+            path: "sanction.description",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Voided",
             path: "voided",
             columnType: COLUMNTYPES.function,
