@@ -232,7 +232,7 @@ const PayrollProofListTableCard = () => {
                                 onClick={() => {
                                     paginator.setPage(1);
                                     if (formHandler.values.bank_account_type_id === "ALL") {
-                                     paginator.setPerPage(9999); 
+                                        paginator.setPerPage(9999); 
                                     } else {
                                         paginator.setPerPage(10); 
                                     }
