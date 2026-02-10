@@ -12,7 +12,7 @@ import { useContext, useState } from "react";
 import Badge from "@/components/common/Badge";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
-import { getAllTransactionsActualTime } from "@/api/transactions/actual-time";
+import { deleteBiotimeLog, getAllTransactionsActualTime } from "@/api/transactions/actual-time";
 import ActualTimeModal from "./ActualTimeModal";
 import EditActualTimeModal from "./EditActualTImeModal";
 import DropDownButtons from "@/components/common/DropDownButtons";
@@ -143,6 +143,32 @@ const ActualTimeTableCard = ({
                 setSelectedLog(data.id);
                 setData(data.punches);
                 editModal.onOpen();
+            }
+        },
+        {
+            label: "Delete",
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Delete Log",
+                    message: "Are you sure you want to delete this actual time log?"
+                });
+
+                if (!isConfirmed) {
+                    return;
+                }
+
+                deleteBiotimeLog(String(data.id))
+                .then((resp) => {
+                    if (!resp.error) {
+                        toast.success(resp.data?.message ?? "Log deleted");
+                        api.triggerReload();
+                    } else {
+                        toast.error(resp.data?.message ?? "Unable to delete log");
+                    }
+                })
+                .catch(() => {
+                    toast.error("Error encountered");
+                });
             }
         },
     ];
