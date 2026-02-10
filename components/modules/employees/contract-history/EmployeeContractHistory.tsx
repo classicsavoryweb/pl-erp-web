@@ -17,6 +17,8 @@ import PrintExtensionContractModal from "./PrintExtensionContractModal";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import confirm from "@/components/common/Confirm";
 import moment from "moment";
+import { voidEmployeeContract } from "@/api/employee";
+
 
 const EmployeeContractHistory = () => {
     const params = useParams();
@@ -113,19 +115,40 @@ const EmployeeContractHistory = () => {
                         }
                     },
                     {
-                        label: "Print Contract",//initial contract [1]
+                        label: "Print Contract",
                         onClick: () => {
                             setId(data.id);
                             initialContractModal.onOpen();
                         }
-                    },//extension contract [2]
+                    },
                     {
-                        label: "Print Contract",
+                        label: "Print Contract",//initial contract [1]
                         onClick: () => {
                             extensionContractModal.onOpen();
                             setId(data.id);
                         }
-                    },
+                    },//extension contract [2]
+                    {
+                        label: "Void", 
+                        onClick: async () => {
+                            const isConfirmed = await confirm({
+                            title: "Void Contract",
+                            message: "Are you sure you want to void this contract?"
+                        });
+                        if (!isConfirmed) return;
+
+                            api.setLoading(true);
+                        try {
+                             await voidEmployeeContract(data.id);
+                            toast.success("Contract voided successfully");
+                            api.triggerReload(); 
+                        } catch (err) {
+                            toast.error("Failed to void contract");
+                        } finally {
+                            api.setLoading(false);
+                            }
+                        }
+                    }       
                 ];
 
                 let actions = contractAction;
@@ -155,6 +178,11 @@ const EmployeeContractHistory = () => {
                         contractAction[1]
                     ];
                 }
+                if (data.status !== "voided") {
+                    const voidAction = contractAction.find(a => a.label === "Void");
+                if (voidAction) actions.push(voidAction);
+            }
+
 
                 return (
                     <ActionDropDown
