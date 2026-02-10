@@ -20,35 +20,37 @@ const ContributionCard = () => {
     const canEdit = payrollDetails.status !== "final" && permissions.includes("perform_compensation_payroll");
     const isEditable = canEdit && isEditing;
 
-    const fields = [
-        { label: "EE SSS", name: "employee_sss" },
-        { label: "ER SSS", name: "employer_sss" },
-        { label: "EE Pagibig", name: "employee_pagibig" },
-        { label: "ER Pagibig", name: "employer_pagibig" },
-        { label: "EE Philhealth", name: "employee_philhealth" },
-        { label: "ER Philhealth", name: "employer_philhealth" },
-        { label: "Withholding Tax", name: "withholding_tax" },
-    ] as const;
+    type ContributionFormValues = {
+        employee_sss: number | string;
+        employer_sss: number | string;
+        employee_pagibig: number | string;
+        employer_pagibig: number | string;
+        employee_philhealth: number | string;
+        employer_philhealth: number | string;
+        withholding_tax: number | string;
+    };
 
-    type ContributionField = (typeof fields)[number]["name"];
-
-    const initialValues = fields.reduce((acc, field) => {
-        acc[field.name] = payrollDetails[field.name] ?? 0;
-        return acc;
-    }, {} as Record<ContributionField, number | string>);
-
-    const validationSchema = Yup.object(
-        fields.reduce((acc, field) => {
-            acc[field.name] = Yup.number().min(0, "Must be 0 or higher").required("Required");
-            return acc;
-        }, {} as Record<string, Yup.NumberSchema>)
-    );
-
-    const formHandler = useFormik({
+    const formHandler = useFormik<ContributionFormValues>({
         enableReinitialize: true,
-        initialValues,
+        initialValues: {
+            employee_sss: payrollDetails.employee_sss ?? 0,
+            employer_sss: payrollDetails.employer_sss ?? 0,
+            employee_pagibig: payrollDetails.employee_pagibig ?? 0,
+            employer_pagibig: payrollDetails.employer_pagibig ?? 0,
+            employee_philhealth: payrollDetails.employee_philhealth ?? 0,
+            employer_philhealth: payrollDetails.employer_philhealth ?? 0,
+            withholding_tax: payrollDetails.withholding_tax ?? 0,
+        },
         validateOnChange: false,
-        validationSchema,
+        validationSchema: Yup.object().shape({
+            employee_sss: Yup.number().min(0, "Must be 0 or higher").required("Required"),
+            employer_sss: Yup.number().min(0, "Must be 0 or higher").required("Required"),
+            employee_pagibig: Yup.number().min(0, "Must be 0 or higher").required("Required"),
+            employer_pagibig: Yup.number().min(0, "Must be 0 or higher").required("Required"),
+            employee_philhealth: Yup.number().min(0, "Must be 0 or higher").required("Required"),
+            employer_philhealth: Yup.number().min(0, "Must be 0 or higher").required("Required"),
+            withholding_tax: Yup.number().min(0, "Must be 0 or higher").required("Required"),
+        }),
         onSubmit: async (values, { setSubmitting }) => {
             const isConfirmed = await confirm({
                 title: "Update Contributions",
@@ -77,13 +79,7 @@ const ContributionCard = () => {
         }
     });
 
-    useEffect(() => {
-        if (!canEdit) {
-            setIsEditing(false);
-        }
-    }, [canEdit]);
-
-    const handleNonNegativeChange = (field: ContributionField) => (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleNonNegativeChange = (field: keyof ContributionFormValues) => (e: React.ChangeEvent<HTMLInputElement>) => {
         const raw = e.target.value;
         if (raw === "") {
             formHandler.setFieldValue(field, "");
@@ -117,21 +113,69 @@ const ContributionCard = () => {
             </div>
             <form onSubmit={formHandler.handleSubmit}>
                 <Grid cols={2}>
-                    {fields.map((field) => {
-                        const error = (formHandler.errors as Record<ContributionField, string | undefined>)[field.name];
-                        return (
-                            <Textfield
-                                key={field.name}
-                                disabled={!isEditable}
-                                label={field.label}
-                                name={field.name}
-                                type="number"
-                                value={(formHandler.values as Record<ContributionField, number | string>)[field.name]}
-                                onChange={handleNonNegativeChange(field.name)}
-                                error={typeof error === "string" ? error : undefined}
-                            />
-                        );
-                    })}
+                    <Textfield
+                        disabled={!isEditable}
+                        label="EE SSS"
+                        name="employee_sss"
+                        type="number"
+                        value={formHandler.values.employee_sss}
+                        onChange={handleNonNegativeChange("employee_sss")}
+                        error={formHandler.errors.employee_sss}
+                    />
+                    <Textfield
+                        disabled={!isEditable}
+                        label="ER SSS"
+                        name="employer_sss"
+                        type="number"
+                        value={formHandler.values.employer_sss}
+                        onChange={handleNonNegativeChange("employer_sss")}
+                        error={formHandler.errors.employer_sss}
+                    />
+                    <Textfield
+                        disabled={!isEditable}
+                        label="EE Pagibig"
+                        name="employee_pagibig"
+                        type="number"
+                        value={formHandler.values.employee_pagibig}
+                        onChange={handleNonNegativeChange("employee_pagibig")}
+                        error={formHandler.errors.employee_pagibig}
+                    />
+                    <Textfield
+                        disabled={!isEditable}
+                        label="ER Pagibig"
+                        name="employer_pagibig"
+                        type="number"
+                        value={formHandler.values.employer_pagibig}
+                        onChange={handleNonNegativeChange("employer_pagibig")}
+                        error={formHandler.errors.employer_pagibig}
+                    />
+                    <Textfield
+                        disabled={!isEditable}
+                        label="EE Philhealth"
+                        name="employee_philhealth"
+                        type="number"
+                        value={formHandler.values.employee_philhealth}
+                        onChange={handleNonNegativeChange("employee_philhealth")}
+                        error={formHandler.errors.employee_philhealth}
+                    />
+                    <Textfield
+                        disabled={!isEditable}
+                        label="ER Philhealth"
+                        name="employer_philhealth"
+                        type="number"
+                        value={formHandler.values.employer_philhealth}
+                        onChange={handleNonNegativeChange("employer_philhealth")}
+                        error={formHandler.errors.employer_philhealth}
+                    />
+                    <Textfield
+                        disabled={!isEditable}
+                        label="Withholding Tax"
+                        name="withholding_tax"
+                        type="number"
+                        value={formHandler.values.withholding_tax}
+                        onChange={handleNonNegativeChange("withholding_tax")}
+                        error={formHandler.errors.withholding_tax}
+                    />
                 </Grid>
                 {isEditable &&
                     <div className="flex justify-end gap-x-2 mt-2">
@@ -148,6 +192,7 @@ const ContributionCard = () => {
                             label="Save"
                             type="submit"
                             loading={formHandler.isSubmitting}
+                            onClick={() => {}}
                         />
                     </div>
                 }
