@@ -86,6 +86,41 @@ const EmployeeOffenseHistory = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Total Days of Suspension",
+            path: "sanction.suspension_days",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Written Reprimand",
+            path: "sanction.description",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => {
+                return row?.sanction?.description === "Written Reprimand"
+                ? row.sanction.description
+                : "—";
+            }
+        },
+        {
+            columnHead: "Final Reminder Memo",
+            path: "sanction.description",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => {
+                return row?.sanction?.description === "Final Reminder Memo"
+                ? row.sanction.description
+                : "—";
+            }
+        },
+        {
+            columnHead: "Reminder Memo",
+            path: "sanction.description",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => {
+                return row?.sanction?.description === "Reminder Memo"
+                ? row.sanction.description
+                : "—";
+            }
+        },
+        {
             columnHead: "Voided",
             path: "voided",
             columnType: COLUMNTYPES.function,
