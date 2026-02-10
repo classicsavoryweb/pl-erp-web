@@ -5,7 +5,7 @@ import Grid from "@/components/common/Grid";
 import Textfield from "@/components/common/Textfield";
 import Button from "@/components/common/Button";
 import { PayrollContext } from "@/context/PayrollProvider";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import confirm from "@/components/common/Confirm";
@@ -79,21 +79,6 @@ const ContributionCard = () => {
         }
     });
 
-    const handleNonNegativeChange = (field: keyof ContributionFormValues) => (e: React.ChangeEvent<HTMLInputElement>) => {
-        const raw = e.target.value;
-        if (raw === "") {
-            formHandler.setFieldValue(field, "");
-            return;
-        }
-
-        const parsed = Number(raw);
-        if (Number.isNaN(parsed)) {
-            return;
-        }
-
-        formHandler.setFieldValue(field, Math.max(0, parsed));
-    };
-
     return (
         <Card
             size="medium"
@@ -119,7 +104,7 @@ const ContributionCard = () => {
                         name="employee_sss"
                         type="number"
                         value={formHandler.values.employee_sss}
-                        onChange={handleNonNegativeChange("employee_sss")}
+                        onChange={formHandler.handleChange}
                         error={formHandler.errors.employee_sss}
                     />
                     <Textfield
@@ -128,7 +113,7 @@ const ContributionCard = () => {
                         name="employer_sss"
                         type="number"
                         value={formHandler.values.employer_sss}
-                        onChange={handleNonNegativeChange("employer_sss")}
+                        onChange={formHandler.handleChange}
                         error={formHandler.errors.employer_sss}
                     />
                     <Textfield
@@ -137,7 +122,7 @@ const ContributionCard = () => {
                         name="employee_pagibig"
                         type="number"
                         value={formHandler.values.employee_pagibig}
-                        onChange={handleNonNegativeChange("employee_pagibig")}
+                        onChange={formHandler.handleChange}
                         error={formHandler.errors.employee_pagibig}
                     />
                     <Textfield
@@ -146,7 +131,7 @@ const ContributionCard = () => {
                         name="employer_pagibig"
                         type="number"
                         value={formHandler.values.employer_pagibig}
-                        onChange={handleNonNegativeChange("employer_pagibig")}
+                        onChange={formHandler.handleChange}
                         error={formHandler.errors.employer_pagibig}
                     />
                     <Textfield
@@ -155,7 +140,7 @@ const ContributionCard = () => {
                         name="employee_philhealth"
                         type="number"
                         value={formHandler.values.employee_philhealth}
-                        onChange={handleNonNegativeChange("employee_philhealth")}
+                        onChange={formHandler.handleChange}
                         error={formHandler.errors.employee_philhealth}
                     />
                     <Textfield
@@ -164,7 +149,7 @@ const ContributionCard = () => {
                         name="employer_philhealth"
                         type="number"
                         value={formHandler.values.employer_philhealth}
-                        onChange={handleNonNegativeChange("employer_philhealth")}
+                        onChange={formHandler.handleChange}
                         error={formHandler.errors.employer_philhealth}
                     />
                     <Textfield
@@ -173,7 +158,7 @@ const ContributionCard = () => {
                         name="withholding_tax"
                         type="number"
                         value={formHandler.values.withholding_tax}
-                        onChange={handleNonNegativeChange("withholding_tax")}
+                        onChange={formHandler.handleChange}
                         error={formHandler.errors.withholding_tax}
                     />
                 </Grid>
