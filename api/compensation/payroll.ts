@@ -58,3 +58,13 @@ export const updatePayrollIncentive = async (id: number, payload: {}) => {
 
     return resData;
 };
+
+export const updatePayrollContributions = async (id: number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/update-payroll-contributions/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
