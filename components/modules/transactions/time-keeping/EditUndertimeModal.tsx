@@ -163,7 +163,7 @@ const EditUndertimeModal = ({
                         name="tag"
                         value={formHandler.values.tag}
                         onChange={formHandler.handleChange}
-                        error={formHandler.errors.tag}
+                        error={typeof formHandler.errors.tag === "string" ? formHandler.errors.tag : undefined}
                         options={[
                             { label: "Tag as Undertime", value: "undertime" },
                             { label: "Tag as Halfday", value: "halfday" },
