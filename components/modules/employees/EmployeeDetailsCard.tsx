@@ -370,6 +370,16 @@ const EmployeeDetailsCard = () => {
                         </Card>
                     </>
                 }
+                    <div className="py-[2px]"/>
+                    <Card
+                        loading={loading}
+                    >
+                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Others</p>
+                        <EmployeeBasicInfo
+                            label="Remarks"
+                            detail={employee.remarks}
+                        />
+                </Card>
             </div>
         </div>
     );
