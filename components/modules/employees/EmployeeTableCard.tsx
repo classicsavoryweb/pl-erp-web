@@ -246,6 +246,22 @@ const EmployeeTableCard = () => {
         {
             label: "Age",
             value: "age",
+        },
+        {
+            label: "Group Head",
+            value: "current_branch.group_head",
+        },
+        {
+            label: "GH Gender",
+            value: "current_branch.group_head_gender",
+        },
+        {
+            label: "Branch Head",
+            value: "current_branch.branch_head",
+        },
+        {
+            label: "BH Gender",
+            value: "current_branch.branch_head_gender"
         }
     ];
 
