@@ -111,7 +111,7 @@ const FilterCard = ({
             position_id: "",
             employee_status_id: "",
             type: "",
-            agency: "", 
+            agency_id: "",
             year: moment().year(),
             month: "",
             sortColumn: "",
@@ -153,6 +153,7 @@ const FilterCard = ({
             position_id: "",
             employee_status_id: "",
             type: "",
+            agency_id: "",
             sortColumn: "",
             sort: "",
             fields: [],
@@ -339,16 +340,21 @@ const FilterCard = ({
                                 label="Employment Type"
                                 name="type"
                                 value={formHandler.values.type}
-                                onChange={formHandler.handleChange}
+                                onChange={(e) => {
+                                    formHandler.handleChange(e);
+                                    if (e.target.value !== "Agency") {
+                                        formHandler.setFieldValue("agency_id", "");
+                                    }
+                                }}
                             />
                             { formHandler.values.type === "Agency" &&
                             <AgencyDropDown
                                 label="Agency"
-                                name="agency"
+                                name="agency_id"
                                 placeholder="select agency"
                                 onChange={formHandler.handleChange}
-                                value={formHandler.values.agency}
-                                error={formHandler.errors.agency}
+                                value={formHandler.values.agency_id}
+                                error={formHandler.errors.agency_id}
                             />
                             }
                         </>
