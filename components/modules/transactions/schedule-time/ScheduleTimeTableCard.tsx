@@ -100,24 +100,21 @@ const ScheduleTimeTableCard = ({
                 const {start_time, end_time} = getCurrentCutoff();
                 const date = moment(data.date);
 
-                if (date.isBetween(moment(start_time), moment(end_time), undefined, "[]")) {
-                    return (
-                        <ActionDropDown
-                            data={data}
-                            actions={[
-                                {
-                                    label: "Transfer Branch",
-                                    onClick: (data) => {
-                                        transferModal.onOpen();
-                                        api.setData(data);
-                                    }
+                return (
+                    <ActionDropDown
+                        data={data}
+                        actions={[
+                            {
+                                label: "Transfer Branch",
+                                onClick: (data) => {
+                                    transferModal.onOpen();
+                                    api.setData(data);
                                 }
-                            ]}
-                        />
-                    );
-                }
+                            }
+                        ]}
+                    />
+                );
 
-                return "—";
             }
         }
     ];
