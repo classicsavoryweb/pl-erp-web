@@ -156,6 +156,11 @@ const TimeKeepingSummaryTableCard = ({
             path: "special_holiday_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
+        {
+            columnHead: "Cancelled Off",
+            path: "cancelled_off",
+            columnType: COLUMNTYPES.timekeeping
+        },
     ];
 
     const formHandler = useFormik({
