@@ -451,7 +451,7 @@ const FirstContract = ({
                             textAlign: "center"
                         }}
                     >
-                        HR Head
+                        {process.env.NEXT_PUBLIC_HR_SIGNATORY_POSITION_ABBV}
                     </Text>
                 </View>
             </Page>

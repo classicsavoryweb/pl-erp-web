@@ -4,6 +4,7 @@ import { usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 
 interface UserDetails {
+    proper_full_name: string;
     full_name: string;
     gender: string,
     first_name: string;
@@ -28,6 +29,7 @@ interface AuthContextType {
 }
 
 const defaultUserDetails: UserDetails = {
+    proper_full_name: "",
     full_name: "",
     gender: "",
     first_name: "",

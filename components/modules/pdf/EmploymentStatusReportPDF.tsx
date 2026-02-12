@@ -229,7 +229,7 @@ const EmploymentStatusReportPDF = ({
                                 fontSize: 8.5 
                             }} 
                         >
-                            Human Resources Head
+                            {process.env.NEXT_PUBLIC_HR_SIGNATORY_POSITION}
                         </Text>
                     </View>
                 </View>

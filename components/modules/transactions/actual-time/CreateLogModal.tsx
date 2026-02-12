@@ -153,8 +153,8 @@ const CreateLogModal = ({
             }
 
             values.time_keeping.map((tk) => {
-                if (tk.punches.length !== 2 && tk.punches.length !== 4) {
-                    toast.error("You can only submit 2 or 4 number of punches");
+                if (tk.punches.length === 1) {
+                    toast.error("You cannot submit only 1 punch");
                     hasThreeLogs = true;
                     return;
                 }

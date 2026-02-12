@@ -53,6 +53,15 @@ export const createBiotimeLog = async (payload: {}) => {
     return resData;
 };
 
+export const deleteBiotimeLog = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/delete-biotime-log/${id}`,
+        method: 'POST',
+    });
+
+    return resData;
+};
+
 export const importTransactionsActualLogs = async (payload: {}) => {    
     const resData = await axiosHelper({
         func_path: '/import-biotime-logs',

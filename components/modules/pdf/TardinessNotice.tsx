@@ -172,7 +172,7 @@ const TardinessNotice = ({
 						>
 						{`${process.env.NEXT_PUBLIC_HR_PREFIX} ${process.env.NEXT_PUBLIC_HR_SIGNATORY}`} 
 						</Text>
-						<Text>Head of Human Resources</Text>
+						<Text>{process.env.NEXT_PUBLIC_HR_SIGNATORY_POSITION}</Text>
 						<Text style={{ fontStyle: "italic", fontSize: 6 }}>
 						Note: This document is computer generated. No signature is required.
 						</Text>

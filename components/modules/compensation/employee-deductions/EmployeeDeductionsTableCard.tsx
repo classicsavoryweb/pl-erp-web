@@ -136,6 +136,11 @@ const EmployeeDeductionsTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "End Loan Status",
+            path: "end_loan_status",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Action",
             path: "action",
             columnType: COLUMNTYPES.function,
