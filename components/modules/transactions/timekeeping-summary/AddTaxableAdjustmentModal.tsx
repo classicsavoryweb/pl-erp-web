@@ -25,41 +25,6 @@ const AddTaxableAdjustmentModal = ({
     const [logs, setLogs] = useState<any[]>([]);
     const [logsLoading, setLogsLoading] = useState<boolean>(false);
 
-    useEffect(() => {
-        if (!modal.isShowing || !data?.id) {
-            setLogs([]);
-            return;
-        }
-
-        let isMounted = true;
-        setLogsLoading(true);
-        getTimeKeepingSummaryAdjustmentLogs({
-            timekeeping_summary_id: data.id
-        })
-            .then((resp) => {
-                if (!isMounted) return;
-                if (resp.error) {
-                    toast.error("Error fetching taxable adjustment logs");
-                    setLogs([]);
-                } else {
-                    setLogs(resp.data ?? []);
-                }
-            })
-            .catch(() => {
-                if (!isMounted) return;
-                toast.error("Error encountered");
-                setLogs([]);
-            })
-            .finally(() => {
-                if (!isMounted) return;
-                setLogsLoading(false);
-            });
-
-        return () => {
-            isMounted = false;
-        };
-    }, [modal.isShowing, data?.id]);
-
     const formHandler = useFormik<{
         amount: string;
     }>({
@@ -109,6 +74,59 @@ const AddTaxableAdjustmentModal = ({
             }
         }
     });
+
+    useEffect(() => {
+        if (!modal.isShowing || !data?.id) {
+            setLogs([]);
+            return;
+        }
+
+        let isMounted = true;
+        setLogsLoading(true);
+        getTimeKeepingSummaryAdjustmentLogs({
+            timekeeping_summary_id: data.id
+        })
+            .then((resp) => {
+                if (!isMounted) return;
+                if (resp.error) {
+                    toast.error("Error fetching taxable adjustment logs");
+                    setLogs([]);
+                } else {
+                    setLogs(resp.data ?? []);
+                }
+            })
+            .catch(() => {
+                if (!isMounted) return;
+                toast.error("Error encountered");
+                setLogs([]);
+            })
+            .finally(() => {
+                if (!isMounted) return;
+                setLogsLoading(false);
+            });
+
+        return () => {
+            isMounted = false;
+        };
+    }, [modal.isShowing, data?.id]);
+
+    useEffect(() => {
+        if (!modal.isShowing) {
+            return;
+        }
+
+        const rawAmount =
+            data?.adjustment_amount ??
+            data?.taxable_adjustment ??
+            data?.taxable_adjustment_amount ??
+            "";
+        const numericAmount = Number(rawAmount);
+        const nextAmount = Number.isFinite(numericAmount) && numericAmount !== 0
+            ? String(numericAmount)
+            : "";
+
+        formHandler.setFieldValue("amount", nextAmount, false);
+    }, [modal.isShowing, data?.id]);
 
     return (
         <Modal
