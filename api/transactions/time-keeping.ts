@@ -96,3 +96,23 @@ export const exportAllTimeKeepingSummary = async (payload?: {}) => {
 
     return resData;
 };
+
+export const addTimeKeepingSummaryAdjustment = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/add-timekeeping-summary-adjustment",
+        method: "POST",
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getTimeKeepingSummaryAdjustmentLogs = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/get-timekeeping-summary-adjustment-logs",
+        method: "GET",
+        payload: payload
+    });
+
+    return resData;
+};
