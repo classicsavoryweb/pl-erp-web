@@ -12,6 +12,7 @@ interface SelectInterface {
     error?: string;
     value?: string | number;
     required?: boolean;
+    disabled?: boolean;
 }
 
 const AdjustmentTypeDropDown = ({
@@ -21,7 +22,8 @@ const AdjustmentTypeDropDown = ({
     onChange,
     error,
     value,
-    required = false
+    required = false,
+    disabled = false,
 }: SelectInterface) => {
 
     const [data, setData] = useState<any>([]);
@@ -50,6 +52,7 @@ const AdjustmentTypeDropDown = ({
             loading={loading}
             options={data}
             required={required}
+            disabled={disabled}
         />
     );
 };
