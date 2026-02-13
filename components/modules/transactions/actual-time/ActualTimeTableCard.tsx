@@ -120,12 +120,12 @@ const ActualTimeTableCard = ({
                 fetchLogModal.onOpen();
             }
         },
-        // {
-        //     label: "Import Biotime Logs",
-        //     onClick: async () => {
-        //         importModal.onOpen();
-        //     }
-        // },
+        {
+            label: "Import Biotime Logs",
+            onClick: async () => {
+                importModal.onOpen();
+            }
+        },
     ];
 
     const tableActions = [
