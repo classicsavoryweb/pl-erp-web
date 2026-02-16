@@ -9,10 +9,10 @@ import { getScheduleTimeEmployees, transferTimeKeepingBranchAll } from "@/api/tr
 import Textfield from "@/components/common/Textfield";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
-import { useEffect, useState } from "react";
-import CutOffDropDown from "../../generic/CutOffDropDown";
+import { useEffect, useMemo, useState } from "react";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import moment from "moment";
+import { useActiveCutoffStore } from "@/stores/useActiveCutoffStore";
 
 interface FormModalInterface {
     modal: any;
@@ -32,6 +32,7 @@ const TransferTimeKeepingBranchAllModal = ({
     const [loading, setLoading] = useState(false);
     const [selectedRows, setSelectedRows] = useState<any[]>([]);
     const [resetSelection, setResetSelection] = useState(false);
+    const { active_cutoff, getActiveCutoff } = useActiveCutoffStore();
 
     const columnSettings = [
         {
@@ -50,6 +51,24 @@ const TransferTimeKeepingBranchAllModal = ({
             columnType: COLUMNTYPES.string
         },
     ];
+
+    const activeCutoffRange = useMemo(() => {
+        if (!active_cutoff?.start_date || !active_cutoff?.end_date) return null;
+        const start = moment(active_cutoff.start_date).format("MM-DD");
+        const end = moment(active_cutoff.end_date).format("MM-DD");
+        return {
+            start,
+            end,
+            value: `${start}-${end}`
+        };
+    }, [active_cutoff]);
+
+    const activeCutoffLabel = useMemo(() => {
+        if (!active_cutoff?.start_date || !active_cutoff?.end_date) return "";
+        const startLabel = moment(active_cutoff.start_date).format("MMM. D");
+        const endLabel = moment(active_cutoff.end_date).format("MMM. D");
+        return `${startLabel} - ${endLabel}`;
+    }, [active_cutoff]);
 
     const formHandler = useFormik({
         initialValues: {
@@ -114,6 +133,27 @@ const TransferTimeKeepingBranchAllModal = ({
     });
 
     useEffect(() => {
+        if (!modal.isShowing) return;
+        getActiveCutoff().catch(() => {
+            toast.error("Error fetching active cutoff");
+        });
+    }, [modal.isShowing, getActiveCutoff]);
+
+    useEffect(() => {
+        if (!activeCutoffRange) return;
+        if (
+            formHandler.values.cutoff?.start_time !== activeCutoffRange.start ||
+            formHandler.values.cutoff?.end_time !== activeCutoffRange.end
+        ) {
+            formHandler.setFieldValue("selected_cutoff", activeCutoffRange.value);
+            formHandler.setFieldValue("cutoff", {
+                start_time: activeCutoffRange.start,
+                end_time: activeCutoffRange.end
+            });
+        }
+    }, [activeCutoffRange, formHandler.values.cutoff?.start_time, formHandler.values.cutoff?.end_time]);
+
+    useEffect(() => {
         const fetchEmployees = async () => {
             if (!modal.isShowing) return;
             if (!formHandler.values.source_branch_id) {
@@ -134,11 +174,8 @@ const TransferTimeKeepingBranchAllModal = ({
 
                 if (!resp.error) {
                     const rows = resp.data ?? [];
-                    const selected = rows
-                        .map((row: any) => row?.employee?.id)
-                        .filter(Boolean);
                     setEmployeeRows(rows);
-                    setSelectedRows(selected);
+                    setSelectedRows([]);
                     setResetSelection(prev => !prev);
                 } else {
                     toast.error(resp.data.message);
@@ -181,12 +218,12 @@ const TransferTimeKeepingBranchAllModal = ({
                     value={formHandler.values.source_branch_id}
                     error={formHandler.errors.source_branch_id}
                 />
-                <CutOffDropDown
-                    value={formHandler.values.selected_cutoff}
-                    onChange={(e) => {
-                        formHandler.setFieldValue("selected_cutoff", e.target.value);
-                        formHandler.setFieldValue("cutoff", e.target.obj || null);
-                    }}
+                <Textfield
+                    label="Cut Off"
+                    name="cutoff"
+                    value={activeCutoffLabel || formHandler.values.selected_cutoff}
+                    disabled
+                    readOnly
                 />
 
                 <div className="mt-4">
