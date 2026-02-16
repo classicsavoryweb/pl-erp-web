@@ -25,6 +25,22 @@ const PayrollListTableCard = () => {
     const [data, setData] = useState<any>(null);
     const createModal = useModal();
     const editModal = useModal();
+    
+    const getPositionLabel = (data: any) => {
+        const basePosition = data?.employee?.current_position?.description ?? "";
+        if (!basePosition) {
+            return "";
+        }
+
+        const isOic = data?.employee?.oic_status === "OIC";
+        const latestOic = data?.employee?.latest_position?.oic_assignment === "Yes";
+
+        if ((isOic || latestOic) && !String(basePosition).endsWith(" (OIC)")) {
+            return `${basePosition} (OIC)`;
+        }
+
+        return basePosition;
+    };
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -54,6 +70,22 @@ const PayrollListTableCard = () => {
         {
             columnHead: "Employee Name",
             path: "employee.full_name",
+            columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Position",
+            path: "employee.current_position.description",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => getPositionLabel(data),
+        },
+        {
+            columnHead: "Home Branch",
+            path: "employee.home_branch.short_name",
+            columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Current Branch",
+            path: "employee.current_branch.short_name",
             columnType: COLUMNTYPES.string,
         },
         {

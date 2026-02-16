@@ -120,7 +120,17 @@ const EditActualTimeModal = ({
             });
 
             if (isConfirmed) {
-                editBiotimePunches(values, selectedLog)
+                const payload = {
+                    ...values,
+                    punches: values.punches.map((punch) => ({
+                        ...punch,
+                        punch_time: punch.punch_time
+                            ? moment(punch.punch_time, "YYYY-MM-DDTHH:mm").format("YYYY-MM-DD HH:mm:ss")
+                            : punch.punch_time,
+                    })),
+                };
+
+                editBiotimePunches(payload, selectedLog)
                     .then((resp) => {
                         if (!resp.error) {
                             toast.success(resp.data.message);
@@ -141,6 +151,9 @@ const EditActualTimeModal = ({
         if (data && data.length > 0) {
             const punchesWithFlag = data.map(punch => ({
                 ...punch,
+                punch_time: punch.punch_time
+                    ? moment(punch.punch_time).format("YYYY-MM-DDTHH:mm")
+                    : "",
                 newPunch: false
             }));
 
@@ -268,7 +281,7 @@ const EditActualTimeModal = ({
                                     const updatedPunches: any = [...formHandler.values.punches];
                                     updatedPunches[index] = {
                                         ...updatedPunches[index],
-                                        punch_time: e.target.value.replace("T", " ") + ":00"
+                                        punch_time: e.target.value
                                     };
                                     formHandler.setFieldValue('punches', updatedPunches);
                                 }}
