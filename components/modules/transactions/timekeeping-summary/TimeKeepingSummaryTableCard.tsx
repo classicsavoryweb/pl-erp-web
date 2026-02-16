@@ -24,6 +24,8 @@ import CutOffDropDown from "../../generic/CutOffDropDown";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { useModal } from "@/hooks/modal";
 import GenerateTimeKeepingModal from "./GenerateTimekeepingModal";
+import ActionDropDown from "@/components/common/ActionDropDown";
+import AddTaxableAdjustmentModal from "./AddTaxableAdjustmentModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -41,6 +43,9 @@ const TimeKeepingSummaryTableCard = ({
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
     const generateModal= useModal();
+    const addAdjustmentModal = useModal();
+    const [selectedSummary, setSelectedSummary] = useState<any>({});
+    const canAddAdjustment = permissions.includes("perform_transactions_adjustments");
 
     const columnSettings = [
         {
@@ -155,6 +160,38 @@ const TimeKeepingSummaryTableCard = ({
             columnHead: "Special Holiday Overtime",
             path: "special_holiday_overtime",
             columnType: COLUMNTYPES.timekeeping
+        },
+        {
+            columnHead: "Cancelled Off",
+            path: "cancelled_off",
+            columnType: COLUMNTYPES.timekeeping
+        },
+        {
+            columnHead: "Action",
+            path: "employee.employee_number",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                if (!canAddAdjustment) {
+                    return "—";
+                }
+
+                return (
+                    <ActionDropDown
+                        containerClassName="w-[115px]"
+                        data={data}
+                        actions={[
+                            {
+                                label: "Add Taxable Adjustment",
+                                permission: "perform_transactions_adjustments",
+                                onClick: (row: any) => {
+                                    setSelectedSummary(row);
+                                    addAdjustmentModal.onOpen();
+                                }
+                            }
+                        ]}
+                    />
+                );
+            }
         },
     ];
 
@@ -396,6 +433,14 @@ const TimeKeepingSummaryTableCard = ({
 
             <GenerateTimeKeepingModal
                 modal={generateModal}
+            />
+
+            <AddTaxableAdjustmentModal
+                modal={addAdjustmentModal}
+                data={selectedSummary}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                }}
             />
         </>
     );

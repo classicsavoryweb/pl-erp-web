@@ -138,6 +138,7 @@ const CreateEmployeeDeductionForm = ({
         >
             <form onSubmit={createFormHandler.handleSubmit}>
                 <SearchEmployeeDropDown
+                    status="all"
                     label="Employee"
                     placeholder="select employee"
                     name="employee_id"

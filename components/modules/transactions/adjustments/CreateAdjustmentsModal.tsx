@@ -12,7 +12,6 @@ import { useState, useEffect } from "react";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { getTimeKeeping } from "@/api/transactions/time-keeping";
 import LoadingState from "@/components/common/LoadingState";
-import Dropdown from "@/components/common/Dropdown";
 import ScheduleMasterlistDropDown from "../../generic/ScheduleMasterlistDropDown";
 import { createAdjustments } from "@/api/transactions/adjustments";
 import BranchDropDown from "../../generic/BranchDropDown";
@@ -32,26 +31,33 @@ type PunchFormValues = {
 interface FormModalInterface {
     modal: any;
     callBack: () => void;
+    prefillValues?: Partial<PunchFormValues>;
+    lockEmployee?: boolean;
+    lockType?: boolean;
 };
 
 const CreateAdjustmentsModal = ({
     modal,
-    callBack
+    callBack,
+    prefillValues,
+    lockEmployee = false,
+    lockType = false,
 }: FormModalInterface) => {
 
     const [loading, setLoading] = useState<boolean>(true);
     const [data, setData] = useState<any>([]);
+    const defaultValues: PunchFormValues = {
+        employee_number: "",
+        date: "",
+        punches: [{ punch_time: ""}],
+        punches_count: "",
+        type: "",
+        schedule: "",
+        branch_id: "",
+    };
 
     const formHandler = useFormik<PunchFormValues>({
-        initialValues: {
-            employee_number: "",
-            date: "",
-            punches: [{ punch_time: ""}],
-            punches_count: "",
-            type: "",
-            schedule: "",
-            branch_id: "",
-        },
+        initialValues: defaultValues,
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             employee_number: Yup.string().required("Employee is required."),
@@ -155,6 +161,19 @@ const CreateAdjustmentsModal = ({
         }
     });
 
+    useEffect(() => {
+        if (!modal.isShowing) return;
+
+        const nextValues = {
+            ...defaultValues,
+            ...prefillValues,
+            punches: prefillValues?.punches ?? defaultValues.punches,
+        };
+
+        formHandler.resetForm({ values: nextValues });
+        setData([]);
+    }, [modal.isShowing, prefillValues]);
+
     const createDefaultPunches = (selectedDate: string) => {
         const selectedDateFormatted = moment(selectedDate).format('YYYY-MM-DD');   
         return [
@@ -212,6 +231,7 @@ const CreateAdjustmentsModal = ({
                     value={formHandler.values.employee_number}
                     error={formHandler.errors.employee_number}
                     required
+                    disabled={lockEmployee}
                 />
 
                 <Textfield
@@ -259,6 +279,7 @@ const CreateAdjustmentsModal = ({
                     value={formHandler.values.type ?? ""}
                     error={formHandler.errors.type}
                     required
+                    disabled={lockType}
                 />
             </Grid>
             { (formHandler.values.employee_number && formHandler.values.date) &&

@@ -164,6 +164,11 @@ const TimeKeepingTableCard = ({
             columnType: COLUMNTYPES.timekeeping
         },
         {
+            columnHead: "Cancelled Off",
+            path: "cancelled_off_hours",
+            columnType: COLUMNTYPES.timekeeping
+        },
+        {
             columnHead: "Approved Overtime",
             path: "approved_overtime",
             columnType: COLUMNTYPES.timekeeping
