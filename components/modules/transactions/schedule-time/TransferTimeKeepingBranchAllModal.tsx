@@ -223,7 +223,6 @@ const TransferTimeKeepingBranchAllModal = ({
                     name="cutoff"
                     value={activeCutoffLabel || formHandler.values.selected_cutoff}
                     disabled
-                    readOnly
                 />
 
                 <div className="mt-4">
