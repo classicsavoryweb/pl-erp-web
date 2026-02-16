@@ -34,9 +34,29 @@ export const getTransactionsScheduleTime = async (payload?: {}) => {
     return resData;
 };
 
+export const getScheduleTimeEmployees = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-transactions-schedule-time-employees',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const transferTimeKeepingBranch = async (payload: {}, schedule_id : number | string) => {
     const resData = await axiosHelper({
         func_path: `/transfer-timekeeping-branch/${schedule_id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const transferTimeKeepingBranchAll = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/transfer-timekeeping-branch-all',
         method: 'POST',
         payload: payload
     });

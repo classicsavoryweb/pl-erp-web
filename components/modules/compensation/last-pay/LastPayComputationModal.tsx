@@ -77,9 +77,9 @@ const LastPayComputationModal = ({
 
     const preparedByTitle = useMemo(() => {
         return (
-            preparedByEmployee?.current_position?.description
+            userDetails?.position
+            ?? preparedByEmployee?.current_position?.description
             ?? userDetails?.current_position?.description
-            ?? userDetails?.position
             ?? ""
         );
     }, [preparedByEmployee, userDetails]);

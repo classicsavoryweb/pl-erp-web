@@ -52,6 +52,11 @@ const DeductionsTableCard = () => {
 
     const columnSettings = [
         {
+            columnHead: "#",
+            path: "row_number",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Description",
             path: "description",
             columnType: COLUMNTYPES.string
@@ -106,6 +111,11 @@ const DeductionsTableCard = () => {
         },
     ];
 
+    const dataSetWithIndex = (api.dataSet ?? []).map((item: any, index: number) => ({
+        ...item,
+        row_number: (paginator.paginationData?.from ?? 1) + index
+    }));
+
     return (
         <>
             <FilterCard
@@ -133,7 +143,7 @@ const DeductionsTableCard = () => {
                     />
                 </div>
                 <Table
-                    dataSet={api.dataSet}
+                    dataSet={dataSetWithIndex}
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}

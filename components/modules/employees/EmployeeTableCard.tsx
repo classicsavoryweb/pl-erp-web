@@ -20,6 +20,22 @@ const EmployeeTableCard = () => {
     const filter = useFilter();
     const [sort, setSort] = useState<any>({});
 
+    const getPositionLabel = (data: any) => {
+        const basePosition = data?.current_position?.description ?? "";
+        if (!basePosition) {
+            return "";
+        }
+
+        const isOic = data?.oic_status === "OIC";
+        const latestOic = data?.latest_position?.oic_assignment === "Yes";
+
+        if ((isOic || latestOic) && !String(basePosition).endsWith(" (OIC)")) {
+            return `${basePosition} (OIC)`;
+        }
+
+        return basePosition;
+    };
+
     useAsyncEffect(() => {
         api.setLoading(true);
         getAllEmployees({
@@ -72,7 +88,8 @@ const EmployeeTableCard = () => {
         {
             columnHead: "Position",
             path: "current_position.description",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => getPositionLabel(data),
             sort: true
         },
         {
@@ -136,6 +153,22 @@ const EmployeeTableCard = () => {
         {
             label: "Branch",
             value: "current_branch.name",
+        },
+        {
+            label: "Branch OIC",
+            value: "current_branch.branch_oic.full_name",
+        },
+        {
+            label: "Branch OIC Gender",
+            value: "current_branch.branch_oic.gender",
+        },
+        {
+            label: "Group Head",
+            value: "current_branch.group_head.full_name",
+        },
+        {
+            label: "Group Head Gender",
+            value: "current_branch.group_head.gender",
         },
         {
             label: "Home Branch",

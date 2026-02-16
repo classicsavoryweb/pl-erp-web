@@ -164,7 +164,20 @@ const CreateLogModal = ({
                 return;
             }
 
-            const response = await createBiotimeLog(values);
+            const payload = {
+                ...values,
+                time_keeping: values.time_keeping.map((tk) => ({
+                    ...tk,
+                    punches: tk.punches.map((punch) => ({
+                        ...punch,
+                        punch_time: punch.punch_time
+                            ? moment(punch.punch_time, "YYYY-MM-DDTHH:mm").format("YYYY-MM-DD HH:mm:ss")
+                            : punch.punch_time,
+                    })),
+                })),
+            };
+
+            const response = await createBiotimeLog(payload);
             if (!response.error) {
                 toast.success(response.data.message);
                 modal.onClose();
@@ -179,7 +192,7 @@ const CreateLogModal = ({
 
                 if (isConfirmed) {
                     createBiotimeLog({
-                        ...values,
+                        ...payload,
                         overwrite: true,
                     }).then((resp) => {
                         if (!resp.error) {
@@ -191,8 +204,8 @@ const CreateLogModal = ({
                             toast.error(resp.data.message);
                         }
                     }).catch(() => {
-                        toast.error("Error encountered");
-                    });
+                            toast.error("Error encountered");
+                        });
                 }
             } else {
                 toast.error(response.data.message);
@@ -278,7 +291,7 @@ const CreateLogModal = ({
                                     updatedPunches[key].date = newDate;
                                     updatedPunches[key].punches = updatedPunches[key].punches.map((punch: any) => {
                                         if (punch.punch_time === "") {
-                                            return { punch_time: `${newDate} 00:00:00` };
+                                            return { punch_time: `${newDate}T00:00` };
                                         } else {
                                             return { punch_time: "" };
                                         }
@@ -297,7 +310,7 @@ const CreateLogModal = ({
                                         type="button"
                                         onClick={() => {
                                             const updatedLogs = [...formHandler.values.time_keeping];
-                                            updatedLogs[key].punches.push({ punch_time: `${updatedLogs[key].date} 00:00:00` });
+                                            updatedLogs[key].punches.push({ punch_time: `${updatedLogs[key].date}T00:00` });
                                             formHandler.setFieldValue("time_keeping",updatedLogs, false)
                                         }}
                                     />            
@@ -329,7 +342,7 @@ const CreateLogModal = ({
                                             onChange={(e) => {
                                                 const updatedPunches:any = [...formHandler.values.time_keeping];
                                                 updatedPunches[key].punches[index] = {
-                                                    punch_time: e.target.value.replace("T", " ") + ":00"
+                                                    punch_time: e.target.value
                                                 }
                                                 formHandler.setFieldValue("time_keeping", updatedPunches, false);
                                             }}

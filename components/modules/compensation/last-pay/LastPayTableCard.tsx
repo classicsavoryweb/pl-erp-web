@@ -102,6 +102,11 @@ const LastPayTableCard = () => {
 
     const columnSettings = [
         {
+            columnHead: "Date Created",
+            path: "created_at",
+            columnType: COLUMNTYPES.date,
+        },
+        {
             columnHead: "Last Pay Number",
             path: "last_pay_number",
             columnType: COLUMNTYPES.string,

@@ -26,8 +26,9 @@ import { useFilter } from "@/hooks/use-filter";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import FetchScheduleModal from "./FetchScheduleModal";
-import ActionDropDown from "@/components/common/ActionDropDown";
-import TransferTimeKeepingBranchModal from "./TransferTimeKeepingBranchModal";
+// import ActionDropDown from "@/components/common/ActionDropDown";
+// import TransferTimeKeepingBranchModal from "./TransferTimeKeepingBranchModal";
+import TransferTimeKeepingBranchAllModal from "./TransferTimeKeepingBranchAllModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -45,7 +46,8 @@ const ScheduleTimeTableCard = ({
     const api = useApiCall();
     const importModal = useModal();
     const fetchModal = useModal();
-    const transferModal = useModal();
+    // const transferModal = useModal();
+    const transferAllModal = useModal();
     const paginator = usePagination(20);
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
@@ -92,31 +94,31 @@ const ScheduleTimeTableCard = ({
             path: "check_out",
             columnType: COLUMNTYPES.string,
         },
-        {
-            columnHead: "Action",
-            path: "check_out",
-            columnType: COLUMNTYPES.function,
-            function: (data:any) => {
-                const {start_time, end_time} = getCurrentCutoff();
-                const date = moment(data.date);
-
-                return (
-                    <ActionDropDown
-                        data={data}
-                        actions={[
-                            {
-                                label: "Transfer Branch",
-                                onClick: (data) => {
-                                    transferModal.onOpen();
-                                    api.setData(data);
-                                }
-                            }
-                        ]}
-                    />
-                );
-
-            }
-        }
+        // {
+        //     columnHead: "Action",
+        //     path: "check_out",
+        //     columnType: COLUMNTYPES.function,
+        //     function: (data:any) => {
+        //         const {start_time, end_time} = getCurrentCutoff();
+        //         const date = moment(data.date);
+        //
+        //         return (
+        //             <ActionDropDown
+        //                 data={data}
+        //                 actions={[
+        //                     {
+        //                         label: "Transfer Branch",
+        //                         onClick: (data) => {
+        //                             transferModal.onOpen();
+        //                             api.setData(data);
+        //                         }
+        //                     }
+        //                 ]}
+        //             />
+        //         );
+        //
+        //     }
+        // }
     ];
 
     const globalActionSettings = [
@@ -131,7 +133,13 @@ const ScheduleTimeTableCard = ({
             onClick: () => {
                 fetchModal.onOpen();
             }
-        }
+        },
+        {
+            label: "Transfer Branch All",
+            onClick: () => {
+                transferAllModal.onOpen();
+            }
+        },
     ];
 
     const formHandler = useFormik({
@@ -339,13 +347,22 @@ const ScheduleTimeTableCard = ({
                 modal={fetchModal}
             />
 
-            <TransferTimeKeepingBranchModal
+            <TransferTimeKeepingBranchAllModal
+                modal={transferAllModal}
+                filterValues={formHandler.values}
+                currentBranch={branch}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                }}
+            />
+
+            {/* <TransferTimeKeepingBranchModal
                 modal={transferModal}
                 data={api.data}
                 onSubmitCallback={() => {
                     api.triggerReload();
                 }}
-            />
+            /> */}
         </>
     );
 };

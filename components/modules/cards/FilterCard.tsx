@@ -20,6 +20,7 @@ import Checkbox from "@/components/common/Checkbox";
 import moment from "moment";
 import FilterBranchDropDown from "../generic/FilterBranchDropDown";
 import AgencyDropDown from "../generic/AgencyDropDown";
+import { toast } from "react-toastify";
 
 interface FilterInterface {
     hasDateRange?: boolean;
@@ -167,7 +168,17 @@ const FilterCard = ({
             
             if (isConfirm) {
                 api && api(values).then((resp: any) => {
-                    const blob = new Blob([resp.data], {
+                    const payload = resp?.data ?? resp;
+                    const isBlob = payload instanceof Blob;
+                    const isArrayBuffer = payload && payload.byteLength !== undefined;
+                    if (!resp || resp.error || (!isBlob && !isArrayBuffer)) {
+                        toast.error(
+                            resp?.data?.message || resp?.message || "Export failed. Please try again."
+                        );
+                        return;
+                    }
+
+                    const blob = isBlob ? payload : new Blob([payload], {
                         type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);

@@ -19,6 +19,15 @@ export const getAllFinalizedCutOffs = async () => {
     return resData;
 };
 
+export const getActiveCutOff = async () => {
+    const resData = await axiosHelper({
+        func_path: '/get-active-cut-off',
+        method: 'GET',
+    });
+
+    return resData;
+};
+
 export const createCutOff = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-cut-off',

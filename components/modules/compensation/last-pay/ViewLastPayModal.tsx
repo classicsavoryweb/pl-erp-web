@@ -4,6 +4,7 @@ import Grid from "@/components/common/Grid";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { formatNumber } from "@/helper/amount";
+import moment from "moment";
 
 interface ModalInterface {
     modal: any;
@@ -46,6 +47,35 @@ const ViewLastPayModal = ({
             columnType: COLUMNTYPES.amount
         },
     ];
+
+    const editLogColumnSettings = [
+        {
+            columnHead: "Date Edited",
+            path: "created_at",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => row.created_at ? moment(row.created_at).format("MMMM DD, YYYY h:mm A") : "-"
+        },
+        {
+            columnHead: "Edited By",
+            path: "created_by",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => row?.causer?.proper_full_name || row?.causer?.full_name || row?.causer?.email || "-"
+        }
+    ];
+
+    const activities = Array.isArray(data.activities) ? data.activities : [];
+    const createdActivity = activities.find((item: any) => item.event === "created");
+    const postedActivity = activities.find((item: any) => item.event === "posted")
+        || activities.find((item: any) => item.event === "updated" && item?.properties?.attributes?.status === "Posted");
+    const postedActivityId = postedActivity?.id;
+    const editLogs = activities.filter((item: any) => item.event === "updated" && item.id !== postedActivityId);
+
+    const getCauserName = (activity: any) => {
+        return activity?.causer?.proper_full_name
+            || activity?.causer?.full_name
+            || activity?.causer?.email
+            || "-";
+    };
 
     return (
         <Modal
@@ -135,6 +165,41 @@ const ViewLastPayModal = ({
                 onChange={() => {}}
                 value={ formatNumber(data.last_pay)}
                 disabled
+            />
+
+            <p className="mt-3">Record Log</p>
+            <Grid cols={2}>
+                <Textfield
+                    label="Date Created"
+                    value={
+                        createdActivity?.created_at
+                            ? moment(createdActivity.created_at).format("MMMM DD, YYYY")
+                            : (data.created_at ? moment(data.created_at).format("MMMM DD, YYYY") : "-")
+                    }
+                    disabled
+                />
+                <Textfield
+                    label="Created By"
+                    value={getCauserName(createdActivity)}
+                    disabled
+                />
+                <Textfield
+                    label="Date Posted"
+                    value={postedActivity?.created_at ? moment(postedActivity.created_at).format("MMMM DD, YYYY h:mm A") : "-"}
+                    disabled
+                />
+                <Textfield
+                    label="Posted By"
+                    value={getCauserName(postedActivity)}
+                    disabled
+                />
+            </Grid>
+
+            <p className="mt-3">Edit History</p>
+            <Table
+                dataSet={editLogs}
+                columnSettings={editLogColumnSettings}
+                smallText
             />
         </Modal>
     );
