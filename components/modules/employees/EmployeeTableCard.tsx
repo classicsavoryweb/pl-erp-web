@@ -114,7 +114,7 @@ const EmployeeTableCard = () => {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status,
-        }
+        },
     ];
 
     const tableActions = [
@@ -279,7 +279,24 @@ const EmployeeTableCard = () => {
         {
             label: "Age",
             value: "age",
-        }
+        },
+        {
+            label: "Branch Head",
+            value: "current_branch.branch_head",
+        },
+        {
+            label: "Branch Employee Number",
+            value: "current_branch.branch_head_employee_number",
+        },
+        {
+            label: "Group Head",
+            value: "current_branch.group_head",
+        },
+        {
+            label: "Group Head Employee Number",
+            value: "current_branch.group_head_employee_number",
+        },
+
     ];
 
     return (
