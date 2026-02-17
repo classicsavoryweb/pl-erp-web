@@ -320,6 +320,7 @@ const EmployeeDeductionsTableCard = ({
                             name="employee_id"
                             onChange={(e) => {
                                 const selectedEmployee = e.target.value;
+                                paginator.setPage(1);
                                 setEmployee(selectedEmployee);
                                 formHandler.setFieldValue("employee_id", selectedEmployee.id);
                             }}
