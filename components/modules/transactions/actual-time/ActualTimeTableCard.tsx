@@ -178,6 +178,7 @@ const ActualTimeTableCard = ({
             key_word: "",
             column_type: "employee.full_name",
             branch_id: "",
+            status: "ALL",
             cutoff: {
                 ...getCurrentCutoff()
             },
@@ -295,6 +296,19 @@ const ActualTimeTableCard = ({
                                 setBranch(branch);
                             }}
                             error={formHandler.errors.branch_id}
+                        />
+                        <Dropdown
+                            placeholder="select status"
+                            label="Status"
+                            name="status"
+                            value={formHandler.values.status}
+                            onChange={formHandler.handleChange}
+                            options={[
+                                { label: "All", value: "ALL" },
+                                { label: "Complete", value: "COMPLETE" },
+                                { label: "Incomplete", value: "INCOMPLETE" },
+                                { label: "Multiple Logs", value: "MULTIPLE LOGS" },
+                            ]}
                         />
                         <CutOffDropDown
                             value={formHandler.values.selected_cutoff}
