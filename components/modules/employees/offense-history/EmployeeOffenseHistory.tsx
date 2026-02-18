@@ -165,6 +165,14 @@ const EmployeeOffenseHistory = () => {
             }
         }
     ]
+    const writtenTotal = api.dataSet?.filter((row: any) =>
+        row?.sanction?.description === "Written Reprimand" || 
+        row?.sanction?.description === "Written Memo"
+    ).length || 0;
+    
+    const suspensionTotal = api.dataSet?.filter((row: any) => 
+        Number(row?.sanction?.suspension_days) > 0 
+    ).length || 0;
     
     return (
         <>
@@ -177,7 +185,7 @@ const EmployeeOffenseHistory = () => {
                 action={action}
                 data={data}
             />
-            <div className="flex justify-end">
+            <div className="flex justify-between items-center mt-4">
                 {/* <div>
                     <Button
                         label="Add"
@@ -187,6 +195,16 @@ const EmployeeOffenseHistory = () => {
                         }}
                     />
                 </div> */}
+                <div className="flex gap-6 text-sm font-medium mt-1">
+                    <div>
+                        Written Memo: 
+                        <span className="font-bold ml-1">{writtenTotal}</span>
+                    </div>
+                    <div>
+                        Suspension: 
+                        <span className="font-bold ml-1">{suspensionTotal}</span>
+                    </div>
+                </div>
                 <div>
                     <DropDownButtons
                         actions={[
