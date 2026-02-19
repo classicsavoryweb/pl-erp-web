@@ -112,6 +112,21 @@ interface Employee {
   schedule: Schedule
   home_branch: HomeBranch
   latest_bank_details: LatestBankDetails
+  payroll_list?: PayrollList
+}
+
+interface PayrollList {
+  id?: number
+  employee_id?: number
+  is_included?: number
+  is_statutory_only?: number
+  is_mancom?: number
+  is_on_maternity_leave?: number
+  is_bank?: number
+  is_hold?: number
+  remarks?: any
+  holded_at?: any
+  holded_cutoffs?: any
 }
 
 interface CurrentBranch {
