@@ -88,6 +88,19 @@ export const endLoanTransaction = async (payload: {}, id: number) => {
     return resData;
 };
 
+export const importEmployeeDeductions = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/import-employee-deductions',
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: payload.hasOwnProperty('deduction_file')
+            ? { "Content-Type": "multipart/form-data" }
+            : {}
+    });
+
+    return resData;
+};
+
 export const getCSHubATDS = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-cshub-atds',
