@@ -11,6 +11,8 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { useEffect } from "react";
 import confirm from "@/components/common/Confirm";
 import { editScheduleMasterlist } from "@/api/schedule-masterlist";
+import Grid from "@/components/common/Grid";
+import Checkbox from "@/components/common/Checkbox";
 
 interface FormModalInterface {
     modal: any;
@@ -51,6 +53,9 @@ const EditScheduleMasterlistForm = ({
             days: "",
             required: "",
             status: "",
+            is_flexible: "0",
+            compute_break_time: "0",
+            compute_travel_time: "0",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -237,7 +242,7 @@ const EditScheduleMasterlistForm = ({
                     placeholder="select if required"
                     name="required"
                     required
-                    value={editFormHandler.values.required}
+                    value={editFormHandler.values.required ?? ""}
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.required}
                     options={[
@@ -260,6 +265,55 @@ const EditScheduleMasterlistForm = ({
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.status}
                 />
+
+
+                <div className="mt-2"/>
+                <Grid cols={3}>
+                    <Checkbox
+                        label="Flexible"
+                        checked={editFormHandler.values.is_flexible == "1"}
+                        value="is_flexible"
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue(value, "1");
+                            } else {
+                                editFormHandler.setFieldValue(value, "0");
+                            }
+                        }}
+                    />
+
+                    <Checkbox
+                        label="Break Time"
+                        checked={editFormHandler.values.compute_break_time == "1"}
+                        value="compute_break_time"
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue(value, "1");
+                            } else {
+                                editFormHandler.setFieldValue(value, "0");
+                            }
+                        }}
+                    />
+
+                    <Checkbox
+                        label="Travel Time"
+                        checked={editFormHandler.values.compute_travel_time == "1"}
+                        value="compute_travel_time"
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue(value, "1");
+                            } else {
+                                editFormHandler.setFieldValue(value, "0");
+                            }
+                        }}
+                    />
+                </Grid>
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">

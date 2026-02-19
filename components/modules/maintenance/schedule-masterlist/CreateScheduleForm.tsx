@@ -10,6 +10,8 @@ import confirm from "@/components/common/Confirm";
 import Dropdown from "@/components/common/Dropdown";
 import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { createScheduleMasterlist } from "@/api/schedule-masterlist";
+import Grid from "@/components/common/Grid";
+import Checkbox from "@/components/common/Checkbox";
 
 interface FormModalInterface {
     modal: any;
@@ -48,6 +50,9 @@ const CreateScheduleForm = ({
             days: "1",
             required: "",
             status: "active",
+            is_flexible: "0",
+            compute_break_time: "0",
+            compute_travel_time: "0",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -255,6 +260,53 @@ const CreateScheduleForm = ({
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.status}
                 />
+                <div className="mt-2"/>
+                <Grid cols={3}>
+                    <Checkbox
+                        label="Flexible"
+                        checked={createFormHandler.values.is_flexible == "1"}
+                        value="is_flexible"
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            if (e.target.checked) {
+                                createFormHandler.setFieldValue(value, "1");
+                            } else {
+                                createFormHandler.setFieldValue(value, "0");
+                            }
+                        }}
+                    />
+
+                    <Checkbox
+                        label="Break Time"
+                        checked={createFormHandler.values.compute_break_time == "1"}
+                        value="compute_break_time"
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            if (e.target.checked) {
+                                createFormHandler.setFieldValue(value, "1");
+                            } else {
+                                createFormHandler.setFieldValue(value, "0");
+                            }
+                        }}
+                    />
+
+                    <Checkbox
+                        label="Travel Time"
+                        checked={createFormHandler.values.compute_travel_time == "1"}
+                        value="compute_travel_time"
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            if (e.target.checked) {
+                                createFormHandler.setFieldValue(value, "1");
+                            } else {
+                                createFormHandler.setFieldValue(value, "0");
+                            }
+                        }}
+                    />
+                </Grid>
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">

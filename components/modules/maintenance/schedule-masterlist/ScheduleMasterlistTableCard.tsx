@@ -117,7 +117,10 @@ const ScheduleMasterlistTableCard = () => {
                     total_hours: data.total_hours,
                     days: data.days,
                     required: data.required,
-                    status: data.status
+                    status: data.status,
+                    is_flexible: data.is_flexible,
+                    compute_break_time: data.compute_break_time,
+                    compute_travel_time: data.compute_travel_time,
                 });
             }
         },
