@@ -68,3 +68,13 @@ export const updatePayrollContributions = async (id: number, payload: {}) => {
 
     return resData;
 };
+
+export const updatePayrollTimekeepingBranch = async (id: number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/update-payroll-timekeeping-branch/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
