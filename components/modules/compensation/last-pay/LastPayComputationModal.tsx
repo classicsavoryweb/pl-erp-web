@@ -11,20 +11,34 @@ import { AuthContext } from "@/context/AuthProvider";
 
 interface LastPayComputationModalProps {
     modal: any;
-    data: any;
+    data?: any;
+    previewData?: any;
+    skipFetch?: boolean;
 }
 
 const LastPayComputationModal = ({
     modal,
-    data
+    data,
+    previewData,
+    skipFetch = false,
 }: LastPayComputationModalProps) => {
     const api = useApiCall();
     const [details, setDetails] = useState<any>({});
     const [preparedByEmployee, setPreparedByEmployee] = useState<any>(null);
     const { userDetails } = useContext(AuthContext);
 
+    const isPreviewOnly = Boolean(skipFetch && previewData);
+
     useAsyncEffect(() => {
         if (!modal.isShowing) return;
+
+        if (isPreviewOnly) {
+            api.setLoading(false);
+            setDetails(previewData ?? {});
+            setPreparedByEmployee(null);
+            return;
+        }
+
         const employeeNumber = data?.employee?.employee_number;
         const preparerEmployeeNumber = userDetails?.employee_number;
         if (!employeeNumber) return;
@@ -66,7 +80,7 @@ const LastPayComputationModal = ({
             .finally(() => {
                 api.setLoading(false);
             });
-    }, [modal.isShowing, data?.employee?.employee_number, userDetails?.employee_number]);
+    }, [modal.isShowing, data?.employee?.employee_number, userDetails?.employee_number, isPreviewOnly, previewData]);
 
     const preparedBy = useMemo(() => {
         if (userDetails?.proper_full_name) return userDetails.proper_full_name;
@@ -85,6 +99,15 @@ const LastPayComputationModal = ({
     }, [preparedByEmployee, userDetails]);
 
     const mergedData = useMemo(() => {
+        if (isPreviewOnly) {
+            const base = previewData ?? {};
+            return {
+                ...base,
+                prepared_by: base?.prepared_by ?? preparedBy,
+                prepared_by_title: base?.prepared_by_title ?? preparedByTitle,
+            };
+        }
+
         return {
             ...details,
             ...data,
@@ -102,7 +125,7 @@ const LastPayComputationModal = ({
             prepared_by: preparedBy || data?.prepared_by || details?.prepared_by,
             prepared_by_title: preparedByTitle || data?.prepared_by_title || details?.prepared_by_title,
         };
-    }, [data, details, preparedBy, preparedByTitle]);
+    }, [isPreviewOnly, previewData, details, data, preparedBy, preparedByTitle]);
 
     return (
         <Modal
@@ -110,7 +133,7 @@ const LastPayComputationModal = ({
             title="Last Pay Computation"
             onClose={() => modal.onClose()}
             size="entireScreen"
-            loading={api.loading}
+            loading={api.loading && !isPreviewOnly}
         >
             <PDFViewer className="w-full h-[85vh]">
                 <LastPayComputationPDF

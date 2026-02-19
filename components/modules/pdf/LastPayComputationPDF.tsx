@@ -284,7 +284,9 @@ const buildDeductionSummary = (deductions: any[]) => {
 
 const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
     const employee = data?.employee ?? {};
-    const payrollRows = buildPayrollRows(data);
+    const payrollRows = Array.isArray(data?.payroll_rows_override)
+        ? data.payroll_rows_override
+        : buildPayrollRows(data);
     const payrollTotal = payrollRows.reduce((sum, row) => sum + Number(row.amount ?? 0), 0);
 
     const thirteenthMonth = Number(data?.thirteenth_month ?? 0);
@@ -294,10 +296,24 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
     const otherIncentive = Number(data?.sales ?? 0) + Number(data?.meal_allowance ?? data?.meal ?? 0);
     const salary = Number(data?.payroll_hold ?? 0);
 
-    const subTotal = thirteenthMonth + taxRefund + incentives + payLeave + otherIncentive + salary;
+    const customAmountItems = Array.isArray(data?.computation_items_override)
+        ? data.computation_items_override
+        : [];
+    const customAmountTotal = customAmountItems.reduce((sum: number, item: any) => {
+        return sum + Number(item?.amount ?? 0);
+    }, 0);
 
-    const deductionSummary = buildDeductionSummary(data?.deductions ?? []);
-    const deductionsTotal = Number(data?.total_deductions ?? (
+    const subTotal = thirteenthMonth + taxRefund + incentives + payLeave + otherIncentive + salary + customAmountTotal;
+
+    const deductionSummaryOverride = data?.deduction_summary_override;
+    const deductionSummary = deductionSummaryOverride ?? buildDeductionSummary(data?.deductions ?? []);
+    const customDeductionItems = Array.isArray(data?.deduction_items_override)
+        ? data.deduction_items_override
+        : [];
+    const customDeductionTotal = customDeductionItems.reduce((sum: number, item: any) => {
+        return sum + Number(item?.amount ?? 0);
+    }, 0);
+    const baseDeductionTotal = (
         deductionSummary.shortages +
         deductionSummary.variance +
         deductionSummary.breakages +
@@ -307,13 +323,19 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
         deductionSummary.cash_advance +
         deductionSummary.corporate_loans +
         deductionSummary.sss_loans
-    ));
+    );
+    const useOverrideTotals = customAmountItems.length > 0 || customDeductionItems.length > 0 || deductionSummaryOverride;
+    const deductionsTotal = useOverrideTotals
+        ? baseDeductionTotal + customDeductionTotal
+        : Number(data?.total_deductions ?? baseDeductionTotal);
 
-    const netClaim = Number(data?.last_pay ?? (subTotal - deductionsTotal));
+    const netClaim = useOverrideTotals
+        ? (subTotal - deductionsTotal)
+        : Number(data?.last_pay ?? (subTotal - deductionsTotal));
 
-    const basicSalary = employee?.current_position?.salary?.basic_salary
+    const basicSalary = data?.basic_salary
+        ?? employee?.current_position?.salary?.basic_salary
         ?? employee?.basic_salary
-        ?? data?.basic_salary
         ?? 0;
     const dailyRate = data?.daily_rate
         ?? data?.payrolls?.[0]?.daily_rate
@@ -324,7 +346,7 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
     const preparedByTitle = data?.prepared_by_title ?? "HO Staff";
     const notedBy = data?.noted_by ?? "CLARITA P. CRUZ";
     const notedByTitle = data?.noted_by_title ?? "Payroll Manager";
-    const receivedBy = employee?.full_name ?? data?.employee_name ?? "";
+    const receivedBy = data?.employee_name ?? employee?.full_name ?? "";
 
     return (
         <Document>
@@ -415,6 +437,12 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
                             <Text style={styles.payLabel}>SALARY:</Text>
                             <Text style={styles.payValue}>{formatAmount(salary)}</Text>
                         </View>
+                        {customAmountItems.map((item: any, index: number) => (
+                            <View style={styles.payRow} key={`custom-amount-${index}`}>
+                                <Text style={styles.payLabel}>{String(item?.label ?? "CUSTOM AMOUNT").toUpperCase()}:</Text>
+                                <Text style={styles.payValue}>{formatAmount(item?.amount ?? 0)}</Text>
+                            </View>
+                        ))}
 
                         <View style={styles.subtotalRow}>
                             <Text style={styles.bold}>SUB TOTAL AMOUNT:</Text>
@@ -459,6 +487,12 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
                             <Text style={styles.payLabel}>SSS LOANS</Text>
                             <Text style={styles.payValue}>{formatAmount(deductionSummary.sss_loans)}</Text>
                         </View>
+                        {customDeductionItems.map((item: any, index: number) => (
+                            <View style={styles.payRow} key={`custom-deduction-${index}`}>
+                                <Text style={styles.payLabel}>{String(item?.label ?? "CUSTOM DEDUCTION").toUpperCase()}</Text>
+                                <Text style={styles.payValue}>{formatAmount(item?.amount ?? 0)}</Text>
+                            </View>
+                        ))}
 
                         <View style={styles.deductionTotalRow}>
                             <Text style={styles.bold}>{formatAmount(deductionsTotal)}</Text>

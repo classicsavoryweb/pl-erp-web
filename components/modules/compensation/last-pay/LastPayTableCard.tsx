@@ -19,7 +19,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import { useState } from "react";
 import ViewLastPayModal from "./ViewLastPayModal";
 import EditLastPayModal from "./EditLastPayModal";
-import LastPayComputationModal from "./LastPayComputationModal";
+import LastPayComputationEditModal from "./LastPayComputationEditModal";
 
 const LastPayTableCard = () => {
     const api = useApiCall();
@@ -314,7 +314,7 @@ const LastPayTableCard = () => {
                 }}
             />
 
-            <LastPayComputationModal
+            <LastPayComputationEditModal
                 modal={computationModal}
                 data={data}
             />
