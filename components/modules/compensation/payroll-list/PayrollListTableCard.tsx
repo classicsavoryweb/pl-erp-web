@@ -6,7 +6,7 @@ import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
-import { exportAllPayrollList, getAllPayrollList } from "@/api/compensation/payroll-list";
+import { exportAllPayrollList, getAllPayrollList, exportPayrollBankDetails } from "@/api/compensation/payroll-list";
 import FilterCard from "../../cards/FilterCard";
 import { useState } from "react";
 import { useModal } from "@/hooks/modal";
@@ -17,6 +17,7 @@ import CreatePayrollListForm from "./CreatePayrollListForm";
 import EditPayrollListForm from "./EditPayrollListForm";
 import moment from "moment";
 import Link from "next/link";
+
 
 const PayrollListTableCard = () => {
     const api = useApiCall();
@@ -162,6 +163,22 @@ const PayrollListTableCard = () => {
                 createModal.onOpen();
             }
         },
+        {
+            label: "Export Bank Details",
+            onClick: async () => {
+            try {
+                const response = await exportPayrollBankDetails({});
+                const url = window.URL.createObjectURL(new Blob([response.data]));
+                const link = document.createElement("a");
+                link.href = url;
+                link.setAttribute("download",`BANK-DETAILS-${moment().format("YYYY-MM-DD")}.xlsx`);
+                    document.body.appendChild(link);
+                    link.click();
+                } catch (error) {
+                    toast.error("Error exporting bank details");
+                }
+            }
+        }
     ];
 
     return (

@@ -34,6 +34,22 @@ export const exportAllPayrollList = async (payload: {}) => {
     return resData;
 };
 
+
+export const exportPayrollBankDetails = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/payroll/export-bank-details',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
+
 export const createPayrollList = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-payroll-list',

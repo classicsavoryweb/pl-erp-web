@@ -296,7 +296,18 @@ const EmployeeTableCard = () => {
             label: "Group Head Employee Number",
             value: "current_branch.group_head_employee_number",
         },
-
+        {
+            label: "College - School",
+            value: "education.college",
+        },
+        {
+            label: "College - Course",
+            value: "education.course",
+        },
+        {
+            label: "High School - School",
+            value: "education.highschool",
+        }
     ];
 
     return (
