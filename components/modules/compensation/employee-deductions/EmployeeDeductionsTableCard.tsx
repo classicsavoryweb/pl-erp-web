@@ -27,6 +27,7 @@ import { exportAllEmployeeDeductions, getAllEmployeeDeductions } from "@/api/com
 import DropDownButtons from "@/components/common/DropDownButtons";
 import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
 import ViewEmployeeDeduction from "./ViewEmployeeDeduction";
+import ImportEmployeeDeductionsModal from "./ImportEmployeeDeductionsModal";
 
 interface EmployeeDeductionsInterface {
     hasExport?: boolean;
@@ -45,6 +46,7 @@ const EmployeeDeductionsTableCard = ({
     const editModal = useModal();
     const viewModal = useModal();
     const editLoanModal = useModal();
+    const importModal = useModal();
     const [data, setData] = useState({});
     const [employee, setEmployee] = useState<any>({});
     const { permissions } = useContext(AuthContext);
@@ -217,6 +219,12 @@ const EmployeeDeductionsTableCard = ({
             label: "Create new deduction",
             onClick: () => {
                 createModal.onOpen();
+            }
+        },
+        {
+            label: "Import deductions",
+            onClick: () => {
+                importModal.onOpen();
             }
         },
     ];
@@ -445,6 +453,11 @@ const EmployeeDeductionsTableCard = ({
             <ViewEmployeeDeduction
                 modal={viewModal}
                 data={data}
+            />
+
+            <ImportEmployeeDeductionsModal
+                modal={importModal}
+                onSubmitCallback={api.triggerReload}
             />
         </>
     );
