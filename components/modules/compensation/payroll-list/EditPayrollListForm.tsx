@@ -30,6 +30,7 @@ const EditPayrollListForm = ({
         initialValues: {
             employee: formValue.employee || {},
             employee_id: formValue.employee.id,
+            salary_amount: formValue.salary_amount ?? 0,
             is_included: 0,
             is_statutory_only: 0,
             is_mancom: 0,
@@ -44,8 +45,16 @@ const EditPayrollListForm = ({
             is_included: Yup.string().required("Payroll status is required."),
             is_statutory_only: Yup.string().required("Payroll Type is required."),
             is_bank: Yup.string().required("Payroll Type is required."),
+            salary_amount: Yup.number()
+                .typeError("Salary must be a number")
+                .min(0, "Salary must be 0 or greater")
+                .nullable(),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
+            const payload = {
+                ...values,
+                salary_amount: String(values.salary_amount ?? "").replace(/,/g, ""),
+            };
 
             const isConfirmed = await confirm({
                 title: "Edit Payroll",
@@ -54,7 +63,7 @@ const EditPayrollListForm = ({
 
             if (isConfirmed) {
                 setSubmitting(true);
-                editPayrollList(values, formValue.id).then((resp) => {
+                editPayrollList(payload, formValue.id).then((resp) => {
                     if(!resp.error) {
                         toast.success("Payroll updated successfully");
                         onSubmitCallback();
@@ -71,6 +80,7 @@ const EditPayrollListForm = ({
             }
         }
     });
+
 
     useEffect(() => {
         if (modal.isShowing) {
@@ -137,6 +147,21 @@ const EditPayrollListForm = ({
                         ]}
                     />
                 </div>
+                <Textfield
+                    label="Salary"
+                    name="salary_amount"
+                    value={editFormHandler.values.salary_amount ?? ""}
+                    onChange={(e) => {
+                        const raw = String(e.target.value ?? "");
+                        const cleaned = raw.replace(/[^0-9.]/g, "");
+                        editFormHandler.setFieldValue("salary_amount", cleaned);
+                    }}
+                    error={
+                        typeof editFormHandler.errors.salary_amount === "string"
+                            ? editFormHandler.errors.salary_amount
+                            : undefined
+                    }
+                />
                 <Grid cols={2}>
                     <div className="mb-2">
                         <Checkbox

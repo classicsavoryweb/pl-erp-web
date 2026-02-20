@@ -143,6 +143,7 @@ const PayrollListTableCard = () => {
                     id: data.id,
                     employee_id: data.employee_id,
                     employee_number: data.employee.employee_number,
+                    salary_amount: data.salary_amount,
                     is_included: data.is_included,
                     is_statutory_only: data.is_statutory_only,
                     is_mancom: data.is_mancom,
