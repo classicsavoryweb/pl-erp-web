@@ -10,6 +10,7 @@ import EmployeePositionHistory from "@/components/modules/employees/position-his
 import EmployeeRequirementsList from "@/components/modules/employees/requirements/EmployeeRequirementsList";
 import EmployeeTraingingHistory from "@/components/modules/employees/trainings/EmployeeTrainingHistory";
 import EmployeeVaccinationHistory from "@/components/modules/employees/vaccinnation/EmployeeVaccinationHistory";
+import EmployeePromotionHistory from "@/components/modules/employees/promotion-history/EmployeePromotionHistory";
 import { AuthContext } from "@/context/AuthProvider";
 import { useParams } from "next/navigation";
 import { useContext } from "react";
@@ -36,6 +37,15 @@ const Page = () => {
                     </Accordion>
                 </div>
             }
+
+            { permissions.includes("view_acting_capacity") && 
+                <div className="w-full">
+                      <Accordion
+                        title="Promotion"
+                    >
+                        <EmployeePromotionHistory/>
+                    </Accordion>
+                </div>}
 
             { permissions.includes("view_employee_branches") && 
                 <div className="w-full">
