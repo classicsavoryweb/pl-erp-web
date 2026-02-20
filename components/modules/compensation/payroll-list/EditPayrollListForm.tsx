@@ -238,22 +238,28 @@ const EditPayrollListForm = ({
                     />
                 </Grid>
 
-                {editFormHandler.values.is_bank === 1 && editFormHandler.values.employee.latest_bank_details &&
-                    <Grid cols={2}>
-                        <Textfield
-                            disabled
-                            label="Account Type"
-                            name="description"
-                            value={editFormHandler.values.employee.latest_bank_details.bank_account_type.description}
-                        />
-                        <Textfield
-                            disabled
-                            label="Account No."
-                            name="account_no"
-                            value={editFormHandler.values.employee.latest_bank_details.bank_number}
-                        />
-                    </Grid>
-                }
+                {editFormHandler.values.is_bank === 1 && (() => {
+                    const bankDetails = editFormHandler.values.employee?.latest_bank_details;
+                    const accountType = bankDetails?.bank_account_type?.description ?? "-";
+                    const accountNo = bankDetails?.bank_number ?? "-";
+
+                    return (
+                        <Grid cols={2}>
+                            <Textfield
+                                disabled
+                                label="Account Type"
+                                name="description"
+                                value={accountType}
+                            />
+                            <Textfield
+                                disabled
+                                label="Account No."
+                                name="account_no"
+                                value={accountNo}
+                            />
+                        </Grid>
+                    );
+                })()}
 
                 <TextArea
                     label="Remarks"
