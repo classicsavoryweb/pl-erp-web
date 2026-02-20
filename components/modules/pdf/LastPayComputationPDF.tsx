@@ -287,7 +287,7 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
     const payrollRows = Array.isArray(data?.payroll_rows_override)
         ? data.payroll_rows_override
         : buildPayrollRows(data);
-    const payrollTotal = payrollRows.reduce((sum:number, row: any) => sum + Number(row.amount ?? 0), 0);
+    const payrollTotal = payrollRows.reduce((sum: number, row: any) => sum + Number(row?.amount ?? 0), 0);
 
     const thirteenthMonth = Number(data?.thirteenth_month ?? 0);
     const taxRefund = Number(data?.tax_refund ?? 0);
@@ -398,9 +398,9 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
                     <View style={styles.leftCol}>
                         <Text style={styles.sectionTitle}>13TH MO. PAY COMPUTATION</Text>
                         {payrollRows.map((row: any, idx: number) => (
-                            <View style={styles.payRow} key={`${row.label}-${idx}`}>
-                                <Text style={styles.payLabel}>{row.label}</Text>
-                                <Text style={styles.payValue}>{formatAmount(row.amount)}</Text>
+                            <View style={styles.payRow} key={`${row?.label ?? "row"}-${idx}`}>
+                                <Text style={styles.payLabel}>{row?.label ?? ""}</Text>
+                                <Text style={styles.payValue}>{formatAmount(row?.amount ?? 0)}</Text>
                             </View>
                         ))}
 

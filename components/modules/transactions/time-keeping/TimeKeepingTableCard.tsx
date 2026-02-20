@@ -39,7 +39,7 @@ const TimeKeepingTableCard = ({
     const api = useApiCall();
     const editModal = useModal();
     const { permissions } = useContext(AuthContext);
-    const [branch, setBranch] = useState<any>({});
+    const [branch, setBranch] = useState<any>(null);
     const [selectedTimekeeping, setSelectedTimekeeping] = useState<any>({});
 
     const columnSettings = [
@@ -200,7 +200,7 @@ const TimeKeepingTableCard = ({
                     ? schema.required('Column type is required')
                     : schema.notRequired()
             ),
-            branch_id: Yup.string().required("Branch is required"),
+            branch_id: Yup.string(),
             year: Yup.string().required("Year is required"),
         }),
         onSubmit: async (values, {setSubmitting}) => {
@@ -258,7 +258,7 @@ const TimeKeepingTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch ? branch.short_name : 'default-branch';
+                    const branchName = branch?.short_name ?? 'all-branches';
     
                     a.href = downloadUrl;
                     a.download = `${branchName.toUpperCase()}-TIMEKEEPING-${formHandler.values.selected_cutoff+"-"+formHandler.values.year}.xls`;
@@ -273,25 +273,23 @@ const TimeKeepingTableCard = ({
     useAsyncEffect(() => {
         api.setLoading(false);
             
-        if (formHandler.values.branch_id) {
-            api.setLoading(true);
+        api.setLoading(true);
 
-            getAllTimeKeeping({
-                page: paginator.page,
-                per_page: paginator.per_page,
-                ...formHandler.values
-            }).then((resp) => {
-                if (!resp.error) {
-                    api.setDataSet(resp.data.data);
-                    paginator.setPage(resp.data.current_page);
-                    paginator.setPaginationData(resp.data);
-                } else {
-                    toast.error("Error fetching timekeeping");
-                }
-            }).finally(() => {
-                api.setLoading(false);
-            });
-        }
+        getAllTimeKeeping({
+            page: paginator.page,
+            per_page: paginator.per_page,
+            ...formHandler.values
+        }).then((resp) => {
+            if (!resp.error) {
+                api.setDataSet(resp.data.data);
+                paginator.setPage(resp.data.current_page);
+                paginator.setPaginationData(resp.data);
+            } else {
+                toast.error("Error fetching timekeeping");
+            }
+        }).finally(() => {
+            api.setLoading(false);
+        });
     }, [paginator.reload, api.reload]);
 
     return (
@@ -382,6 +380,7 @@ const TimeKeepingTableCard = ({
                                     api.setDataSet([]);
                                     formHandler.resetForm();
                                     exportHandler.resetForm();
+                                    setBranch(null);
                                 }}
                                 variant="secondary"
                             />    
