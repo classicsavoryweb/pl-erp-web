@@ -45,7 +45,7 @@ const LastPayDetails = ({
             return Number(deduction?.balance ?? deduction?.amount ?? 0);
         }
 
-        const amount = deduction?.amount ?? deduction?.balance ?? 0;
+        const amount = deduction?.balance ?? deduction?.amount ?? 0;
         return Number(amount);
     };
 
@@ -327,6 +327,14 @@ const LastPayDetails = ({
                 ...deduction,
                 balance: balanceValue,
                 amount: amountValue
+            };
+        }
+
+        const nonSssBalance = deduction?.balance;
+        if (nonSssBalance !== undefined && nonSssBalance !== null) {
+            return {
+                ...deduction,
+                amount: nonSssBalance
             };
         }
 
