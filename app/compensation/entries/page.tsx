@@ -5,9 +5,9 @@ const Page = () => {
     return (
         <>
             <PageTitle
-                title="Entries"
+                title="Final Entries"
             />
-            <EntriesTableCard/>
+            <EntriesTableCard title="Final Entries" showTag={false}/>
         </>
     );
 };

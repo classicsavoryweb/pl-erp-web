@@ -69,6 +69,19 @@ export const compensationRoutes: Route[] = [
                 name: "Entries",
                 pathname: "/compensation/entries",
                 permission: "view_compensation_entries",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "For Review Entries",
+                        pathname: "/compensation/entries/for-review",
+                        permission: "view_compensation_entries",
+                    },
+                    {
+                        name: "Final Entries",
+                        pathname: "/compensation/entries",
+                        permission: "view_compensation_entries",
+                    },
+                ]
             },
             {
                 name: "Converter",

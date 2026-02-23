@@ -12,35 +12,131 @@ import { toast } from "react-toastify";
 import Grid from "@/components/common/Grid";
 import confirm from "@/components/common/Confirm";
 import usePagination from "@/hooks/pagination";
-import { useContext, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { AuthContext } from "@/context/AuthProvider";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
 import Dropdown from "@/components/common/Dropdown";
 import DateRangeConfirmModal from "./DateRangeConfirmModal";
 import { getAllEntries, exportAllEntries} from "@/api/compensation/entries";
+import moment from "moment";
+import BranchDropDown from "../../generic/BranchDropDown";
+import CutOffDropDown from "../../generic/CutOffDropDown";
+import { useBranchStore } from "@/stores/useBranchStore";
 interface FilterInterface {
     hasExport?: boolean;
     exportPermission?: string;
     unique_api?: (values: any) => any;
+    title?: string;
+    showTag?: boolean;
 };
 
 const EntriesTableCard = ({
     unique_api = exportAllEntries,
     hasExport = true,
     exportPermission = "export_all_compensation_entries",
+    title = "Entries",
+    showTag = true,
 }: FilterInterface) => {
     const paginator = usePagination(20);
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const dateRangeConfirmModal = useModal();
+    const { branches, getBranches } = useBranchStore();
+
+    useAsyncEffect(() => {
+        getBranches();
+    }, []);
+
+    const branchShortNameMap = useMemo(() => {
+        const map = new Map<string, string>();
+        branches.forEach((branch: any) => {
+            if (branch?.branch_number && branch?.short_name) {
+                map.set(branch.branch_number, branch.short_name);
+            }
+        });
+        return map;
+    }, [branches]);
+
+    const getCutoffFromDocumentNo = (documentNo?: string) => {
+        if (!documentNo) return "-";
+        const candidate = documentNo.includes("|")
+            ? documentNo.split("|").slice(1).join("|")
+            : documentNo;
+
+        const matches = candidate.match(/\d{4}-\d{2}-\d{2}|\d{2}\/\d{2}\/\d{4}/g);
+        if (!matches || matches.length < 2) return "-";
+
+        const parseDate = (value: string) => {
+            const parsed = moment(value, ["YYYY-MM-DD", "MM/DD/YYYY"], true);
+            return parsed.isValid() ? parsed : null;
+        };
+
+        const start = parseDate(matches[0]);
+        const end = parseDate(matches[1]);
+        if (!start || !end) return "-";
+
+        const monthLabels = ["Jan.", "Feb.", "Mar.", "Apr.", "May", "Jun.", "Jul.", "Aug.", "Sep.", "Oct.", "Nov.", "Dec."];
+        const formatLabel = (dateValue: moment.Moment) => {
+            return `${monthLabels[dateValue.month()]} ${dateValue.date()}`;
+        };
+
+        return `${formatLabel(start)} - ${formatLabel(end)}`;
+    };
+
+    const getBranchFromDocumentNo = (
+        documentNo?: string,
+        branchShortName?: string,
+        branchName?: string,
+        branchNumber?: string
+    ) => {
+        if (branchShortName) return branchShortName;
+
+        if (branchNumber && branchShortNameMap.has(branchNumber)) {
+            return branchShortNameMap.get(branchNumber) || branchNumber;
+        }
+
+        return branchName || branchNumber || "-";
+    };
+
+    const getTagFromDocumentNo = (documentNo?: string) => {
+        if (!documentNo || !documentNo.includes("|")) return "-";
+        const prefix = documentNo.split("|")[0].trim();
+        return prefix || "-";
+    };
 
     const columnSettings = [
         {
+            columnHead: "Cutoff",
+            path: "document_no",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return getCutoffFromDocumentNo(data?.document_no);
+            },
+            filterable: false
+        },
+        {
             columnHead: "Branch",
             path: "branch.name",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return getBranchFromDocumentNo(
+                    data?.document_no,
+                    data?.branch?.short_name,
+                    data?.branch?.name,
+                    data?.branch_number
+                );
+            }
         },
+        ...(showTag ? [{
+            columnHead: "Tag",
+            path: "document_no",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return getTagFromDocumentNo(data?.document_no);
+            },
+            filterable: false
+        }] : []),
         {
             columnHead: "Amount",
             path: "amount",
@@ -87,6 +183,11 @@ const EntriesTableCard = ({
         initialValues: {
             key_word: "",
             column_type: "branch.name",
+            branch_id: "",
+            branch_number: "",
+            selected_cutoff: "",
+            cutoff_start: "",
+            cutoff_end: "",
             action: "",
         },
         validateOnChange: false,
@@ -97,6 +198,8 @@ const EntriesTableCard = ({
                     ? schema.required('Column type is required')
                     : schema.notRequired()
             ),
+            branch_id: Yup.string(),
+            branch_number: Yup.string(),
         }),
         onSubmit: async (values, {setSubmitting}) => {
             api.triggerReload();
@@ -173,7 +276,7 @@ const EntriesTableCard = ({
                             value={formHandler.values.column_type}
                             error={formHandler.errors.column_type}
                             onChange={formHandler.handleChange}
-                            options={columnSettings.map((column:any) => {
+                            options={columnSettings.filter((column: any) => column.filterable !== false).map((column:any) => {
                                 return {
                                     label: column.columnHead,
                                     value: column.path
@@ -186,6 +289,25 @@ const EntriesTableCard = ({
                             placeholder="enter keyword"
                             value={formHandler.values.key_word}
                             onChange={formHandler.handleChange}
+                        />
+                        <BranchDropDown
+                            placeholder="select branch"
+                            label="Branch"
+                            name="branch_id"
+                            value={formHandler.values.branch_id}
+                            onChange={(e) => {
+                                formHandler.handleChange(e);
+                                formHandler.setFieldValue("branch_number", e.target.obj?.branch_number || "");
+                            }}
+                            error={formHandler.errors.branch_id}
+                        />
+                        <CutOffDropDown
+                            value={formHandler.values.selected_cutoff}
+                            onChange={(e) => {
+                                formHandler.setFieldValue("selected_cutoff", e.target.value);
+                                formHandler.setFieldValue("cutoff_start", e.target.obj?.start_time || "");
+                                formHandler.setFieldValue("cutoff_end", e.target.obj?.end_time || "");
+                            }}
                         />
                     </Grid>
                     <div className="flex justify-end gap-x-2">
@@ -247,7 +369,7 @@ const EntriesTableCard = ({
                 </form>
             </Card>
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Entries</p>
+                <p className=" font-semibold text-red-800 dark:text-red-500">{title}</p>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
