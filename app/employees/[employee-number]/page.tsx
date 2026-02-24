@@ -38,14 +38,15 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("view_acting_capacity") && 
+            { permissions.includes("view_promotion_history") && 
                 <div className="w-full">
                       <Accordion
                         title="Promotion"
                     >
                         <EmployeePromotionHistory/>
                     </Accordion>
-                </div>}
+                </div>
+            }
 
             { permissions.includes("view_employee_branches") && 
                 <div className="w-full">
