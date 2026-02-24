@@ -1,5 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
-import EntriesTableCard from "@/components/modules/compensation/entries/EntriesTableCard";
+import EntriesReviewTableCard from "@/components/modules/compensation/entries/EntriesReviewTableCard";
 
 const Page = () => {
     return (
@@ -7,7 +7,7 @@ const Page = () => {
             <PageTitle
                 title="For Review Entries"
             />
-            <EntriesTableCard title="For Review Entries" showTag={false}/>
+            <EntriesReviewTableCard title="For Review Entries"/>
         </>
     );
 };

@@ -1,5 +1,5 @@
 import PageTitle from "@/components/common/PageTitle";
-import EntriesTableCard from "@/components/modules/compensation/entries/EntriesTableCard";
+import EntriesFinalTableCard from "@/components/modules/compensation/entries/EntriesFinalTableCard";
 
 const Page = () => {
     return (
@@ -7,7 +7,7 @@ const Page = () => {
             <PageTitle
                 title="Final Entries"
             />
-            <EntriesTableCard title="Final Entries" showTag={false}/>
+            <EntriesFinalTableCard title="Final Entries"/>
         </>
     );
 };

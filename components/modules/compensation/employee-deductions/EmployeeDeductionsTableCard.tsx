@@ -299,14 +299,26 @@ const EmployeeDeductionsTableCard = ({
 
             if (isConfirm) {
                 unique_api && unique_api(values).then((resp: any) => {
-                    const blob = new Blob([resp.data], {
-                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                    if (resp?.error) {
+                        const message = resp?.data?.message || resp?.message || "Error exporting deductions";
+                        toast.error(message);
+                        return;
+                    }
+
+                    const fileData = resp?.data ?? resp;
+                    if (!fileData) {
+                        toast.error("Error exporting deductions");
+                        return;
+                    }
+
+                    const blob = new Blob([fileData], {
+                        type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
-                    const a = document.createElement('a');
+                    const a = document.createElement("a");
 
                     a.href = downloadUrl;
-                    a.download = `EMPLOYEE-DEDUCTIONS-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `EMPLOYEE-DEDUCTIONS-${moment().format("YYYY-MM-DD")}.xlsx`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
