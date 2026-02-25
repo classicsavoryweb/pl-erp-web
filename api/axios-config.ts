@@ -6,7 +6,6 @@ interface dataType {
     method: 'POST' | 'GET';
     payload?: any;
     additionalHeaders?: any;
-    params?: any,
     responseType?: "blob" | "json",
 };
 
