@@ -46,6 +46,16 @@ export const getActingCapacity = async (id: string) => {
     return resData;
 };
 
+export const getPromotionSummary = async (id: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-promotion-summary/${id}`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const getACF = async (id: string) => {
     const resData = await axiosHelper({
         func_path: `/get-acf/${id}`,

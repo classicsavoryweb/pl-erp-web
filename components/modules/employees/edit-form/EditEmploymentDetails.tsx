@@ -2,6 +2,7 @@ import Card from '@/components/common/Card';
 import { FormikProps } from 'formik';
 import EmploymentStatusDropdown from '../../generic/EmploymentStatusDropDown';
 import ActiveInactiveDropDown from '../../generic/ActiveInactiveDropDown';
+import BranchDropDown from '../../generic/BranchDropDown';
 import Grid from '@/components/common/Grid';
 import Textfield from '@/components/common/Textfield';
 import Badge from '@/components/common/Badge';
@@ -143,6 +144,14 @@ const EditEmploymentDetails = ({
                         />
                     </>
                 }
+                    <BranchDropDown
+                        onChange={formHandler.handleChange}
+                        label='Home Branch'
+                        name="home_branch_id"
+                        value={Number(formHandler.values.home_branch_id) || ""}
+                        placeholder='select branch'
+                        required
+                    />
             </Grid>
         </Card>
     );
