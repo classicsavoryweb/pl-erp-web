@@ -109,6 +109,16 @@ const ActingCapacityTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Start Date",
+            path: "start_date",
+            columnType: COLUMNTYPES.date
+        },
+        {
+            columnHead: "End Date",
+            path: "latest_end_date",
+            columnType: COLUMNTYPES.date
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.function,
