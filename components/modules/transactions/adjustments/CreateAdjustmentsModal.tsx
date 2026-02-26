@@ -133,11 +133,6 @@ const CreateAdjustmentsModal = ({
             return errors;
         },
         onSubmit: async (values, {resetForm}) => {
-            if (values.punches.length !== 2 && values.punches.length !== 4) {
-                toast.error("You can only submit 2 or 4 number of punches");
-                return;
-            }
-
             const isConfirmed = await confirm({
                 title: "Create Adjustment",
                 message: "Are you sure you want to save changes?"
