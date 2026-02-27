@@ -1,6 +1,6 @@
 "use client";
 
-import { getAdjustment } from "@/api/transactions/adjustments";
+import { editAdjustments, getAdjustment } from "@/api/transactions/adjustments";
 import Button from "@/components/common/Button";
 import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
@@ -15,17 +15,25 @@ import { toast } from "react-toastify";
 interface FormModalInterface {
     modal: any;
     id: number | string;
+    onUpdated?: () => void;
 };
 
 const ViewAdjustmentModal = ({
     modal,
-    id
+    id,
+    onUpdated
 }: FormModalInterface) => {
 
     const api = useApiCall();
     const [originalTimeKeeping, setOriginalTimeKeeping] = useState<any[]>([]);
     const [adjustedTimeKeeping, setAdjustedTimeKeeping] = useState<any[]>([]);
     const [adjustmentDetails, setAdjustmentDetails] = useState<any>({});
+    const [isEditing, setIsEditing] = useState(false);
+    const [saving, setSaving] = useState(false);
+    const [editValues, setEditValues] = useState<any>({
+        taxable_amount: "",
+        correct_amount_paid: ""
+    });
 
     const columnSettings = [
         {
@@ -140,6 +148,11 @@ const ViewAdjustmentModal = ({
                     setAdjustedTimeKeeping([{...resp.data.adjustment_timekeeping}]);
                     setOriginalTimeKeeping([{...resp.data.original_timekeeping}]);
                     setAdjustmentDetails(resp.data.adjustment);
+                    setEditValues({
+                        taxable_amount: resp.data.adjustment?.taxable_amount ?? "",
+                        correct_amount_paid: resp.data.adjustment?.correct_amount_paid ?? ""
+                    });
+                    setIsEditing(false);
                 } else {
                     toast.error("Error fetching adjustment details");
                 }
@@ -159,6 +172,8 @@ const ViewAdjustmentModal = ({
                 modal.onClose();
                 setAdjustedTimeKeeping([]);
                 setOriginalTimeKeeping([]);
+                setIsEditing(false);
+                onUpdated?.();
             }}
             loading={api.loading}
             size="xxl"
@@ -206,27 +221,116 @@ const ViewAdjustmentModal = ({
                 />
                 <Textfield
                     label="Adjusted Amount"
-                    disabled={true}
-                    value={adjustmentDetails.correct_amount_paid ?? ""}
+                    disabled={!isEditing}
+                    type="text"
+                    value={editValues.correct_amount_paid ?? ""}
+                    onChange={(e) => {
+                        setEditValues((prev: any) => ({
+                            ...prev,
+                            correct_amount_paid: e.target.value
+                        }));
+                    }}
                 />
                 <Textfield
                     label="Taxable Adjustment"
-                    disabled={true}
-                    value={adjustmentDetails.taxable_amount ?? ""}
+                    disabled={!isEditing}
+                    type="text"
+                    value={editValues.taxable_amount ?? ""}
+                    onChange={(e) => {
+                        setEditValues((prev: any) => ({
+                            ...prev,
+                            taxable_amount: e.target.value
+                        }));
+                    }}
                 />
             </Grid>
             <hr className="mt-6 pb-2 text-slate-300"/>
-            <div className="flex justify-end">
-                <div>
+            <div className="flex justify-end gap-x-2">
+                {adjustmentDetails.status !== "Adjusted" && !isEditing && (
+                    <div className="w-[120px]">
+                        <Button
+                            label="Edit"
+                            onClick={() => {
+                                setEditValues({
+                                    taxable_amount: adjustmentDetails.taxable_amount ?? "",
+                                    correct_amount_paid: adjustmentDetails.correct_amount_paid ?? ""
+                                });
+                                setIsEditing(true);
+                            }}
+                        />
+                    </div>
+                )}
+                {adjustmentDetails.status !== "Adjusted" && isEditing && (
+                    <div className="w-[120px]">
+                        <Button
+                            label="Save"
+                            variant="success"
+                            loading={saving}
+                            onClick={() => {
+                                const taxableAmount = Number(editValues.taxable_amount);
+                                const correctAmountPaid = Number(editValues.correct_amount_paid);
+
+                                if (Number.isNaN(taxableAmount) || Number.isNaN(correctAmountPaid)) {
+                                    toast.error("Please enter valid amounts");
+                                    return;
+                                }
+
+                                setSaving(true);
+                                editAdjustments({
+                                    taxable_amount: taxableAmount,
+                                    correct_amount_paid: correctAmountPaid
+                                }, String(id))
+                                .then((resp) => {
+                                    if (!resp.error) {
+                                        toast.success(resp.data.message || "Adjustment updated");
+                                        setAdjustmentDetails(resp.data.adjustment);
+                                        setEditValues({
+                                            taxable_amount: resp.data.adjustment?.taxable_amount ?? "",
+                                            correct_amount_paid: resp.data.adjustment?.correct_amount_paid ?? ""
+                                        });
+                                        setIsEditing(false);
+                                        onUpdated?.();
+                                    } else {
+                                        toast.error(resp.data.message || "Unable to update adjustment");
+                                    }
+                                })
+                                .catch(() => {
+                                    toast.error("Error encountered");
+                                })
+                                .finally(() => {
+                                    setSaving(false);
+                                });
+                            }}
+                        />
+                    </div>
+                )}
+                {adjustmentDetails.status !== "Adjusted" && isEditing && (
+                    <div className="w-[120px]">
+                        <Button
+                            label="Cancel Edit"
+                            variant="secondary"
+                            onClick={() => {
+                                setEditValues({
+                                    taxable_amount: adjustmentDetails.taxable_amount ?? "",
+                                    correct_amount_paid: adjustmentDetails.correct_amount_paid ?? ""
+                                });
+                                setIsEditing(false);
+                            }}
+                        />
+                    </div>
+                )}
+                <div className="w-[120px]">
                     <Button
-                        label="Cancel"
+                        label="Close"
                         variant="secondary"
                         onClick={() => {
                             modal.onClose();
                             setAdjustedTimeKeeping([]);
                             setOriginalTimeKeeping([]);
+                            setIsEditing(false);
+                            onUpdated?.();
                         }}
-                    />            
+                    />
                 </div>
             </div>
         </Modal>
