@@ -10,6 +10,7 @@ import { getCurrentCutoff } from "@/helper/cutoff";
 
 interface DateRangeConfirmModalForm {
     modal: any;
+    sendToApsys?: boolean;
 }
 
 const convertDate = (mmdd: string) => {
@@ -18,20 +19,20 @@ const convertDate = (mmdd: string) => {
     return `${year}-${mmdd}`;
 };
 
-const DateRangeConfirmModal = ({ 
-    modal 
+const DateRangeConfirmModal = ({
+    modal,
+    sendToApsys = true,
 }: DateRangeConfirmModalForm) => {
 
     const formHandler = useFormik({
         initialValues: {
             action: "generate",
-            pay_date: "",
             selected_cutoff: getCurrentCutoff().range,
             date_from: "",
             date_to: "",
+            send_to_apsys: sendToApsys,
         },
         validationSchema: Yup.object({
-            pay_date: Yup.string().required("Pay date is required"),
             selected_cutoff: Yup.string().required("Cut off range is required"),
         }),
         validateOnChange: false,
@@ -69,14 +70,6 @@ const DateRangeConfirmModal = ({
             size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <Textfield
-                    label="Pay Date"
-                    type="date"
-                    name="pay_date"
-                    value={formHandler.values.pay_date}
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.pay_date}
-                />
                 <CutOffDropDown
                     value={formHandler.values.selected_cutoff}
                     onChange={(e) => {

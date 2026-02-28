@@ -388,6 +388,9 @@ const AdjustmentsTableCard = () => {
             <ViewAdjustmentModal
                 modal={viewAdjustments}
                 id={id}
+                onUpdated={() => {
+                    api.triggerReload();
+                }}
             />
         </>
     );
