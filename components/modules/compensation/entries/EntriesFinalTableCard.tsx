@@ -278,6 +278,7 @@ const EntriesFinalTableCard = ({
             </Card>
             <DateRangeConfirmModal
                 modal={generateModal}
+                sendToApsys={true}
             />
 
         </>

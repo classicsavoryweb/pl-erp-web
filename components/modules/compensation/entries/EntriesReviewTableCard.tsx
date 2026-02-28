@@ -445,6 +445,7 @@ const EntriesReviewTableCard = ({
             </Card>
             <DateRangeConfirmModal
                 modal={generateModal}
+                sendToApsys={false}
             />
         </>
     );

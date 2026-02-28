@@ -10,6 +10,7 @@ import { getCurrentCutoff } from "@/helper/cutoff";
 
 interface DateRangeConfirmModalForm {
     modal: any;
+    sendToApsys?: boolean;
 }
 
 const convertDate = (mmdd: string) => {
@@ -18,8 +19,9 @@ const convertDate = (mmdd: string) => {
     return `${year}-${mmdd}`;
 };
 
-const DateRangeConfirmModal = ({ 
-    modal 
+const DateRangeConfirmModal = ({
+    modal,
+    sendToApsys = true,
 }: DateRangeConfirmModalForm) => {
 
     const formHandler = useFormik({
@@ -28,6 +30,7 @@ const DateRangeConfirmModal = ({
             selected_cutoff: getCurrentCutoff().range,
             date_from: "",
             date_to: "",
+            send_to_apsys: sendToApsys,
         },
         validationSchema: Yup.object({
             selected_cutoff: Yup.string().required("Cut off range is required"),
