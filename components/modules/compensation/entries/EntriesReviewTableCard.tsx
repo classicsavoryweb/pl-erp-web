@@ -22,6 +22,8 @@ import BranchDropDown from "../../generic/BranchDropDown";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import { useBranchStore } from "@/stores/useBranchStore";
 import { getActiveCutOff } from "@/api/compensation/cut-off";
+import { useModal } from "@/hooks/modal";
+import DateRangeConfirmModal from "./DateRangeConfirmModal";
 interface FilterInterface {
     hasExport?: boolean;
     exportPermission?: string;
@@ -41,6 +43,8 @@ const EntriesReviewTableCard = ({
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const { branches, getBranches } = useBranchStore();
+    const generateModal = useModal();
+    const canGenerate = permissions.includes("perform_compensation_entries");
     const [isCutoffReady, setIsCutoffReady] = useState(false);
     const [activeCutoff, setActiveCutoff] = useState<{
         range: string;
@@ -395,6 +399,17 @@ const EntriesReviewTableCard = ({
                                 variant="secondary"
                             />    
                         </div>
+                        {canGenerate &&
+                            <div className="w-[120px]">
+                                <Button
+                                    label="Generate"
+                                    type="button"
+                                    onClick={() => {
+                                        generateModal.onOpen();
+                                    }}
+                                />
+                            </div>
+                        }
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&
                             <>
                                 { hasExport &&
@@ -428,6 +443,9 @@ const EntriesReviewTableCard = ({
                     paginator={paginator}
                 />
             </Card>
+            <DateRangeConfirmModal
+                modal={generateModal}
+            />
         </>
     );
 };

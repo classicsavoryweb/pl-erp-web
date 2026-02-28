@@ -17,6 +17,8 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
 import Dropdown from "@/components/common/Dropdown";
 import { getAllEntries, exportAllEntries } from "@/api/compensation/entries";
+import { useModal } from "@/hooks/modal";
+import DateRangeConfirmModal from "./DateRangeConfirmModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -34,6 +36,8 @@ const EntriesFinalTableCard = ({
     const paginator = usePagination(20);
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
+    const generateModal = useModal();
+    const canGenerate = permissions.includes("perform_compensation_entries");
 
     const columnSettings = [
         {
@@ -228,6 +232,17 @@ const EntriesFinalTableCard = ({
                                 variant="secondary"
                             />
                         </div>
+                        {canGenerate &&
+                            <div className="w-[120px]">
+                                <Button
+                                    label="Generate"
+                                    type="button"
+                                    onClick={() => {
+                                        generateModal.onOpen();
+                                    }}
+                                />
+                            </div>
+                        }
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&
                             <>
                                 {hasExport &&
@@ -261,6 +276,9 @@ const EntriesFinalTableCard = ({
                     paginator={paginator}
                 />
             </Card>
+            <DateRangeConfirmModal
+                modal={generateModal}
+            />
 
         </>
     );
