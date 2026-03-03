@@ -60,6 +60,11 @@ const ATDTableCard = ({
         },
         {
             columnHead: "Transaction Date",
+            path: "date_created",
+            columnType: COLUMNTYPES.date
+        },
+        {
+            columnHead: "Date Imported",
             path: "created_at",
             columnType: COLUMNTYPES.date
         },
