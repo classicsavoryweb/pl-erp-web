@@ -105,6 +105,12 @@ const ViewATDModal = ({
                 disabled
             />
             <Textfield
+                label="Transaction Date"
+                name="months"
+                value={data.date_created ? moment(data.date_created).format("MMMM DD, YYYY") : ""}
+                disabled
+            />
+            <Textfield
                 label="Date Imported"
                 name="months"
                 value={moment(data.created_at).format("MMMM DD, YYYY HH:mm:ss A")}

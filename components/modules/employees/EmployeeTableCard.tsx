@@ -12,13 +12,15 @@ import { useRouter } from "next/navigation";
 import FilterCard from "../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import { AuthContext } from "@/context/AuthProvider";
 
 const EmployeeTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(15);
     const filter = useFilter();
     const [sort, setSort] = useState<any>({});
+    const { permissions } = useContext(AuthContext);
 
     const getPositionLabel = (data: any) => {
         const basePosition = data?.current_position?.description ?? "";
@@ -309,6 +311,13 @@ const EmployeeTableCard = () => {
             value: "education.highschool",
         }
     ];
+
+    if (permissions.includes("view_employee_bank_details")) {
+        exportOptions.splice(4, 0, {
+            label: "Bank Account Number",
+            value: "latest_bank_details.bank_number",
+        });
+    }
 
     return (
         <>
