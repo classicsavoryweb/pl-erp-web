@@ -15,6 +15,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import confirm from "@/components/common/Confirm";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import moment from "moment";
+import Badge from "@/components/common/Badge";
 
 const EmployeePromotionHistory = () => {
     const params = useParams();
@@ -73,7 +74,23 @@ const EmployeePromotionHistory = () => {
         {
             columnHead: "Status",
             path: "status",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let status: "default" | "success" | "warning" | "danger" = "default";
+
+                if (data.status === "Pending") {
+                    status = "warning";
+                } else if (data.status === "Confirmed") {
+                    status = "success";
+                } else if (data.status === "Rejected") {
+                    status = "danger";
+                }
+
+                return <Badge
+                    label={data.status}
+                    status={status}
+                />
+            }
         },
     ];
 
