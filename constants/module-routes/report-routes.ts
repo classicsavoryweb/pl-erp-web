@@ -72,7 +72,20 @@ export const reportRoutes: Route[] = [
                 name: "Pay Slip",
                 pathname: "/reports/pay-slip",
                 permission: "view_reports_pay_slip",
-            }
+            },
+            {
+                name: "Payroll",
+                pathname: "/reports/payroll",
+                permission: "",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "Deductions",
+                        pathname: "/reports/payroll/deductions",
+                        permission: "view_reports_deductions"
+                    },
+                ]
+            },
         ]
     }
 ];
