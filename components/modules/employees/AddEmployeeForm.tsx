@@ -77,20 +77,19 @@ const AddEmployeeForm = () => {
             });
 
             if (isConfirmed) {
-                setSubmitting(true);
-                addEmployee(values)
-                .then((resp) => {
+                try {
+                    const resp = await addEmployee(values);
                     if(!resp.error) {
                         toast.success("Employee added successfully");
                         resetForm();
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch (error) {
                     toast.error("Error encountered");
-                }).finally((() => {
+                } finally {
                     setSubmitting(false);
-                }));
+                }
             }
         }
     });
