@@ -38,7 +38,7 @@ const CreatePayrollListForm = ({
             is_statutory_only: 0,
             is_mancom: 0,
             is_on_maternity_leave: 0,
-            is_bank: 1,
+            is_bank: 0,
             is_hold: 0,
             remarks: "",
             description: "",
@@ -58,8 +58,9 @@ const CreatePayrollListForm = ({
             });
             if (isConfirmed) {
                 setSubmitting(true);
-                createPayrollList(values)
-                .then((resp) => {
+                
+                try {
+                    const resp = await createPayrollList(values);
                     if(!resp.error) {
                         toast.success("Payroll created successfully");
                         setEmployee({});
@@ -69,11 +70,11 @@ const CreatePayrollListForm = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch {
                     toast.error("Error encountered");
-                }).finally((() => {
+                } finally {
                     setSubmitting(false);
-                }));
+                }
             }
         }
     });

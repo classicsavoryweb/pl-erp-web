@@ -63,7 +63,10 @@ const EditPayrollListForm = ({
 
             if (isConfirmed) {
                 setSubmitting(true);
-                editPayrollList(payload, formValue.id).then((resp) => {
+
+                try {
+                    const resp = await editPayrollList(payload, formValue.id);
+
                     if(!resp.error) {
                         toast.success("Payroll updated successfully");
                         onSubmitCallback();
@@ -72,11 +75,11 @@ const EditPayrollListForm = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch {
                     toast.error("Error encountered");
-                }).finally((() => {
+                } finally {
                     setSubmitting(false);
-                }));
+                }
             }
         }
     });
@@ -126,27 +129,25 @@ const EditPayrollListForm = ({
                         },
                     ]}
                 />
-                <div className="mb-2">
-                    <Dropdown
-                        label="Payroll Type"
-                        placeholder="select type"
-                        name="is_statutory_only"
-                        value={editFormHandler.values.is_statutory_only}
-                        required
-                        onChange={editFormHandler.handleChange}
-                        error={editFormHandler.errors.is_statutory_only}
-                        options={[
-                            {
-                                label: "Statutory only",
-                                value: 1
-                            },
-                            {
-                                label: "Full payroll",
-                                value: 0
-                            },
-                        ]}
-                    />
-                </div>
+                <Dropdown
+                    label="Payroll Type"
+                    placeholder="select type"
+                    name="is_statutory_only"
+                    value={editFormHandler.values.is_statutory_only}
+                    required
+                    onChange={editFormHandler.handleChange}
+                    error={editFormHandler.errors.is_statutory_only}
+                    options={[
+                        {
+                            label: "Statutory only",
+                            value: 1
+                        },
+                        {
+                            label: "Full payroll",
+                            value: 0
+                        },
+                    ]}
+                />
                 <Textfield
                     label="Salary"
                     name="salary_amount"
@@ -163,39 +164,34 @@ const EditPayrollListForm = ({
                     }
                 />
                 <Grid cols={2}>
-                    <div className="mb-2">
-                        <Checkbox
-                            label="Is Mancom"
-                            checked={editFormHandler.values.is_mancom === 1}
-                            value="is_mancom"
-                            onChange={(e) => {
-                                if (e.target.checked) {
-                                    editFormHandler.setFieldValue("is_mancom", 1);
-                                    editFormHandler.setFieldValue("is_on_maternity_leave", 0);
-                                } else {
-                                    editFormHandler.setFieldValue("is_mancom", 0);
-                                }
-                            }}
-                        />
-                    </div>
-                    <div className="mb-2">
-                        <Checkbox
-                            label="Is On Maternity Leave"
-                            checked={editFormHandler.values.is_on_maternity_leave === 1}
-                            value="is_on_maternity_leave"
-                            onChange={(e) => {
-                                if (e.target.checked) {
-                                    editFormHandler.setFieldValue("is_on_maternity_leave", 1);
-                                    editFormHandler.setFieldValue("is_mancom", 0);
-                                } else {
-                                    editFormHandler.setFieldValue("is_on_maternity_leave", 0);
-                                }
-                            }}
-                        />
-                    </div>
+                    <Checkbox
+                        label="Is Mancom"
+                        checked={editFormHandler.values.is_mancom === 1}
+                        value="is_mancom"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue("is_mancom", 1);
+                                editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                            } else {
+                                editFormHandler.setFieldValue("is_mancom", 0);
+                            }
+                        }}
+                    />
+                    <Checkbox
+                        label="Is On Maternity Leave"
+                        checked={editFormHandler.values.is_on_maternity_leave === 1}
+                        value="is_on_maternity_leave"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue("is_on_maternity_leave", 1);
+                                editFormHandler.setFieldValue("is_mancom", 0);
+                            } else {
+                                editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                            }
+                        }}
+                    />
                 </Grid>
-
-                <p className="mb-[-2px]">
+                <p className="my-[-2px]">
                     Transaction Mode<span className="text-red-400">*</span>
                 </p>
                 <Grid cols={3}>
@@ -223,7 +219,6 @@ const EditPayrollListForm = ({
                             }
                         }}
                     />
-
                     <Checkbox
                         label="Hold"
                         checked={editFormHandler.values.is_hold === 1}
@@ -237,12 +232,10 @@ const EditPayrollListForm = ({
                         }}
                     />
                 </Grid>
-
                 {editFormHandler.values.is_bank === 1 && (() => {
                     const bankDetails = editFormHandler.values.employee?.latest_bank_details;
                     const accountType = bankDetails?.bank_account_type?.description ?? "-";
                     const accountNo = bankDetails?.bank_number ?? "-";
-
                     return (
                         <Grid cols={2}>
                             <Textfield
@@ -260,7 +253,6 @@ const EditPayrollListForm = ({
                         </Grid>
                     );
                 })()}
-
                 <TextArea
                     label="Remarks"
                     name="remarks"
@@ -268,7 +260,6 @@ const EditPayrollListForm = ({
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.remarks}
                 />
-
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">
