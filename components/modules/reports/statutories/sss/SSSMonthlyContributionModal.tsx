@@ -59,7 +59,7 @@ const SSSMonthlyContributionModal = ({
                     const a = document.createElement('a');
     
                     a.href = downloadUrl;
-                    a.download = `REPORTS-SSS-MONTHLY-CONTRIBUTION-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `REPORTS-SSS-MONTHLY-CONTRIBUTION-${moment().format('YYYY-MM-DD')}.xlsx`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();

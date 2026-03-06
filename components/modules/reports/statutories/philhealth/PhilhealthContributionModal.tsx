@@ -59,7 +59,7 @@ const PhilhealthContributionModal = ({
                     const a = document.createElement('a');
     
                     a.href = downloadUrl;
-                    a.download = `REPORTS-PHILHEALTH-MONTHLY-CONTRIBUTION-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `REPORTS-PHILHEALTH-MONTHLY-CONTRIBUTION-${moment().format('YYYY-MM-DD')}.xlsx`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();

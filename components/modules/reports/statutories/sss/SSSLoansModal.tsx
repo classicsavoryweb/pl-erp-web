@@ -63,7 +63,7 @@ const SSSLoansModal = ({
                     const loanType = values.loan_type ? values.loan_type : 'Unknown';
     
                     a.href = downloadUrl;
-                    a.download = `REPORTS-SSS-LOANS-${loanType.toUpperCase()}-${moment().format('YYYY-MM-DD')}.xls`;
+                    a.download = `REPORTS-SSS-LOANS-${loanType.toUpperCase()}-${moment().format('YYYY-MM-DD')}.xlsx`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
