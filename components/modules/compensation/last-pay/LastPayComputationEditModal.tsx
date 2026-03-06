@@ -330,6 +330,7 @@ const LastPayComputationEditModal = ({
 
         const preview = {
             ...baseData,
+            payroll_rows_override: baseData?.payroll_rows_override,
             payroll_hold: toNumber(draft.payroll_hold),
             thirteenth_month: toNumber(draft.thirteenth_month),
             tax_refund: toNumber(draft.tax_refund),
