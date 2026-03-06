@@ -386,16 +386,28 @@ const LastPayDetails = ({
                         }
                         disabled
                     />
-                    <Textfield
-                        label="13th Month"
-                        value={ Number(formHandler.values.thirteenth_month)
-                            .toLocaleString('en-US', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            })
-                        }
-                        disabled
-                    />
+                    {disabled ? (
+                        <Textfield
+                            label="13th Month"
+                            value={ Number(formHandler.values.thirteenth_month)
+                                .toLocaleString('en-US', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })
+                            }
+                            disabled
+                        />
+                    ) : (
+                        <Textfield
+                            label="13th Month"
+                            type="number"
+                            name="thirteenth_month"
+                            onChange={formHandler.handleChange}
+                            value={formHandler.values.thirteenth_month}
+                            error={formHandler.errors?.thirteenth_month}
+                            disabled={disabled}
+                        />
+                    )}
                     <Textfield
                         label="Tax Refund"
                         type="number"

@@ -45,6 +45,7 @@ const EditLastPayModal = ({
             incentives: Yup.number().required("Incentives is requried").min(0, "Amount cannot be negative"),
             sl_vl: Yup.number().required("SL/VL is required").min(0, "Amount cannot be negative"),
             meal_allowance: Yup.number().required("Meal Allowance is required").min(0, "Amount cannot be negative"),
+            thirteenth_month: Yup.number().min(0, "Amount cannot be negative"),
         }),
         validateOnChange: false,
         onSubmit: async (values, {setSubmitting, setValues}) => {
