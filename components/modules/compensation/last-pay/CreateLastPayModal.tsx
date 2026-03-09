@@ -75,6 +75,10 @@ const CreateLastPayModal = ({
                             sss_loans_details: []
                         });
                         callBack();
+                        modal.onClose();
+                        setShowing(false);
+                        setSelectedEmployee({});
+                        formHandler.resetForm();
                     } else {
                         toast.error(resp.data.message);
                     }
