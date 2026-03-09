@@ -5,16 +5,22 @@ import Checkbox from "@/components/common/Checkbox";
 import Dropdown from "@/components/common/Dropdown";
 import Grid from "@/components/common/Grid";
 import { useFormik } from "formik";
+import { useState } from "react";
 import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
 import BranchDropDown from "../../generic/BranchDropDown";
 import Button from "@/components/common/Button";
 import FinalizedPayDateDropDown from "../../generic/FinalizedPayDateDropDown";
 import * as Yup from "yup";
 import confirm from "@/components/common/Confirm";
-import { submitPayslips } from "../../../../api/compensation/pay-slip";
+import { exportPayslips, submitPayslips } from "../../../../api/compensation/pay-slip";
 import { toast } from "react-toastify";
+import { pdf } from "@react-pdf/renderer";
+import PayslipPDF from "../../pdf/PayslipPDF";
+import moment from "moment";
 
 const PaySlipReportForm = () => {
+
+    const [exporting, setExporting] = useState(false);
 
     const formHandler = useFormik({
         initialValues: {
@@ -88,6 +94,77 @@ const PaySlipReportForm = () => {
             }
         }
     });
+
+    const showExportButton =
+        formHandler.values.payslip === "history" &&
+        String(formHandler.values.pay_date) !== "0" &&
+        String(formHandler.values.pay_date) !== "" &&
+        formHandler.values.type === "Branch" &&
+        String(formHandler.values.branch_id) !== "0" &&
+        String(formHandler.values.branch_id) !== "";
+
+    const handleExport = async () => {
+        if (formHandler.values.type !== "Branch") {
+            toast.error("Export is only available for Branch type.");
+            return;
+        }
+
+        if (!formHandler.values.branch_id || String(formHandler.values.branch_id) === "0") {
+            toast.error("Please select a branch.");
+            return;
+        }
+
+        if (formHandler.values.payslip !== "history") {
+            toast.error("Export is only available for Payslip History.");
+            return;
+        }
+
+        if (!formHandler.values.pay_date || String(formHandler.values.pay_date) === "0") {
+            toast.error("Please select a single Pay Date.");
+            return;
+        }
+
+        setExporting(true);
+        try {
+            const resp = await exportPayslips({
+                ...formHandler.values,
+                send_email: false,
+            });
+
+            if (resp.error) {
+                toast.error(resp.data?.message ?? "Error encountered");
+                return;
+            }
+
+            const payrolls = resp.data?.data ?? [];
+            if (!Array.isArray(payrolls) || payrolls.length === 0) {
+                toast.info("No payroll found for the selected branch and pay date.");
+                return;
+            }
+
+            const blob = await pdf(<PayslipPDF payrolls={payrolls} />).toBlob();
+            const downloadUrl = window.URL.createObjectURL(blob);
+            const branchName =
+                payrolls[0]?.timekeeping_branch?.name ??
+                payrolls[0]?.employee?.current_branch?.name ??
+                "BRANCH";
+            const payDate = payrolls[0]?.pay_date
+                ? moment(payrolls[0].pay_date).format("YYYY-MM-DD")
+                : moment().format("YYYY-MM-DD");
+            const safeBranch = String(branchName).toUpperCase().replace(/\s+/g, "-");
+            const link = document.createElement("a");
+            link.href = downloadUrl;
+            link.download = `${safeBranch}-PAYSLIP-${payDate}.pdf`;
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+            window.URL.revokeObjectURL(downloadUrl);
+        } catch (error) {
+            toast.error("Error encountered");
+        } finally {
+            setExporting(false);
+        }
+    };
 
     return (
         <Card>
@@ -224,7 +301,7 @@ const PaySlipReportForm = () => {
 
                 <div className="mt-[100px]"/>
 
-                <Grid cols={2}>
+                <Grid cols={showExportButton ? 3 : 2}>
                     <Button
                         label="Reset"
                         variant="secondary"
@@ -232,6 +309,15 @@ const PaySlipReportForm = () => {
                             formHandler.resetForm();
                         }}
                     />
+                    {showExportButton && (
+                        <Button
+                            type="button"
+                            label="Export"
+                            variant="success"
+                            loading={exporting}
+                            onClick={handleExport}
+                        />
+                    )}
                     <Button
                         type="submit"
                         label="Submit"
