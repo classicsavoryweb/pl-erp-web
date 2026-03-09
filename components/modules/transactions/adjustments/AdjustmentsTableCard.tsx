@@ -132,6 +132,7 @@ const AdjustmentsTableCard = () => {
 
                 if (data.status === "Adjusted") {
                     actions = [
+                        tableActions[2],
                         tableActions[3]
                     ];
                 }

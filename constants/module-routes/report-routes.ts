@@ -80,6 +80,11 @@ export const reportRoutes: Route[] = [
                 isDropDown: true,
                 subLinks: [
                     {
+                        name: "Statutory",
+                        pathname: "/reports/payroll/statutory",
+                        permission: ""
+                    },
+                    {
                         name: "Deductions",
                         pathname: "/reports/payroll/deductions",
                         permission: "view_reports_deductions"
