@@ -9,3 +9,13 @@ export const submitPayslips = async (payload: {}) => {
 
     return resData;
 };
+
+export const exportPayslips = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-payslips',
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
