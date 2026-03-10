@@ -40,6 +40,7 @@ const CreatePayrollListForm = ({
             is_on_maternity_leave: 0,
             is_bank: 0,
             is_hold: 0,
+            has_complete_documents: 0,
             remarks: "",
             description: "",
             account_no: "",
@@ -164,40 +165,47 @@ const CreatePayrollListForm = ({
                         ]}
                     />
                 </div>
-                <Grid cols={2}>
-                    <div className="mb-2">
-                        <Checkbox
-                            label="Is Mancom"
-                            checked={createFormHandler.values.is_mancom === 1}
-                            value="is_mancom"
-                            onChange={(e) => {
-                                if (e.target.checked) {
-                                    createFormHandler.setFieldValue("is_mancom", 1);
-                                    createFormHandler.setFieldValue("is_on_maternity_leave", 0);
-                                } else {
-                                    createFormHandler.setFieldValue("is_mancom", 0);
-                                }
-                            }}
-                        />
-                    </div>
-                    <div className="mb-2">
-                        <Checkbox
-                            label="Is On Maternity Leave"
-                            checked={createFormHandler.values.is_on_maternity_leave === 1}
-                            value="is_on_maternity_leave"
-                            onChange={(e) => {
-                                if (e.target.checked) {
-                                    createFormHandler.setFieldValue("is_on_maternity_leave", 1);
-                                    createFormHandler.setFieldValue("is_mancom", 0);
-                                } else {
-                                    createFormHandler.setFieldValue("is_on_maternity_leave", 0);
-                                }
-                            }}
-                        />
-                    </div>
+                <Grid cols={3}>
+                    <Checkbox
+                        label="Complete Docs"
+                        checked={createFormHandler.values.has_complete_documents === 1}
+                        value="has_complete_documents"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                createFormHandler.setFieldValue("has_complete_documents", 1);
+                            } else {
+                                createFormHandler.setFieldValue("has_complete_documents", 0);
+                            }
+                        }}
+                    />
+                    <Checkbox
+                        label="Mancom"
+                        checked={createFormHandler.values.is_mancom === 1}
+                        value="is_mancom"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                createFormHandler.setFieldValue("is_mancom", 1);
+                                createFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                            } else {
+                                createFormHandler.setFieldValue("is_mancom", 0);
+                            }
+                        }}
+                    />
+                    <Checkbox
+                        label="On Maternity Leave"
+                        checked={createFormHandler.values.is_on_maternity_leave === 1}
+                        value="is_on_maternity_leave"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                createFormHandler.setFieldValue("is_on_maternity_leave", 1);
+                                createFormHandler.setFieldValue("is_mancom", 0);
+                            } else {
+                                createFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                            }
+                        }}
+                    />
                 </Grid>
-
-                <p className="mb-[-2px]">
+                <p className="my-[2px]">
                     Transaction Mode<span className="text-red-400">*</span>
                 </p>
                 <Grid cols={3}>

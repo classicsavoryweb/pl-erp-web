@@ -148,6 +148,7 @@ const PayrollListTableCard = () => {
                     is_statutory_only: data.is_statutory_only,
                     is_mancom: data.is_mancom,
                     is_on_maternity_leave: data.is_on_maternity_leave,
+                    has_complete_documents: data.has_complete_documents,
                     is_bank: data.is_bank,
                     is_hold: data.is_hold,
                     remarks: data.remarks,

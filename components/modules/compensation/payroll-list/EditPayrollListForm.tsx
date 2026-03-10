@@ -37,6 +37,7 @@ const EditPayrollListForm = ({
             is_on_maternity_leave: 0,
             is_bank: 0,
             is_hold: 0,
+            has_complete_documents: 0,
             remarks: "",
         },
         validateOnChange: false,
@@ -163,9 +164,21 @@ const EditPayrollListForm = ({
                             : undefined
                     }
                 />
-                <Grid cols={2}>
+                <Grid cols={3}>
                     <Checkbox
-                        label="Is Mancom"
+                        label="Complete Docs"
+                        checked={editFormHandler.values.has_complete_documents === 1}
+                        value="has_complete_documents"
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue("has_complete_documents", 1);
+                            } else {
+                                editFormHandler.setFieldValue("has_complete_documents", 0);
+                            }
+                        }}
+                    />
+                    <Checkbox
+                        label="Mancom"
                         checked={editFormHandler.values.is_mancom === 1}
                         value="is_mancom"
                         onChange={(e) => {
@@ -178,7 +191,7 @@ const EditPayrollListForm = ({
                         }}
                     />
                     <Checkbox
-                        label="Is On Maternity Leave"
+                        label="On Maternity Leave"
                         checked={editFormHandler.values.is_on_maternity_leave === 1}
                         value="is_on_maternity_leave"
                         onChange={(e) => {
@@ -191,7 +204,7 @@ const EditPayrollListForm = ({
                         }}
                     />
                 </Grid>
-                <p className="my-[-2px]">
+                <p className="my-[2px]">
                     Transaction Mode<span className="text-red-400">*</span>
                 </p>
                 <Grid cols={3}>
