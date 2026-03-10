@@ -16,6 +16,7 @@ import Grid from "@/components/common/Grid";
 import Checkbox from "@/components/common/Checkbox";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
+import EmployeeNotInPayrollListDropDown from "../../generic/EmployeeNotInPayrollListDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -53,6 +54,11 @@ const CreatePayrollListForm = ({
             is_bank: Yup.string().required("Payroll Type is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
+            if (values.is_bank == 1 && !employeeBankAccount) {
+                toast.error("Missing bank details");
+                return;
+            }
+
             const isConfirmed = await confirm({
                 title: "Create Payroll",
                 message: "Are you sure you want to create?"
@@ -113,7 +119,7 @@ const CreatePayrollListForm = ({
             size="md"
         >
             <form onSubmit={createFormHandler.handleSubmit}>
-                <SearchEmployeeDropDown
+                <EmployeeNotInPayrollListDropDown
                     label="Employee"
                     placeholder="select employee"
                     name="employee_id"

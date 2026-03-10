@@ -160,7 +160,7 @@ const PayrollListTableCard = () => {
 
     const globalActionSettings = [
         {
-            label: "Add employee to payroll list",
+            label: "Add Employee",
             onClick: () => {
                 createModal.onOpen();
             }
