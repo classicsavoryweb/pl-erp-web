@@ -41,6 +41,7 @@ const ActingCapacityTableCard = () => {
     const confirmPromotion = useModal();
     const paginator = usePagination();
     const filter = useFilter();
+    const [sort, setSort] = useState<any>({});
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -71,6 +72,7 @@ const ActingCapacityTableCard = () => {
             columnHead: "Employee Number",
             path: "employee.employee_number",
             columnType: COLUMNTYPES.function,
+            sort: true,
             function: (data:any) => {
                 return (
                     <Link
@@ -86,42 +88,50 @@ const ActingCapacityTableCard = () => {
         {
             columnHead: "Employee Name",
             path: "employee.full_name",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Current Branch",
             path: "branch.name",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
-                {
+        {
             columnHead: "Branch Assignment",
             path: "branch_assignment.name",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Current Position",
             path: "current_position.description",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Recommended Position",
             path: "recommended_position.description",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.string,
+            sort: true
         },
         {
             columnHead: "Start Date",
             path: "start_date",
-            columnType: COLUMNTYPES.date
+            columnType: COLUMNTYPES.date,
+            sort: true
         },
         {
             columnHead: "End Date",
             path: "latest_end_date",
-            columnType: COLUMNTYPES.date
+            columnType: COLUMNTYPES.date,
+            sort: true
         },
         {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.function,
+            sort: true,
             function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" = "default";
 
@@ -296,6 +306,8 @@ const ActingCapacityTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
+                columnSort
+                filterValues={sort}
             />
             <Card>
                 <div className="flex justify-end gap-x-3">
@@ -308,6 +320,10 @@ const ActingCapacityTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
+                    canSortColumns
+                    onSort={(e) => {
+                        setSort(e);
+                    }}
                 />
             </Card>
 
