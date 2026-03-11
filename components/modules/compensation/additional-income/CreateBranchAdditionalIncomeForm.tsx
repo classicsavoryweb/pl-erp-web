@@ -16,11 +16,17 @@ import { saveBranchAdditionalIncome } from "@/api/compensation/branch-additional
 
 interface ModalInterface {
     modal: any;
+    cutoffStart: string;
+    cutoffEnd: string;
+    year: number;
     onSubmitCallback: () => void;
 }
 
 const CreateBranchAdditionalIncomeForm = ({
     modal,
+    cutoffStart,
+    cutoffEnd,
+    year,
     onSubmitCallback
 }: ModalInterface) => {
 
@@ -43,7 +49,12 @@ const CreateBranchAdditionalIncomeForm = ({
 
             if (isConfirmed) {
                 setSubmitting(true);
-                saveBranchAdditionalIncome(values)
+                saveBranchAdditionalIncome({
+                    ...values,
+                    cutoff_start: cutoffStart,
+                    cutoff_end: cutoffEnd,
+                    year
+                })
                 .then((resp) => {
                     if (!resp.error) {
                         onSubmitCallback();

@@ -10,11 +10,17 @@ import { importBranchAdditionalIncome } from "@/api/compensation/branch-addition
 
 interface FormModalInterface {
     modal: any;
+    cutoffStart: string;
+    cutoffEnd: string;
+    year: number;
     onSubmitCallback?: () => void;
 }
 
 const ImportBranchAdditionalIncomeModal = ({
     modal,
+    cutoffStart,
+    cutoffEnd,
+    year,
     onSubmitCallback
 }: FormModalInterface) => {
     const importForm = useFormik({
@@ -27,7 +33,9 @@ const ImportBranchAdditionalIncomeModal = ({
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {
             setSubmitting(true);
-            importBranchAdditionalIncome(values)
+            importBranchAdditionalIncome({
+                ...values
+            })
                 .then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message || "Imported successfully");
