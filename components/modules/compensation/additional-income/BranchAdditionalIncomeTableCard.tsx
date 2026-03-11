@@ -12,12 +12,14 @@ import { getAllBranchAdditionalIncome } from "@/api/compensation/branch-addition
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "../../cards/FilterCard";
 import CreateBranchAdditionalIncomeForm from "./CreateBranchAdditionalIncomeForm";
+import ImportBranchAdditionalIncomeModal from "./ImportBranchAdditionalIncomeModal";
 
 const BranchAdditionalIncomeTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
     const filter = useFilter();
     const createModal = useModal();
+    const importModal = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -67,8 +69,14 @@ const BranchAdditionalIncomeTableCard = () => {
             onClick: () => {
                 createModal.onOpen();
             }
+        },
+        {
+            label: "Import Additional Income",
+            onClick: () => {
+                importModal.onOpen();
+            }
         }
-    ];
+];
 
     return (
         <>
@@ -103,6 +111,13 @@ const BranchAdditionalIncomeTableCard = () => {
                 onSubmitCallback={() => {
                     api.triggerReload();
                     createModal.onClose();
+                }}
+            />
+            <ImportBranchAdditionalIncomeModal
+                modal={importModal}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    importModal.onClose();
                 }}
             />
         </>

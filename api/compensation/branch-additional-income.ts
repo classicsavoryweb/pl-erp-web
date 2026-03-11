@@ -19,3 +19,16 @@ export const saveBranchAdditionalIncome = async (payload: {}) => {
 
     return resData;
 };
+
+export const importBranchAdditionalIncome = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/import-branch-additional-income',
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: payload.hasOwnProperty('additional_income_file')
+            ? { "Content-Type": "multipart/form-data" }
+            : {}
+    });
+
+    return resData;
+};
