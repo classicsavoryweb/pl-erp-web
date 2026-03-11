@@ -8,7 +8,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
-import { getAllBranchAdditionalIncome } from "@/api/compensation/branch-additional-income";
+import { exportBranchAdditionalIncome, getAllBranchAdditionalIncome } from "@/api/compensation/branch-additional-income";
 import CreateBranchAdditionalIncomeForm from "./CreateBranchAdditionalIncomeForm";
 import ImportBranchAdditionalIncomeModal from "./ImportBranchAdditionalIncomeModal";
 import { useFormik } from "formik";
@@ -154,6 +154,45 @@ const BranchAdditionalIncomeTableCard = () => {
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                            />
+                        </div>
+                        <div className="w-[100px]">
+                            <Button
+                                label="Export"
+                                type="button"
+                                variant="success"
+                                onClick={async () => {
+                                    const resp = await exportBranchAdditionalIncome({
+                                        cutoff_start: formHandler.values.cutoff_start,
+                                        cutoff_end: formHandler.values.cutoff_end,
+                                        year: formHandler.values.year,
+                                        branch_id: formHandler.values.branch_id
+                                    });
+
+                                    const payload = resp?.data ?? resp;
+                                    const isBlob = payload instanceof Blob;
+                                    const isArrayBuffer = payload && payload.byteLength !== undefined;
+
+                                    if (!resp || resp.error || (!isBlob && !isArrayBuffer)) {
+                                        toast.error(
+                                            resp?.data?.message || resp?.message || "Export failed. Please try again."
+                                        );
+                                        return;
+                                    }
+
+                                    const blob = isBlob ? payload : new Blob([payload], {
+                                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                    });
+                                    const downloadUrl = window.URL.createObjectURL(blob);
+                                    const a = document.createElement('a');
+                                    const cutoffLabel = `${formHandler.values.cutoff_start}-${formHandler.values.cutoff_end}-${formHandler.values.year}`;
+
+                                    a.href = downloadUrl;
+                                    a.download = `BRANCH-ADDITIONAL-INCOME-${cutoffLabel}.xlsx`;
+                                    document.body.appendChild(a);
+                                    a.click();
+                                    a.remove();
+                                }}
                             />
                         </div>
                         <div className="w-[100px]">

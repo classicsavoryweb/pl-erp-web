@@ -32,3 +32,17 @@ export const importBranchAdditionalIncome = async (payload: {}) => {
 
     return resData;
 };
+
+export const exportBranchAdditionalIncome = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-branch-additional-income',
+        method: 'GET',
+        payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
