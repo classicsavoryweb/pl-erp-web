@@ -71,11 +71,6 @@ const AdjustmentsTableCard = () => {
             columnType: COLUMNTYPES.date
         },
         {
-            columnHead: "Cancelled RD",
-            path: "cancelled_rd",
-            columnType: COLUMNTYPES.string
-        },
-        {
             columnHead: "Taxable Amount",
             path: "taxable_amount",
             columnType: COLUMNTYPES.amount
