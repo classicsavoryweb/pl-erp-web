@@ -93,6 +93,11 @@ export const reportRoutes: Route[] = [
                         name: "Incentive Attendance",
                         pathname: "/reports/payroll/incentive-attendance",
                         permission: "view_reports_incentive_attendance"
+                    },
+                    {
+                        name: "Incentive Report",
+                        pathname: "/reports/payroll/incentive-report",
+                        permission: "view_reports_incentive_report"
                     }
                 ]
             },
