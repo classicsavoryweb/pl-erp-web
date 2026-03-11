@@ -132,15 +132,17 @@ const CreateAdjustmentsModal = ({
             }
             return errors;
         },
-        onSubmit: async (values, {resetForm}) => {
+        onSubmit: async (values, {setSubmitting, resetForm}) => {
             const isConfirmed = await confirm({
                 title: "Create Adjustment",
                 message: "Are you sure you want to save changes?"
             });
 
             if (isConfirmed) {
-                createAdjustments(values)
-                .then((resp) => {
+                setSubmitting(true);
+                try {
+                    const resp = await createAdjustments(values);
+
                     if (!resp.error) {
                         toast.success("Adjustment saved successfully");
                         callBack();
@@ -149,9 +151,11 @@ const CreateAdjustmentsModal = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch {
                     toast.error("Error encountered");
-                });
+                } finally {
+                    setSubmitting(false);
+                }
             }
         }
     });
@@ -360,6 +364,7 @@ const CreateAdjustmentsModal = ({
                     <Button
                         label="Submit"
                         type="submit"
+                        loading={formHandler.isSubmitting}
                         onClick={() => {
                         }}
                     />            
