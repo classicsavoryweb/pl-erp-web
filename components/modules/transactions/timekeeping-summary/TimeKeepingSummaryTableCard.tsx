@@ -288,7 +288,7 @@ const TimeKeepingSummaryTableCard = ({
                     const branchName = branch?.short_name ?? 'all-branches';
     
                     a.href = downloadUrl;
-                    a.download = `${branchName.toUpperCase()}-TIMEKEEPING-SUMMARY-${formHandler.values.selected_cutoff+"-"+formHandler.values.year}.xls`;
+                    a.download = `${branchName.toUpperCase()}-TIMEKEEPING-SUMMARY-${formHandler.values.selected_cutoff+"-"+formHandler.values.year}.xlsx`;
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
