@@ -152,7 +152,9 @@ const PayrollListTableCard = () => {
                     is_bank: data.is_bank,
                     is_hold: data.is_hold,
                     remarks: data.remarks,
-                    employee: data.employee
+                    employee: data.employee,
+                    bank_details_id: data.bank_details_id,
+                    current_bank_details: data.current_bank_details,
                 });
             }
         }

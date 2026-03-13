@@ -39,6 +39,8 @@ const EditPayrollListForm = ({
             is_hold: 0,
             has_complete_documents: 0,
             remarks: "",
+            current_bank_details: formValue.current_bank_details || {},
+            bank_details_id: formValue.bank_details_id || "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -56,6 +58,11 @@ const EditPayrollListForm = ({
                 ...values,
                 salary_amount: String(values.salary_amount ?? "").replace(/,/g, ""),
             };
+
+            if (values.is_bank == 1 && (values.bank_details_id == null || values.bank_details_id == "")) {
+                toast.error("Missing bank details");
+                return;
+            }
 
             const isConfirmed = await confirm({
                 title: "Edit Payroll",
@@ -204,7 +211,8 @@ const EditPayrollListForm = ({
                         }}
                     />
                 </Grid>
-                <p className="my-[2px]">
+
+                <p className="pt-3">
                     Transaction Mode<span className="text-red-400">*</span>
                 </p>
                 <Grid cols={3}>
@@ -245,25 +253,41 @@ const EditPayrollListForm = ({
                         }}
                     />
                 </Grid>
+
+                <div className="pt-3"/>
                 {editFormHandler.values.is_bank === 1 && (() => {
-                    const bankDetails = editFormHandler.values.employee?.latest_bank_details;
-                    const accountType = bankDetails?.bank_account_type?.description ?? "-";
-                    const accountNo = bankDetails?.bank_number ?? "-";
+                    let bankDetails = editFormHandler.values.current_bank_details;
+                    let accountType = bankDetails?.bank_account_type?.description ?? "-";
+                    let accountNo = bankDetails?.bank_number ?? "-";
                     return (
-                        <Grid cols={2}>
-                            <Textfield
-                                disabled
-                                label="Account Type"
-                                name="description"
-                                value={accountType}
-                            />
-                            <Textfield
-                                disabled
-                                label="Account No."
-                                name="account_no"
-                                value={accountNo}
-                            />
-                        </Grid>
+                        <>
+                            <div className="flex justify-start mb-[-4px]">
+                                <button
+                                    type="button"
+                                    className="text-xs text-red-600 hover:underline hover:cursor-pointer"
+                                    onClick={() => {
+                                        editFormHandler.setFieldValue("bank_details_id", editFormHandler.values.employee?.latest_bank_details?.id);
+                                        editFormHandler.setFieldValue("current_bank_details", editFormHandler.values.employee.latest_bank_details);
+                                    }}
+                                >
+                                    UPDATE BANK DETAILS
+                                </button>
+                            </div>
+                            <Grid cols={2}>
+                                <Textfield
+                                    disabled
+                                    label="Account Type"
+                                    name="description"
+                                    value={accountType}
+                                />
+                                <Textfield
+                                    disabled
+                                    label="Account No."
+                                    name="account_no"
+                                    value={accountNo}
+                                />
+                            </Grid>
+                        </>
                     );
                 })()}
                 <TextArea
