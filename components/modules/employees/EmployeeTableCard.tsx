@@ -144,6 +144,7 @@ const EmployeeTableCard = () => {
         {
             label: "Date Hired",
             value: "date_hired",
+            checked: true,
         },
         {
             label: "Status",
@@ -202,6 +203,7 @@ const EmployeeTableCard = () => {
         {
             label: "Separation Date",
             value: "separation_date",
+            checked: true,
         },
         {
             label: "Separation Reason",
