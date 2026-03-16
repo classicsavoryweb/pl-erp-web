@@ -44,7 +44,6 @@ const EditEmployeeDeductionForm = ({
             monthly_amortization: "",
             balance: "",
             remarks: "",
-            branch_id: "",
             block_payment: "",
             created_by: "",
             branch: "",
@@ -59,7 +58,6 @@ const EditEmployeeDeductionForm = ({
             end_date: Yup.string().required("End date is required."),
             monthly_amortization: Yup.string().required("Monthly amortization is required."),
             balance: Yup.string().required("Balance is required."),
-            branch_id: Yup.string().required("Branch is required."),
             block_payment: Yup.string().required("Block Payment is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
@@ -98,32 +96,14 @@ const EditEmployeeDeductionForm = ({
             editFormHandler.setValues({
                 ...formValue,
             });
-
-            api.setLoading(true);
-            getEmployee(formValue.employee_number).then((resp: any) => {
-                if (!resp.error && resp.data.employee) {
-                    const employeeData = resp.data.employee;
-                    setEmployee(employeeData);
-                } else {
-                    setEmployee({});
-                    setBranch({});
-                    toast.error(resp.data.message);
-                }
-            }).catch(() => {
-                setEmployee({});
-                setBranch({});
-                toast.error("Error encountered");
-            }).finally(() => {
-                api.setLoading(false);
-            });
         }
     }, [modal.isShowing]);
 
-    useEffect(() => {
-        if (modal.isShowing) {
-            editFormHandler.setValues(formValue);
-        }
-    }, [modal.isShowing]);
+    // useEffect(() => {
+    //     if (modal.isShowing) {
+    //         editFormHandler.setValues(formValue);
+    //     }
+    // }, [modal.isShowing]);
 
     const updateDerivedFields = (updatedValues: any) => {
         const { months, amount, start_date } = updatedValues;
@@ -171,25 +151,12 @@ const EditEmployeeDeductionForm = ({
             size="md"
         >
             <form onSubmit={editFormHandler.handleSubmit}>
-                <SearchEmployeeDropDown
+                <Textfield
                     label="Employee"
-                    placeholder="select employee"
-                    name="employee"
-                    onChange={editFormHandler.handleChange}
-                    value={employee}
-                    error={editFormHandler.errors.employee_id}
-                    required
                     disabled
+                    name="employee"
+                    value={formValue.employee?.full_name ?? ""}
                 />
-                {/* <DeductionDropDown
-                    label="Deduction Type"
-                    required
-                    name="deduction_id"
-                    value={Number(editFormHandler.values.deduction_id)}
-                    error={editFormHandler.errors.deduction_id}
-                    onChange={editFormHandler.handleChange}
-                    placeholder="select deduction type"
-                /> */}
                 <Textfield
                     label="Deduction Type"
                     disabled
@@ -283,12 +250,12 @@ const EditEmployeeDeductionForm = ({
                     }}
                     error={editFormHandler.errors.branch_id}
                 /> */}
-                <Textfield
+                {/* <Textfield
                     label="Branch"
                     disabled
                     name="branch"
                     value={editFormHandler.values.branch ?? ""}
-                />
+                /> */}
                 <Checkbox
                     label="Block Payment"
                     checked={editFormHandler.values.block_payment === "Yes"}

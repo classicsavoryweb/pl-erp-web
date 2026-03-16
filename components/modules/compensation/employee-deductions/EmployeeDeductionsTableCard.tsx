@@ -154,6 +154,7 @@ const EmployeeDeductionsTableCard = ({
                     onClick: () => {
                         editModal.onOpen();
                         setData({
+                            employee: data.employee,
                             id: data.id,
                             employee_id: data.employee_id,
                             employee_number: data.employee.employee_number,
@@ -168,7 +169,6 @@ const EmployeeDeductionsTableCard = ({
                             branch_id: data.branch_id,
                             block_payment: data.block_payment,
                             created_by: data.created_by,
-                            branch: data.branch.name,
                             deduction_type: data.deduction.description,
                         });
                     }
