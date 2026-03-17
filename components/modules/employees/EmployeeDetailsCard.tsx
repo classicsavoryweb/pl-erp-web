@@ -222,6 +222,10 @@ const EmployeeDetailsCard = () => {
                         detail={employee.current_branch?.name}
                     />
                     <EmployeeBasicInfo
+                        label="Region"
+                        detail={employee.current_branch?.region}
+                    />
+                    <EmployeeBasicInfo
                         label="Company"
                         detail={employee.current_branch?.company}
                     />
@@ -232,6 +236,10 @@ const EmployeeDetailsCard = () => {
                     <EmployeeBasicInfo
                         label="Home Branch"
                         detail={employee.home_branch?.name}
+                    />
+                    <EmployeeBasicInfo
+                        label="Region"
+                        detail={employee.home_branch?.region}
                     />
                     <div className="py-3">
                         <hr className=" text-slate-300" />
