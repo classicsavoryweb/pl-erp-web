@@ -18,6 +18,7 @@ import Dropdown from "@/components/common/Dropdown";
 import CutOffDropDown from "../../../generic/CutOffDropDown";
 import Button from "@/components/common/Button";
 import BankAccountTypeDropDown from "../../../generic/BankAccounTypeDropDown";
+import BranchDropDown from "../../../generic/BranchDropDown";
 
 const PayrollProofListTableCard = () => {
     const api = useApiCall();
@@ -100,6 +101,7 @@ const PayrollProofListTableCard = () => {
             bank_account_type_id: "1",
             type: "PAYROLL",
             year: moment().year(),
+            branch_id: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -173,7 +175,7 @@ const PayrollProofListTableCard = () => {
             <Card>
                 <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
                 <form onSubmit={formHandler.handleSubmit}>
-                    <Grid cols={4}>
+                    <Grid cols={5}>
                         <BankAccountTypeDropDown
                             placeholder="select bank account type"
                             label="Bank Account Type"
@@ -222,6 +224,13 @@ const PayrollProofListTableCard = () => {
                                 const year = new Date().getFullYear() - i;
                                 return { label: year.toString(), value: year.toString() };
                             })}
+                        />
+                        <BranchDropDown
+                            placeholder="select branch"
+                            label="Branch"
+                            name="branch_id"
+                            value={formHandler.values.branch_id}
+                            onChange={formHandler.handleChange}
                         />
                     </Grid>
                     <div className="flex justify-end gap-x-2">
