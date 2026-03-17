@@ -64,7 +64,7 @@ const WorkingHoursDeductionCard = () => {
                                     <Textfield
                                         disabled
                                         label={"Amount"}
-                                        value={formatNumber(undertime.payment.undertime_deduction)}
+                                        value={formatNumber(undertime.payment?.undertime_deduction ?? 0)}
                                     />
                                 </Grid>
                             );
