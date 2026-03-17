@@ -225,7 +225,7 @@ const EmployeeTableCard = () => {
         },
         {
             label: "Region",
-            value: "region",
+            value: "current_branch.location",
         },
         {
             label: "Contact Number",
