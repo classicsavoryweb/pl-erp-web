@@ -23,6 +23,8 @@ interface SelectInterface {
     disabled?: boolean;
 }
 
+const getOptionLabel = (label?: string | null) => String(label ?? "");
+
 const DebounceSearchableDropDown = ({
     label,
     placeholder,
@@ -48,7 +50,8 @@ const DebounceSearchableDropDown = ({
         if (value && typeof value === "object" && "employee_number" in value) {
             return `${value.last_name}, ${value.first_name} ${value.middle_name || ""}`;
         }
-        return options.find((opt) => opt.value === value)?.label || placeholder || "";
+        const matchedOption = options.find((opt) => opt.value === value);
+        return getOptionLabel(matchedOption?.label) || placeholder || "";
     }, [value, options, placeholder, loading]);
 
     useEffect(() => {
@@ -184,7 +187,7 @@ const DebounceSearchableDropDown = ({
                     }`}
                     onClick={() => handleSelect(opt)}
                     >
-                    {opt.label}
+                    {getOptionLabel(opt.label) || placeholder}
                     </div>
                 ))
                 ) : (
