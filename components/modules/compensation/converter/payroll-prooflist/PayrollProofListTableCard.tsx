@@ -52,11 +52,14 @@ const PayrollProofListTableCard = () => {
         {
             columnHead: "Employee Name",
             path: "employee.full_name",
-            columnType: COLUMNTYPES.string,
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return data.last_name + ", " + data.first_name;
+            }
         },
         {
             columnHead: "Employee Number",
-            path: "employee.employee_number",
+            path: "employee_number",
             columnType: COLUMNTYPES.string
         },
         {
