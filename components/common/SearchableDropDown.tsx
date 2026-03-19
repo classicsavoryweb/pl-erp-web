@@ -20,6 +20,8 @@ interface SelectInterface {
     disabled?: boolean;
 }
 
+const getOptionLabel = (label?: string | null) => String(label ?? "");
+
 const SearchableDropDown = ({
     label,
     placeholder,
@@ -39,13 +41,14 @@ const SearchableDropDown = ({
 
     const selectedLabel = useMemo(() => {
         if (loading) return "loading...";
-        return options.find((opt) => opt.value === value)?.label || placeholder;
+        const matchedOption = options.find((opt) => opt.value === value);
+        return getOptionLabel(matchedOption?.label) || placeholder;
     }, [value, options, placeholder, loading]);
 
     const filteredOptions = useMemo(() => {
         const keywordLower = keyWord.toLowerCase();
         return options.filter((opt) =>
-        opt.label.toLowerCase().includes(keywordLower)
+        getOptionLabel(opt.label).toLowerCase().includes(keywordLower)
         );
     }, [keyWord, options]);
 
@@ -151,7 +154,7 @@ const SearchableDropDown = ({
                         }`}
                         onClick={() => handleSelect(opt)}
                         >
-                        {opt.label}
+                        {getOptionLabel(opt.label) || placeholder}
                         </div>
                     ))
                     ) : (
