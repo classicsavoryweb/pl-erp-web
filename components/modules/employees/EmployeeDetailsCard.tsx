@@ -223,7 +223,7 @@ const EmployeeDetailsCard = () => {
                     />
                     <EmployeeBasicInfo
                         label="Region"
-                        detail={employee.current_branch?.region}
+                        detail={employee.current_branch?.location}
                     />
                     <EmployeeBasicInfo
                         label="Company"
@@ -239,7 +239,7 @@ const EmployeeDetailsCard = () => {
                     />
                     <EmployeeBasicInfo
                         label="Region"
-                        detail={employee.home_branch?.region}
+                        detail={employee.home_branch?.location}
                     />
                     <div className="py-3">
                         <hr className=" text-slate-300" />
