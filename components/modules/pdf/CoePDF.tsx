@@ -107,7 +107,7 @@ const CoePDF = ({
                         <Text hyphenationCallback={(word: string) => [word]}>
                             {INDENT}
                             Should you need to verify any information or do background checking, please email us at
-                            sfirecords@classicsavory.com.
+                            {process.env.NEXT_PUBLIC_HR_EMAIL}.
                         </Text>
                     </View>
 
@@ -154,7 +154,7 @@ const CoePDF = ({
                             <View style={styles.section}>
                                 <Text hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
-                                    For further verification regarding {data.gender === "Male" ? "his " : "her "}performance and other employment records, please feel free to reach us at 09178242418 or email us at sfirecords@classicsavory.com.
+                                    For further verification regarding {data.gender === "Male" ? "his " : "her "}performance and other employment records, please feel free to reach us at 09178242418 or email us at {process.env.NEXT_PUBLIC_HR_EMAIL}.
                                 </Text>
                             </View>
                             :
@@ -162,7 +162,7 @@ const CoePDF = ({
                                 <Text hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
                                     Should you need to verify any information or do background checking, please email us at
-                                    sfirecords@classicsavory.com.
+                                    {process.env.NEXT_PUBLIC_HR_EMAIL}.
                                 </Text>
                             </View>
                         }
