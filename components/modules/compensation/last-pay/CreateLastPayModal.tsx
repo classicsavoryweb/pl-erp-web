@@ -40,6 +40,7 @@ const CreateLastPayModal = ({
             sss_loans_details: []
         },
         validationSchema: Yup.object().shape({
+            payroll_hold: Yup.number().required("Payroll is required").min(0, "Amount cannot be negative"),
             tax_refund: Yup.number().required("Tax Refund is required").min(0, "Amount cannot be negative"),
             sales: Yup.number().required("Sales Incentives is required").min(0, "Amount cannot be negative"),
             incentives: Yup.number().required("Incentives is requried").min(0, "Amount cannot be negative"),

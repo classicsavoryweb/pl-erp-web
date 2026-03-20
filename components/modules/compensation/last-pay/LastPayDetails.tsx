@@ -375,17 +375,29 @@ const LastPayDetails = ({
                         value={formHandler.values.year}
                         disabled
                     />
-                    <Textfield
-                        label="Payroll"
-                        name="payroll_hold"
-                        value={ Number(formHandler.values.payroll_hold)
-                            .toLocaleString('en-US', {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            })
-                        }
-                        disabled
-                    />
+                    {disabled ? (
+                        <Textfield
+                            label="Payroll"
+                            name="payroll_hold"
+                            value={ Number(formHandler.values.payroll_hold)
+                                .toLocaleString('en-US', {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })
+                            }
+                            disabled
+                        />
+                    ) : (
+                        <Textfield
+                            label="Payroll"
+                            type="number"
+                            name="payroll_hold"
+                            onChange={formHandler.handleChange}
+                            value={formHandler.values.payroll_hold}
+                            error={formHandler.errors?.payroll_hold}
+                            disabled={disabled}
+                        />
+                    )}
                     {disabled ? (
                         <Textfield
                             label="13th Month"
