@@ -88,9 +88,9 @@ const Page = () => {
                         <PayrollDeductionTableCard/>
                     </div>
 
-                    <div className="mt-[16px]">
+                    {/* <div className="mt-[16px]">
                         <TardinessHistoryCard/>
-                    </div>
+                    </div> */}
                     { (permissions.includes("perform_compensation_incentives")) &&
                         <div className="mt-[16px]">
                             <IncentivesCard/>
