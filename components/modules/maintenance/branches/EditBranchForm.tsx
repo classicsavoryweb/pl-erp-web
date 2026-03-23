@@ -82,9 +82,6 @@ const EditBranchForm = ({
             date_open: Yup.string().required("Date opened is required."),
             company: Yup.string().required("Company is required."),
             rate_code: Yup.string().required("Rate code is required."),
-            branch_head_employee_number: Yup.string().required("Branch OIC is required."),
-            mancom_employee_number: Yup.string().required("Mancom is required."),
-            group_head_employee_number: Yup.string().required("Group head is required."),
             // expense_debit: Yup.string().required("Expense debit is required."),
             // expense_credit: Yup.string().required("Expense credit is required."),
             // advance_debit: Yup.string().required("Advance debit is required."),
@@ -249,11 +246,11 @@ const EditBranchForm = ({
                         label="Branch OIC"
                         placeholder="select branch oic"
                         name="branch_head_employee_number"
-                        value={editBranchFormHandler.values.branch_head_employee_number}
-                        required
+                        value={editBranchFormHandler.values.branch_head_employee_number || ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_head_employee_number}
                         disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        allowClear
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -261,11 +258,11 @@ const EditBranchForm = ({
                         label="Group Head"
                         placeholder="select group head"
                         name="group_head_employee_number"
-                        value={editBranchFormHandler.values.group_head_employee_number}
-                        required
+                        value={editBranchFormHandler.values.group_head_employee_number || ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.group_head_employee_number}
                         disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        allowClear
                     />
                     <BranchEmployeeDropDown
                         label="Kitchen OIC"
@@ -275,6 +272,7 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.kitchen_oic_employee_number}
                         disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        allowClear
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -282,11 +280,11 @@ const EditBranchForm = ({
                         label="Mancom"
                         placeholder="select mancom"
                         name="mancom_employee_number"
-                        value={editBranchFormHandler.values.mancom_employee_number}
-                        required
+                        value={editBranchFormHandler.values.mancom_employee_number || ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.mancom_employee_number}
                         disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        allowClear
                     />
                 </Grid>
 
