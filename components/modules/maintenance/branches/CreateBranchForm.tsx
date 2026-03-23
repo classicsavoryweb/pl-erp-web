@@ -71,9 +71,6 @@ const CreateBranchForm = ({
             date_open: Yup.string().required("Date opened is required."),
             company: Yup.string().required("Company is required."),
             rate_code: Yup.string().required("Rate code is required."),
-            branch_head_employee_number: Yup.string().required("Branch OIC is required."),
-            mancom_employee_number: Yup.string().required("Mancom is required."),
-            group_head_employee_number: Yup.string().required("Group head is required."),
             // expense_debit: Yup.string().required("Expense debit is required."),
             // expense_credit: Yup.string().required("Expense credit is required."),
             // advance_debit: Yup.string().required("Advance debit is required."),
@@ -219,18 +216,18 @@ const CreateBranchForm = ({
                         placeholder="select branch oic"
                         name="branch_head_employee_number"
                         value={createBranchFormHandler.values.branch_head_employee_number}
-                        required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.branch_head_employee_number}
+                        allowClear
                     />
                     <BranchEmployeeDropDown
                         label="Group Head"
                         placeholder="select group head"
                         name="group_head_employee_number"
                         value={createBranchFormHandler.values.group_head_employee_number}
-                        required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.group_head_employee_number}
+                        allowClear
                     />
                 </Grid>
 
@@ -242,15 +239,16 @@ const CreateBranchForm = ({
                         value={createBranchFormHandler.values.kitchen_oic_employee_number}
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.kitchen_oic_employee_number}
+                        allowClear
                     />
                     <BranchEmployeeDropDown
                         label="Mancom"
                         placeholder="select mancom"
                         name="mancom_employee_number"
                         value={createBranchFormHandler.values.mancom_employee_number}
-                        required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.mancom_employee_number}
+                        allowClear
                     />
                 </Grid>
 

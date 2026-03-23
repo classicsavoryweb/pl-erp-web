@@ -18,6 +18,7 @@ interface SelectInterface {
     }[];
     loading?: boolean;
     disabled?: boolean;
+    allowClear?: boolean;
 }
 
 const getOptionLabel = (label?: string | null) => String(label ?? "");
@@ -33,6 +34,7 @@ const SearchableDropDown = ({
     options,
     loading = false,
     disabled = false,
+    allowClear = false,
 }: SelectInterface) => {
     const [toggle, setToggle] = useState(false);
     const [keyWord, setKeyWord] = useState("");
@@ -76,6 +78,12 @@ const SearchableDropDown = ({
 
     const handleSelect = (selected: { label: string; value: string, obj?: any }) => {
         onChange({ target: { name, value: selected.value, obj:selected.obj   } });
+        setToggle(false);
+        setKeyWord("");
+    };
+
+    const handleClear = () => {
+        onChange({ target: { name, value: "" } });
         setToggle(false);
         setKeyWord("");
     };
@@ -163,6 +171,16 @@ const SearchableDropDown = ({
                 </div>
                 )}
             </div>
+
+            {allowClear && value && !disabled && (
+                <button
+                    type="button"
+                    className="mt-1 text-xs text-red-500 underline hover:text-red-700"
+                    onClick={handleClear}
+                >
+                    Clear selection
+                </button>
+            )}
 
             {error && <p className="text-red-400">{error}</p>}
         </div>
