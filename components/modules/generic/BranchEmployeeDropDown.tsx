@@ -14,6 +14,7 @@ interface SelectInterface {
     value?: string | number;
     required?: boolean;
     disabled?: boolean;
+    allowClear?: boolean;
 }
 
 const BranchEmployeeDropDown = ({
@@ -25,6 +26,7 @@ const BranchEmployeeDropDown = ({
     value,
     required = false,
     disabled = false,
+    allowClear = false,
 }: SelectInterface) => {
 
     const {employees, loading, getBranchEmployees} = useBranchEmployeeStore();
@@ -56,6 +58,7 @@ const BranchEmployeeDropDown = ({
             options={employeeData}
             required={required}
             disabled={disabled}
+            allowClear={allowClear}
         />
     );
 };
