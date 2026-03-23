@@ -39,13 +39,7 @@ const chunkArray = (arr: any[], size: number) => {
 const TardinessNotice = ({
   data
 }: TardinessNoticeInterface) => {
-    // const isTTFC = process.env.NEXT_PUBLIC_COMPANY === 'Tony Ting Food Concepts';
-    // const companyAddressLine1 = isTTFC
-    //     ? 'Unit 301 TP Building 414 Pureza St'
-    //     : '#84 Sto. Domingo St.cor. N.S. Amoranto';
-    // const companyAddressLine2 = isTTFC
-    //     ? 'Brgy 425, Sampaloc Manila'
-    //     : 'Brgy. Sto. Domingo, Quezon City';
+
 
 	return (
 		<Document>
