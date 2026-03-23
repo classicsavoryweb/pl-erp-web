@@ -74,6 +74,19 @@ export const reportRoutes: Route[] = [
                 permission: "view_reports_pay_slip",
             },
             {
+                name: "Timekeeping",
+                pathname: "/reports/timekeeping",
+                permission: "",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "Summary List",
+                        pathname: "/reports/timekeeping/summary-list",
+                        permission: "view_reports_timekeeping_summary_report"
+                    },
+                ]
+            },
+            {
                 name: "Payroll",
                 pathname: "/reports/payroll",
                 permission: "",
