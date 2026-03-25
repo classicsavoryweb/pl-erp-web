@@ -60,8 +60,9 @@ const defaultPayrollDetails: PayrollDetails = {
     created_at: "",
     updated_at: "",
     employee: {} as any,
+    position: {} as any,
     timekeeping_branch: {} as any,
-    timekeeping_summary: {} as any,
+    details: {} as any,
     incentives: {} as any,
     tardiness_list: [],
     undertime_list: [],
@@ -70,6 +71,8 @@ const defaultPayrollDetails: PayrollDetails = {
     additional_working_hours_total: "",
     working_hours_deduction_total: "",
     tardiness_offenses: [],
+    special_leave: "",
+    payroll_list: {} as any,
 };
 
 const defaultIncentivesDetails: Incentives = {

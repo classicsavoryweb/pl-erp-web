@@ -18,12 +18,11 @@ const EmployeeDetailCard = () => {
     const [timekeepingBranchId, setTimekeepingBranchId] = useState<any>("");
     const [saving, setSaving] = useState(false);
 
-    const isMaternityLeave = payrollDetails?.employee?.payroll_list?.is_on_maternity_leave === 1;
+    const isMaternityLeave = payrollDetails?.details.is_on_maternity_leave === 1;
     const canEdit = permissions.includes("perform_compensation_payroll") && payrollDetails.status !== "final";
 
     useEffect(() => {
         const selectedId = payrollDetails?.timekeeping_branch?.id
-            ?? payrollDetails?.employee?.current_branch?.id
             ?? "";
         setTimekeepingBranchId(selectedId);
     }, [payrollDetails]);
@@ -82,13 +81,13 @@ const EmployeeDetailCard = () => {
                 <Textfield
                     disabled
                     label="Position"
-                    value={payrollDetails?.employee?.current_position?.description ?? ""}
+                    value={payrollDetails?.position?.description ?? ""}
                 />
-                <Textfield
+                {/* <Textfield
                     disabled
                     label="Home Branch"
-                    value={payrollDetails?.employee?.current_branch?.name ?? ""}
-                />
+                    value={payrollDetails?.?.name ?? ""}
+                /> */}
                 {isMaternityLeave ? (
                     <BranchDropDown
                         label="Timekeeping Branch"
@@ -104,13 +103,13 @@ const EmployeeDetailCard = () => {
                     <Textfield
                         disabled
                         label="Timekeeping Branch"
-                        value={payrollDetails?.timekeeping_branch?.name ?? payrollDetails?.employee?.current_branch?.name ?? ""}
+                        value={payrollDetails?.timekeeping_branch?.name}
                     />
                 )}
                 <Textfield
                     disabled
-                    label={payrollDetails?.employee?.latest_bank_details?.bank_account_type_id == "2" ? "Savings Account" : "Cash Card"}
-                    value={payrollDetails?.employee?.latest_bank_details?.bank_number}
+                    label={payrollDetails?.payroll_list?.current_bank_details?.bank_account_type_id == "2" ? "Savings Account" : "Cash Card"}
+                    value={payrollDetails?.payroll_list?.current_bank_details?.bank_number}
                 />
                 <Textfield
                     disabled

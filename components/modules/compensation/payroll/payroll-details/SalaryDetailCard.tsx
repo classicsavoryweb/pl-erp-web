@@ -31,9 +31,8 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     value={payrollDetails.pay_date}
                 />
                 <Textfield
-                    disabled
                     label="Regular Days"
-                    value={payrollDetails?.timekeeping_summary?.regular_days ?? 0}
+                    value={payrollDetails?.details?.regular_days ?? 0}
                 />
                 <Textfield
                     disabled

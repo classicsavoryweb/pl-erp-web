@@ -61,17 +61,17 @@ const PayrollTableCard = () => {
         },
         {
             columnHead: "Branch",
-            path: "employee.current_branch.short_name",
+            path: "timekeeping_branch.short_name",
             columnType: COLUMNTYPES.string,
         },
         {
             columnHead: "Position",
-            path: "employee.current_position.description",
+            path: "position.description",
             columnType: COLUMNTYPES.string,
         },
         {
             columnHead: "Regular Days",
-            path: "timekeeping_summary.regular_days",
+            path: "details.regular_days",
             columnType: COLUMNTYPES.string,
         },
         {
@@ -175,7 +175,7 @@ const PayrollTableCard = () => {
                         />
                         <BranchDropDown
                             placeholder="select branch"
-                            label="Branch"
+                            label="Timekeeping Branch"
                             name="branch_id"
                             value={formHandler.values.branch_id}
                             onChange={(e) => {

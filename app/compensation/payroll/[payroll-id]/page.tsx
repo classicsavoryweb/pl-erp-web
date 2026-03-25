@@ -24,7 +24,7 @@ const Page = () => {
     const params = useParams();
     const payrollId = params["payroll-id"];
     const { permissions } = useContext(AuthContext);
-    const { setPayrollDetails ,payrollDetails } = useContext(PayrollContext);
+    const {setPayrollDetails, payrollDetails } = useContext(PayrollContext);
 
     useEffect(() => {
         formHandler.setValues({

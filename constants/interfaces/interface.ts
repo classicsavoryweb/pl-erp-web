@@ -41,8 +41,9 @@ export interface PayrollDetails {
   created_at: string
   updated_at: string
   employee: Employee
-  timekeeping_branch: any
-  timekeeping_summary: TimekeepingSummary
+  timekeeping_branch: CurrentBranch,
+  position: CurrentPosition,
+  details: PayrollProcessDetails
   incentives: Incentives
   tardiness_list: TimeKeeping[]
   undertime_list: TimeKeeping[]
@@ -51,6 +52,8 @@ export interface PayrollDetails {
   additional_working_hours_total: string,
   working_hours_deduction_total: string,
   tardiness_offenses: TardinessOffense[]
+  special_leave: string,
+  payroll_list: PayrollList,
 }
 
 interface Employee {
@@ -107,12 +110,12 @@ interface Employee {
   monthly_salary: string
   daily_salary: number
   cut_off_base_salary: number
-  current_branch: CurrentBranch
-  current_position: CurrentPosition
-  schedule: Schedule
-  home_branch: HomeBranch
-  latest_bank_details: LatestBankDetails
-  payroll_list?: PayrollList
+  // current_branch: CurrentBranch
+  // current_position: CurrentPosition
+  // schedule: Schedule
+  // home_branch: HomeBranch
+  // latest_bank_details: LatestBankDetails
+  // payroll_list?: PayrollList
 }
 
 interface PayrollList {
@@ -127,6 +130,7 @@ interface PayrollList {
   remarks?: any
   holded_at?: any
   holded_cutoffs?: any
+  current_bank_details: LatestBankDetails
 }
 
 interface CurrentBranch {
@@ -249,8 +253,16 @@ export interface HomeBranch {
   branch_ho_stat_credit: any
 }
 
-export interface TimekeepingSummary {
+export interface PayrollProcessDetails {
   id: number
+  is_hold : number
+  is_on_maternity_leave : number
+  is_mancom : number
+  is_complete_documents : number
+  schedule_type : number
+  daily_rate : number
+  hourly_rate : number
+  minute_rate : number
   cut_off: string
   employee_id: string
   branch_id: string
@@ -271,8 +283,14 @@ export interface TimekeepingSummary {
   remarks: any
   created_at: string
   updated_at: string
+  undertime_minutes: Minutes[],
+  tardiness_minutes: Minutes[],
 }
 
+export interface Minutes {
+  date: string
+  minutes: string
+}
 export interface LatestBankDetails {
   bank_account_type_id : string;
   bank_number : string;
@@ -365,3 +383,5 @@ export interface TardinessOffense {
   created_at: string;
   updated_at: string;
 }
+
+

@@ -21,9 +21,8 @@ const AdditionalWorkingHours = () => {
                     smallGap
                 >
                     <Textfield
-                        disabled
                         label="Special Holiday"
-                        value={payrollDetails?.timekeeping_summary?.special_holiday ?? 0}
+                        value={payrollDetails?.details?.special_holiday ?? 0}
                     />
                     <Textfield
                         disabled
@@ -37,9 +36,8 @@ const AdditionalWorkingHours = () => {
                     smallGap
                 >
                     <Textfield
-                        disabled
                         label="Legal Holiday"
-                        value={payrollDetails?.timekeeping_summary?.legal_holiday ?? 0}
+                        value={payrollDetails?.details?.legal_holiday ?? 0}
                     />
                     <Textfield
                         disabled
@@ -53,12 +51,10 @@ const AdditionalWorkingHours = () => {
                     smallGap
                 >
                     <Textfield
-                        disabled
                         label="Overtime Regular"
-                        value={payrollDetails?.timekeeping_summary?.regular_overtime ?? 0}
+                        value={payrollDetails?.details?.regular_overtime ?? 0}
                     />
                     <Textfield
-                        disabled
                         label="Amount"
                         value={formatNumber(payrollDetails.overtime_amount)}
                     />
@@ -69,9 +65,8 @@ const AdditionalWorkingHours = () => {
                     smallGap
                 >
                     <Textfield
-                        disabled
                         label="Legal Holiday OT"
-                        value={payrollDetails?.timekeeping_summary?.legal_holiday_overtime ?? 0}
+                        value={payrollDetails?.details?.legal_holiday_overtime ?? 0}
                     />
                     <Textfield
                         disabled
@@ -85,9 +80,8 @@ const AdditionalWorkingHours = () => {
                     smallGap
                 >
                     <Textfield
-                        disabled
                         label="Night Differential"
-                        value={payrollDetails?.timekeeping_summary?.night_differential ?? 0}
+                        value={payrollDetails?.details?.night_differential ?? 0}
                     />
                     <Textfield
                         disabled
@@ -101,9 +95,8 @@ const AdditionalWorkingHours = () => {
                     smallGap
                 >
                     <Textfield
-                        disabled
                         label="Special Holiday OT"
-                        value={payrollDetails?.timekeeping_summary?.special_holiday_overtime ?? 0}
+                        value={payrollDetails?.details?.special_holiday_overtime ?? 0}
                     />
                     <Textfield
                         disabled
@@ -117,9 +110,8 @@ const AdditionalWorkingHours = () => {
                     smallGap
                 >
                     <Textfield
-                        disabled
                         label="Night Differential OT"
-                        value={payrollDetails?.timekeeping_summary?.night_differential_overtime ?? 0}
+                        value={payrollDetails?.details?.night_differential_overtime ?? 0}
                     />
                     <Textfield
                         disabled
@@ -133,12 +125,10 @@ const AdditionalWorkingHours = () => {
                     smallGap
                 >
                     <Textfield
-                        disabled
                         label="Cancelled Off"
-                        value={payrollDetails?.timekeeping_summary?.cancelled_off ?? 0}
+                        value={payrollDetails?.details?.cancelled_off ?? 0}
                     />
                     <Textfield
-                        disabled
                         label="Amount"
                         value={formatNumber(payrollDetails.cancelled_off)}
                     />

@@ -17,11 +17,11 @@ const WorkingHoursDeductionCard = () => {
         >
             <p className="font-semibold text-red-800 dark:text-red-500">Working Hours Deductions</p>
 
-            { (payrollDetails.tardiness_list && payrollDetails.tardiness_list.length > 0) &&
+            { (payrollDetails.details.tardiness_minutes && payrollDetails.details.tardiness_minutes.length > 0) &&
                 <>
                     <p className="mt-3">Tardiness</p>
                     <Grid cols={3}>
-                        { payrollDetails.tardiness_list.map((tardy, idx) => {
+                        { payrollDetails.details?.tardiness_minutes.map((tardy, idx) => {
                             return (
                                 <Grid
                                     cols={2}
@@ -31,12 +31,12 @@ const WorkingHoursDeductionCard = () => {
                                     <Textfield
                                         disabled
                                         label={moment(tardy.date).format("MMMM DD, Y")}
-                                        value={tardy.tardiness + " mins"}
+                                        value={tardy.minutes + " mins"}
                                     />
                                     <Textfield
                                         disabled
                                         label={"Amount"}
-                                        value={formatNumber( Number(tardy.tardiness) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
+                                        value={formatNumber( Number(tardy.minutes) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
                                     />
                                 </Grid>
                             );
@@ -45,11 +45,11 @@ const WorkingHoursDeductionCard = () => {
                 </>
             }
 
-            { (payrollDetails.undertime_list && payrollDetails.undertime_list.length > 0) &&
+            { (payrollDetails.details.undertime_minutes && payrollDetails.details.undertime_minutes.length > 0) &&
                 <>
                     <p className="mt-3">Undertime</p>
                     <Grid cols={3}>
-                        { payrollDetails.undertime_list.map((undertime,idx) => {
+                        { payrollDetails.details.undertime_minutes.map((undertime,idx) => {
                             return (
                                 <Grid
                                     cols={2}
@@ -59,12 +59,12 @@ const WorkingHoursDeductionCard = () => {
                                     <Textfield
                                         disabled
                                         label={moment(undertime.date).format("MMMM d, Y")}
-                                        value={undertime.undertime + "mins"}
+                                        value={undertime.minutes + "mins"}
                                     />
                                     <Textfield
                                         disabled
                                         label={"Amount"}
-                                        value={formatNumber(Number(undertime.undertime) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
+                                        value={formatNumber(Number(undertime.minutes) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
                                     />
                                 </Grid>
                             );
