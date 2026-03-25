@@ -60,6 +60,11 @@ const EmployeeDeductionsTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Employee Number",
+            path: "employee.employee_number",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Current Branch",
             path: "employee.current_branch.short_name",
             columnType: COLUMNTYPES.string
