@@ -65,3 +65,13 @@ export const finalizeCutOff = async (id: number | string) => {
 
     return resData;
 };
+
+export const generatePayroll = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/generate-payroll',
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
