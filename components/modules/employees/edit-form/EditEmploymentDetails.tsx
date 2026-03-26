@@ -3,7 +3,6 @@ import { FormikProps } from 'formik';
 import EmploymentStatusDropdown from '../../generic/EmploymentStatusDropDown';
 import ActiveInactiveDropDown from '../../generic/ActiveInactiveDropDown';
 import BranchDropDown from '../../generic/BranchDropDown';
-import AgencyDropDown from '../../generic/AgencyDropDown';
 import Grid from '@/components/common/Grid';
 import Textfield from '@/components/common/Textfield';
 import Badge from '@/components/common/Badge';
@@ -43,7 +42,7 @@ const EditEmploymentDetails = ({
             loading={loading}
             size='medium'
         >
-            <p className="text-md font-semibold text-cyan-900 dark:text-cyan-700">Employment Details</p>
+            <p className="text-md font-semibold text-red-800 dark:text-red-500">Employment Details</p>
             <Grid
                 cols={2}
             >
@@ -98,16 +97,6 @@ const EditEmploymentDetails = ({
                     placeholder='select employee status'
                     required
                 />
-                {formHandler.values.type === "Agency" && (
-                    <AgencyDropDown
-                        label='Agency'
-                        name='agency_id'
-                        placeholder='select agency'
-                        onChange={formHandler.handleChange}
-                        value={formHandler.values.agency_id || ""}
-                        required
-                    />
-                )}
                 <Textfield
                     type='date'
                     onChange={formHandler.handleChange}
