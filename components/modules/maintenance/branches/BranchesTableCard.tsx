@@ -13,6 +13,7 @@ import { useState } from "react";
 import { exportAllBranches, getAllBranches } from "@/api/branches";
 import CreateBranchForm from "./CreateBranchForm";
 import EditBranchForm from "./EditBranchForm";
+import ViewBranchHistoryModal from "./ViewBranchHistoryModal";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
@@ -22,7 +23,8 @@ const BranchesTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const editModal = useModal();
-    const [data, setData] = useState({});
+    const historyModal = useModal();
+    const [data, setData] = useState<any>({});
     const paginator = usePagination();
     const filter = useFilter();
 
@@ -108,6 +110,18 @@ const BranchesTableCard = () => {
     ];
 
     const tableActions = [
+        {
+            label: "View History",
+            onClick: (data: any) => {
+                setData((current: any) => ({
+                    ...current,
+                    id: data.id,
+                    name: data.name,
+                    branch_number: data.branch_number,
+                }));
+                historyModal.onOpen();
+            }
+        },
         {
             label: "Edit",
             onClick: (data: any) => {
@@ -218,6 +232,10 @@ const BranchesTableCard = () => {
                 modal={editModal}
                 onSubmitCallback={api.triggerReload}
                 formValue={data}
+            />
+            <ViewBranchHistoryModal
+                modal={historyModal}
+                branchId={(data as any)?.id}
             />
         </>
     );
