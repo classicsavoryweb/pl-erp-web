@@ -10,6 +10,7 @@ interface ModalInterface {
     children: React.ReactNode;
     loading?: boolean;
     error?: boolean;
+    showCloseButton?: boolean;
 };
 
 const sizeClasses = {
@@ -28,7 +29,8 @@ const Modal = ({
     onClose,
     children,
     loading = false,
-    error = false
+    error = false,
+    showCloseButton = true
 }: ModalInterface) => {
 
     return (
@@ -39,13 +41,15 @@ const Modal = ({
             >
                 <div className="flex justify-between items-center border-b border-slate-300 pb-2 mb-4 ">
                     <p className="font-semibold">{title}</p>
-                    <button
-                        className="text-gray-500 dark:text-slate-300 dark:hover:text-slate-400 hover:text-gray-800 text-2xl hover:cursor-pointer"
-                        onClick={onClose}
-                        aria-label="Close"
-                    >
-                        &times;
-                    </button>
+                    {showCloseButton && (
+                        <button
+                            className="text-gray-500 dark:text-slate-300 dark:hover:text-slate-400 hover:text-gray-800 text-2xl hover:cursor-pointer"
+                            onClick={onClose}
+                            aria-label="Close"
+                        >
+                            &times;
+                        </button>
+                    )}
                 </div>
                 <div>
                     { loading
