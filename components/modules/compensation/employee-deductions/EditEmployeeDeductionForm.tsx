@@ -133,7 +133,7 @@ const EditEmployeeDeductionForm = ({
             const monthly = parsedAmount / parsedMonths;
             editFormHandler.setFieldValue("monthly_amortization", monthly.toFixed(2));
         } else {
-            editFormHandler.setFieldValue("monthly_amortization", "");
+            editFormHandler.setFieldValue("monthly_amortization", parsedAmount.toFixed(2));
         }
     };
 
