@@ -95,32 +95,45 @@ const PaySlipReportForm = () => {
         }
     });
 
-    const showExportButton =
-        formHandler.values.payslip === "history" &&
-        String(formHandler.values.pay_date) !== "0" &&
-        String(formHandler.values.pay_date) !== "" &&
+    const isHistory = formHandler.values.payslip === "history";
+    const isRange = String(formHandler.values.pay_date) === "0";
+    const hasBranchSelection =
         formHandler.values.type === "Branch" &&
-        String(formHandler.values.branch_id) !== "0" &&
-        String(formHandler.values.branch_id) !== "";
+        String(formHandler.values.branch_id) !== "" &&
+        String(formHandler.values.branch_id) !== "0";
+    const hasEmployeeSelection =
+        formHandler.values.type === "Employee" &&
+        String(formHandler.values.employee_id) !== "";
+    const hasSelectedEntity = hasBranchSelection || hasEmployeeSelection;
+    const hasValidDateSelection = isRange
+        ? String(formHandler.values.pay_date_from) !== "" &&
+          String(formHandler.values.pay_date_to) !== ""
+        : String(formHandler.values.pay_date) !== "";
+
+    const showExportButton = isHistory && hasSelectedEntity && hasValidDateSelection;
 
     const handleExport = async () => {
-        if (formHandler.values.type !== "Branch") {
-            toast.error("Export is only available for Branch type.");
-            return;
-        }
-
-        if (!formHandler.values.branch_id || String(formHandler.values.branch_id) === "0") {
-            toast.error("Please select a branch.");
-            return;
-        }
-
-        if (formHandler.values.payslip !== "history") {
+        if (!isHistory) {
             toast.error("Export is only available for Payslip History.");
             return;
         }
 
-        if (!formHandler.values.pay_date || String(formHandler.values.pay_date) === "0") {
-            toast.error("Please select a single Pay Date.");
+        if (!hasSelectedEntity) {
+            toast.error(
+                formHandler.values.type === "Employee"
+                    ? "Please select an employee."
+                    : "Please select a branch or employee."
+            );
+            return;
+        }
+
+        if (isRange) {
+            if (!formHandler.values.pay_date_from || !formHandler.values.pay_date_to) {
+                toast.error("Please select a pay date range.");
+                return;
+            }
+        } else if (!formHandler.values.pay_date) {
+            toast.error("Please select a pay date.");
             return;
         }
 
@@ -138,23 +151,44 @@ const PaySlipReportForm = () => {
 
             const payrolls = resp.data?.data ?? [];
             if (!Array.isArray(payrolls) || payrolls.length === 0) {
-                toast.info("No payroll found for the selected branch and pay date.");
+                toast.info("No payroll found for the selected filters.");
                 return;
             }
 
-            const blob = await pdf(<PayslipPDF payrolls={payrolls} />).toBlob();
+            const sortedPayrolls = [...payrolls].sort((a, b) =>
+                String(a?.pay_date ?? "").localeCompare(String(b?.pay_date ?? ""))
+            );
+            const blob = await pdf(<PayslipPDF payrolls={sortedPayrolls} />).toBlob();
             const downloadUrl = window.URL.createObjectURL(blob);
+            const firstPayroll = sortedPayrolls[0];
+            const lastPayroll = sortedPayrolls[sortedPayrolls.length - 1];
+            const selectedEmployee = formHandler.values.employee as any;
             const branchName =
-                payrolls[0]?.timekeeping_branch?.name ??
-                payrolls[0]?.employee?.current_branch?.name ??
+                firstPayroll?.timekeeping_branch?.name ??
+                firstPayroll?.employee?.current_branch?.name ??
                 "BRANCH";
-            const payDate = payrolls[0]?.pay_date
-                ? moment(payrolls[0].pay_date).format("YYYY-MM-DD")
-                : moment().format("YYYY-MM-DD");
-            const safeBranch = String(branchName).toUpperCase().replace(/\s+/g, "-");
+            const selectedEmployeeName = selectedEmployee
+                ? `${selectedEmployee.last_name ?? ""}, ${selectedEmployee.first_name ?? ""} ${selectedEmployee.middle_name ?? ""}`.trim()
+                : "";
+            const employeeName =
+                firstPayroll?.employee?.full_name ??
+                (selectedEmployeeName || "EMPLOYEE");
+            const employeeNumber =
+                firstPayroll?.employee?.employee_number ??
+                selectedEmployee?.employee_number ??
+                "";
+            const fileTarget = formHandler.values.type === "Employee"
+                ? [employeeName, employeeNumber].filter(Boolean).join("-")
+                : branchName;
+            const dateLabel = isRange
+                ? `${moment(firstPayroll?.pay_date ?? moment()).format("YYYY-MM-DD")}-${moment(lastPayroll?.pay_date ?? moment()).format("YYYY-MM-DD")}`
+                : (firstPayroll?.pay_date
+                    ? moment(firstPayroll.pay_date).format("YYYY-MM-DD")
+                    : moment().format("YYYY-MM-DD"));
+            const safeTarget = String(fileTarget).toUpperCase().replace(/\s+/g, "-");
             const link = document.createElement("a");
             link.href = downloadUrl;
-            link.download = `${safeBranch}-PAYSLIP-${payDate}.pdf`;
+            link.download = `${safeTarget}-PAYSLIP-${dateLabel}.pdf`;
             document.body.appendChild(link);
             link.click();
             link.remove();
