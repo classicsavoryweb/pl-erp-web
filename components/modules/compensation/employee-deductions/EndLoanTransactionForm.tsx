@@ -8,6 +8,7 @@ import { useEffect } from "react";
 import TextArea from "@/components/common/TextArea";
 import confirm from "@/components/common/Confirm";
 import { endLoanTransaction } from "@/api/compensation/employee-deductions";
+import * as Yup from "yup";
 
 interface FormModalInterface {
     modal: any;
@@ -28,6 +29,12 @@ const EndLoanTransactionForm = ({
             end_loan_reason: "",
             end_loan_status: ""
         },
+        validateOnChange: false,
+        validationSchema: Yup.object().shape({
+            end_loan_reason: Yup.string()
+                .trim()
+                .required("End loan reason is required."),
+        }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
@@ -80,6 +87,7 @@ const EndLoanTransactionForm = ({
                     value={editFormHandler.values.end_loan_reason ?? ""}
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.end_loan_reason}
+                    required
                 />
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
