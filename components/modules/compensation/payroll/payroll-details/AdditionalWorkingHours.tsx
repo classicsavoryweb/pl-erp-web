@@ -7,7 +7,7 @@ import { PayrollContext } from "@/context/PayrollProvider";
 import { formatNumber } from "@/helper/amount";
 import { useContext } from "react";
 
-const AdditionalWorkingHours = () => {
+const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
     const { loading, payrollDetails } = useContext(PayrollContext);
     return (
         <Card
@@ -22,7 +22,14 @@ const AdditionalWorkingHours = () => {
                 >
                     <Textfield
                         label="Special Holiday"
-                        value={payrollDetails?.details?.special_holiday ?? 0}
+                        name="special_holiday"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.special_holiday}
+                        type="number"
+                        onBlur={(e) => {
+                            formHandler.setFieldValue("save_changes", false);
+                            formHandler.submitForm();
+                        }}
                     />
                     <Textfield
                         disabled
@@ -37,7 +44,14 @@ const AdditionalWorkingHours = () => {
                 >
                     <Textfield
                         label="Legal Holiday"
-                        value={payrollDetails?.details?.legal_holiday ?? 0}
+                        name="legal_holiday"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.legal_holiday}
+                        type="number"
+                        onBlur={(e) => {
+                            formHandler.setFieldValue("save_changes", false);
+                            formHandler.submitForm();
+                        }}
                     />
                     <Textfield
                         disabled
@@ -52,9 +66,17 @@ const AdditionalWorkingHours = () => {
                 >
                     <Textfield
                         label="Overtime Regular"
-                        value={payrollDetails?.details?.regular_overtime ?? 0}
+                        name="regular_overtime"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.regular_overtime}
+                        type="number"
+                        onBlur={(e) => {
+                            formHandler.setFieldValue("save_changes", false);
+                            formHandler.submitForm();
+                        }}
                     />
                     <Textfield
+                        disabled
                         label="Amount"
                         value={formatNumber(payrollDetails.overtime_amount)}
                     />
@@ -66,7 +88,14 @@ const AdditionalWorkingHours = () => {
                 >
                     <Textfield
                         label="Legal Holiday OT"
-                        value={payrollDetails?.details?.legal_holiday_overtime ?? 0}
+                        name="legal_holiday_overtime"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.legal_holiday_overtime}
+                        type="number"
+                        onBlur={(e) => {
+                            formHandler.setFieldValue("save_changes", false);
+                            formHandler.submitForm();
+                        }}
                     />
                     <Textfield
                         disabled
@@ -81,7 +110,14 @@ const AdditionalWorkingHours = () => {
                 >
                     <Textfield
                         label="Night Differential"
-                        value={payrollDetails?.details?.night_differential ?? 0}
+                        name="night_differential"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.night_differential}
+                        type="number"
+                        onBlur={(e) => {
+                            formHandler.setFieldValue("save_changes", false);
+                            formHandler.submitForm();
+                        }}
                     />
                     <Textfield
                         disabled
@@ -96,7 +132,14 @@ const AdditionalWorkingHours = () => {
                 >
                     <Textfield
                         label="Special Holiday OT"
-                        value={payrollDetails?.details?.special_holiday_overtime ?? 0}
+                        name="special_holiday_overtime"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.special_holiday_overtime}
+                        type="number"
+                        onBlur={(e) => {
+                            formHandler.setFieldValue("save_changes", false);
+                            formHandler.submitForm();
+                        }}
                     />
                     <Textfield
                         disabled
@@ -111,7 +154,14 @@ const AdditionalWorkingHours = () => {
                 >
                     <Textfield
                         label="Night Differential OT"
-                        value={payrollDetails?.details?.night_differential_overtime ?? 0}
+                        name="night_differential_overtime"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.night_differential_overtime}
+                        type="number"
+                        onBlur={(e) => {
+                            formHandler.setFieldValue("save_changes", false);
+                            formHandler.submitForm();
+                        }}
                     />
                     <Textfield
                         disabled
@@ -126,9 +176,17 @@ const AdditionalWorkingHours = () => {
                 >
                     <Textfield
                         label="Cancelled Off"
-                        value={payrollDetails?.details?.cancelled_off ?? 0}
+                        name="cancelled_off"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.cancelled_off}
+                        type="number"
+                        onBlur={(e) => {
+                            formHandler.setFieldValue("save_changes", false);
+                            formHandler.submitForm();
+                        }}
                     />
                     <Textfield
+                        disabled
                         label="Amount"
                         value={formatNumber(payrollDetails.cancelled_off)}
                     />

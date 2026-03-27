@@ -15,6 +15,7 @@ interface TextfieldInterface {
     required?: boolean;
     disabled?: boolean;
     isUpperCase?: boolean;
+    onBlur?: (e: any) => void;
 }
 
 const Textfield = ({
@@ -28,6 +29,7 @@ const Textfield = ({
     required = false,
     disabled = false,
     isUpperCase = false,
+    onBlur
 }: TextfieldInterface) => {
     const [showPassword, setShowPassword] = useState(false);
     const isPassword = type === "password";
@@ -45,6 +47,7 @@ const Textfield = ({
                     name={name}
                     placeholder={placeholder}
                     value={value}
+                    onBlur={onBlur}
                     onChange={(e) => {
                         if (isUpperCase) {
                             const newValue = isUpperCase ? e.target.value.toUpperCase() : e.target.value;
