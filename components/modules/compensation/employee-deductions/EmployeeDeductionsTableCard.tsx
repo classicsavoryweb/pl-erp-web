@@ -351,6 +351,7 @@ const EmployeeDeductionsTableCard = ({
                             }}
                             value={employee}
                             error={formHandler.errors.employee_id}
+                            type="Direct"
                         />
                         <Dropdown
                             placeholder="select column"
