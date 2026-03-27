@@ -1,17 +1,18 @@
 "use client";
-import { getEmployeeTrainings } from "@/api/employee";
-import Button from "@/components/common/Button";
+import { exportEmployeeTrainings, getEmployeeTrainings } from "@/api/employee";
+import confirm from "@/components/common/Confirm";
+import DropDownButtons from "@/components/common/DropDownButtons";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
+import moment from "moment";
 import { useParams } from "next/navigation";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { EmployeeContext } from "@/context/EmployeeProvider";
-import ActionDropDown from "@/components/common/ActionDropDown";
 import EmployeeTrainingForm from "./EmployeeTrainingForm";
 
 const EmployeeTraingingHistory = () => {
@@ -111,12 +112,42 @@ const EmployeeTraingingHistory = () => {
             />
             <div className="flex justify-end">
                 <div>
-                    <Button
-                        label="Add"
-                        onClick={() => {
-                            setAction("add");
-                            modal.onOpen();
-                        }}
+                    <DropDownButtons
+                        actions={[
+                            {
+                                label: "Add",
+                                onClick: () => {
+                                    setAction("add");
+                                    modal.onOpen();
+                                }
+                            },
+                            {
+                                label: "Export",
+                                onClick: async () => {
+                                    const isConfirmed = await confirm({
+                                        title: "Export",
+                                        message: "Are you sure you want to export?"
+                                    });
+
+                                    if (isConfirmed) {
+                                        exportEmployeeTrainings(String(employeeNumber))
+                                        .then((resp) => {
+                                            const blob = new Blob([resp.data], {
+                                                type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+                                            });
+                                            const downloadUrl = window.URL.createObjectURL(blob);
+                                            const a = document.createElement('a');
+
+                                            a.href = downloadUrl;
+                                            a.download = `${employeeNumber}-EMPLOYEE-TRAININGS-${moment().format("YYYY-MM-DD")}.xls`;
+                                            document.body.appendChild(a);
+                                            a.click();
+                                            a.remove();
+                                        });
+                                    }
+                                }
+                            },
+                        ]}
                     />
                 </div>
             </div>
