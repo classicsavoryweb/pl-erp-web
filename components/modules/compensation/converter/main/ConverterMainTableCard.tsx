@@ -150,7 +150,7 @@ const ConverterMainTableCard = () => {
                         statusActions = [
                             tableActions[0],
                             tableActions[3],
-                            tableActions[4],
+                            // tableActions[4],
                             tableActions[6],
                             tableActions[7],
                         ];
