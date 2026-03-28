@@ -41,6 +41,8 @@ const Page = () => {
             non_taxable_adjustment: payrollDetails.non_taxable_adjustment ?? 0,
             adjustment_amount: payrollDetails.details.adjustment_amount ?? 0,
             remarks: payrollDetails.remarks,
+            tardiness_minutes: payrollDetails.details.tardiness_minutes ?? [],
+            undertime_minutes: payrollDetails.details.undertime_minutes ?? [],
             save_changes: false
         });
     }, [payrollDetails]);
@@ -59,6 +61,8 @@ const Page = () => {
             special_holiday_overtime: payrollDetails.details.special_holiday_overtime ?? 0,
             non_taxable_adjustment: payrollDetails.non_taxable_adjustment ?? 0,
             adjustment_amount: payrollDetails.details.adjustment_amount ?? 0,
+            tardiness_minutes: payrollDetails.details.tardiness_minutes ?? [],
+            undertime_minutes: payrollDetails.details.undertime_minutes ?? [],
             remarks: payrollDetails.remarks,
             save_changes: false,
         },
@@ -132,7 +136,9 @@ const Page = () => {
                         <ContributionCard/>
                     </Grid>
                     <div className="mt-[8px]">
-                        <WorkingHoursDeductionCard/>
+                        <WorkingHoursDeductionCard
+                            formHandler={formHandler}
+                        />
                     </div>
                     <div className="mt-[16px]">
                         <PayrollDeductionTableCard/>

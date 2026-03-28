@@ -33,6 +33,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 <Textfield
                     label="Regular Days"
                     name="regular_days"
+                    disabled={payrollDetails.status == "final"}
                     onChange={formHandler.handleChange}
                     value={formHandler.values.regular_days}
                     type="number"
@@ -44,6 +45,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 <Textfield
                     label="Special Leave"
                     name="special_leave"
+                    disabled={payrollDetails.status == "final"}
                     onChange={formHandler.handleChange}
                     value={formHandler.values.special_leave}
                     type="number"

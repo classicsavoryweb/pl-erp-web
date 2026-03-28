@@ -26,6 +26,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         onChange={formHandler.handleChange}
                         value={formHandler.values.special_holiday}
                         type="number"
+                        disabled={payrollDetails.status == "final"}
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
                             formHandler.submitForm();
@@ -45,6 +46,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                     <Textfield
                         label="Legal Holiday"
                         name="legal_holiday"
+                        disabled={payrollDetails.status == "final"}
                         onChange={formHandler.handleChange}
                         value={formHandler.values.legal_holiday}
                         type="number"
@@ -67,6 +69,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                     <Textfield
                         label="Overtime Regular"
                         name="regular_overtime"
+                        disabled={payrollDetails.status == "final"}
                         onChange={formHandler.handleChange}
                         value={formHandler.values.regular_overtime}
                         type="number"
@@ -89,6 +92,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                     <Textfield
                         label="Legal Holiday OT"
                         name="legal_holiday_overtime"
+                        disabled={payrollDetails.status == "final"}
                         onChange={formHandler.handleChange}
                         value={formHandler.values.legal_holiday_overtime}
                         type="number"
@@ -111,6 +115,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                     <Textfield
                         label="Night Differential"
                         name="night_differential"
+                        disabled={payrollDetails.status == "final"}
                         onChange={formHandler.handleChange}
                         value={formHandler.values.night_differential}
                         type="number"
@@ -133,6 +138,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                     <Textfield
                         label="Special Holiday OT"
                         name="special_holiday_overtime"
+                        disabled={payrollDetails.status == "final"}
                         onChange={formHandler.handleChange}
                         value={formHandler.values.special_holiday_overtime}
                         type="number"
@@ -156,6 +162,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         label="Night Differential OT"
                         name="night_differential_overtime"
                         onChange={formHandler.handleChange}
+                        disabled={payrollDetails.status == "final"}
                         value={formHandler.values.night_differential_overtime}
                         type="number"
                         onBlur={(e) => {
@@ -177,6 +184,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                     <Textfield
                         label="Cancelled Off"
                         name="cancelled_off"
+                        disabled={payrollDetails.status == "final"}
                         onChange={formHandler.handleChange}
                         value={formHandler.values.cancelled_off}
                         type="number"
