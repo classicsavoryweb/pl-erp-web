@@ -320,6 +320,19 @@ export const editEmployeeTrainingTitle = async ( employeeNumber: string, payload
     return resData;
 };
 
+export const exportEmployeeTrainings = async (id: string) => {
+    const resData = await axiosHelper({
+        func_path: `/export-employee-trainings/${id}`,
+        method: 'GET',
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    });
+
+    return resData;
+};
+
 
 export const getEmployeeVaccination = async (employeeNumber: string, payload: {}) => {
     const resData = await axiosHelper({
