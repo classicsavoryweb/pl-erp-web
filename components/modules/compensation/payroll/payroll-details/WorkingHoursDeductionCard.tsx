@@ -8,7 +8,7 @@ import { formatNumber } from "@/helper/amount";
 import moment from "moment";
 import { useContext } from "react";
 
-const WorkingHoursDeductionCard = () => {
+const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
     const { loading, payrollDetails } = useContext(PayrollContext);
     return (
         <Card
@@ -17,11 +17,11 @@ const WorkingHoursDeductionCard = () => {
         >
             <p className="font-semibold text-red-800 dark:text-red-500">Working Hours Deductions</p>
 
-            { (payrollDetails.details.tardiness_minutes && payrollDetails.details.tardiness_minutes.length > 0) &&
+            <p className="mt-3">Tardiness</p>
+            { (formHandler.values.tardiness_minutes && formHandler.values.tardiness_minutes.length > 0) &&
                 <>
-                    <p className="mt-3">Tardiness</p>
                     <Grid cols={3}>
-                        { payrollDetails.details?.tardiness_minutes.map((tardy, idx) => {
+                        { formHandler.values.tardiness_minutes.map((tardy: any, idx:number) => {
                             return (
                                 <Grid
                                     cols={2}
@@ -44,12 +44,11 @@ const WorkingHoursDeductionCard = () => {
                     </Grid>
                 </>
             }
-
-            { (payrollDetails.details.undertime_minutes && payrollDetails.details.undertime_minutes.length > 0) &&
+            <p className="mt-3">Undertime</p>
+            { (formHandler.values.undertime_minutes && formHandler.values.undertime_minutes.length > 0) &&
                 <>
-                    <p className="mt-3">Undertime</p>
                     <Grid cols={3}>
-                        { payrollDetails.details.undertime_minutes.map((undertime,idx) => {
+                        { formHandler.values.undertime_minutes.map((undertime: any, idx: number) => {
                             return (
                                 <Grid
                                     cols={2}
