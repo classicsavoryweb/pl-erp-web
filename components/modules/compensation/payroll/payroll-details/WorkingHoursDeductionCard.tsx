@@ -40,7 +40,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
 
             { (formHandler.values.tardiness_minutes && formHandler.values.tardiness_minutes.length > 0) &&
                 <>
-                    <Grid cols={4}>
+                    <Grid cols={3}>
                         { formHandler.values.tardiness_minutes.map((tardy: any, idx:number) => {
                             return (
                                 <Grid
@@ -66,11 +66,27 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                             formHandler.submitForm();
                                         }}
                                     />
-                                    <Textfield
-                                        disabled
-                                        label={"Amount"}
-                                        value={formatNumber( Number(tardy.minutes) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
-                                    />
+                                    <div>
+                                        <div className="flex justify-end">
+                                            <p
+                                                className="z-1 mb-[-30px] hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                                onClick={() => {
+                                                    const minutes = [...formHandler.values.tardiness_minutes];
+                                                    minutes.splice(idx, 1)
+                                                    formHandler.setFieldValue("tardiness_minutes", minutes);
+                                                    formHandler.setFieldValue("save_changes", false);
+                                                    formHandler.submitForm();
+                                                }}
+                                            >
+                                                Remove
+                                            </p>
+                                        </div>
+                                        <Textfield
+                                            disabled
+                                            label={"Amount"}
+                                            value={formatNumber( Number(tardy.minutes) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
+                                        />
+                                    </div>
                                 </Grid>
                             );
                         })}
@@ -122,11 +138,28 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                             formHandler.submitForm();
                                         }}
                                     />
-                                    <Textfield
-                                        disabled
-                                        label={"Amount"}
-                                        value={formatNumber(Number(undertime.minutes) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
-                                    />
+
+                                    <div>
+                                        <div className="flex justify-end">
+                                            <p
+                                                className="z-1 mb-[-30px] hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                                onClick={() => {
+                                                    const minutes = [...formHandler.values.undertime_minutes];
+                                                    minutes.splice(idx, 1)
+                                                    formHandler.setFieldValue("undertime_minutes", minutes);
+                                                    formHandler.setFieldValue("save_changes", false);
+                                                    formHandler.submitForm();
+                                                }}
+                                            >
+                                                Remove
+                                            </p>
+                                        </div>
+                                        <Textfield
+                                            disabled
+                                            label={"Amount"}
+                                            value={formatNumber(Number(undertime.minutes) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
+                                        />
+                                    </div>
                                 </Grid>
                             );
                         })}

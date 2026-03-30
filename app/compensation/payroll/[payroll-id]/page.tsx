@@ -43,6 +43,7 @@ const Page = () => {
             remarks: payrollDetails.remarks,
             tardiness_minutes: payrollDetails.details.tardiness_minutes ?? [],
             undertime_minutes: payrollDetails.details.undertime_minutes ?? [],
+            timekeeping_branch_id: payrollDetails.timekeeping_branch_id,
             save_changes: false
         });
     }, [payrollDetails]);
@@ -63,6 +64,7 @@ const Page = () => {
             adjustment_amount: payrollDetails.details.adjustment_amount ?? 0,
             tardiness_minutes: payrollDetails.details.tardiness_minutes ?? [],
             undertime_minutes: payrollDetails.details.undertime_minutes ?? [],
+            timekeeping_branch_id: payrollDetails.timekeeping_branch_id,
             remarks: payrollDetails.remarks,
             save_changes: false,
         },
@@ -106,7 +108,9 @@ const Page = () => {
             
             <div className="flex gap-x-4 w-full">
                 <div className="w-8/12">
-                    <EmployeeDetailCard/>
+                    <EmployeeDetailCard
+                        formHandler={formHandler}
+                    />
                     <div className="mt-[16px]">
                         <AdditionalWorkingHours
                             formHandler={formHandler}
