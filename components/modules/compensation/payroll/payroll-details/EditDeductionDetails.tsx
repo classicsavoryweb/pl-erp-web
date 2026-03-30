@@ -5,19 +5,18 @@ import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import * as Yup from "yup";
-import { toast } from "react-toastify";
 import { useContext, useEffect } from "react";
-import confirm from "@/components/common/Confirm";
 import { PayrollContext } from "@/context/PayrollProvider";
-import { editPayrollDeductionDetails } from "@/api/compensation/payroll";
 interface FormModalInterface {
     modal: any;
     formValue: any;
+    formHandler: any;
 }
 
 const EditDeductionDetails = ({
     modal,
-    formValue
+    formValue,
+    formHandler
 }: FormModalInterface) => {
 
     const {payrollDetails, setPayrollDetails} = useContext(PayrollContext);
@@ -45,33 +44,18 @@ const EditDeductionDetails = ({
                 return parseFloat(String(value)) <= parseFloat(String(balance));
             }),
         }),
-        onSubmit: async (values, {resetForm, setSubmitting}) => {
-            const isConfirmed = await confirm({
-                title: "Edit Deduction",
-                message: "Are you sure you want to save changes?"
-            });
-
-            if(isConfirmed) {
-                setSubmitting(true);
-                editPayrollDeductionDetails(payrollDetails.id, {
-                    deduction_id: values.deduction_id,
-                    deducted_amount: values.deducted_amount
-                }).then((resp) => {
-                    if (!resp.error) {
-                        setPayrollDetails(resp.data.details);
-                        toast.success(resp.data.message);
-                        modal.onClose();
-                        resetForm();
-                    } else {
-                        toast.error(resp.data.message);
-                    }
-                }).catch(() => {
-                    toast.error("Error encountered");
-                }).finally(() => {
-                    setSubmitting(false);
-                });
-            }
-
+        onSubmit: async (values) => {
+            const deductionId = values.deduction_id;
+            const deductionArray = [...formHandler.values.deductions];
+            const idx = deductionArray.findIndex(item => item.deduction_id == deductionId);
+            deductionArray[idx] = {
+                ...deductionArray[idx],
+                deducted_amount: values.deducted_amount
+            };
+            formHandler.setFieldValue("deductions", deductionArray);
+            formHandler.setFieldValue("save_changes", false);
+            formHandler.submitForm();
+            modal.onClose();
         }
     });
 
