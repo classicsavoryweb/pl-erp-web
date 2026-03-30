@@ -49,6 +49,18 @@ export const updatePayrollDetails = async (id: number, payload: {}) => {
     return resData;
 };
 
+
+
+export const previewPayrollComputation = async (id: number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/preview-payroll-compution/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const updatePayrollIncentive = async (id: number, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/update-payroll-incentive/${id}`,

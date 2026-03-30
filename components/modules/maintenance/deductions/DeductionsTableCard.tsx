@@ -53,7 +53,7 @@ const DeductionsTableCard = () => {
     const columnSettings = [
         {
             columnHead: "#",
-            path: "row_number",
+            path: "id",
             columnType: COLUMNTYPES.string
         },
         {

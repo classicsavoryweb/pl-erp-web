@@ -32,7 +32,27 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 />
                 <Textfield
                     label="Regular Days"
-                    value={payrollDetails?.details?.regular_days ?? 0}
+                    name="regular_days"
+                    disabled={payrollDetails.status == "final"}
+                    onChange={formHandler.handleChange}
+                    value={formHandler.values.regular_days}
+                    type="number"
+                    onBlur={(e) => {
+                        formHandler.setFieldValue("save_changes", false);
+                        formHandler.submitForm();
+                    }}
+                />
+                <Textfield
+                    label="Special Leave"
+                    name="special_leave"
+                    disabled={payrollDetails.status == "final"}
+                    onChange={formHandler.handleChange}
+                    value={formHandler.values.special_leave}
+                    type="number"
+                    onBlur={(e) => {
+                        formHandler.setFieldValue("save_changes", false);
+                        formHandler.submitForm();
+                    }}
                 />
                 <Textfield
                     disabled
@@ -56,11 +76,15 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 <Textfield
                     disabled = {payrollDetails.status == "final" || !permissions.includes("perform_compensation_payroll")}
                     label="Taxable Adjustment"
-                    name="taxable_adjustment"
+                    name="adjustment_amount"
                     type="number"
                     onChange={formHandler.handleChange}
-                    value={formHandler.values.taxable_adjustment}
-                    error={formHandler.errors.taxable_adjustment}
+                    value={formHandler.values.adjustment_amount}
+                    error={formHandler.errors.adjustment_amount}
+                    onBlur={(e) => {
+                        formHandler.setFieldValue("save_changes", false);
+                        formHandler.submitForm();
+                    }}
                 />
                 <Textfield
                     disabled = {payrollDetails.status == "final" || !permissions.includes("perform_compensation_payroll")}
@@ -70,6 +94,10 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     onChange={formHandler.handleChange}
                     value={formHandler.values.non_taxable_adjustment}
                     error={formHandler.errors.non_taxable_adjustment}
+                    onBlur={(e) => {
+                        formHandler.setFieldValue("save_changes", false);
+                        formHandler.submitForm();
+                    }}
                 />
             </Grid>
         </Card>

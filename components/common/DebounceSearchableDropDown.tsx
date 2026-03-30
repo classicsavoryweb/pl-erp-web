@@ -20,6 +20,7 @@ interface SelectInterface {
     mapResponse: (item: any) => Option;
     transformResponse?: (resp: any) => any[];
     status?: "active" | "inactive" | "all";
+    type?: "Direct" | "Agency" | "all";
     disabled?: boolean;
 }
 
@@ -36,6 +37,7 @@ const DebounceSearchableDropDown = ({
     api,
     mapResponse,
     status= "active",
+    type= "all",
     disabled = false,
     transformResponse = (resp: any) => resp?.data || [],
 }: SelectInterface) => {
@@ -92,7 +94,8 @@ const DebounceSearchableDropDown = ({
             setLoading(true);
             api({
                 status: status,
-                keyWord: keyWord
+                keyWord: keyWord,
+                type: type
             }).then((resp:any) => {
                 const rawData = transformResponse(resp);
                 const newDataSet: Option[] = rawData.map(mapResponse);
