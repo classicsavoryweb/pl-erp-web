@@ -31,7 +31,7 @@ const EditEducation = ({
                 label='Address'
                 name="education.college_address"
                 value={formHandler.values.education?.college_address || ""}
-                placeholder='enter course'
+                placeholder='enter address'
             />
             <Textfield
                 onChange={formHandler.handleChange}
@@ -71,14 +71,14 @@ const EditEducation = ({
                 label='Highschool'
                 name="education.highschool"
                 value={formHandler.values.education?.highschool || ""}
-                placeholder='enter highschooll'
+                placeholder='enter highschool'
             />
             <Textfield
                 onChange={formHandler.handleChange}
                 label='Address'
                 name="education.highschool_address"
                 value={formHandler.values.education?.highschool_address || ""}
-                placeholder='enter course'
+                placeholder='enter address'
             />
             <Grid cols={2}>
                 <Textfield
