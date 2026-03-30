@@ -67,9 +67,6 @@ const Page = () => {
             save_changes: false,
         },
         validateOnChange: false,
-        // validationSchema: Yup.object().shape({
-        //     non_taxable_adjustment: Yup.number().required("Non taxable adjustment is required")
-        // }),
         onSubmit: async (values) => {
             if (values.save_changes) {
                 const isConfirmed = await confirm({
@@ -100,22 +97,6 @@ const Page = () => {
                     toast.error("Error preview computation.");
                 }
             }
-            // const isConfirmed = await confirm({
-            //     message : "Are you sure you want to save changes",
-            //     title: "Payroll Details"
-            // });
-
-            // isConfirmed && updatePayrollDetails(payrollDetails.id, values)
-            // .then((resp) => {
-            //     if (!resp.error) {
-            //         toast.success(resp.data.message);
-            //         setPayrollDetails(resp.data.details);
-            //     } else {
-            //         toast.error(resp.data.message);
-            //     }
-            // }).catch(() => {
-            //     toast.error("Error encountered");
-            // });
         }
     });
 
