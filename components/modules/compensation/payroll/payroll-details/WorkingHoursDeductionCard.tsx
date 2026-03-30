@@ -84,7 +84,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                         <Textfield
                                             disabled
                                             label={"Amount"}
-                                            value={formatNumber( Number(tardy.minutes) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
+                                            value={formatNumber(Number(tardy.minutes) * Number(payrollDetails.details.minute_rate ?? 0))}
                                         />
                                     </div>
                                 </Grid>
@@ -157,7 +157,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                         <Textfield
                                             disabled
                                             label={"Amount"}
-                                            value={formatNumber(Number(undertime.minutes) * (Number(payrollDetails.hourly_rate ?? 0) / 60))}
+                                            value={formatNumber(Number(undertime.minutes) * Number(payrollDetails.details.minute_rate ?? 0))}
                                         />
                                     </div>
                                 </Grid>

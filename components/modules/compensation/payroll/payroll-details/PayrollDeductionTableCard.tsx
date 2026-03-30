@@ -11,17 +11,10 @@ import { useContext, useEffect, useState } from "react";
 import { toast } from "react-toastify";
 import EditDeductionDetails from "./EditDeductionDetails";
 
-const PayrollDeductionTableCard = () => {
+const PayrollDeductionTableCard = ({ formHandler } : {formHandler : any}) => {
     const { loading, setPayrollDetails, payrollDetails } = useContext(PayrollContext);
-    const [dataSet, setDataSet] = useState<any[]>([]);
     const editModal = useModal();
     const [data, setData] = useState<any>({});
-
-    useEffect(() => {
-        if (!loading) {
-            setDataSet(JSON.parse(payrollDetails.deductions) ?? []);
-        }
-    }, [loading, payrollDetails.deductions.length]);
 
     const columnSettings = [
         {
@@ -56,23 +49,13 @@ const PayrollDeductionTableCard = () => {
         },
         {
             label: "Remove",
-            onClick: async (data:any) => {
-                const isConfirmed = await confirm({
-                    message : "Are you sure you want to save changes",
-                    title: "Deduction"
-                });
-
-                isConfirmed && updatePayrollDeduction(payrollDetails.id, { deduction_id: data.deduction_id})
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(resp.data.message);
-                        setPayrollDetails(resp.data.details);
-                    } else {
-                        toast.error(resp.data.message);
-                    }
-                }).catch(() => {
-                    toast.error("Error encountered");
-                })
+            onClick: (data:any) => {
+                const deductionId = data.deduction_id;
+                const deductionArray = [...formHandler.values.deductions];
+                const newDeductionArray = deductionArray.filter(item => item.deduction_id != deductionId);
+                formHandler.setFieldValue("deductions", newDeductionArray);
+                formHandler.setFieldValue("save_changes", false);
+                formHandler.submitForm();
             }
         }
     ];
@@ -85,7 +68,7 @@ const PayrollDeductionTableCard = () => {
             >
                 <p className="font-semibold text-red-800 dark:text-red-500">Company Deductions</p>
                 <Table
-                    dataSet={dataSet}
+                    dataSet={formHandler.values.deductions}
                     columnSettings={columnSettings}
                     withActions={payrollDetails.status === "initial"}
                     actions={actionSettings}
@@ -94,6 +77,7 @@ const PayrollDeductionTableCard = () => {
             <EditDeductionDetails
                 modal={editModal}
                 formValue={data}
+                formHandler={formHandler}
             />
         </>
     );

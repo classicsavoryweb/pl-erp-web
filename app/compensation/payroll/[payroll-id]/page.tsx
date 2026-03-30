@@ -43,6 +43,7 @@ const Page = () => {
             remarks: payrollDetails.remarks,
             tardiness_minutes: payrollDetails.details.tardiness_minutes ?? [],
             undertime_minutes: payrollDetails.details.undertime_minutes ?? [],
+            deductions: payrollDetails.deductions ?? [],
             timekeeping_branch_id: payrollDetails.timekeeping_branch_id,
             save_changes: false
         });
@@ -65,6 +66,7 @@ const Page = () => {
             tardiness_minutes: payrollDetails.details.tardiness_minutes ?? [],
             undertime_minutes: payrollDetails.details.undertime_minutes ?? [],
             timekeeping_branch_id: payrollDetails.timekeeping_branch_id,
+            deductions: payrollDetails.deductions ?? [],
             remarks: payrollDetails.remarks,
             save_changes: false,
         },
@@ -126,7 +128,9 @@ const Page = () => {
                         />
                     </div>
                     <div className="mt-[16px]">
-                        <PayrollDeductionTableCard/>
+                        <PayrollDeductionTableCard
+                            formHandler={formHandler}
+                        />
                     </div>
 
                     {/* <div className="mt-[16px]">
