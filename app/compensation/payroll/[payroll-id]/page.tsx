@@ -15,7 +15,7 @@ import { AuthContext } from "@/context/AuthProvider";
 import { useContext, useEffect, useState } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
-import { previewPayrollComputation, updatePayrollDetails } from "@/api/compensation/payroll";
+import { previewPayrollComputation } from "@/api/compensation/payroll";
 import * as Yup from "yup";
 import IncentivesCard from "@/components/modules/compensation/payroll/payroll-details/IncentivesCard";
 import TardinessHistoryCard from "@/components/modules/compensation/payroll/payroll-details/TardinessHistoryCard";
@@ -45,6 +45,14 @@ const Page = () => {
             undertime_minutes: payrollDetails.details.undertime_minutes ?? [],
             deductions: payrollDetails.deductions ?? [],
             timekeeping_branch_id: payrollDetails.timekeeping_branch_id,
+            employee_sss: payrollDetails.employee_sss,
+            employer_sss: payrollDetails.employer_sss,
+            employee_pagibig: payrollDetails.employee_pagibig,
+            employer_pagibig: payrollDetails.employer_pagibig,
+            employee_philhealth: payrollDetails.employee_philhealth,
+            employer_philhealth: payrollDetails.employer_philhealth,
+            withholding_tax: payrollDetails.withholding_tax,
+            is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
             save_changes: false
         });
     }, [payrollDetails]);
@@ -67,6 +75,14 @@ const Page = () => {
             undertime_minutes: payrollDetails.details.undertime_minutes ?? [],
             timekeeping_branch_id: payrollDetails.timekeeping_branch_id,
             deductions: payrollDetails.deductions ?? [],
+            employee_sss: payrollDetails.employee_sss ?? 0,
+            employer_sss: payrollDetails.employer_sss ?? 0,
+            employee_pagibig: payrollDetails.employee_pagibig ?? 0,
+            employer_pagibig: payrollDetails.employer_pagibig ?? 0,
+            employee_philhealth: payrollDetails.employee_philhealth ?? 0,
+            employer_philhealth: payrollDetails.employer_philhealth ?? 0,
+            withholding_tax: payrollDetails.withholding_tax ?? 0,
+            is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
             remarks: payrollDetails.remarks,
             save_changes: false,
         },
@@ -120,7 +136,9 @@ const Page = () => {
                     </div>
                     <Grid cols={2}>
                         <GovernmentIdentificationCard/>
-                        <ContributionCard/>
+                        <ContributionCard
+                            formHandler={formHandler}
+                        />
                     </Grid>
                     <div className="mt-[8px]">
                         <WorkingHoursDeductionCard
