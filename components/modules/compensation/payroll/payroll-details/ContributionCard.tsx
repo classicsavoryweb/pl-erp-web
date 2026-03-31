@@ -16,7 +16,6 @@ import Checkbox from "@/components/common/Checkbox";
 
 const ContributionCard = ({formHandler} : {formHandler: any}) => {
     const { loading, payrollDetails, setPayrollDetails } = useContext(PayrollContext);
-    const { permissions } = useContext(AuthContext);
 
     return (
         <Card
@@ -25,20 +24,42 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
         >
             <div className="flex justify-between">
                 <p className="font-semibold text-red-800 dark:text-red-500">Contributions</p>
-                <Checkbox
-                    label="Manual Entry"
-                    value={1}
-                    checked={formHandler.values.is_manual_statutory_entry == 1}
-                    onChange={(e) => {
-                        if (payrollDetails.status == "initial") {
-                            if (e.target.checked) {
-                                formHandler.setFieldValue("is_manual_statutory_entry", 1);
-                            } else {
-                                formHandler.setFieldValue("is_manual_statutory_entry", 0);
+                <div className="flex justify-end gap-x-2">
+                    <Checkbox
+                        label="Complete Documents"
+                        value={1}
+                        checked={formHandler.values.is_complete_documents == 1}
+                        onChange={(e) => {
+                            if (payrollDetails.status == "initial") {
+                                if (e.target.checked) {
+                                    formHandler.setFieldValue("is_complete_documents", 1);
+                                } else {
+                                    formHandler.setFieldValue("is_complete_documents", 0);
+                                }
+                                
+                                formHandler.setFieldValue("save_changes", false);
+                                formHandler.submitForm();
                             }
-                        }
-                    }}
-                />
+                        }}
+                    />
+                    <Checkbox
+                        label="Manual Entry"
+                        value={1}
+                        checked={formHandler.values.is_manual_statutory_entry == 1}
+                        onChange={(e) => {
+                            if (payrollDetails.status == "initial") {
+                                if (e.target.checked) {
+                                    formHandler.setFieldValue("is_manual_statutory_entry", 1);
+                                } else {
+                                    formHandler.setFieldValue("is_manual_statutory_entry", 0);
+                                }
+
+                                formHandler.setFieldValue("save_changes", false);
+                                formHandler.submitForm();
+                            }
+                        }}
+                    />
+                </div>
             </div>
             <form onSubmit={formHandler.handleSubmit}>
                 <Grid cols={2}>

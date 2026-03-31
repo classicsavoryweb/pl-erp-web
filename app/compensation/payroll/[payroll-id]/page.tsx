@@ -53,6 +53,7 @@ const Page = () => {
             employer_philhealth: payrollDetails.employer_philhealth,
             withholding_tax: payrollDetails.withholding_tax,
             is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
+            is_complete_documents: payrollDetails.details.is_complete_documents,
             save_changes: false
         });
     }, [payrollDetails]);
@@ -83,6 +84,7 @@ const Page = () => {
             employer_philhealth: payrollDetails.employer_philhealth ?? 0,
             withholding_tax: payrollDetails.withholding_tax ?? 0,
             is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
+            is_complete_documents: payrollDetails.details.is_complete_documents,
             remarks: payrollDetails.remarks,
             save_changes: false,
         },
