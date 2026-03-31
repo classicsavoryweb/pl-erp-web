@@ -6,11 +6,16 @@ import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { generateEntries } from "@/api/compensation/entries";
 import CutOffDropDown from "../../generic/CutOffDropDown";
+import FinalizedCutOffDropDown from "../../generic/FinalizedCutOffDropDown";
 import { getCurrentCutoff } from "@/helper/cutoff";
+import { useCutOffStore } from "@/stores/useCutOffStore";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import { useEffect } from "react";
 
 interface DateRangeConfirmModalForm {
     modal: any;
     sendToApsys?: boolean;
+    finalizedOnly?: boolean;
 }
 
 const convertDate = (mmdd: string) => {
@@ -22,14 +27,23 @@ const convertDate = (mmdd: string) => {
 const DateRangeConfirmModal = ({
     modal,
     sendToApsys = true,
+    finalizedOnly = false,
 }: DateRangeConfirmModalForm) => {
+    const currentCutoff = getCurrentCutoff();
+    const { cut_offs, getCutOffs } = useCutOffStore();
+
+    useAsyncEffect(() => {
+        if (finalizedOnly) {
+            getCutOffs();
+        }
+    }, [finalizedOnly]);
 
     const formHandler = useFormik({
         initialValues: {
             action: "generate",
-            selected_cutoff: getCurrentCutoff().range,
-            date_from: "",
-            date_to: "",
+            selected_cutoff: finalizedOnly ? "" : currentCutoff.range,
+            date_from: finalizedOnly ? "" : convertDate(currentCutoff.start_time),
+            date_to: finalizedOnly ? "" : convertDate(currentCutoff.end_time),
             send_to_apsys: sendToApsys,
         },
         validationSchema: Yup.object({
@@ -58,6 +72,22 @@ const DateRangeConfirmModal = ({
         }
     });
 
+    useEffect(() => {
+        if (!modal.isShowing || !finalizedOnly || cut_offs.length === 0) {
+            return;
+        }
+
+        const latestFinalizedCutoff = cut_offs[0];
+
+        formHandler.setValues((prevValues) => ({
+            ...prevValues,
+            selected_cutoff: String(latestFinalizedCutoff.id),
+            date_from: latestFinalizedCutoff.start_date,
+            date_to: latestFinalizedCutoff.end_date,
+            send_to_apsys: sendToApsys,
+        }));
+    }, [modal.isShowing, finalizedOnly, cut_offs, sendToApsys]);
+
     return (
         <Modal
             isShowing={modal.isShowing}
@@ -70,20 +100,34 @@ const DateRangeConfirmModal = ({
             size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <CutOffDropDown
-                    value={formHandler.values.selected_cutoff}
-                    onChange={(e) => {
-                        formHandler.setFieldValue("selected_cutoff", e.target.value);
+                {finalizedOnly ? (
+                    <FinalizedCutOffDropDown
+                        name="selected_cutoff"
+                        value={formHandler.values.selected_cutoff}
+                        onChange={(e) => {
+                            formHandler.setFieldValue("selected_cutoff", String(e.target.value));
+                            formHandler.setFieldValue("date_from", e.target.obj?.start_date || "");
+                            formHandler.setFieldValue("date_to", e.target.obj?.end_date || "");
+                        }}
+                        required
+                        error={formHandler.errors.selected_cutoff}
+                    />
+                ) : (
+                    <CutOffDropDown
+                        value={formHandler.values.selected_cutoff}
+                        onChange={(e) => {
+                            formHandler.setFieldValue("selected_cutoff", e.target.value);
 
-                        const dateFrom = convertDate(e.target.obj?.start_time);
-                        const dateTo = convertDate(e.target.obj?.end_time);
+                            const dateFrom = convertDate(e.target.obj?.start_time);
+                            const dateTo = convertDate(e.target.obj?.end_time);
 
-                        formHandler.setFieldValue("date_from", dateFrom);
-                        formHandler.setFieldValue("date_to", dateTo);
-                    }}
-                    required
-                    error={formHandler.errors.selected_cutoff}
-                />
+                            formHandler.setFieldValue("date_from", dateFrom);
+                            formHandler.setFieldValue("date_to", dateTo);
+                        }}
+                        required
+                        error={formHandler.errors.selected_cutoff}
+                    />
+                )}
                 <div className="flex justify-end gap-2 mt-4">
                     <Button
                         label="Cancel"
