@@ -527,7 +527,7 @@ const TardinessNOD = ({
                             }
                         </Text>
                         <Text>
-                            25% Performance Incentives Deduuction
+                            25% Performance Incentives Deduction
                         </Text>
                     </View>
 
@@ -551,7 +551,7 @@ const TardinessNOD = ({
                             }
                         </Text>
                         <Text>
-                            50% Performance Incentives Deduuction
+                            50% Performance Incentives Deduction
                         </Text>
                     </View>
 
@@ -575,7 +575,7 @@ const TardinessNOD = ({
                             }
                         </Text>
                         <Text>
-                            75% Performance Incentives Deduuction
+                            75% Performance Incentives Deduction
                         </Text>
                     </View>
 
@@ -599,7 +599,7 @@ const TardinessNOD = ({
                             }
                         </Text>
                         <Text>
-                            100% Performance Incentives Deduuction
+                            100% Performance Incentives Deduction
                         </Text>
                     </View>
 
