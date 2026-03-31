@@ -30,10 +30,12 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                     value={1}
                     checked={formHandler.values.is_manual_statutory_entry == 1}
                     onChange={(e) => {
-                        if (e.target.checked) {
-                            formHandler.setFieldValue("is_manual_statutory_entry", 1);
-                        } else {
-                            formHandler.setFieldValue("is_manual_statutory_entry", 0);
+                        if (payrollDetails.status == "initial") {
+                            if (e.target.checked) {
+                                formHandler.setFieldValue("is_manual_statutory_entry", 1);
+                            } else {
+                                formHandler.setFieldValue("is_manual_statutory_entry", 0);
+                            }
                         }
                     }}
                 />
