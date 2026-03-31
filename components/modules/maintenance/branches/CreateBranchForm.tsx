@@ -15,6 +15,7 @@ import BranchEmployeeDropDown from "../../generic/BranchEmployeeDropDown";
 import Grid from "@/components/common/Grid";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
 import confirm from "@/components/common/Confirm";
+import RegionDropDown from "../../generic/RegionDropDown";
 
 interface FormModalInterface {
     modal: any;
@@ -67,7 +68,7 @@ const CreateBranchForm = ({
             short_name: Yup.string().required("Short name is required."),
             type: Yup.string().required("Type is required."),
             address: Yup.string().required("Address is required."),
-            location: Yup.string().required("Location is required."),
+            location: Yup.string().required("Region is required."),
             date_open: Yup.string().required("Date opened is required."),
             company: Yup.string().required("Company is required."),
             rate_code: Yup.string().required("Rate code is required."),
@@ -156,9 +157,9 @@ const CreateBranchForm = ({
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.address}
                     />
-                    <Textfield
-                        label="Location"
-                        placeholder="enter location"
+                    <RegionDropDown
+                        label="Region"
+                        placeholder="select region"
                         name="location"
                         value={createBranchFormHandler.values.location}
                         required

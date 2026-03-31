@@ -47,6 +47,11 @@ export const maintenanceRoutes: Route[] = [
                         permission: "view_branches"
                     },
                     {
+                        name: "Regions",
+                        pathname: "/maintenance/organization/regions",
+                        permission: "view_branches"
+                    },
+                    {
                         name: "Positions",
                         pathname: "/maintenance/organization/positions",
                         permission: "view_positions"

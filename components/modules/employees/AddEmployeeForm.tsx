@@ -30,6 +30,7 @@ const AddEmployeeForm = () => {
             position_id: "",
             branch_id: "",
             home_branch_id: "",
+            region: "",
             date_hired: "",
             birthday: "",
             contact_number: "",
@@ -217,10 +218,20 @@ const AddEmployeeForm = () => {
                         label="Home Branch"
                         name="home_branch_id"
                         placeholder="select branch"
-                        onChange={addEmployeeHandler.handleChange}
+                        onChange={(e) => {
+                            addEmployeeHandler.handleChange(e);
+                            addEmployeeHandler.setFieldValue("region", e.target.obj?.location ?? "");
+                        }}
                         value={addEmployeeHandler.values.home_branch_id}
                         error={addEmployeeHandler.errors.home_branch_id}
                         required
+                    />
+                    <Textfield
+                        label="Region"
+                        name="region"
+                        placeholder="auto-filled from home branch"
+                        value={addEmployeeHandler.values.region}
+                        disabled
                     />
                     <PositionDropDown
                         label="Position"

@@ -18,6 +18,7 @@ import BranchEmployeeDropDown from "../../generic/BranchEmployeeDropDown";
 import confirm from "@/components/common/Confirm";
 import { AuthContext } from "@/context/AuthProvider";
 import { useContext } from "react";
+import RegionDropDown from "../../generic/RegionDropDown";
 
 
 
@@ -78,7 +79,7 @@ const EditBranchForm = ({
             short_name: Yup.string().required("Short name is required."),
             type: Yup.string().required("Type is required."),
             address: Yup.string().required("Address is required."),
-            location: Yup.string().required("Location is required."),
+            location: Yup.string().required("Region is required."),
             date_open: Yup.string().required("Date opened is required."),
             company: Yup.string().required("Company is required."),
             rate_code: Yup.string().required("Rate code is required."),
@@ -185,9 +186,9 @@ const EditBranchForm = ({
                     />
                 </Grid>
                 <Grid cols={2}>
-                    <Textfield
-                        label="Location"
-                        placeholder="enter location"
+                    <RegionDropDown
+                        label="Region"
+                        placeholder="select region"
                         name="location"
                         value={editBranchFormHandler.values.location}
                         required
