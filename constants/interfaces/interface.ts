@@ -259,6 +259,7 @@ export interface PayrollProcessDetails {
   is_on_maternity_leave : number
   is_mancom : number
   is_complete_documents : number
+  is_manual_statutory_entry: number
   schedule_type : number
   daily_rate : number
   hourly_rate : number
