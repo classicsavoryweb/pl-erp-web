@@ -1,9 +1,9 @@
 "use client";
 
-import { getAllBranches } from "@/api/branches";
-import Dropdown from "@/components/common/Dropdown";
-import { useEffect, useState } from "react";
-import { toast } from "react-toastify";
+import SearchableDropDown from "@/components/common/SearchableDropDown";
+import { useAsyncEffect } from "@/hooks/async-effect";
+import { useFilterBranchStore } from "@/stores/useFilterBranchStore";
+import { useMemo } from "react";
 
 interface RegionDropDownProps {
     label: string;
@@ -16,6 +16,10 @@ interface RegionDropDownProps {
     disabled?: boolean;
 }
 
+interface BranchWithRegion {
+    location?: string | null;
+}
+
 const RegionDropDown = ({
     label,
     placeholder,
@@ -23,58 +27,46 @@ const RegionDropDown = ({
     onChange,
     error,
     value,
-    required,
-    disabled,
+    required = false,
+    disabled = false,
 }: RegionDropDownProps) => {
-    const [regions, setRegions] = useState<string[]>([]);
-    const [loading, setLoading] = useState(false);
+    const { branches, loading, getFilterBranches } = useFilterBranchStore();
 
-    useEffect(() => {
-        let isMounted = true;
-
-        setLoading(true);
-        getAllBranches({ per_page: 10000 })
-            .then((resp) => {
-                if (resp.error) {
-                    toast.error("Error fetching regions");
-                    return;
-                }
-
-                const nextRegions = Array.from(
-                    new Set(
-                        (resp.data?.data ?? [])
-                            .map((branch: any) => branch.location)
-                            .filter((region: string | null | undefined) => !!region)
-                    )
-                ) as string[];
-
-                nextRegions.sort((a, b) => a.localeCompare(b));
-
-                if (isMounted) {
-                    setRegions(nextRegions);
-                }
-            })
-            .catch(() => {
-                toast.error("Error fetching regions");
-            })
-            .finally(() => {
-                if (isMounted) {
-                    setLoading(false);
-                }
-            });
-
-        return () => {
-            isMounted = false;
-        };
+    useAsyncEffect(() => {
+        getFilterBranches();
     }, []);
 
-    const regionOptions = [...regions];
-    if (value && !regionOptions.includes(String(value))) {
-        regionOptions.unshift(String(value));
-    }
+    const regionOptions = useMemo(() => {
+        const options = Array.from(
+            new Set(
+                branches
+                    .map((branch: BranchWithRegion) => branch.location?.trim())
+                    .filter((region): region is string => Boolean(region))
+            )
+        )
+            .sort((a, b) => a.localeCompare(b))
+            .map((region) => ({
+                label: region,
+                value: region,
+            }));
+
+        const selectedRegion = String(value ?? "").trim();
+
+        if (!selectedRegion) {
+            return options;
+        }
+
+        const hasSelectedRegion = options.some(
+            (option) => option.value === selectedRegion
+        );
+
+        return hasSelectedRegion
+            ? options
+            : [{ label: selectedRegion, value: selectedRegion }, ...options];
+    }, [branches, value]);
 
     return (
-        <Dropdown
+        <SearchableDropDown
             label={label}
             placeholder={placeholder}
             name={name}
@@ -84,10 +76,7 @@ const RegionDropDown = ({
             required={required}
             disabled={disabled}
             loading={loading}
-            options={regionOptions.map((region) => ({
-                label: region,
-                value: region,
-            }))}
+            options={regionOptions}
         />
     );
 };
