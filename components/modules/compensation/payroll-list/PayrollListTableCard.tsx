@@ -17,6 +17,7 @@ import CreatePayrollListForm from "./CreatePayrollListForm";
 import EditPayrollListForm from "./EditPayrollListForm";
 import moment from "moment";
 import Link from "next/link";
+import ActivityLogsModal from "../../generic/ActivityLogsModal";
 
 
 const PayrollListTableCard = () => {
@@ -26,6 +27,7 @@ const PayrollListTableCard = () => {
     const [data, setData] = useState<any>(null);
     const createModal = useModal();
     const editModal = useModal();
+    const activityLogsModal = useModal();
     
     const getPositionLabel = (data: any) => {
         const basePosition = data?.employee?.current_position?.description ?? "";
@@ -157,6 +159,29 @@ const PayrollListTableCard = () => {
                     current_bank_details: data.current_bank_details,
                 });
             }
+        },
+        {
+            label: "View Logs",
+            onClick: (data: any) => {
+                activityLogsModal.onOpen();
+                setData({
+                    id: data.id,
+                    employee_id: data.employee_id,
+                    employee_number: data.employee.employee_number,
+                    salary_amount: data.salary_amount,
+                    is_included: data.is_included,
+                    is_statutory_only: data.is_statutory_only,
+                    is_mancom: data.is_mancom,
+                    is_on_maternity_leave: data.is_on_maternity_leave,
+                    has_complete_documents: data.has_complete_documents,
+                    is_bank: data.is_bank,
+                    is_hold: data.is_hold,
+                    remarks: data.remarks,
+                    employee: data.employee,
+                    bank_details_id: data.bank_details_id,
+                    current_bank_details: data.current_bank_details,
+                });
+            }
         }
     ];
 
@@ -249,6 +274,13 @@ const PayrollListTableCard = () => {
                     formValue={data}
                 />
             )}
+
+            <ActivityLogsModal
+                modal={activityLogsModal}
+                title="Payroll List"
+                data={data}
+                logName="Payroll List"
+            />
         </>
     );
 };
