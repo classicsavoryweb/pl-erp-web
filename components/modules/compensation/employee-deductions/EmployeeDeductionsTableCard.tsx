@@ -28,6 +28,7 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
 import ViewEmployeeDeduction from "./ViewEmployeeDeduction";
 import ImportEmployeeDeductionsModal from "./ImportEmployeeDeductionsModal";
+import ActivityLogsModal from "../../generic/ActivityLogsModal";
 
 interface EmployeeDeductionsInterface {
     hasExport?: boolean;
@@ -47,7 +48,8 @@ const EmployeeDeductionsTableCard = ({
     const viewModal = useModal();
     const editLoanModal = useModal();
     const importModal = useModal();
-    const [data, setData] = useState({});
+    const activityLogsModal = useModal();
+    const [data, setData] = useState<any>({});
     const [employee, setEmployee] = useState<any>({});
     const { permissions } = useContext(AuthContext);
     const paginator = usePagination();
@@ -209,6 +211,31 @@ const EmployeeDeductionsTableCard = ({
                         }
                     ];
                 }
+                
+                actions.push({
+                    label: "View Logs",
+                    onClick: () => {
+                        activityLogsModal.onOpen();
+                        setData({
+                            employee: data.employee,
+                            id: data.id,
+                            employee_id: data.employee_id,
+                            employee_number: data.employee.employee_number,
+                            deduction_id: data.deduction_id,
+                            months: data.months,
+                            amount: data.amount,
+                            start_date: data.start_date,
+                            end_date: data.end_date,
+                            monthly_amortization: data.monthly_amortization,
+                            balance: data.balance,
+                            remarks: data.remarks,
+                            branch_id: data.branch_id,
+                            block_payment: data.block_payment,
+                            created_by: data.created_by,
+                            deduction_type: data.deduction.description,
+                        });
+                    }
+                });
 
                 return actions.length > 0 ? 
                 <ActionDropDown 
@@ -476,6 +503,13 @@ const EmployeeDeductionsTableCard = ({
             <ImportEmployeeDeductionsModal
                 modal={importModal}
                 onSubmitCallback={api.triggerReload}
+            />
+
+            <ActivityLogsModal
+                title="Employee Deductions"
+                modal={activityLogsModal}
+                data={data}
+                logName="Employee Deductions"
             />
         </>
     );

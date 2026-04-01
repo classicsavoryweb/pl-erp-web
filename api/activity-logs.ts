@@ -9,3 +9,13 @@ export const getAllActivityLogs = async (payload?: {}) => {
 
     return resData;
 };
+
+export const getSpecificActivityLogs = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-specific-activity-logs',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
