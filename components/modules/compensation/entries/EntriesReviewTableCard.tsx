@@ -11,7 +11,7 @@ import { toast } from "react-toastify";
 import Grid from "@/components/common/Grid";
 import confirm from "@/components/common/Confirm";
 import usePagination from "@/hooks/pagination";
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useMemo, useState } from "react";
 import { AuthContext } from "@/context/AuthProvider";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
@@ -19,9 +19,10 @@ import Dropdown from "@/components/common/Dropdown";
 import { getAllEntries, exportAllEntries} from "@/api/compensation/entries";
 import moment from "moment";
 import BranchDropDown from "../../generic/BranchDropDown";
-import FinalizedCutOffDropDown from "../../generic/FinalizedCutOffDropDown";
+import CutOffDropDown from "../../generic/CutOffDropDown";
+import { getCurrentCutoff } from "@/helper/cutoff";
 import { useBranchStore } from "@/stores/useBranchStore";
-import { useCutOffStore } from "@/stores/useCutOffStore";
+import { getActiveCutOff } from "@/api/compensation/cut-off";
 import { useModal } from "@/hooks/modal";
 import DateRangeConfirmModal from "./DateRangeConfirmModal";
 interface FilterInterface {
@@ -43,19 +44,18 @@ const EntriesReviewTableCard = ({
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const { branches, getBranches } = useBranchStore();
-    const { cut_offs, getCutOffs } = useCutOffStore();
     const generateModal = useModal();
     const canGenerate = permissions.includes("perform_compensation_entries");
     const [isCutoffReady, setIsCutoffReady] = useState(false);
     const [activeCutoff, setActiveCutoff] = useState<{
-        selectedCutoff: string;
+        range: string;
         startDate: string;
         endDate: string;
+        year: string;
     } | null>(null);
 
     useAsyncEffect(() => {
         getBranches();
-        getCutOffs();
     }, []);
 
     const branchShortNameMap = useMemo(() => {
@@ -195,9 +195,13 @@ const EntriesReviewTableCard = ({
             column_type: "branch.name",
             branch_id: "",
             branch_number: "",
-            selected_cutoff: "",
-            cutoff_start: "",
-            cutoff_end: "",
+            cutoff: {
+                ...getCurrentCutoff()
+            },
+            selected_cutoff: getCurrentCutoff().range,
+            cutoff_start: getCurrentCutoff().start_time,
+            cutoff_end: getCurrentCutoff().end_time,
+            year: moment().year(),
             action: "",
         },
         validateOnChange: false,
@@ -210,34 +214,13 @@ const EntriesReviewTableCard = ({
             ),
             branch_id: Yup.string(),
             branch_number: Yup.string(),
+            year: Yup.string().required("Year is required"),
         }),
         onSubmit: async (values, {setSubmitting}) => {
             api.triggerReload();
             setSubmitting(true);
         }
     });
-
-    useEffect(() => {
-        if (cut_offs.length === 0) {
-            setIsCutoffReady(true);
-            return;
-        }
-
-        const latestFinalizedCutoff = cut_offs[0];
-        const startDate = moment(latestFinalizedCutoff.start_date).format("MM-DD");
-        const endDate = moment(latestFinalizedCutoff.end_date).format("MM-DD");
-
-        setActiveCutoff({
-            selectedCutoff: String(latestFinalizedCutoff.id),
-            startDate,
-            endDate,
-        });
-
-        formHandler.setFieldValue("selected_cutoff", String(latestFinalizedCutoff.id));
-        formHandler.setFieldValue("cutoff_start", startDate);
-        formHandler.setFieldValue("cutoff_end", endDate);
-        setIsCutoffReady(true);
-    }, [cut_offs]);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -263,6 +246,44 @@ const EntriesReviewTableCard = ({
             api.setLoading(false);
         });
     }, [paginator.reload, api.reload, isCutoffReady]);
+
+    useAsyncEffect(() => {
+        getActiveCutOff()
+            .then((resp) => {
+                if (resp?.error) {
+                    toast.error(resp?.data?.message || "Error fetching active cutoff");
+                    return;
+                }
+
+                const startDate = resp?.data?.start_date;
+                const endDate = resp?.data?.end_date;
+                const start = moment(startDate, "YYYY-MM-DD", true);
+                const end = moment(endDate, "YYYY-MM-DD", true);
+
+                const range = start.isValid() && end.isValid()
+                    ? `${start.format("MM-DD")}-${end.format("MM-DD")}`
+                    : "";
+
+                const startValue = start.isValid() ? start.format("MM-DD") : (startDate || "");
+                const endValue = end.isValid() ? end.format("MM-DD") : (endDate || "");
+
+                setActiveCutoff({
+                    range,
+                    startDate: startValue,
+                    endDate: endValue,
+                    year: start.isValid() ? start.format("YYYY") : moment().format("YYYY"),
+                });
+
+                formHandler.setFieldValue("selected_cutoff", range);
+                formHandler.setFieldValue("cutoff_start", startValue);
+                formHandler.setFieldValue("cutoff_end", endValue);
+                formHandler.setFieldValue("year", start.isValid() ? start.format("YYYY") : moment().format("YYYY"));
+            })
+            .finally(() => {
+                setIsCutoffReady(true);
+                api.triggerReload();
+            });
+    }, []);
     
     const exportHandler = useFormik({
         initialValues: {
@@ -349,14 +370,29 @@ const EntriesReviewTableCard = ({
                             }}
                             error={formHandler.errors.branch_id}
                         />
-                        <FinalizedCutOffDropDown
-                            name="selected_cutoff"
+                        <CutOffDropDown
                             value={formHandler.values.selected_cutoff}
                             onChange={(e) => {
-                                formHandler.setFieldValue("selected_cutoff", String(e.target.value));
-                                formHandler.setFieldValue("cutoff_start", moment(e.target.obj?.start_date).format("MM-DD"));
-                                formHandler.setFieldValue("cutoff_end", moment(e.target.obj?.end_date).format("MM-DD"));
+                                formHandler.setFieldValue("cutoff", e.target.obj || null);
+                                formHandler.setFieldValue("selected_cutoff", e.target.value);
+                                formHandler.setFieldValue("cutoff_start", e.target.obj?.start_time || "");
+                                formHandler.setFieldValue("cutoff_end", e.target.obj?.end_time || "");
                             }}
+                        />
+                        <Dropdown
+                            placeholder="select year"
+                            label="Year"
+                            name="year"
+                            value={String(formHandler.values.year)}
+                            onChange={formHandler.handleChange}
+                            error={formHandler.errors.year}
+                            options={Array.from({ length: 100 }, (_, i) => {
+                                const year = new Date().getFullYear() - i;
+                                return {
+                                    label: year.toString(),
+                                    value: year.toString(),
+                                };
+                            })}
                         />
                     </Grid>
                     <div className="flex justify-end gap-x-2">
@@ -379,9 +415,10 @@ const EntriesReviewTableCard = ({
                                     formHandler.resetForm();
                                     exportHandler.resetForm();
                                     if (activeCutoff) {
-                                        formHandler.setFieldValue("selected_cutoff", activeCutoff.selectedCutoff);
+                                        formHandler.setFieldValue("selected_cutoff", activeCutoff.range);
                                         formHandler.setFieldValue("cutoff_start", activeCutoff.startDate);
                                         formHandler.setFieldValue("cutoff_end", activeCutoff.endDate);
+                                        formHandler.setFieldValue("year", activeCutoff.year);
                                     }
                                     api.triggerReload();
                                 }}
@@ -435,7 +472,6 @@ const EntriesReviewTableCard = ({
             <DateRangeConfirmModal
                 modal={generateModal}
                 sendToApsys={false}
-                finalizedOnly
             />
         </>
     );
