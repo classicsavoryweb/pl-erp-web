@@ -49,7 +49,7 @@ export const maintenanceRoutes: Route[] = [
                     {
                         name: "Regions",
                         pathname: "/maintenance/organization/regions",
-                        permission: "view_branches"
+                        permission: "view_region"
                     },
                     {
                         name: "Positions",
