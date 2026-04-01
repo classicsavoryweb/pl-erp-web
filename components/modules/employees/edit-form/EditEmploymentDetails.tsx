@@ -145,7 +145,10 @@ const EditEmploymentDetails = ({
                     </>
                 }
                     <BranchDropDown
-                        onChange={formHandler.handleChange}
+                        onChange={(e) => {
+                            formHandler.handleChange(e);
+                            formHandler.setFieldValue("region", e.target.obj?.location ?? "");
+                        }}
                         label='Home Branch'
                         name="home_branch_id"
                         value={Number(formHandler.values.home_branch_id) || ""}

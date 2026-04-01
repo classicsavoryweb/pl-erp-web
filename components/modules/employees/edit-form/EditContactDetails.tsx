@@ -36,12 +36,12 @@ const EditContactDetails = ({
                     required
                 />
                 <Textfield
-                    onChange={formHandler.handleChange}
                     label='Region'
                     name="region"
                     value={formHandler.values.region || ""}
-                    placeholder='enter region'
+                    placeholder='auto-filled from home branch'
                     required
+                    disabled
                 />
             </Grid>
             <TextArea

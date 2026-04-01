@@ -20,6 +20,7 @@ import { getAllEntries, exportAllEntries} from "@/api/compensation/entries";
 import moment from "moment";
 import BranchDropDown from "../../generic/BranchDropDown";
 import CutOffDropDown from "../../generic/CutOffDropDown";
+import { getCurrentCutoff } from "@/helper/cutoff";
 import { useBranchStore } from "@/stores/useBranchStore";
 import { getActiveCutOff } from "@/api/compensation/cut-off";
 import { useModal } from "@/hooks/modal";
@@ -50,6 +51,7 @@ const EntriesReviewTableCard = ({
         range: string;
         startDate: string;
         endDate: string;
+        year: string;
     } | null>(null);
 
     useAsyncEffect(() => {
@@ -193,9 +195,13 @@ const EntriesReviewTableCard = ({
             column_type: "branch.name",
             branch_id: "",
             branch_number: "",
-            selected_cutoff: "",
-            cutoff_start: "",
-            cutoff_end: "",
+            cutoff: {
+                ...getCurrentCutoff()
+            },
+            selected_cutoff: getCurrentCutoff().range,
+            cutoff_start: getCurrentCutoff().start_time,
+            cutoff_end: getCurrentCutoff().end_time,
+            year: moment().year(),
             action: "",
         },
         validateOnChange: false,
@@ -208,6 +214,7 @@ const EntriesReviewTableCard = ({
             ),
             branch_id: Yup.string(),
             branch_number: Yup.string(),
+            year: Yup.string().required("Year is required"),
         }),
         onSubmit: async (values, {setSubmitting}) => {
             api.triggerReload();
@@ -264,11 +271,13 @@ const EntriesReviewTableCard = ({
                     range,
                     startDate: startValue,
                     endDate: endValue,
+                    year: start.isValid() ? start.format("YYYY") : moment().format("YYYY"),
                 });
 
                 formHandler.setFieldValue("selected_cutoff", range);
                 formHandler.setFieldValue("cutoff_start", startValue);
                 formHandler.setFieldValue("cutoff_end", endValue);
+                formHandler.setFieldValue("year", start.isValid() ? start.format("YYYY") : moment().format("YYYY"));
             })
             .finally(() => {
                 setIsCutoffReady(true);
@@ -364,10 +373,26 @@ const EntriesReviewTableCard = ({
                         <CutOffDropDown
                             value={formHandler.values.selected_cutoff}
                             onChange={(e) => {
+                                formHandler.setFieldValue("cutoff", e.target.obj || null);
                                 formHandler.setFieldValue("selected_cutoff", e.target.value);
                                 formHandler.setFieldValue("cutoff_start", e.target.obj?.start_time || "");
                                 formHandler.setFieldValue("cutoff_end", e.target.obj?.end_time || "");
                             }}
+                        />
+                        <Dropdown
+                            placeholder="select year"
+                            label="Year"
+                            name="year"
+                            value={String(formHandler.values.year)}
+                            onChange={formHandler.handleChange}
+                            error={formHandler.errors.year}
+                            options={Array.from({ length: 100 }, (_, i) => {
+                                const year = new Date().getFullYear() - i;
+                                return {
+                                    label: year.toString(),
+                                    value: year.toString(),
+                                };
+                            })}
                         />
                     </Grid>
                     <div className="flex justify-end gap-x-2">
@@ -393,6 +418,7 @@ const EntriesReviewTableCard = ({
                                         formHandler.setFieldValue("selected_cutoff", activeCutoff.range);
                                         formHandler.setFieldValue("cutoff_start", activeCutoff.startDate);
                                         formHandler.setFieldValue("cutoff_end", activeCutoff.endDate);
+                                        formHandler.setFieldValue("year", activeCutoff.year);
                                     }
                                     api.triggerReload();
                                 }}
