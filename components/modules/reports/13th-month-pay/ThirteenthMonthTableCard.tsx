@@ -107,7 +107,6 @@ const ThirteenthMonthTableCard = () => {
                             console.error("Download error:", error);
                         }
                     },
-                    permission: "generate_13th_month_pay"
                 });
 
                 actions.push({
@@ -149,7 +148,8 @@ const ThirteenthMonthTableCard = () => {
                                     toast.error("Error encountered");
                                 });
                             }
-                        }
+                        },
+                        permission: "generate_13th_month_pay"
                     });
                 }
 
