@@ -2,7 +2,7 @@
 
 import SearchableDropDown from "@/components/common/SearchableDropDown";
 import { useAsyncEffect } from "@/hooks/async-effect";
-import { useFilterBranchStore } from "@/stores/useFilterBranchStore";
+import { useRegionStore } from "@/stores/useRegionStore";
 import { useMemo } from "react";
 
 interface RegionDropDownProps {
@@ -16,8 +16,9 @@ interface RegionDropDownProps {
     disabled?: boolean;
 }
 
-interface BranchWithRegion {
-    location?: string | null;
+interface RegionOption {
+    name?: string | null;
+    description?: string | null;
 }
 
 const RegionDropDown = ({
@@ -30,25 +31,29 @@ const RegionDropDown = ({
     required = false,
     disabled = false,
 }: RegionDropDownProps) => {
-    const { branches, loading, getFilterBranches } = useFilterBranchStore();
+    const { regions, loading, getRegions } = useRegionStore();
 
     useAsyncEffect(() => {
-        getFilterBranches();
+        getRegions();
     }, []);
 
     const regionOptions = useMemo(() => {
-        const options = Array.from(
-            new Set(
-                branches
-                    .map((branch: BranchWithRegion) => branch.location?.trim())
-                    .filter((region): region is string => Boolean(region))
-            )
-        )
-            .sort((a, b) => a.localeCompare(b))
-            .map((region) => ({
-                label: region,
-                value: region,
-            }));
+        const options = regions
+            .map((region: RegionOption) => {
+                const name = region.name?.trim();
+                const description = region.description?.trim();
+
+                if (!name) {
+                    return null;
+                }
+
+                return {
+                    label: description || name,
+                    value: name,
+                };
+            })
+            .filter((region): region is { label: string; value: string } => Boolean(region))
+            .sort((a, b) => a.label.localeCompare(b.label));
 
         const selectedRegion = String(value ?? "").trim();
 
@@ -63,7 +68,7 @@ const RegionDropDown = ({
         return hasSelectedRegion
             ? options
             : [{ label: selectedRegion, value: selectedRegion }, ...options];
-    }, [branches, value]);
+    }, [regions, value]);
 
     return (
         <SearchableDropDown
