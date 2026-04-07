@@ -124,7 +124,7 @@ const TagalogPromotionPDF = ({
                     <View
                         style={styles.section}
                     >
-                        <Text>Ito ay para ikumpirma ang pagkakataas ng iyong posisyon bilang <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> epektibo ng {moment(data.acting_capacity.end_date).format("MMMM DD, YYYY")}.</Text>
+                        <Text>Ito ay para ikumpirma ang pagkakataas ng iyong posisyon bilang <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> epektibo ng {moment(data.acting_capacity.effectivity_date).format("MMMM DD, YYYY")}.</Text>
                     </View>
 
                     <View
