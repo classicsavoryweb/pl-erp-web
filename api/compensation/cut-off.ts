@@ -75,3 +75,12 @@ export const generatePayroll = async (payload: {}) => {
 
     return resData;
 };
+
+export const reComputeIncentives = async (id: number | string) => {
+    const resData = await axiosHelper({
+        func_path: `/recompute-incentives/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};

@@ -38,7 +38,6 @@ const EditCutOffModal = ({
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            year: Yup.string().required("Year is required"),
             selected_cutoff: Yup.string().required("Selected cutoff is required"),
             pay_date: Yup.string().required("Pay date is required"),
             initialize: Yup.string().required("Initialization is required"),
@@ -86,7 +85,7 @@ const EditCutOffModal = ({
                 selected_cutoff: range,
                 year: data.year,
                 pay_date: data.pay_date,
-                initialize: data.initialize,
+                initialize: data.initialize == 1 ? "Yes" : "No",
                 part: data.part
             });
         }
