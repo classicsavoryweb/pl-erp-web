@@ -243,6 +243,11 @@ export const maintenanceRoutes: Route[] = [
                         pathname: "/maintenance/incentives/incentives-per-employee",
                         permission: "view_incentives_per_employee",
                     },
+                    {
+                        name: "Positions",
+                        pathname: "/maintenance/incentives/incentives-position",
+                        permission: "view_incentives_position"
+                    }
                 ]
             },
             {
