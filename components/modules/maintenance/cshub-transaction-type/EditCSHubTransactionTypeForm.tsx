@@ -41,6 +41,7 @@ const EditCSHubTransactionTypeForm = ({
             deduction_status_negative: "",
             credit_status_positive: "",
             credit_status_negative: "",
+            batch_entry: "No",
             email_status: "",
             ho_debit: "",
             ho_credit: "",
@@ -208,6 +209,20 @@ const EditCSHubTransactionTypeForm = ({
                         label="For Credit (Negative)"
                         checked={editFormHandler.values.credit_status_negative === "Yes"}
                         value="credit_status_negative"
+                        onChange={(e) => {
+                            const value = e.target.value;
+
+                            if (e.target.checked) {
+                                editFormHandler.setFieldValue(value, "Yes");
+                            } else {
+                                editFormHandler.setFieldValue(value, "No");
+                            }
+                        }}
+                    />
+                    <Checkbox
+                        label="Batch Entry"
+                        checked={editFormHandler.values.batch_entry === "Yes"}
+                        value="batch_entry"
                         onChange={(e) => {
                             const value = e.target.value;
 
