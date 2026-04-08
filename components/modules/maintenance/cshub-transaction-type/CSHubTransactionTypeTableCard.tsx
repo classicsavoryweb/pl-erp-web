@@ -93,6 +93,7 @@ const CSHubTransactionTypeTableCard = () => {
                     deduction_status_negative: data.deduction_status_negative,
                     credit_status_positive: data.credit_status_positive,
                     credit_status_negative: data.credit_status_negative,
+                    batch_entry: data.batch_entry ?? "No",
                     email_status: data.email_status,
                     ho_debit: data.ho_debit,
                     ho_credit: data.ho_credit,
