@@ -67,20 +67,22 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                         }}
                                     />
                                     <div>
-                                        <div className="flex justify-end">
-                                            <p
-                                                className="z-1 mb-[-30px] hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
-                                                onClick={() => {
-                                                    const minutes = [...formHandler.values.tardiness_minutes];
-                                                    minutes.splice(idx, 1)
-                                                    formHandler.setFieldValue("tardiness_minutes", minutes);
-                                                    formHandler.setFieldValue("save_changes", false);
-                                                    formHandler.submitForm();
-                                                }}
-                                            >
-                                                Remove
-                                            </p>
-                                        </div>
+                                        { payrollDetails.status == "initial" &&
+                                            <div className="flex justify-end">
+                                                <p
+                                                    className="z-1 mb-[-30px] hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                                    onClick={() => {
+                                                        const minutes = [...formHandler.values.tardiness_minutes];
+                                                        minutes.splice(idx, 1)
+                                                        formHandler.setFieldValue("tardiness_minutes", minutes);
+                                                        formHandler.setFieldValue("save_changes", false);
+                                                        formHandler.submitForm();
+                                                    }}
+                                                >
+                                                    Remove
+                                                </p>
+                                            </div>
+                                        }
                                         <Textfield
                                             disabled
                                             label={"Amount"}
@@ -140,20 +142,22 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                     />
 
                                     <div>
-                                        <div className="flex justify-end">
-                                            <p
-                                                className="z-1 mb-[-30px] hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
-                                                onClick={() => {
-                                                    const minutes = [...formHandler.values.undertime_minutes];
-                                                    minutes.splice(idx, 1)
-                                                    formHandler.setFieldValue("undertime_minutes", minutes);
-                                                    formHandler.setFieldValue("save_changes", false);
-                                                    formHandler.submitForm();
-                                                }}
-                                            >
-                                                Remove
-                                            </p>
-                                        </div>
+                                        { payrollDetails.status == "initial" &&
+                                            <div className="flex justify-end">
+                                                <p
+                                                    className="z-1 mb-[-30px] hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                                    onClick={() => {
+                                                        const minutes = [...formHandler.values.undertime_minutes];
+                                                        minutes.splice(idx, 1)
+                                                        formHandler.setFieldValue("undertime_minutes", minutes);
+                                                        formHandler.setFieldValue("save_changes", false);
+                                                        formHandler.submitForm();
+                                                    }}
+                                                >
+                                                    Remove
+                                                </p>
+                                            </div>
+                                        }
                                         <Textfield
                                             disabled
                                             label={"Amount"}
