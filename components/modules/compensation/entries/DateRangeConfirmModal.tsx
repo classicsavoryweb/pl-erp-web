@@ -8,6 +8,7 @@ import * as Yup from "yup";
 import { generateEntries } from "@/api/compensation/entries";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import { getCurrentCutoff } from "@/helper/cutoff";
+import confirm from "@/components/common/Confirm";
 
 interface DateRangeConfirmModalForm {
     modal: any;
@@ -44,6 +45,8 @@ const DateRangeConfirmModal = ({
         currentCutoff.end_time,
         currentYear
     );
+    const modalTitle = sendToApsys ? "Send Entries to APSYS" : "Generate Entries";
+    const submitLabel = sendToApsys ? "Send to APSYS" : "Generate";
 
     const formHandler = useFormik({
         initialValues: {
@@ -62,6 +65,20 @@ const DateRangeConfirmModal = ({
         validateOnChange: false,
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             if (values.action === "generate") {
+                const actionText = values.send_to_apsys
+                    ? "send this transaction to APSYS"
+                    : "generate entries for this cutoff";
+
+                const isConfirmed = await confirm({
+                    title: modalTitle,
+                    message: `Are you sure you want to ${actionText} for ${values.selected_cutoff} ${values.year}?`
+                });
+
+                if (!isConfirmed) {
+                    setSubmitting(false);
+                    return;
+                }
+
                 generateEntries({
                     ...values
                 })
@@ -85,7 +102,7 @@ const DateRangeConfirmModal = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Generate Entries"
+            title={modalTitle}
             onClose={() => {
                 modal.onClose();
                 formHandler.resetForm();
@@ -150,7 +167,7 @@ const DateRangeConfirmModal = ({
                     />
                     <Button
                         type="submit"
-                        label="Submit"
+                        label={submitLabel}
                         loading={formHandler.isSubmitting}
                         onClick={() => {}}
                     />

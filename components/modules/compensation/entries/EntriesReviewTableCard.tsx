@@ -45,6 +45,7 @@ const EntriesReviewTableCard = ({
     const { permissions } = useContext(AuthContext);
     const { branches, getBranches } = useBranchStore();
     const generateModal = useModal();
+    const sendToApsysModal = useModal();
     const canGenerate = permissions.includes("perform_compensation_entries");
     const [isCutoffReady, setIsCutoffReady] = useState(false);
     const [activeCutoff, setActiveCutoff] = useState<{
@@ -436,6 +437,18 @@ const EntriesReviewTableCard = ({
                                 />
                             </div>
                         }
+                        {canGenerate &&
+                            <div className="w-[140px]">
+                                <Button
+                                    label="Send to APSYS"
+                                    type="button"
+                                    variant="success"
+                                    onClick={() => {
+                                        sendToApsysModal.onOpen();
+                                    }}
+                                />
+                            </div>
+                        }
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&
                             <>
                                 { hasExport &&
@@ -472,6 +485,10 @@ const EntriesReviewTableCard = ({
             <DateRangeConfirmModal
                 modal={generateModal}
                 sendToApsys={false}
+            />
+            <DateRangeConfirmModal
+                modal={sendToApsysModal}
+                sendToApsys={true}
             />
         </>
     );
