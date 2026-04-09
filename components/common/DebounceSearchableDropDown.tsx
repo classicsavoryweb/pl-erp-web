@@ -21,6 +21,7 @@ interface SelectInterface {
     transformResponse?: (resp: any) => any[];
     status?: "active" | "inactive" | "all";
     type?: "Direct" | "Agency" | "all";
+    rank?: "management" | "rank-file" | "all"
     disabled?: boolean;
 }
 
@@ -40,6 +41,7 @@ const DebounceSearchableDropDown = ({
     type= "all",
     disabled = false,
     transformResponse = (resp: any) => resp?.data || [],
+    rank= "all"
 }: SelectInterface) => {
     const [toggle, setToggle] = useState(false);
     const [keyWord, setKeyWord] = useState("");
@@ -95,7 +97,8 @@ const DebounceSearchableDropDown = ({
             api({
                 status: status,
                 keyWord: keyWord,
-                type: type
+                type: type,
+                rank: rank
             }).then((resp:any) => {
                 const rawData = transformResponse(resp);
                 const newDataSet: Option[] = rawData.map(mapResponse);
@@ -110,6 +113,9 @@ const DebounceSearchableDropDown = ({
         setLoading(true);
         api({
             status: status,
+            keyWord: keyWord,
+            type: type,
+            rank: rank
         })
         .then((resp:any) => {
             const rawData = transformResponse(resp);

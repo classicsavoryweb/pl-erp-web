@@ -85,6 +85,7 @@ const CreateIncentivesPerEmployeeForm = ({
                     value={employee}
                     error={createFormHandler.errors.employee_id}
                     required
+                    rank="rank-file"
                 />
                 { Object.entries(employee).length > 0 &&
                     <Textfield

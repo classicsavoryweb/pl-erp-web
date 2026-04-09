@@ -5,7 +5,7 @@ const Page = () => {
     return (
         <>
             <PageTitle
-                title="Rank and File per Employee"
+                title="Rank and File Per Employee"
             />
             <IncentivesPerEmployeeTableCard/>
         </>

@@ -14,6 +14,7 @@ interface SelectInterface {
     disabled?: boolean;
     status?: "active" | "inactive" | "all";
     type?: "Direct" | "Agency" | "all";
+    rank?: "management" | "rank-file" | "all"
 }
 
 const SearchEmployeeDropDown = ({
@@ -26,7 +27,8 @@ const SearchEmployeeDropDown = ({
     required = false,
     disabled = false,
     status = "active",
-    type = "all"
+    type = "all",
+    rank = "all"
 }: SelectInterface) => {
 
     return (
@@ -46,6 +48,7 @@ const SearchEmployeeDropDown = ({
                 label: `${emp.last_name}, ${emp.first_name} ${emp.middle_name || ""} - ${emp.employee_number}`,
                 value: emp,
             })}
+            rank={rank}
             transformResponse={(resp: any) => resp?.data || []}
         />
     );
