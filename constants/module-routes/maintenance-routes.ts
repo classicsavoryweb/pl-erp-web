@@ -223,34 +223,6 @@ export const maintenanceRoutes: Route[] = [
                 ]
             },
             {
-                name: "Incentives",
-                pathname: "/maintenance/incentives",
-                permission: "",
-                isDropDown: true,
-                subLinks: [
-                    {
-                        name: "Management",
-                        pathname: "/maintenance/incentives/incentives-management",
-                        permission: "view_incentives_management",
-                    },
-                    {
-                        name: "Rank and File",
-                        pathname: "/maintenance/incentives/incentives-bracket",
-                        permission: "view_incentives_bracket",
-                    },
-                    {
-                        name: "Per Employee",
-                        pathname: "/maintenance/incentives/incentives-per-employee",
-                        permission: "view_incentives_per_employee",
-                    },
-                    {
-                        name: "Positions",
-                        pathname: "/maintenance/incentives/incentives-position",
-                        permission: "view_incentives_position"
-                    }
-                ]
-            },
-            {
                 name: "Payroll",
                 pathname: "/maintenance/payroll",
                 permission: "",

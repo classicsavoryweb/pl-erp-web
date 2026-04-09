@@ -61,6 +61,34 @@ export const compensationRoutes: Route[] = [
                 permission: "view_compensation_deductions",
             },
             {
+                name: "Incentives",
+                pathname: "/compensation/incentives",
+                permission: "",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "Management",
+                        pathname: "/compensation/incentives/incentives-management",
+                        permission: "view_incentives_management",
+                    },
+                    {
+                        name: "Rank and File",
+                        pathname: "/compensation/incentives/incentives-bracket",
+                        permission: "view_incentives_bracket",
+                    },
+                    {
+                        name: "Per Employee",
+                        pathname: "/compensation/incentives/incentives-per-employee",
+                        permission: "view_incentives_per_employee",
+                    },
+                    {
+                        name: "Positions",
+                        pathname: "/compensation/incentives/incentives-position",
+                        permission: "view_incentives_position"
+                    }
+                ]
+            },
+            {
                 name: "Payroll",
                 pathname: "/compensation/payroll",
                 permission: "view_compensation_payroll",
