@@ -88,12 +88,12 @@ export const compensationRoutes: Route[] = [
                     },
                     {
                         name: "Incentive Attendance",
-                        pathname: "/reports/payroll/incentive-attendance",
+                        pathname: "/compensation/incentive/incentive-attendance",
                         permission: "view_reports_incentive_attendance"
                     },
                     {
                         name: "Incentive Report",
-                        pathname: "/reports/payroll/incentive-report",
+                        pathname: "/compensation/incentive/incentive-report",
                         permission: "view_reports_incentive_report"
                     }
                 ]
