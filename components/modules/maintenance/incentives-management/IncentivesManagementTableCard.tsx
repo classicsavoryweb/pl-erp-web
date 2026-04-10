@@ -56,6 +56,11 @@ const IncentivesManagementTableCard = () => {
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Current Position",
+            path: "employee.current_position.description",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Max Amount",
             path: "max_amount",
             columnType: COLUMNTYPES.string
