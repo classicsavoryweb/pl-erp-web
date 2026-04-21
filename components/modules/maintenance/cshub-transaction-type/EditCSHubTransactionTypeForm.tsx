@@ -55,7 +55,7 @@ const EditCSHubTransactionTypeForm = ({
             description: Yup.string().required("Description is required."),
             source_id: Yup.string().required("CS hub source module is required."),
             transaction_type: Yup.string().required("CS hub transaction type is required."),
-            deduction_id: Yup.string().required("Payroll deduction id is required."),
+            deduction_id: Yup.string().nullable(),
             ho_credit: Yup.string().required("HO credit account is required."),
             status: Yup.string().required("Status is required."),
         }),
