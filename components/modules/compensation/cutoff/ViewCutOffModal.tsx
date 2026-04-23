@@ -138,11 +138,13 @@ const ViewCutOffModal = ({
                 <>
                     <div className="flex items-center justify-between mt-5">
                         <p>Initialization History</p>
-                        <div>
-                            <DropDownButtons
-                                actions={filteredActions}
-                            />
-                        </div>
+                        {!JSON.parse(data.initializations).some((item: any) => item.finalized_at) && (
+                            <div>
+                                <DropDownButtons
+                                    actions={filteredActions}
+                                />
+                            </div>
+                        )}
                     </div>
 
                     <div className="max-h-[500px] overflow-hidden overflow-y-auto">
