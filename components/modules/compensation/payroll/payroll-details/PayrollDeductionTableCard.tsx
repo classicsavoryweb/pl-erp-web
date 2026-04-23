@@ -55,6 +55,7 @@ const PayrollDeductionTableCard = ({ formHandler } : {formHandler : any}) => {
                 const newDeductionArray = deductionArray.filter(item => item.deduction_id != deductionId);
                 formHandler.setFieldValue("deductions", newDeductionArray);
                 formHandler.setFieldValue("save_changes", false);
+                formHandler.setFieldValue("reload_deductions", false);
                 formHandler.submitForm();
             }
         }
@@ -66,7 +67,22 @@ const PayrollDeductionTableCard = ({ formHandler } : {formHandler : any}) => {
                 size="medium"
                 loading={loading}
             >
-                <p className="font-semibold text-red-800 dark:text-red-500">Company Deductions</p>
+                <div className="flex justify-between">
+                    <p className="font-semibold text-red-800 dark:text-red-500">Company Deductions</p>
+                    { payrollDetails.status == "initial" &&
+                        <p
+                            className="hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                            onClick={() => {
+                                formHandler.setFieldValue("save_changes", false);
+                                formHandler.setFieldValue("reload_deductions", true);
+                                formHandler.submitForm();
+                            }}
+                        >
+                            Reload Deductions
+                        </p>
+                    }
+
+                </div>
                 <Table
                     dataSet={formHandler.values.deductions}
                     columnSettings={columnSettings}
