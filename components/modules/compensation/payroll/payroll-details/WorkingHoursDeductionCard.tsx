@@ -63,6 +63,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                         }}
                                         onBlur={(e) => {
                                             formHandler.setFieldValue("save_changes", false);
+                                            formHandler.setFieldValue("reload_deductions", false);
                                             formHandler.submitForm();
                                         }}
                                     />
@@ -76,6 +77,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                                         minutes.splice(idx, 1)
                                                         formHandler.setFieldValue("tardiness_minutes", minutes);
                                                         formHandler.setFieldValue("save_changes", false);
+                                                        formHandler.setFieldValue("reload_deductions", false);
                                                         formHandler.submitForm();
                                                     }}
                                                 >
@@ -137,6 +139,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                         }}
                                         onBlur={(e) => {
                                             formHandler.setFieldValue("save_changes", false);
+                                            formHandler.setFieldValue("reload_deductions", false);
                                             formHandler.submitForm();
                                         }}
                                     />
@@ -151,6 +154,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                                         minutes.splice(idx, 1)
                                                         formHandler.setFieldValue("undertime_minutes", minutes);
                                                         formHandler.setFieldValue("save_changes", false);
+                                                        formHandler.setFieldValue("reload_deductions", false);
                                                         formHandler.submitForm();
                                                     }}
                                                 >

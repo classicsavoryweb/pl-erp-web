@@ -38,6 +38,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                                 }
                                 
                                 formHandler.setFieldValue("save_changes", false);
+                                formHandler.setFieldValue("reload_deductions", false);
                                 formHandler.submitForm();
                             }
                         }}
@@ -55,6 +56,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                                 }
 
                                 formHandler.setFieldValue("save_changes", false);
+                                formHandler.setFieldValue("reload_deductions", false);
                                 formHandler.submitForm();
                             }
                         }}
@@ -73,6 +75,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         error={formHandler.errors.employee_sss}
                         onBlur={() => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -86,6 +89,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         error={formHandler.errors.employer_sss}
                         onBlur={() => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -99,6 +103,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         error={formHandler.errors.employee_pagibig}
                         onBlur={() => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -112,6 +117,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         error={formHandler.errors.employer_pagibig}
                         onBlur={() => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -125,6 +131,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         error={formHandler.errors.employee_philhealth}
                         onBlur={() => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -138,6 +145,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         error={formHandler.errors.employer_philhealth}
                         onBlur={() => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -151,6 +159,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         error={formHandler.errors.withholding_tax}
                         onBlur={() => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />

@@ -39,6 +39,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     type="number"
                     onBlur={(e) => {
                         formHandler.setFieldValue("save_changes", false);
+                        formHandler.setFieldValue("reload_deductions", false);
                         formHandler.submitForm();
                     }}
                 />
@@ -51,6 +52,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     type="number"
                     onBlur={(e) => {
                         formHandler.setFieldValue("save_changes", false);
+                        formHandler.setFieldValue("reload_deductions", false);
                         formHandler.submitForm();
                     }}
                 />
@@ -83,6 +85,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     error={formHandler.errors.adjustment_amount}
                     onBlur={(e) => {
                         formHandler.setFieldValue("save_changes", false);
+                        formHandler.setFieldValue("reload_deductions", false);
                         formHandler.submitForm();
                     }}
                 />
@@ -96,6 +99,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     error={formHandler.errors.non_taxable_adjustment}
                     onBlur={(e) => {
                         formHandler.setFieldValue("save_changes", false);
+                        formHandler.setFieldValue("reload_deductions", false);
                         formHandler.submitForm();
                     }}
                 />

@@ -54,7 +54,8 @@ const Page = () => {
             withholding_tax: payrollDetails.withholding_tax,
             is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
             is_complete_documents: payrollDetails.details.is_complete_documents,
-            save_changes: false
+            save_changes: false,
+            reload_deductions: false,
         });
     }, [payrollDetails]);
 
@@ -87,6 +88,7 @@ const Page = () => {
             is_complete_documents: payrollDetails.details.is_complete_documents,
             remarks: payrollDetails.remarks,
             save_changes: false,
+            reload_deductions: false,
         },
         validateOnChange: false,
         onSubmit: async (values) => {

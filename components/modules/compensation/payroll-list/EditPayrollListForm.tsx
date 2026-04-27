@@ -204,9 +204,11 @@ const EditPayrollListForm = ({
                         onChange={(e) => {
                             if (e.target.checked) {
                                 editFormHandler.setFieldValue("is_on_maternity_leave", 1);
+                                editFormHandler.setFieldValue("is_bank", 0);
                                 editFormHandler.setFieldValue("is_mancom", 0);
                             } else {
                                 editFormHandler.setFieldValue("is_on_maternity_leave", 0);
+                                editFormHandler.setFieldValue("is_bank", 1);
                             }
                         }}
                     />

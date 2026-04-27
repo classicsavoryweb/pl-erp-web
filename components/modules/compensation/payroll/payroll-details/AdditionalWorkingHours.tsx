@@ -29,6 +29,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         disabled={payrollDetails.status == "final"}
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -52,6 +53,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         type="number"
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -75,6 +77,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         type="number"
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -98,6 +101,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         type="number"
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -121,6 +125,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         type="number"
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -144,6 +149,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         type="number"
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -167,6 +173,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         type="number"
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />
@@ -190,6 +197,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         type="number"
                         onBlur={(e) => {
                             formHandler.setFieldValue("save_changes", false);
+                            formHandler.setFieldValue("reload_deductions", false);
                             formHandler.submitForm();
                         }}
                     />

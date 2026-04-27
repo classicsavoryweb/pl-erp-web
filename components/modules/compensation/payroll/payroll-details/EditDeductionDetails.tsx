@@ -54,6 +54,7 @@ const EditDeductionDetails = ({
             };
             formHandler.setFieldValue("deductions", deductionArray);
             formHandler.setFieldValue("save_changes", false);
+            formHandler.setFieldValue("reload_deductions", false);
             formHandler.submitForm();
             modal.onClose();
         }
