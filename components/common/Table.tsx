@@ -21,6 +21,7 @@ interface columnSetting {
 type ActionType = {
     label: string;
     onClick: (data: any) => void;
+    permission?: string | string[];
     disabled?: boolean;
 };
 

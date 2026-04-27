@@ -1,11 +1,13 @@
 "use client";
 
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
+import { AuthContext } from '@/context/AuthProvider';
 
 type ActionType = {
     label: string;
     onClick: () => void;
+    permission?: string | string[];
     disabled?: boolean;
 };
 
@@ -19,6 +21,14 @@ const DropDownButtons = ({
 
     const [toggle, setToggle] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const { permissions } = useContext(AuthContext);
+    const availableActions = actions.filter((action) => {
+        if (!action.permission) return true;
+        if (Array.isArray(action.permission)) {
+            return action.permission.some((permission) => permissions.includes(permission));
+        }
+        return permissions.includes(action.permission);
+    });
     
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -53,7 +63,7 @@ const DropDownButtons = ({
             
             { toggle &&
                  <div className="absolute flex flex-col items-start w-full z-50 bg-gray-200 shadow-lg dark:bg-neutral-800">
-                    {actions.map((action, idx) => {
+                    {availableActions.map((action, idx) => {
                         const isDisabled = action.disabled === true;
 
                         return (

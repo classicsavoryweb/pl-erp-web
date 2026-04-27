@@ -63,7 +63,10 @@ const EmployeePositionHistory = () => {
         {
             columnHead: "OIC",
             path: "oic_assignment",
-            columnType: COLUMNTYPES.string
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return data.oic_assignment || "No";
+            }
         },
         {
             columnHead: "Date Appointed",

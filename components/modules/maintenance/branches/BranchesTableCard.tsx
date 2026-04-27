@@ -103,6 +103,7 @@ const BranchesTableCard = () => {
     const actionSettings = [
         {
             label: "Create new branch",
+            permission: "create_branches",
             onClick: () => {
                 createModal.onOpen();
             }
@@ -124,6 +125,7 @@ const BranchesTableCard = () => {
         },
         {
             label: "Edit",
+            permission: ["edit_branches_all", "edit_branches_oic"],
             onClick: (data: any) => {
                 editModal.onOpen();
                 setData({
@@ -141,9 +143,13 @@ const BranchesTableCard = () => {
                     date_open : data.date_open,
                     company : data.company,
                     branch_head_employee_number: data.branch_head_employee_number,
+                    branch_head_date_appointed: data.branch_head_date_appointed,
                     group_head_employee_number: data.group_head_employee_number,
                     rate_code: data.rate_code,
                     kitchen_oic_employee_number: data.kitchen_oic_employee_number,
+                    kitchen_oic_date_appointed: data.kitchen_oic_date_appointed,
+                    kitchen_oic_2_employee_number: data.kitchen_oic_2_employee_number,
+                    kitchen_oic_2_date_appointed: data.kitchen_oic_2_date_appointed,
                     mancom_employee_number: data.mancom_employee_number,
                     expense_debit: data.expense_debit,
                     expense_credit: data.expense_credit,

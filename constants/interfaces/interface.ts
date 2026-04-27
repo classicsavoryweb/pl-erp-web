@@ -147,9 +147,14 @@ interface CurrentBranch {
   branch_head_employee_number: string
   group_head_employee_number: string
   branch_head: string
+  branch_head_date_appointed: string
   group_head: string
   kitchen_oic_employee_number: string
   kitchen_oic: string
+  kitchen_oic_date_appointed: string
+  kitchen_oic_2_employee_number: string
+  kitchen_oic_2: string
+  kitchen_oic_2_date_appointed: string
   mancom_employee_number: string
   mancom: string
   status: string
@@ -228,9 +233,14 @@ export interface HomeBranch {
   branch_head_employee_number: string
   group_head_employee_number: string
   branch_head: string
+  branch_head_date_appointed: string
   group_head: string
   kitchen_oic_employee_number: string
   kitchen_oic: string
+  kitchen_oic_date_appointed: string
+  kitchen_oic_2_employee_number: string
+  kitchen_oic_2: string
+  kitchen_oic_2_date_appointed: string
   mancom_employee_number: string
   mancom: string
   status: string

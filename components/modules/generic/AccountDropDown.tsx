@@ -54,6 +54,7 @@ const AccountDropDown = ({
             loading={loading}
             options={accountData}
             required={required}
+            disabled={disabled}
         />
     );
 };

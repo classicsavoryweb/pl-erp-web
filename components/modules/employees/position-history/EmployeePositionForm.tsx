@@ -55,11 +55,7 @@ const EmployeePositionForm = ({
             }),
             oic_assignment: Yup.string(),
             date_appointed: Yup.string()
-                .when('oic_assignment', (oic_assignment, schema) =>
-                    String(oic_assignment) === "Yes"
-                        ? schema.required('Date appointed is required')
-                        : schema.notRequired()
-                ).test(
+                .test(
                 'future-date',
                 'Date appointed must be same or later than Date started',
                 function (value) {
@@ -97,10 +93,23 @@ const EmployeePositionForm = ({
     });
 
     useEffect(() => {
-        if (action === "edit" && modal.isShowing) {
-            formHandler.setValues(data);
+        if (modal.isShowing) {
+            if (action === "edit") {
+                formHandler.setValues(data);
+                return;
+            }
+
+            const oicAssignment = data?.oic_assignment === "Yes" ? "Yes" : "No";
+            formHandler.setValues({
+                id: "",
+                position_id: "",
+                date_started: "",
+                oic_assignment: oicAssignment,
+                date_appointed: oicAssignment === "Yes" ? data?.date_appointed ?? "" : "",
+                remarks: "",
+            });
         }
-    }, [modal.isShowing]);
+    }, [action, data, modal.isShowing]);
 
     return (
         <Modal
@@ -148,6 +157,7 @@ const EmployeePositionForm = ({
                 ]}
                 value={formHandler.values.oic_assignment || ""}
                 error={formHandler.errors.oic_assignment}
+                disabled
                 onChange={(e) => {
                     formHandler.handleChange(e);
                     if (e.target.value === "No") {
@@ -159,7 +169,7 @@ const EmployeePositionForm = ({
                 type="date"
                 label="Date Appointed"
                 name="date_appointed"
-                disabled={formHandler.values.oic_assignment === "No"}
+                disabled
                 value={formHandler.values.date_appointed || ""}
                 error={formHandler.errors.date_appointed}
                 onChange={formHandler.handleChange}

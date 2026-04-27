@@ -44,6 +44,7 @@ const CreateBranchForm = ({
             group_head_employee_number: "",
             rate_code: "",
             kitchen_oic_employee_number: "",
+            kitchen_oic_2_employee_number: "",
             mancom_employee_number: "",
             expense_debit: "",
             expense_credit: "",
@@ -242,6 +243,18 @@ const CreateBranchForm = ({
                         error={createBranchFormHandler.errors.kitchen_oic_employee_number}
                         allowClear
                     />
+                    <BranchEmployeeDropDown
+                        label="Kitchen OIC 2"
+                        placeholder="select kitchen oic 2"
+                        name="kitchen_oic_2_employee_number"
+                        value={createBranchFormHandler.values.kitchen_oic_2_employee_number}
+                        onChange={createBranchFormHandler.handleChange}
+                        error={createBranchFormHandler.errors.kitchen_oic_2_employee_number}
+                        allowClear
+                    />
+                </Grid>
+
+                <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Mancom"
                         placeholder="select mancom"
