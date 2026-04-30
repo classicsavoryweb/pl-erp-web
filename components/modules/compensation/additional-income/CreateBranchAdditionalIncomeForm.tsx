@@ -39,7 +39,7 @@ const CreateBranchAdditionalIncomeForm = ({
         validationSchema: Yup.object().shape({
             branch_id: Yup.string().required("Branch is required"),
             amount: Yup.number().required("Amount is required")
-            .min(1, "Cannot accept below 1")
+            .min(0, "Cannot accept below 0")
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
             const isConfirmed = await confirm({

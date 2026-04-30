@@ -7,13 +7,11 @@ import { PayrollContext } from "@/context/PayrollProvider";
 import { AuthContext } from "@/context/AuthProvider";
 import { useContext, useEffect, useState } from "react";
 import BranchDropDown from "../../../generic/BranchDropDown";
+import Checkbox from "@/components/common/Checkbox";
 
 const EmployeeDetailCard = ({formHandler}: {formHandler: any}) => {
     const { loading, payrollDetails } = useContext(PayrollContext);
     const { permissions } = useContext(AuthContext);
-
-    const isMaternityLeave = payrollDetails?.details.is_on_maternity_leave === 1;
-    const canEdit = permissions.includes("perform_compensation_payroll") && payrollDetails.status !== "final";
 
     return (
         <Card
@@ -68,6 +66,46 @@ const EmployeeDetailCard = ({formHandler}: {formHandler: any}) => {
                     value={payrollDetails.tax_status ?? ""}
                 />
             </Grid>
+            <div className="flex gap-x-5">
+                <div>
+                    <Checkbox
+                        label="On Hold"
+                        value={1}
+                        checked={formHandler.values.is_hold == 1}
+                        onChange={(e) => {
+                            if (payrollDetails.status == "initial") {
+                                if (e.target.checked) {
+                                    formHandler.setFieldValue("is_hold", 1);
+                                } else {
+                                    formHandler.setFieldValue("is_hold", 0);
+                                }
+                            }
+                        }}
+                    />
+                </div>
+                { payrollDetails.employee.gender == "Female" &&
+                    <>
+                        <Checkbox
+                            label="Maternity Leave"
+                            value={1}
+                            checked={formHandler.values.is_on_maternity_leave == 1}
+                            onChange={(e) => {
+                                if (payrollDetails.status == "initial") {
+                                    if (e.target.checked) {
+                                        formHandler.setFieldValue("is_on_maternity_leave", 1);
+                                    } else {
+                                        formHandler.setFieldValue("is_on_maternity_leave", 0);
+                                    }
+
+                                    formHandler.setFieldValue("save_changes", false);
+                                    formHandler.setFieldValue("reload_deductions", true);
+                                    formHandler.submitForm();
+                                }
+                            }}
+                        />
+                    </>
+                }
+            </div>
         </Card>
     );
 };

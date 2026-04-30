@@ -48,8 +48,8 @@ const RegionDropDown = ({
                 }
 
                 return {
-                    label: description || name,
-                    value: name,
+                    label: name,
+                    value: description,
                 };
             })
             .filter((region): region is { label: string; value: string } => Boolean(region))
