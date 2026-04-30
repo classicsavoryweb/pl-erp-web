@@ -28,6 +28,14 @@ interface FormModalInterface {
     formValue: any;
 };
 
+const SectionDivider = ({ label }: { label: string }) => (
+    <div className="mt-4 mb-2 flex items-center gap-3">
+        <div className="h-[2px] flex-1 bg-slate-400 dark:bg-neutral-600" />
+        <p className="text-sm font-bold uppercase text-slate-600 dark:text-neutral-300">{label}</p>
+        <div className="h-[2px] flex-1 bg-slate-400 dark:bg-neutral-600" />
+    </div>
+);
+
 const EditBranchForm = ({
     modal,
     onSubmitCallback,
@@ -149,6 +157,23 @@ const EditBranchForm = ({
         const day = String(currentDate.getDate()).padStart(2, "0");
 
         return `${year}-${month}-${day}`;
+    };
+
+    const getDateAppointedMin = (
+        employeeNumber?: string | null,
+        originalEmployeeNumber?: string | null,
+        originalDateAppointed?: string | null
+    ) => {
+        if (
+            employeeNumber
+            && originalEmployeeNumber
+            && employeeNumber === originalEmployeeNumber
+            && originalDateAppointed
+        ) {
+            return originalDateAppointed;
+        }
+
+        return getCurrentDate();
     };
 
     const handleOicChange = (
@@ -283,6 +308,7 @@ const EditBranchForm = ({
                         disabled={!canEditAllBranches}
                     />
                 </Grid>
+                <SectionDivider label="Branch OIC" />
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Branch OIC"
@@ -306,7 +332,11 @@ const EditBranchForm = ({
                         name="branch_head_date_appointed"
                         type="date"
                         value={editBranchFormHandler.values.branch_head_date_appointed || ""}
-                        min={getCurrentDate()}
+                        min={getDateAppointedMin(
+                            editBranchFormHandler.values.branch_head_employee_number,
+                            formValue?.branch_head_employee_number,
+                            formValue?.branch_head_date_appointed
+                        )}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_head_date_appointed}
                         disabled={
@@ -338,7 +368,11 @@ const EditBranchForm = ({
                         name="kitchen_oic_date_appointed"
                         type="date"
                         value={editBranchFormHandler.values.kitchen_oic_date_appointed || ""}
-                        min={getCurrentDate()}
+                        min={getDateAppointedMin(
+                            editBranchFormHandler.values.kitchen_oic_employee_number,
+                            formValue?.kitchen_oic_employee_number,
+                            formValue?.kitchen_oic_date_appointed
+                        )}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.kitchen_oic_date_appointed}
                         disabled={
@@ -370,7 +404,11 @@ const EditBranchForm = ({
                         name="kitchen_oic_2_date_appointed"
                         type="date"
                         value={editBranchFormHandler.values.kitchen_oic_2_date_appointed || ""}
-                        min={getCurrentDate()}
+                        min={getDateAppointedMin(
+                            editBranchFormHandler.values.kitchen_oic_2_employee_number,
+                            formValue?.kitchen_oic_2_employee_number,
+                            formValue?.kitchen_oic_2_date_appointed
+                        )}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.kitchen_oic_2_date_appointed}
                         disabled={
@@ -404,7 +442,7 @@ const EditBranchForm = ({
                     />
                 </Grid>
 
-                <p className="mt-3">Timekeeping</p>
+                <SectionDivider label="Timekeeping" />
                 <Grid cols={2}>
                     <Textfield
                         type="number"
@@ -428,7 +466,7 @@ const EditBranchForm = ({
                     />
                 </Grid>
 
-                <p className="mt-3">Accounts</p>
+                <SectionDivider label="Accounts" />
                 <Grid cols={2}>
                     <AccountDropDown
                         label="Expense Debit"
