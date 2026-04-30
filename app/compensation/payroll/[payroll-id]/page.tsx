@@ -54,6 +54,8 @@ const Page = () => {
             withholding_tax: payrollDetails.withholding_tax,
             is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
             is_complete_documents: payrollDetails.details.is_complete_documents,
+            is_on_maternity_leave: payrollDetails.details.is_on_maternity_leave,
+            is_hold: payrollDetails.details.is_hold,
             save_changes: false,
             reload_deductions: false,
         });
@@ -86,6 +88,8 @@ const Page = () => {
             withholding_tax: payrollDetails.withholding_tax ?? 0,
             is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
             is_complete_documents: payrollDetails.details.is_complete_documents,
+            is_on_maternity_leave: payrollDetails.details.is_on_maternity_leave,
+            is_hold: payrollDetails.details.is_hold,
             remarks: payrollDetails.remarks,
             save_changes: false,
             reload_deductions: false,
