@@ -7,7 +7,7 @@ import { useEffect, useRef, useState, useContext } from 'react';
 type ActionType = {
     label: string;
     onClick: (data: any) => void;
-    permission?: string | string[];
+    permission?: string;
     disabled?: boolean;
 };
 
@@ -32,9 +32,6 @@ const ActionDropDown = ({
     const { permissions } = useContext(AuthContext);
     const availableActions = actions.filter((action) => {
         if (!action.permission) return true;
-        if (Array.isArray(action.permission)) {
-            return action.permission.some((permission) => permissions.includes(permission));
-        }
         return permissions.includes(action.permission);
     });
     const primaryAction = availableActions[0];

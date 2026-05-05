@@ -332,11 +332,6 @@ const EditBranchForm = ({
                         name="branch_head_date_appointed"
                         type="date"
                         value={editBranchFormHandler.values.branch_head_date_appointed || ""}
-                        min={getDateAppointedMin(
-                            editBranchFormHandler.values.branch_head_employee_number,
-                            formValue?.branch_head_employee_number,
-                            formValue?.branch_head_date_appointed
-                        )}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_head_date_appointed}
                         disabled={
@@ -368,11 +363,6 @@ const EditBranchForm = ({
                         name="kitchen_oic_date_appointed"
                         type="date"
                         value={editBranchFormHandler.values.kitchen_oic_date_appointed || ""}
-                        min={getDateAppointedMin(
-                            editBranchFormHandler.values.kitchen_oic_employee_number,
-                            formValue?.kitchen_oic_employee_number,
-                            formValue?.kitchen_oic_date_appointed
-                        )}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.kitchen_oic_date_appointed}
                         disabled={
@@ -404,11 +394,6 @@ const EditBranchForm = ({
                         name="kitchen_oic_2_date_appointed"
                         type="date"
                         value={editBranchFormHandler.values.kitchen_oic_2_date_appointed || ""}
-                        min={getDateAppointedMin(
-                            editBranchFormHandler.values.kitchen_oic_2_employee_number,
-                            formValue?.kitchen_oic_2_employee_number,
-                            formValue?.kitchen_oic_2_date_appointed
-                        )}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.kitchen_oic_2_date_appointed}
                         disabled={

@@ -9,7 +9,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { exportAllBranches, getAllBranches } from "@/api/branches";
 import CreateBranchForm from "./CreateBranchForm";
 import EditBranchForm from "./EditBranchForm";
@@ -18,6 +18,7 @@ import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import DropDownButtons from "@/components/common/DropDownButtons";
+import { AuthContext } from "@/context/AuthProvider";
 
 const BranchesTableCard = () => {
     const api = useApiCall();
@@ -27,6 +28,10 @@ const BranchesTableCard = () => {
     const [data, setData] = useState<any>({});
     const paginator = usePagination();
     const filter = useFilter();
+    const { permissions } = useContext(AuthContext);
+    const canCreateBranches = permissions.includes("create_branches");
+    const canEditBranches = permissions.includes("edit_branches_all")
+        || permissions.includes("edit_branches_oic");
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -103,7 +108,6 @@ const BranchesTableCard = () => {
     const actionSettings = [
         {
             label: "Create new branch",
-            permission: "create_branches",
             onClick: () => {
                 createModal.onOpen();
             }
@@ -125,7 +129,6 @@ const BranchesTableCard = () => {
         },
         {
             label: "Edit",
-            permission: ["edit_branches_all", "edit_branches_oic"],
             onClick: (data: any) => {
                 editModal.onOpen();
                 setData({
@@ -218,7 +221,7 @@ const BranchesTableCard = () => {
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
-                        actions={actionSettings}
+                        actions={canCreateBranches ? actionSettings : []}
                     />
                 </div>
                 <Table
@@ -227,7 +230,7 @@ const BranchesTableCard = () => {
                     loading={api.loading}
                     paginator={paginator}
                     withActions
-                    actions={tableActions}
+                    actions={canEditBranches ? tableActions : tableActions.slice(0, 1)}
                 />
             </Card>
             <CreateBranchForm
