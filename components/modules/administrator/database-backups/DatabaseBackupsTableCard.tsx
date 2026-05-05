@@ -119,7 +119,6 @@ const DatabaseBackupsTableCard = () => {
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
                         actions={globalActionSettings}
-                        permissions={permissions}
                     />
                 </div>
                 <Table

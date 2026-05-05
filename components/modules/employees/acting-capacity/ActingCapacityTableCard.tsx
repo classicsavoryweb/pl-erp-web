@@ -316,7 +316,6 @@ const ActingCapacityTableCard = () => {
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
                         actions={actionSettings}
-                        permissions={permissions}
                     />
                 </div>
                 <Table
