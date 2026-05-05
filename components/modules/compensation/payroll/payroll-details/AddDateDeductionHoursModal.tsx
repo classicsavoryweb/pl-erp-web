@@ -25,11 +25,13 @@ const AddDateDeductionHoursModal = ({
     const handler = useFormik({
         initialValues: {
             date: "",
+            minutes: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
+            minutes: Yup.number().required("Minutes is required").min(1, "Cannot accept less than 1") ,
             date: Yup.date()
-            .required('Date is required.')
+            .required('Date is required')
             .test(
             'in-cutoff-date',
             `Date must be in the cutoff`,
@@ -42,7 +44,7 @@ const AddDateDeductionHoursModal = ({
                 );
             }),
         }),
-        onSubmit: (values, {resetForm}) => {
+        onSubmit: (values, {resetForm, setErrors}) => {
             let field = type == "tardiness"
                 ? "tardiness_minutes"
                 : "undertime_minutes";
@@ -56,9 +58,16 @@ const AddDateDeductionHoursModal = ({
             if (!exists) {
                 updatedMinutes.push({
                     date: values.date,
-                    minutes: 0,
+                    minutes: values.minutes,
                 });
+
+                updatedMinutes.sort((a: any, b: any) => new Date(a.date).getTime() - new Date(b.date).getTime());
                 payrollFormhandler.setFieldValue(field, updatedMinutes);
+                resetForm();
+            } else {
+                setErrors({
+                    date: `Date is already existing`
+                });
             }
         }
     });
@@ -80,6 +89,14 @@ const AddDateDeductionHoursModal = ({
                     onChange={handler.handleChange}
                     value={handler.values.date}
                     error={handler.errors.date}
+                />
+                <Textfield
+                    label="Minutes"
+                    type="number"
+                    name="minutes"
+                    onChange={handler.handleChange}
+                    value={handler.values.minutes}
+                    error={handler.errors.minutes}
                 />
                 <Button
                     type="submit"
