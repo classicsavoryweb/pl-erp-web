@@ -9,7 +9,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import Badge from "@/components/common/Badge";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
@@ -26,7 +26,6 @@ import RejectPromotionModal from "./RejectPromotionForm";
 import ConfirmPromotionModal from "./ConfirmPromotionModal";
 import Link from "next/link";
 import DropDownButtons from "@/components/common/DropDownButtons";
-import { AuthContext } from "@/context/AuthProvider";
 
 const ActingCapacityTableCard = () => {
     const api = useApiCall();
@@ -43,7 +42,6 @@ const ActingCapacityTableCard = () => {
     const paginator = usePagination();
     const filter = useFilter();
     const [sort, setSort] = useState<any>({});
-    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -191,7 +189,6 @@ const ActingCapacityTableCard = () => {
                     <ActionDropDown
                         data={data}
                         actions={tableActions}
-                        permissions={permissions}
                     />
                 )
             }

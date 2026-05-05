@@ -40,7 +40,6 @@ interface TableInterface {
     smallText?: boolean;
     initialSelectedRows?: any[];
     resetRows?: boolean;
-    permissions?: string[];
 };
 
 const Table = ({
@@ -58,7 +57,6 @@ const Table = ({
     smallText,
     initialSelectedRows = [],
     resetRows = false,
-    permissions = [],
 }: TableInterface) => {
 
     const currentPage = paginator && paginator.paginationData.current_page;
@@ -276,7 +274,6 @@ const Table = ({
                                                 <ActionDropDown
                                                     data={data}
                                                     actions={actions}
-                                                    permissions={permissions}
                                                 />
                                             </td>
                                         }

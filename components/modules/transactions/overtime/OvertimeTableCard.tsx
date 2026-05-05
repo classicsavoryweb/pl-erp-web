@@ -189,7 +189,6 @@ const OvertimeTableCard = ({
                     <ActionDropDown
                         data={data}
                         actions={actions}
-                        permissions={permissions}
                     />
                 );
             }

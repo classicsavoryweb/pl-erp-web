@@ -9,7 +9,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { useContext, useState } from "react";
+import { useState } from "react";
 import { exportAllBranches, getAllBranches } from "@/api/branches";
 import CreateBranchForm from "./CreateBranchForm";
 import EditBranchForm from "./EditBranchForm";
@@ -18,7 +18,6 @@ import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import DropDownButtons from "@/components/common/DropDownButtons";
-import { AuthContext } from "@/context/AuthProvider";
 
 const BranchesTableCard = () => {
     const api = useApiCall();
@@ -28,7 +27,6 @@ const BranchesTableCard = () => {
     const [data, setData] = useState<any>({});
     const paginator = usePagination();
     const filter = useFilter();
-    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -230,7 +228,6 @@ const BranchesTableCard = () => {
                     paginator={paginator}
                     withActions
                     actions={tableActions}
-                    permissions={permissions}
                 />
             </Card>
             <CreateBranchForm

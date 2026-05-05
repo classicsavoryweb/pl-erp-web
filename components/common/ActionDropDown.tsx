@@ -1,7 +1,8 @@
 "use client";
 
+import { AuthContext } from '@/context/AuthProvider';
 import ExpandMoreOutlinedIcon from '@mui/icons-material/ExpandMoreOutlined';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useContext } from 'react';
 
 type ActionType = {
     label: string;
@@ -16,7 +17,6 @@ interface DropdownInterface {
     label?: string;
     direct?: boolean;
     containerClassName?: string;
-    permissions?: string[];
 };
 
 const ActionDropDown = ({
@@ -25,11 +25,11 @@ const ActionDropDown = ({
     label = "Action",
     direct = false,
     containerClassName,
-    permissions = [],
 }: DropdownInterface) => {
 
     const [toggle, setToggle] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+    const { permissions } = useContext(AuthContext);
     const availableActions = actions.filter((action) => {
         if (!action.permission) return true;
         if (Array.isArray(action.permission)) {
