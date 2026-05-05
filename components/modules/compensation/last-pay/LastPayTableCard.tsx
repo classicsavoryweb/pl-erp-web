@@ -6,11 +6,10 @@ import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
-import confirm from "@/components/common/Confirm";
 import Badge from "@/components/common/Badge";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "../../cards/FilterCard";
-import { getAllLastPays, postLastPay } from "@/api/compensation/last-pay";
+import { getAllLastPays } from "@/api/compensation/last-pay";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { useModal } from "@/hooks/modal";
 import CreateLastPayModal from "./CreateLastPayModal";
@@ -19,6 +18,8 @@ import { useState } from "react";
 import ViewLastPayModal from "./ViewLastPayModal";
 import EditLastPayModal from "./EditLastPayModal";
 import LastPayComputationEditModal from "./LastPayComputationEditModal";
+import PostLastPayPreviewModal from "./PostLastPayPreviewModal";
+import TaxRefundComputationModal from "./TaxRefundComputationModal";
 
 const LastPayTableCard = () => {
     const api = useApiCall();
@@ -29,6 +30,8 @@ const LastPayTableCard = () => {
     const viewModal = useModal();
     const editModal = useModal();
     const computationModal = useModal();
+    const postPreviewModal = useModal();
+    const taxRefundComputationModal = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -122,6 +125,7 @@ const LastPayTableCard = () => {
                         actions = [
                             actionSettings[0],
                             actionSettings[1],
+                            actionSettings[2],
                         ];
                         break;
                     case "Unposted":
@@ -130,6 +134,7 @@ const LastPayTableCard = () => {
                             actionSettings[1],
                             actionSettings[2],
                             actionSettings[3],
+                            actionSettings[4],
                         ];
                         break;
                 };
@@ -158,26 +163,17 @@ const LastPayTableCard = () => {
             }
         },
         {
+            label: "Tax Refund Computation",
+            onClick: (data:any) => {
+                taxRefundComputationModal.onOpen();
+                setData(data);
+            }
+        },
+        {
             label: "Post",
-            onClick: async (data: any) => {
-                const isConfirmed = await confirm({
-                    title: "Post Last Pay",
-                    message: "Are you sure you want to post?"
-                });
-
-                if (isConfirmed) {
-                    postLastPay(data.id)
-                    .then((resp) => {
-                        if (!resp.error) {
-                            toast.success("Last pay posted successfully");
-                            api.triggerReload();
-                        } else {
-                            toast.error(resp.data.message);
-                        }
-                    }).catch(() => {
-                        toast.error("Error encountered");
-                    });
-                }
+            onClick: (data: any) => {
+                setData(data);
+                postPreviewModal.onOpen();
             }
         },
         {
@@ -270,6 +266,19 @@ const LastPayTableCard = () => {
 
             <LastPayComputationEditModal
                 modal={computationModal}
+                data={data}
+            />
+
+            <PostLastPayPreviewModal
+                modal={postPreviewModal}
+                data={data}
+                onPosted={() => {
+                    api.triggerReload();
+                }}
+            />
+
+            <TaxRefundComputationModal
+                modal={taxRefundComputationModal}
                 data={data}
             />
         </>

@@ -330,10 +330,11 @@ const LastPayDetails = ({
             };
         }
 
-        const nonSssBalance = deduction?.balance;
+        const nonSssBalance = deduction?.balance ?? deduction?.amount;
         if (nonSssBalance !== undefined && nonSssBalance !== null) {
             return {
                 ...deduction,
+                balance: nonSssBalance,
                 amount: nonSssBalance
             };
         }
