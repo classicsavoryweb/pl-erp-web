@@ -10,7 +10,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { editBranch } from "@/api/branches";
 import { useEffect } from "react";
 import Grid from "@/components/common/Grid";
-import AccountDropDown from "../../generic/AccountDropDown";
+import AccountDropDown from "./BranchAccountDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import CompanyDropDown from "../../generic/CompanyDropDown";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";

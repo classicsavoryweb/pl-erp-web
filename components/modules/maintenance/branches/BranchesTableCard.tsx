@@ -219,11 +219,13 @@ const BranchesTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end gap-x-3">
-                    <DropDownButtons
-                        actions={canCreateBranches ? actionSettings : []}
-                    />
-                </div>
+                {canCreateBranches &&
+                    <div className="flex justify-end gap-x-3">
+                        <DropDownButtons
+                            actions={actionSettings}
+                        />
+                    </div>
+                }
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
