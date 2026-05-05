@@ -16,11 +16,12 @@ import Button from "@/components/common/Button";
 import { useModal } from "@/hooks/modal";
 import CreateReportCoeRequestForm from "./CreateReportCoeRequestForm";
 import CoePreviewModal from "./CoePreviewModal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import confirm from "@/components/common/Confirm";
 import EditReportCoeRequestForm from "./EditReportCoeRequestForm";
 import DropDownButtons from "@/components/common/DropDownButtons";
+import { AuthContext } from "@/context/AuthProvider";
 
 const ReportCoeRequestsTableCard = () => {
     const [selectedRequest, setSelectedRequest] = useState<number>(0);
@@ -31,6 +32,7 @@ const ReportCoeRequestsTableCard = () => {
     const createModal = useModal();
     const viewCoeModal = useModal();
     const editCoeModal = useModal();
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -139,6 +141,7 @@ const ReportCoeRequestsTableCard = () => {
                         <ActionDropDown
                             data={data}
                             actions={actions}
+                            permissions={permissions}
                         />
                     );
                 } else {

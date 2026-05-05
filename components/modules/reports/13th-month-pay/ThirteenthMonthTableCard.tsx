@@ -157,6 +157,7 @@ const ThirteenthMonthTableCard = () => {
                 <ActionDropDown 
                     data={data} 
                     actions={actions} 
+                    permissions={permissions}
                 /> : "—";
             }
         }

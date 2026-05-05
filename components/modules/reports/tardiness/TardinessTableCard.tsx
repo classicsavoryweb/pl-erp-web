@@ -17,7 +17,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import confirm from "@/components/common/Confirm";
 import ImportModal from "./ImportModal";
 import { useModal } from "@/hooks/modal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import EditTardinessModal from "./EditTardinessModal";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { useFormik } from "formik";
@@ -29,6 +29,7 @@ import moment from "moment";
 import TardinessNTEModal from "./TardinessNTEModal";
 import TardinessNODModal from "./TardinesNODModal";
 import TardinessDetailsModal from "./TardinessDetailsModal";
+import { AuthContext } from "@/context/AuthProvider";
 
 const TardinessTableCard = () => {
     const api = useApiCall();
@@ -43,6 +44,7 @@ const TardinessTableCard = () => {
     const viewNOD = useModal();
     const viewTardiness = useModal();
     const sendNodMemo = useModal();
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -268,6 +270,7 @@ const TardinessTableCard = () => {
                     <ActionDropDown
                         data={data}
                         actions={actions}
+                        permissions={permissions}
                     />
                 );
 

@@ -24,8 +24,9 @@ import CutOffDropDown from "../../generic/CutOffDropDown";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import { approveAdjustments, getAdjustment, getAllAdjustments, unapproveAdjustments, voidAdjustments } from "@/api/transactions/adjustments";
 import CreateAdjustmentsModal from "./CreateAdjustmentsModal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ViewAdjustmentModal from "./ViewAdjustmentModal";
+import { AuthContext } from "@/context/AuthProvider";
 
 const AdjustmentsTableCard = () => {
     const api = useApiCall();
@@ -33,6 +34,7 @@ const AdjustmentsTableCard = () => {
     const createAdjustments = useModal();
     const viewAdjustments = useModal();
     const filter = useFilter();
+    const { permissions } = useContext(AuthContext);
     const [id, setId] = useState<number|string>(0);
     const statusOption = [
         {
@@ -140,6 +142,7 @@ const AdjustmentsTableCard = () => {
                     <ActionDropDown
                         data={data}
                         actions={actions}
+                        permissions={permissions}
                     />
                 );
             }

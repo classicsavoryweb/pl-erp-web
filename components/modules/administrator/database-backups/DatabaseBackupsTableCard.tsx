@@ -8,15 +8,17 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { getAllDatabaseBackups } from "@/api/database-backups";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { createDatabaseBackup, downloadSqlFile } from "@/api/database-backups";
 import confirm from "@/components/common/Confirm";
+import { AuthContext } from "@/context/AuthProvider";
 
 const DatabaseBackupsTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
     const [data] = useState<any>({});
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -126,6 +128,7 @@ const DatabaseBackupsTableCard = () => {
                     paginator={paginator}
                     withActions
                     actions={actions}
+                    permissions={permissions}
                 />
             </Card>
         </>

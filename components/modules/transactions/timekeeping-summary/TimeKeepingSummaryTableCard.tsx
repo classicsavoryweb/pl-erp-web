@@ -189,6 +189,7 @@ const TimeKeepingSummaryTableCard = ({
                                 }
                             }
                         ]}
+                        permissions={permissions}
                     />
                 );
             }
