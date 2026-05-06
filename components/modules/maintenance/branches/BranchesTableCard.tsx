@@ -9,7 +9,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { exportAllBranches, getAllBranches } from "@/api/branches";
 import CreateBranchForm from "./CreateBranchForm";
 import EditBranchForm from "./EditBranchForm";
@@ -18,6 +18,7 @@ import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import DropDownButtons from "@/components/common/DropDownButtons";
+import { AuthContext } from "@/context/AuthProvider";
 
 const BranchesTableCard = () => {
     const api = useApiCall();
@@ -27,6 +28,10 @@ const BranchesTableCard = () => {
     const [data, setData] = useState<any>({});
     const paginator = usePagination();
     const filter = useFilter();
+    const { permissions } = useContext(AuthContext);
+    const canCreateBranches = permissions.includes("create_branches");
+    const canEditBranches = permissions.includes("edit_branches_all")
+        || permissions.includes("edit_branches_oic");
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -141,9 +146,13 @@ const BranchesTableCard = () => {
                     date_open : data.date_open,
                     company : data.company,
                     branch_head_employee_number: data.branch_head_employee_number,
+                    branch_head_date_appointed: data.branch_head_date_appointed,
                     group_head_employee_number: data.group_head_employee_number,
                     rate_code: data.rate_code,
                     kitchen_oic_employee_number: data.kitchen_oic_employee_number,
+                    kitchen_oic_date_appointed: data.kitchen_oic_date_appointed,
+                    kitchen_oic_2_employee_number: data.kitchen_oic_2_employee_number,
+                    kitchen_oic_2_date_appointed: data.kitchen_oic_2_date_appointed,
                     mancom_employee_number: data.mancom_employee_number,
                     expense_debit: data.expense_debit,
                     expense_credit: data.expense_credit,
@@ -210,18 +219,20 @@ const BranchesTableCard = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end gap-x-3">
-                    <DropDownButtons
-                        actions={actionSettings}
-                    />
-                </div>
+                {canCreateBranches &&
+                    <div className="flex justify-end gap-x-3">
+                        <DropDownButtons
+                            actions={actionSettings}
+                        />
+                    </div>
+                }
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
                     withActions
-                    actions={tableActions}
+                    actions={canEditBranches ? tableActions : tableActions.slice(0, 1)}
                 />
             </Card>
             <CreateBranchForm

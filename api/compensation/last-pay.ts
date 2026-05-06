@@ -58,6 +58,24 @@ export const postLastPay = async (lastPayId: number) => {
     return resData;
 }
 
+export const previewLastPay = async (lastPayId: number) => {
+    const resData = await axiosHelper({
+        func_path: `/preview-last-pay/${lastPayId}`,
+        method: 'GET',
+    });
+
+    return resData;
+}
+
+export const getTaxRefundComputation = async (lastPayId: number) => {
+    const resData = await axiosHelper({
+        func_path: `/tax-refund-computation/${lastPayId}`,
+        method: 'GET',
+    });
+
+    return resData;
+}
+
 export const removeLastPayDeduction = async (employeeNumber: string, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/remove-last-pay-deduction/${employeeNumber}`,

@@ -25,10 +25,15 @@ const FIELD_LABELS: Record<string, string> = {
     rate_code: "Rate Code",
     branch_head_employee_number: "Branch Head Employee Number",
     branch_head: "Branch Head",
+    branch_head_date_appointed: "Branch OIC Date Appointed",
     group_head_employee_number: "Group Head Employee Number",
     group_head: "Group Head",
     kitchen_oic_employee_number: "Kitchen OIC Employee Number",
     kitchen_oic: "Kitchen OIC",
+    kitchen_oic_date_appointed: "Kitchen OIC Date Appointed",
+    kitchen_oic_2_employee_number: "Kitchen OIC 2 Employee Number",
+    kitchen_oic_2: "Kitchen OIC 2",
+    kitchen_oic_2_date_appointed: "Kitchen OIC 2 Date Appointed",
     mancom_employee_number: "Mancom Employee Number",
     mancom: "Mancom",
     expense_debit: "Expense Debit",
@@ -49,6 +54,7 @@ const HIDDEN_CHANGE_KEYS = new Set([
     "branch_head_employee_number",
     "group_head_employee_number",
     "kitchen_oic_employee_number",
+    "kitchen_oic_2_employee_number",
     "mancom_employee_number",
 ]);
 
@@ -66,6 +72,33 @@ const ACCOUNT_CHANGE_KEYS = new Set([
     "branch_ho_stat_debit",
     "branch_ho_stat_credit",
 ]);
+
+const OIC_NAME_TO_DATE_KEY: Record<string, string> = {
+    branch_head: "branch_head_date_appointed",
+    kitchen_oic: "kitchen_oic_date_appointed",
+    kitchen_oic_2: "kitchen_oic_2_date_appointed",
+};
+
+const OIC_DATE_TO_NAME_KEY = Object.entries(OIC_NAME_TO_DATE_KEY).reduce<Record<string, string>>(
+    (acc, [nameKey, dateKey]) => {
+        acc[dateKey] = nameKey;
+        return acc;
+    },
+    {}
+);
+
+const formatDateAppointed = (value: any) => {
+    if (value === null || value === undefined || value === "") {
+        return "-";
+    }
+
+    const parsed = moment(value);
+    if (!parsed.isValid()) {
+        return String(value);
+    }
+
+    return parsed.format("M/D/YYYY");
+};
 
 const normalizeValue = (value: any, key?: string, accountNames?: Record<string, string>) => {
     if (value === null || value === undefined || value === "") {
@@ -118,18 +151,59 @@ const getChanges = (activity: any, accountNames?: Record<string, string>) => {
         return oldDisplayValue !== newDisplayValue;
     });
 
-    if (changedKeys.length === 0) {
+    const filteredChangedKeys = changedKeys.filter((key) => {
+        const linkedNameKey = OIC_DATE_TO_NAME_KEY[key];
+        if (!linkedNameKey) {
+            return true;
+        }
+
+        return !changedKeys.includes(linkedNameKey);
+    });
+
+    if (filteredChangedKeys.length === 0) {
         return "-";
     }
 
     return (
         <div className="whitespace-pre-line">
-            {changedKeys.map((key) => {
+            {filteredChangedKeys.map((key) => {
                 const label = FIELD_LABELS[key] ?? key.replace(/_/g, " ");
+                const oldDisplay = normalizeValue(oldValues[key], key, accountNames);
+                const newDisplay = normalizeValue(attributes[key], key, accountNames);
+
+                if (OIC_NAME_TO_DATE_KEY[key]) {
+                    const dateKey = OIC_NAME_TO_DATE_KEY[key];
+                    const oldDate = formatDateAppointed(oldValues[dateKey]);
+                    const newDate = formatDateAppointed(attributes[dateKey]);
+                    const hasOldValue = !!(oldValues[key] || oldValues[dateKey]);
+                    const hasNewValue = !!(attributes[key] || attributes[dateKey]);
+
+                    if (!hasOldValue && hasNewValue) {
+                        return (
+                            <div key={key}>
+                                {label}: {newDisplay} (Date Appointed: {newDate})
+                            </div>
+                        );
+                    }
+
+                    if (hasOldValue && !hasNewValue) {
+                        return (
+                            <div key={key}>
+                                {label}: {oldDisplay} (Date Appointed: {oldDate})
+                            </div>
+                        );
+                    }
+
+                    return (
+                        <div key={key}>
+                            {label}: {oldDisplay} (Date Appointed: {oldDate}) -&gt; {newDisplay} (Date Appointed: {newDate})
+                        </div>
+                    );
+                }
 
                 return (
                     <div key={key}>
-                        {label}: {normalizeValue(oldValues[key], key, accountNames)} -&gt; {normalizeValue(attributes[key], key, accountNames)}
+                        {label}: {oldDisplay} -&gt; {newDisplay}
                     </div>
                 );
             })}

@@ -10,7 +10,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 import { editBranch } from "@/api/branches";
 import { useEffect } from "react";
 import Grid from "@/components/common/Grid";
-import AccountDropDown from "../../generic/AccountDropDown";
+import AccountDropDown from "./BranchAccountDropDown";
 import Dropdown from "@/components/common/Dropdown";
 import CompanyDropDown from "../../generic/CompanyDropDown";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
@@ -28,6 +28,14 @@ interface FormModalInterface {
     formValue: any;
 };
 
+const SectionDivider = ({ label }: { label: string }) => (
+    <div className="mt-4 mb-2 flex items-center gap-3">
+        <div className="h-[2px] flex-1 bg-slate-400 dark:bg-neutral-600" />
+        <p className="text-sm font-bold uppercase text-slate-600 dark:text-neutral-300">{label}</p>
+        <div className="h-[2px] flex-1 bg-slate-400 dark:bg-neutral-600" />
+    </div>
+);
+
 const EditBranchForm = ({
     modal,
     onSubmitCallback,
@@ -35,6 +43,18 @@ const EditBranchForm = ({
 }: FormModalInterface) => {
 
     const { permissions } = useContext(AuthContext); 
+    const canEditAllBranches = permissions.includes("edit_branches_all");
+    const canEditBranchOic = canEditAllBranches || permissions.includes("edit_branches_oic");
+    const oicEditableFields = [
+        "branch_head_employee_number",
+        "branch_head_date_appointed",
+        "kitchen_oic_employee_number",
+        "kitchen_oic_date_appointed",
+        "kitchen_oic_2_employee_number",
+        "kitchen_oic_2_date_appointed",
+        "group_head_employee_number",
+        "mancom_employee_number",
+    ];
 
     const editBranchFormHandler = useFormik({
         initialValues: {
@@ -51,9 +71,13 @@ const EditBranchForm = ({
             date_open : "" ,
             company : "" ,
             branch_head_employee_number: "",
+            branch_head_date_appointed: "",
             group_head_employee_number: "",
             rate_code: "",
             kitchen_oic_employee_number: "",
+            kitchen_oic_date_appointed: "",
+            kitchen_oic_2_employee_number: "",
+            kitchen_oic_2_date_appointed: "",
             mancom_employee_number: "",
             expense_debit: "",
             expense_credit: "",
@@ -69,13 +93,11 @@ const EditBranchForm = ({
             branch_ho_stat_credit: "",
         },
         validateOnChange: false,
-        validationSchema: Yup.object().shape({
+        validationSchema: Yup.object().shape(canEditAllBranches ? {
             name: Yup.string().required("Branch name is required."),
             branch_number: Yup.string().required("Branch number is required."),
             branch_email: Yup.string().required("Branch email is required."),
             status: Yup.string().required("Status is required."),
-            //travel_time: Yup.string().required("Travel time is required."),
-            //device_name: Yup.string().required("Device name is required."),
             short_name: Yup.string().required("Short name is required."),
             type: Yup.string().required("Type is required."),
             address: Yup.string().required("Address is required."),
@@ -83,20 +105,13 @@ const EditBranchForm = ({
             date_open: Yup.string().required("Date opened is required."),
             company: Yup.string().required("Company is required."),
             rate_code: Yup.string().required("Rate code is required."),
-            // expense_debit: Yup.string().required("Expense debit is required."),
-            // expense_credit: Yup.string().required("Expense credit is required."),
-            // advance_debit: Yup.string().required("Advance debit is required."),
-            // advance_credit: Yup.string().required("Advance credit is required."),
-            // ho_13th_debit: Yup.string().required("13th allocation debit is required."),
-            // ho_13th_debit_1: Yup.string().required("13th allocation debit is required."),
-            // ho_13th_credit: Yup.string().required("13th allocation credit is required."),
-            // branch_ho_13th_debit: Yup.string().required("13th allocation debit is required."),
-            // branch_ho_13th_debit_1: Yup.string().required("13th allocation debit is required."),
-            // branch_ho_13th_credit: Yup.string().required("13th allocation credit is required."),
-            // branch_ho_stat_debit: Yup.string().required("Statutory debit is required."),
-            // branch_ho_stat_credit: Yup.string().required("Statutory credit is required."),
-        }),
+        } : {}),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
+            if (!canEditBranchOic) {
+                toast.error("You do not have permission to edit branches.");
+                return;
+            }
+
             const isConfirmed = await confirm({
                 title: "Edit Branch",
                 message: "Are you sure you want to save changes?"
@@ -104,7 +119,13 @@ const EditBranchForm = ({
 
             if (isConfirmed) {
                 setSubmitting(true);
-                editBranch(values, formValue.id)
+                const payload = canEditAllBranches
+                    ? values
+                    : Object.fromEntries(
+                        Object.entries(values).filter(([key]) => oicEditableFields.includes(key))
+                    );
+
+                editBranch(payload, formValue.id)
                 .then((resp) => {
                     if(!resp.error) {
                         toast.success("Branch updated successfully");
@@ -129,6 +150,50 @@ const EditBranchForm = ({
         }
     }, [modal.isShowing]);
 
+    const getCurrentDate = () => {
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        const day = String(currentDate.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    };
+
+    const getDateAppointedMin = (
+        employeeNumber?: string | null,
+        originalEmployeeNumber?: string | null,
+        originalDateAppointed?: string | null
+    ) => {
+        if (
+            employeeNumber
+            && originalEmployeeNumber
+            && employeeNumber === originalEmployeeNumber
+            && originalDateAppointed
+        ) {
+            return originalDateAppointed;
+        }
+
+        return getCurrentDate();
+    };
+
+    const handleOicChange = (
+        e: any,
+        employeeField: string,
+        dateField: string,
+        originalEmployeeNumber?: string | null,
+        originalDateAppointed?: string | null
+    ) => {
+        const employeeNumber = e.target.value || "";
+        const previousEmployeeNumber = originalEmployeeNumber || "";
+        const previousDateAppointed = originalDateAppointed || "";
+        const dateAppointed = !employeeNumber
+            ? ""
+            : (employeeNumber === previousEmployeeNumber ? previousDateAppointed : getCurrentDate());
+
+        editBranchFormHandler.setFieldValue(employeeField, employeeNumber);
+        editBranchFormHandler.setFieldValue(dateField, dateAppointed);
+    };
+
     return (
         <Modal
             isShowing={modal.isShowing}
@@ -150,7 +215,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.name}
-                        disabled={!permissions.includes("perform_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <Textfield
                         label="Short Name"
@@ -160,7 +225,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.short_name}
-                        disabled={!permissions.includes("perform_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -172,7 +237,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_number}
-                        disabled={!permissions.includes("perform_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <Textfield
                         label="Address"
@@ -182,7 +247,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.address}
-                        disabled={!permissions.includes("perform_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -194,7 +259,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.location}
-                        disabled={!permissions.includes("perform_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <Textfield
                         label="Date Opened"
@@ -205,7 +270,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.date_open}
-                        disabled={!permissions.includes("perform_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -217,7 +282,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.company}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                         
                     />
                     <Textfield
@@ -228,7 +293,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_email}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -240,18 +305,101 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.rate_code}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
-
+                </Grid>
+                <SectionDivider label="Branch OIC" />
+                <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Branch OIC"
                         placeholder="select branch oic"
                         name="branch_head_employee_number"
                         value={editBranchFormHandler.values.branch_head_employee_number || ""}
-                        onChange={editBranchFormHandler.handleChange}
+                        onChange={(e: any) => handleOicChange(
+                            e,
+                            "branch_head_employee_number",
+                            "branch_head_date_appointed",
+                            formValue?.branch_head_employee_number,
+                            formValue?.branch_head_date_appointed
+                        )}
                         error={editBranchFormHandler.errors.branch_head_employee_number}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditBranchOic}
                         allowClear
+                    />
+                    <Textfield
+                        label="Date Appointed"
+                        placeholder="date appointed"
+                        name="branch_head_date_appointed"
+                        type="date"
+                        value={editBranchFormHandler.values.branch_head_date_appointed || ""}
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.branch_head_date_appointed}
+                        disabled={
+                            !canEditBranchOic
+                            || !editBranchFormHandler.values.branch_head_employee_number
+                        }
+                    />
+                </Grid>
+                <Grid cols={2}>
+                    <BranchEmployeeDropDown
+                        label="Kitchen OIC"
+                        placeholder="select kitchen oic"
+                        name="kitchen_oic_employee_number"
+                        value={editBranchFormHandler.values.kitchen_oic_employee_number || ""}
+                        onChange={(e: any) => handleOicChange(
+                            e,
+                            "kitchen_oic_employee_number",
+                            "kitchen_oic_date_appointed",
+                            formValue?.kitchen_oic_employee_number,
+                            formValue?.kitchen_oic_date_appointed
+                        )}
+                        error={editBranchFormHandler.errors.kitchen_oic_employee_number}
+                        disabled={!canEditBranchOic}
+                        allowClear
+                    />
+                    <Textfield
+                        label="Date Appointed"
+                        placeholder="date appointed"
+                        name="kitchen_oic_date_appointed"
+                        type="date"
+                        value={editBranchFormHandler.values.kitchen_oic_date_appointed || ""}
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.kitchen_oic_date_appointed}
+                        disabled={
+                            !canEditBranchOic
+                            || !editBranchFormHandler.values.kitchen_oic_employee_number
+                        }
+                    />
+                </Grid>
+                <Grid cols={2}>
+                    <BranchEmployeeDropDown
+                        label="Kitchen OIC 2"
+                        placeholder="select kitchen oic 2"
+                        name="kitchen_oic_2_employee_number"
+                        value={editBranchFormHandler.values.kitchen_oic_2_employee_number || ""}
+                        onChange={(e: any) => handleOicChange(
+                            e,
+                            "kitchen_oic_2_employee_number",
+                            "kitchen_oic_2_date_appointed",
+                            formValue?.kitchen_oic_2_employee_number,
+                            formValue?.kitchen_oic_2_date_appointed
+                        )}
+                        error={editBranchFormHandler.errors.kitchen_oic_2_employee_number}
+                        disabled={!canEditBranchOic}
+                        allowClear
+                    />
+                    <Textfield
+                        label="Date Appointed"
+                        placeholder="date appointed"
+                        name="kitchen_oic_2_date_appointed"
+                        type="date"
+                        value={editBranchFormHandler.values.kitchen_oic_2_date_appointed || ""}
+                        onChange={editBranchFormHandler.handleChange}
+                        error={editBranchFormHandler.errors.kitchen_oic_2_date_appointed}
+                        disabled={
+                            !canEditBranchOic
+                            || !editBranchFormHandler.values.kitchen_oic_2_employee_number
+                        }
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -262,17 +410,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.group_head_employee_number || ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.group_head_employee_number}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
-                        allowClear
-                    />
-                    <BranchEmployeeDropDown
-                        label="Kitchen OIC"
-                        placeholder="select kitchen oic"
-                        name="kitchen_oic_employee_number"
-                        value={editBranchFormHandler.values.kitchen_oic_employee_number || ""}
-                        onChange={editBranchFormHandler.handleChange}
-                        error={editBranchFormHandler.errors.kitchen_oic_employee_number}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditBranchOic}
                         allowClear
                     />
                 </Grid>
@@ -284,12 +422,12 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.mancom_employee_number || ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.mancom_employee_number}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditBranchOic}
                         allowClear
                     />
                 </Grid>
 
-                <p className="mt-3">Timekeeping</p>
+                <SectionDivider label="Timekeeping" />
                 <Grid cols={2}>
                     <Textfield
                         type="number"
@@ -299,7 +437,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.travel_time ?? ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.travel_time}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <Textfield
                         label="Device Name"
@@ -308,12 +446,12 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.device_name ?? ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.device_name}
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                         
                     />
                 </Grid>
 
-                <p className="mt-3">Accounts</p>
+                <SectionDivider label="Accounts" />
                 <Grid cols={2}>
                     <AccountDropDown
                         label="Expense Debit"
@@ -323,7 +461,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.expense_debit}
                         error={editBranchFormHandler.errors.expense_debit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <AccountDropDown
                         label="Expense credit"
@@ -333,7 +471,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.expense_credit}
                         error={editBranchFormHandler.errors.expense_credit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -345,7 +483,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.advance_debit}
                         error={editBranchFormHandler.errors.advance_debit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <AccountDropDown
                         label="Advance credit"
@@ -355,7 +493,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.advance_credit}
                         error={editBranchFormHandler.errors.advance_credit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -367,7 +505,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_debit}
                         error={editBranchFormHandler.errors.ho_13th_debit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (HO/HO) Debit"
@@ -377,7 +515,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_debit_1}
                         error={editBranchFormHandler.errors.ho_13th_debit_1}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -389,7 +527,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.ho_13th_credit}
                         error={editBranchFormHandler.errors.ho_13th_credit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (Branch/HO) Debit"
@@ -399,7 +537,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_debit}
                         error={editBranchFormHandler.errors.branch_ho_13th_debit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
                 <Grid cols={2}>
@@ -411,7 +549,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_debit_1}
                         error={editBranchFormHandler.errors.branch_ho_13th_debit_1}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <AccountDropDown
                         label="13th Monthly Allocation (Branch/HO) Credit"
@@ -421,7 +559,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_13th_credit}
                         error={editBranchFormHandler.errors.branch_ho_13th_credit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
 
@@ -434,7 +572,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_stat_debit}
                         error={editBranchFormHandler.errors.branch_ho_stat_debit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                     <AccountDropDown
                         label="Statutory Allocation (Branch/HO) Credit"
@@ -444,7 +582,7 @@ const EditBranchForm = ({
                         value={editBranchFormHandler.values.branch_ho_stat_credit}
                         error={editBranchFormHandler.errors.branch_ho_stat_credit}
                         required
-                        disabled={!permissions.includes("perform_branches") && !permissions.includes("edit_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
 
@@ -457,7 +595,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.type}
-                        disabled={!permissions.includes("perform_branches")}
+                        disabled={!canEditAllBranches}
                         options={[
                             {
                                 label: "Head Office",
@@ -477,7 +615,7 @@ const EditBranchForm = ({
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.status}
-                        disabled={!permissions.includes("perform_branches")}
+                        disabled={!canEditAllBranches}
                     />
                 </Grid>
 
