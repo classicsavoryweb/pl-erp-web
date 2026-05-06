@@ -54,17 +54,23 @@ const EmployeePositionForm = ({
                 return moment(value).isSameOrAfter(moment(data.date_started));
             }),
             oic_assignment: Yup.string(),
-            date_appointed: Yup.string()
-                .test(
-                'future-date',
-                'Date appointed must be same or later than Date started',
-                function (value) {
-                    const { date_started } = this.parent;
-                    if (!value || !date_started) return true;
+            date_appointed: Yup.string().nullable().when("oic_assignment", {
+                is: "Yes",
+                then: (schema) =>
+                    schema.required("Date Appointed is required")
+                    .test(
+                        "future-date",
+                        "Date appointed must be same or later than Date started",
+                        function (value) {
+                            const { date_started } = this.parent;
 
-                    return moment(value).isSameOrAfter(moment(date_started));
-                }),
+                            if (!value || !date_started) return true;
 
+                            return moment(value).isSameOrAfter(moment(date_started));
+                        }
+                    ),
+                otherwise: (schema) => schema.nullable(),
+            }),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
