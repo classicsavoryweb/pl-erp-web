@@ -95,6 +95,16 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                             );
                         })}
                     </Grid>
+                    <Grid cols={3}>
+                        <Textfield
+                            disabled
+                            label={"Total Tardiness"}
+                            value={
+                                formHandler.values.tardiness_minutes.reduce(
+                                (sum: number, item: any) => sum + Number(item.minutes), 0)
+                            }
+                        />
+                    </Grid>
                 </>
             }
 
@@ -171,6 +181,16 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                 </Grid>
                             );
                         })}
+                    </Grid>
+                    <Grid cols={3}>
+                        <Textfield
+                            disabled
+                            label={"Total Undertime"}
+                            value={
+                                formHandler.values.undertime_minutes.reduce(
+                                (sum: number, item: any) => sum + Number(item.minutes), 0)
+                            }
+                        />
                     </Grid>
                 </>
             }
