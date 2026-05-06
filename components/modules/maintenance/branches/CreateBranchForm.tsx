@@ -22,6 +22,14 @@ interface FormModalInterface {
     onSubmitCallback: () => void;
 };
 
+const SectionDivider = ({ label }: { label: string }) => (
+    <div className="mt-4 mb-2 flex items-center gap-3">
+        <div className="h-[2px] flex-1 bg-slate-400 dark:bg-neutral-600" />
+        <p className="text-sm font-bold uppercase text-slate-600 dark:text-neutral-300">{label}</p>
+        <div className="h-[2px] flex-1 bg-slate-400 dark:bg-neutral-600" />
+    </div>
+);
+
 const CreateBranchForm = ({
     modal,
     onSubmitCallback
@@ -41,10 +49,13 @@ const CreateBranchForm = ({
             date_open : "" ,
             company : "" ,
             branch_head_employee_number: "",
+            branch_head_date_appointed: "",
             group_head_employee_number: "",
             rate_code: "",
             kitchen_oic_employee_number: "",
+            kitchen_oic_date_appointed: "",
             kitchen_oic_2_employee_number: "",
+            kitchen_oic_2_date_appointed: "",
             mancom_employee_number: "",
             expense_debit: "",
             expense_credit: "",
@@ -113,6 +124,26 @@ const CreateBranchForm = ({
             }
         }
     });
+
+    const getCurrentDate = () => {
+        const currentDate = new Date();
+        const year = currentDate.getFullYear();
+        const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+        const day = String(currentDate.getDate()).padStart(2, "0");
+
+        return `${year}-${month}-${day}`;
+    };
+
+    const handleOicChange = (
+        e: any,
+        employeeField: string,
+        dateField: string
+    ) => {
+        const employeeNumber = e.target.value || "";
+
+        createBranchFormHandler.setFieldValue(employeeField, employeeNumber);
+        createBranchFormHandler.setFieldValue(dateField, employeeNumber ? getCurrentDate() : "");
+    };
 
     return (
         <Modal
@@ -212,24 +243,30 @@ const CreateBranchForm = ({
                     />
                 </Grid>
 
+                <SectionDivider label="Branch OIC" />
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Branch OIC"
                         placeholder="select branch oic"
                         name="branch_head_employee_number"
                         value={createBranchFormHandler.values.branch_head_employee_number}
-                        onChange={createBranchFormHandler.handleChange}
+                        onChange={(e: any) => handleOicChange(
+                            e,
+                            "branch_head_employee_number",
+                            "branch_head_date_appointed"
+                        )}
                         error={createBranchFormHandler.errors.branch_head_employee_number}
                         allowClear
                     />
-                    <BranchEmployeeDropDown
-                        label="Group Head"
-                        placeholder="select group head"
-                        name="group_head_employee_number"
-                        value={createBranchFormHandler.values.group_head_employee_number}
+                    <Textfield
+                        label="Date Appointed"
+                        placeholder="date appointed"
+                        name="branch_head_date_appointed"
+                        type="date"
+                        value={createBranchFormHandler.values.branch_head_date_appointed || ""}
                         onChange={createBranchFormHandler.handleChange}
-                        error={createBranchFormHandler.errors.group_head_employee_number}
-                        allowClear
+                        error={createBranchFormHandler.errors.branch_head_date_appointed}
+                        disabled={!createBranchFormHandler.values.branch_head_employee_number}
                     />
                 </Grid>
 
@@ -239,17 +276,60 @@ const CreateBranchForm = ({
                         placeholder="select kitchen oic"
                         name="kitchen_oic_employee_number"
                         value={createBranchFormHandler.values.kitchen_oic_employee_number}
-                        onChange={createBranchFormHandler.handleChange}
+                        onChange={(e: any) => handleOicChange(
+                            e,
+                            "kitchen_oic_employee_number",
+                            "kitchen_oic_date_appointed"
+                        )}
                         error={createBranchFormHandler.errors.kitchen_oic_employee_number}
                         allowClear
                     />
+                    <Textfield
+                        label="Date Appointed"
+                        placeholder="date appointed"
+                        name="kitchen_oic_date_appointed"
+                        type="date"
+                        value={createBranchFormHandler.values.kitchen_oic_date_appointed || ""}
+                        onChange={createBranchFormHandler.handleChange}
+                        error={createBranchFormHandler.errors.kitchen_oic_date_appointed}
+                        disabled={!createBranchFormHandler.values.kitchen_oic_employee_number}
+                    />
+                </Grid>
+
+                <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Kitchen OIC 2"
                         placeholder="select kitchen oic 2"
                         name="kitchen_oic_2_employee_number"
                         value={createBranchFormHandler.values.kitchen_oic_2_employee_number}
-                        onChange={createBranchFormHandler.handleChange}
+                        onChange={(e: any) => handleOicChange(
+                            e,
+                            "kitchen_oic_2_employee_number",
+                            "kitchen_oic_2_date_appointed"
+                        )}
                         error={createBranchFormHandler.errors.kitchen_oic_2_employee_number}
+                        allowClear
+                    />
+                    <Textfield
+                        label="Date Appointed"
+                        placeholder="date appointed"
+                        name="kitchen_oic_2_date_appointed"
+                        type="date"
+                        value={createBranchFormHandler.values.kitchen_oic_2_date_appointed || ""}
+                        onChange={createBranchFormHandler.handleChange}
+                        error={createBranchFormHandler.errors.kitchen_oic_2_date_appointed}
+                        disabled={!createBranchFormHandler.values.kitchen_oic_2_employee_number}
+                    />
+                </Grid>
+
+                <Grid cols={2}>
+                    <BranchEmployeeDropDown
+                        label="Group Head"
+                        placeholder="select group head"
+                        name="group_head_employee_number"
+                        value={createBranchFormHandler.values.group_head_employee_number}
+                        onChange={createBranchFormHandler.handleChange}
+                        error={createBranchFormHandler.errors.group_head_employee_number}
                         allowClear
                     />
                 </Grid>
