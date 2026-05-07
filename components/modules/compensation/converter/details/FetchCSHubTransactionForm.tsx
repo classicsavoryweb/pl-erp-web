@@ -27,6 +27,7 @@ const FetchCSHubTransactionForm = ({
     const [dataSet, setDataset] = useState<any[]>([]);
     const [selectedTransactions, setSelectedTransactions] = useState<any[]>([]);
     const [resetRows, setReset] = useState<boolean>(false);
+    const [loading, setLoading] = useState<boolean>(false);
 
     const trasanctionsFormHandler = useFormik({
         initialValues: {
@@ -196,6 +197,7 @@ const FetchCSHubTransactionForm = ({
                     <div className="flex justify-end items-center mt-2">
                         <div>
                             <Button
+                                loading={loading}
                                 onClick={async () => {
                                     const isConfirmed = await confirm({
                                         message: "Are you sure you want to generate?",
@@ -203,6 +205,7 @@ const FetchCSHubTransactionForm = ({
                                     });
 
                                     if (isConfirmed) {
+                                        setLoading(true);
                                         const transactionDataset = dataSet;
 
                                         const transactions =  transactionDataset
