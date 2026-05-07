@@ -116,3 +116,23 @@ export const getTimeKeepingSummaryAdjustmentLogs = async (payload?: {}) => {
 
     return resData;
 };
+
+export const getEmployeesPerTimekeepingBranch = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/get-employees-by-timekeeping-branch",
+        method: "GET",
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const generateTimeKeepingPerEmployee = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/generate-timekeeping-by-employee",
+        method: "POST",
+        payload: payload
+    });
+
+    return resData;
+};
