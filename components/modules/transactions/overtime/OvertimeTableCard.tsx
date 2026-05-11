@@ -215,6 +215,8 @@ const OvertimeTableCard = ({
                             toast.error("Timekeeping not found");
                             timekeepingModal.onOpen();
                             setDataSet(resp.data.timekeepings);
+                        } else {
+                            toast.error(resp.data.message);
                         }
                     }
                 }).catch(() => {
