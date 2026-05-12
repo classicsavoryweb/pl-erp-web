@@ -467,8 +467,6 @@ const FilterCard = ({
             >
                 <Grid cols={3}>
                     { exportOptions && exportOptions.map((option, key) => {
-                        const isChecked = exportHandler.values.fields.some((field: any) => field.value === option.value);
-
                         return (
                             <div className="py-1" key={key}>
                                 <Checkbox
@@ -483,11 +481,11 @@ const FilterCard = ({
                                         } else {
                                             exportHandler.setFieldValue(
                                                 "fields",
-                                                exportHandler.values.fields.filter((field: any) => field.value !== option.value)
+                                                exportHandler.values.fields.filter((field) => field !== option)
                                             );
                                         }
                                     }}
-                                    checked={isChecked}
+                                    checked={option.checked ?? undefined}
                                 />
                             </div>
                         );
