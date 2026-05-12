@@ -151,6 +151,7 @@ const EmployeeTableCard = () => {
         {
             label: "Position",
             value: "current_position.description",
+            checked: true,
         },
         {
             label: "Branch",
@@ -166,7 +167,7 @@ const EmployeeTableCard = () => {
         },
         {
             label: "Group Head",
-            value: "current_branch.group_head.full_name",
+            value: "current_branch.group_head",
         },
         {
             label: "Group Head Gender",
@@ -184,12 +185,10 @@ const EmployeeTableCard = () => {
         {
             label: "Status",
             value: "status",
-            checked: true,
         },
         {
             label: "Employment Status",
             value: "employee_status.description",
-            checked: true,
         },
         {
             label: "Employee Type",
@@ -238,7 +237,6 @@ const EmployeeTableCard = () => {
         {
             label: "Separation Date",
             value: "separation_date",
-            checked: true,
         },
         {
             label: "Separation Reason",
@@ -291,10 +289,6 @@ const EmployeeTableCard = () => {
         {
             label: "Branch Employee Number",
             value: "current_branch.branch_head_employee_number",
-        },
-        {
-            label: "Group Head",
-            value: "current_branch.group_head",
         },
         {
             label: "Group Head Employee Number",
