@@ -51,6 +51,10 @@ const EmployeeDeductionsTableCard = ({
     const activityLogsModal = useModal();
     const [data, setData] = useState<any>({});
     const [employee, setEmployee] = useState<any>({});
+    const [summary, setSummary] = useState({
+        deduction_count: 0,
+        total_balance: 0,
+    });
     const { permissions } = useContext(AuthContext);
     const paginator = usePagination();
     const filter = useFilter();
@@ -303,9 +307,14 @@ const EmployeeDeductionsTableCard = ({
             if (resp.error) {
                 toast.error("Error fetching deductions");
             } else {
-                api.setDataSet(resp.data.data);
-                paginator.setPage(resp.data.current_page);
-                paginator.setPaginationData(resp.data);
+                const deductions = resp.data.deductions;
+                api.setDataSet(deductions.data);
+                paginator.setPage(deductions.current_page);
+                paginator.setPaginationData(deductions);
+                setSummary({
+                    deduction_count: Number(resp.data.summary?.deduction_count ?? 0),
+                    total_balance: Number(resp.data.summary?.total_balance ?? 0),
+                });
             }
         })
         .catch(() => {
@@ -420,46 +429,63 @@ const EmployeeDeductionsTableCard = ({
                             onChange={formHandler.handleChange}
                         /> 
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
-                            <Button
-                                type="submit"
-                                label="Search"
-                                onClick={() => {}}
-                            />    
+                    <div className="flex flex-wrap items-end justify-between gap-4">
+                        <div className="flex flex-wrap items-end gap-2 text-xs text-slate-700 dark:text-slate-200">
+                            <div className="min-w-[120px]">
+                                <p className="text-[10px] font-medium uppercase leading-4 text-slate-500 dark:text-slate-400">Number of Deductions</p>
+                                <p className="text-base font-semibold">{summary.deduction_count.toLocaleString("en-US")}</p>
+                            </div>
+                            <div className="min-w-[96px]">
+                                <p className="text-[10px] font-medium uppercase leading-4 text-slate-500 dark:text-slate-400">Total Balance</p>
+                                <p className="text-base font-semibold">
+                                    {summary.total_balance.toLocaleString("en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    })}
+                                </p>
+                            </div>
                         </div>
-                        {(exportPermission === "" || permissions.includes(exportPermission)) &&
-                            <>
-                                { hasExport &&
-                                    <div className="w-[100px]">
-                                        <Button
-                                            label="Export"
-                                            type="button"
-                                            onClick={() => {
-                                                exportHandler.setValues(prev => ({
-                                                    ...prev,
-                                                    ...formHandler.values
-                                                }));
-                                                exportHandler.submitForm();
-                                            }}
-                                            variant="success"
-                                        />    
-                                    </div>
-                                }
-                            </>
-                        }
-                        <div className="w-[100px]">
-                            <Button
-                                label="Reset"
-                                type="button"
-                                onClick={() => {
-                                    formHandler.resetForm();
-                                    exportHandler.resetForm();
-                                    formHandler.submitForm();
-                                    setEmployee({});
-                                }}
-                                variant="secondary"
-                            />    
+                        <div className="flex justify-end gap-x-2">
+                            <div className="w-[100px]">
+                                <Button
+                                    type="submit"
+                                    label="Search"
+                                    onClick={() => {}}
+                                />    
+                            </div>
+                            {(exportPermission === "" || permissions.includes(exportPermission)) &&
+                                <>
+                                    { hasExport &&
+                                        <div className="w-[100px]">
+                                            <Button
+                                                label="Export"
+                                                type="button"
+                                                onClick={() => {
+                                                    exportHandler.setValues(prev => ({
+                                                        ...prev,
+                                                        ...formHandler.values
+                                                    }));
+                                                    exportHandler.submitForm();
+                                                }}
+                                                variant="success"
+                                            />    
+                                        </div>
+                                    }
+                                </>
+                            }
+                            <div className="w-[100px]">
+                                <Button
+                                    label="Reset"
+                                    type="button"
+                                    onClick={() => {
+                                        formHandler.resetForm();
+                                        exportHandler.resetForm();
+                                        formHandler.submitForm();
+                                        setEmployee({});
+                                    }}
+                                    variant="secondary"
+                                />    
+                            </div>
                         </div>
                     </div>
                 </form>
