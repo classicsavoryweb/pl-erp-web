@@ -27,11 +27,6 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         value={formHandler.values.special_holiday}
                         type="number"
                         disabled={payrollDetails.status == "final"}
-                        onBlur={(e) => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled
@@ -51,11 +46,6 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         onChange={formHandler.handleChange}
                         value={formHandler.values.legal_holiday}
                         type="number"
-                        onBlur={(e) => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled
@@ -75,11 +65,6 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         onChange={formHandler.handleChange}
                         value={formHandler.values.regular_overtime}
                         type="number"
-                        onBlur={(e) => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled
@@ -99,11 +84,6 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         onChange={formHandler.handleChange}
                         value={formHandler.values.legal_holiday_overtime}
                         type="number"
-                        onBlur={(e) => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled
@@ -123,11 +103,6 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         onChange={formHandler.handleChange}
                         value={formHandler.values.night_differential}
                         type="number"
-                        onBlur={(e) => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled
@@ -147,11 +122,6 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         onChange={formHandler.handleChange}
                         value={formHandler.values.special_holiday_overtime}
                         type="number"
-                        onBlur={(e) => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled
@@ -171,11 +141,6 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         disabled={payrollDetails.status == "final"}
                         value={formHandler.values.night_differential_overtime}
                         type="number"
-                        onBlur={(e) => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled
@@ -195,11 +160,6 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         onChange={formHandler.handleChange}
                         value={formHandler.values.cancelled_off}
                         type="number"
-                        onBlur={(e) => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled

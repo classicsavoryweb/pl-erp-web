@@ -61,11 +61,6 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                             };
                                             formHandler.setFieldValue("tardiness_minutes", minutes);
                                         }}
-                                        onBlur={(e) => {
-                                            formHandler.setFieldValue("save_changes", false);
-                                            formHandler.setFieldValue("reload_deductions", false);
-                                            formHandler.submitForm();
-                                        }}
                                     />
                                     <div>
                                         { payrollDetails.status == "initial" &&
@@ -146,11 +141,6 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                                 minutes: e.target.value
                                             };
                                             formHandler.setFieldValue("undertime_minutes", minutes);
-                                        }}
-                                        onBlur={(e) => {
-                                            formHandler.setFieldValue("save_changes", false);
-                                            formHandler.setFieldValue("reload_deductions", false);
-                                            formHandler.submitForm();
                                         }}
                                     />
 

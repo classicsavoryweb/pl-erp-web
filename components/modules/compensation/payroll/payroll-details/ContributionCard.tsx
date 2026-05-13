@@ -73,11 +73,6 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         value={formHandler.values.employee_sss}
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.employee_sss}
-                        onBlur={() => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled={payrollDetails.status == "final" || formHandler.values.is_manual_statutory_entry == 0}
@@ -87,11 +82,6 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         value={formHandler.values.employer_sss}
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.employer_sss}
-                        onBlur={() => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled={payrollDetails.status == "final" || formHandler.values.is_manual_statutory_entry == 0}
@@ -101,11 +91,6 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         value={formHandler.values.employee_pagibig}
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.employee_pagibig}
-                        onBlur={() => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled={payrollDetails.status == "final" || formHandler.values.is_manual_statutory_entry == 0}
@@ -115,11 +100,6 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         value={formHandler.values.employer_pagibig}
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.employer_pagibig}
-                        onBlur={() => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled={payrollDetails.status == "final" || formHandler.values.is_manual_statutory_entry == 0}
@@ -129,11 +109,6 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         value={formHandler.values.employee_philhealth}
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.employee_philhealth}
-                        onBlur={() => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled={payrollDetails.status == "final" || formHandler.values.is_manual_statutory_entry == 0}
@@ -143,11 +118,6 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         value={formHandler.values.employer_philhealth}
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.employer_philhealth}
-                        onBlur={() => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                     <Textfield
                         disabled={payrollDetails.status == "final" || formHandler.values.is_manual_statutory_entry == 0}
@@ -157,11 +127,6 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
                         value={formHandler.values.withholding_tax}
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.withholding_tax}
-                        onBlur={() => {
-                            formHandler.setFieldValue("save_changes", false);
-                            formHandler.setFieldValue("reload_deductions", false);
-                            formHandler.submitForm();
-                        }}
                     />
                 </Grid>
             </form>
