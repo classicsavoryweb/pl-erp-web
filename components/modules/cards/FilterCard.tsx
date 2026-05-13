@@ -25,6 +25,7 @@ import { toast } from "react-toastify";
 interface FilterInterface {
     hasDateRange?: boolean;
     withStatus?: boolean;
+    withEmployeeStatus?: boolean;
     withHolidayType?: boolean;
     columnSettings?: any;
     filterHandler: any;
@@ -57,6 +58,7 @@ const FilterCard = ({
     columnSettings,
     filterHandler,
     withStatus = false,
+    withEmployeeStatus = false,
     withHolidayType = false,
     withBranch = false,
     withFilterBranch = false,
@@ -107,6 +109,7 @@ const FilterCard = ({
             date_from: '',
             date_to: '',
             status: "",
+            employee_status: "",
             holiday_type: "",
             branch_id: "",
             position_id: "",
@@ -133,6 +136,7 @@ const FilterCard = ({
                     : schema.notRequired()
             ),
             status: Yup.string(),
+            employee_status: Yup.string(),
             holiday_type: Yup.string()
         }),
         onSubmit: (values) => {
@@ -149,6 +153,7 @@ const FilterCard = ({
             date_from: '',
             date_to: '',
             status: "",
+            employee_status: "",
             holiday_type: "",
             branch_id: "",
             position_id: "",
@@ -299,6 +304,25 @@ const FilterCard = ({
                                 value={formHandler.values.status}
                                 onChange={formHandler.handleChange}
                                 options={statusOption}
+                            />
+                        }
+                        { withEmployeeStatus &&
+                            <Dropdown
+                                placeholder="select employee status"
+                                label="Employee Status"
+                                name="employee_status"
+                                value={formHandler.values.employee_status}
+                                onChange={formHandler.handleChange}
+                                options={[
+                                    {
+                                        label: "Active",
+                                        value: "active"
+                                    },
+                                    {
+                                        label: "Inactive",
+                                        value: "inactive"
+                                    }
+                                ]}
                             />
                         }
                         { withHolidayType &&

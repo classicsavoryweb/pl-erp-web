@@ -230,6 +230,7 @@ const PayrollListTableCard = () => {
                 ]}
                 filterHandler={filter}
                 withStatus
+                withEmployeeStatus
                 statusOption={[
                     {
                         label: "Included",
