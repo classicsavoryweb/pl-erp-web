@@ -37,11 +37,6 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     onChange={formHandler.handleChange}
                     value={formHandler.values.regular_days}
                     type="number"
-                    onBlur={(e) => {
-                        formHandler.setFieldValue("save_changes", false);
-                        formHandler.setFieldValue("reload_deductions", false);
-                        formHandler.submitForm();
-                    }}
                 />
                 <Textfield
                     label="Special Leave"
@@ -50,11 +45,6 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     onChange={formHandler.handleChange}
                     value={formHandler.values.special_leave}
                     type="number"
-                    onBlur={(e) => {
-                        formHandler.setFieldValue("save_changes", false);
-                        formHandler.setFieldValue("reload_deductions", false);
-                        formHandler.submitForm();
-                    }}
                 />
                 <Textfield
                     disabled
@@ -83,11 +73,6 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     onChange={formHandler.handleChange}
                     value={formHandler.values.adjustment_amount}
                     error={formHandler.errors.adjustment_amount}
-                    onBlur={(e) => {
-                        formHandler.setFieldValue("save_changes", false);
-                        formHandler.setFieldValue("reload_deductions", false);
-                        formHandler.submitForm();
-                    }}
                 />
                 <Textfield
                     disabled = {payrollDetails.status == "final" || !permissions.includes("perform_compensation_payroll")}
@@ -97,11 +82,6 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                     onChange={formHandler.handleChange}
                     value={formHandler.values.non_taxable_adjustment}
                     error={formHandler.errors.non_taxable_adjustment}
-                    onBlur={(e) => {
-                        formHandler.setFieldValue("save_changes", false);
-                        formHandler.setFieldValue("reload_deductions", false);
-                        formHandler.submitForm();
-                    }}
                 />
             </Grid>
         </Card>

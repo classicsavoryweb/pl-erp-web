@@ -128,6 +128,24 @@ const Page = () => {
         }
     });
 
+    useEffect(() => {
+        const handleKeyDown = (e: any) => {
+            if (e.key === "Tab") {
+                e.preventDefault();
+                formHandler.setFieldValue("save_changes", false);
+                formHandler.setFieldValue("reload_deductions", false);
+                formHandler.submitForm();
+            }
+        };
+
+        window.addEventListener("keydown", handleKeyDown);
+
+        return () => {
+            window.removeEventListener("keydown", handleKeyDown);
+        };
+    }, []);
+
+
     return (
         <>
             <title>{`PR-${payrollId} | Classic Savory ERP`}</title>
