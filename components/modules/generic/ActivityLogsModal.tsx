@@ -1,12 +1,15 @@
 "use client";
 
 import { getSpecificActivityLogs } from "@/api/activity-logs";
+import Card from "@/components/common/Card";
+import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
+import { useState } from "react";
 import { toast } from "react-toastify";
 
 interface ActivityLogsModalInterface {
@@ -23,6 +26,7 @@ const ActivityLogsModal = ({
 }: ActivityLogsModalInterface) => {
     const api = useApiCall();
     const paginator = usePagination(5);
+    const [logData, setLogData] = useState<any>({});
 
     useAsyncEffect(async () => {
         if (modal.isShowing) {
@@ -68,6 +72,15 @@ const ActivityLogsModal = ({
         },
     ];
 
+    const actionSettings = [
+        {
+            label: "View Details",
+            onClick: (data:any) => {
+                setLogData(data);
+            }
+        }
+    ];
+
     return (
         <Modal
             isShowing={modal.isShowing}
@@ -75,6 +88,7 @@ const ActivityLogsModal = ({
             size="lg"
             onClose={() => {
                 modal.onClose();
+                setLogData({});
             }}
         >
             <Table
@@ -82,8 +96,38 @@ const ActivityLogsModal = ({
                 dataSet={api.dataSet}
                 paginator={paginator}
                 loading={api.loading}
+                withActions
+                actions={actionSettings}
                 smallText
             />
+
+            { (logData && logData.properties)&&
+                <div className="mt-2">
+                    <Card>
+                        <p className="font-semibold">Log Details</p>
+                        <Grid cols={2}>
+                            { logData.properties.old &&
+                                <div className="mt-2">
+                                    <p className="font-semibold text-xs">Old:</p>
+                                    {Object.entries(logData.properties.old).map(([key, value]) => (
+                                    <div className="text-[11px]" key={key}>
+                                        <p>{key} : {String(value)}</p>
+                                    </div>))}
+                                </div>
+                            }
+                            { logData.properties.attributes &&
+                                <div className="mt-2">
+                                    <p className="font-semibold text-xs">Changes:</p>
+                                    {Object.entries(logData.properties.attributes).map(([key, value]) => (
+                                    <div className="text-[11px]" key={key}>
+                                        <p>{key} : {String(value)}</p>
+                                    </div>))}
+                                </div>
+                            }
+                        </Grid>
+                    </Card>
+                </div>
+            }
         </Modal>
     );
 };
