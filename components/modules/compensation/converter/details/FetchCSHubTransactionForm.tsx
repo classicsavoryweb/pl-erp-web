@@ -32,14 +32,14 @@ const FetchCSHubTransactionForm = ({
     const trasanctionsFormHandler = useFormik({
         initialValues: {
             type: "",
-            posted_from: moment().subtract(4, "month").format("YYYY-MM-DD"),
-            posted_to: moment().format("YYYY-MM-DD"),
+            approved_from: moment().subtract(4, "month").format("YYYY-MM-DD"),
+            approved_to: moment().format("YYYY-MM-DD"),
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             type: Yup.string().required("Type is required"),
-            posted_from: Yup.string().required("Posted from is required"),
-            posted_to: Yup.string().required("Posted to is required"),
+            approved_from: Yup.string().required("Posted from is required"),
+            approved_to: Yup.string().required("Posted to is required"),
         }),
         onSubmit: (values, {setSubmitting, resetForm}) => {
             setSubmitting(true);
@@ -148,21 +148,21 @@ const FetchCSHubTransactionForm = ({
                 />
                 <Textfield
                     type="date"
-                    label="Posting Date From"
-                    name="posted_from"
+                    label="Approved Date From"
+                    name="approved_from"
                     required
                     onChange={trasanctionsFormHandler.handleChange}
-                    value={trasanctionsFormHandler.values.posted_from}
-                    error={trasanctionsFormHandler.errors.posted_from}
+                    value={trasanctionsFormHandler.values.approved_from}
+                    error={trasanctionsFormHandler.errors.approved_from}
                 />
                 <Textfield
                     type="date"
-                    label="Posting Date To"
-                    name="posted_to"
+                    label="Approved Date To"
+                    name="approved_to"
                     required
                     onChange={trasanctionsFormHandler.handleChange}
-                    value={trasanctionsFormHandler.values.posted_to}
-                    error={trasanctionsFormHandler.errors.posted_to}
+                    value={trasanctionsFormHandler.values.approved_to}
+                    error={trasanctionsFormHandler.errors.approved_to}
                 />
             </Grid>
 
