@@ -90,8 +90,8 @@ const FetchCSHubTransactionForm = ({
             }
         },
         {
-            columnHead: "Posting Date",
-            path: "posting_date",
+            columnHead: "Approved Date",
+            path: "date_approved",
             columnType: COLUMNTYPES.date
         },
         {
