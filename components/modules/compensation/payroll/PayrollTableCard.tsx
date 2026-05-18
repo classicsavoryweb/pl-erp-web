@@ -19,6 +19,7 @@ import BranchDropDown from "../../generic/BranchDropDown";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import Button from "@/components/common/Button"
 import Badge from "@/components/common/Badge";
+import Accordion from "@/components/common/Accordion";
 
 const PayrollTableCard = () => {
     const api = useApiCall();
@@ -148,8 +149,10 @@ const PayrollTableCard = () => {
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -202,8 +205,8 @@ const PayrollTableCard = () => {
                             })}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 label="Search"
                                 onClick={() => {
@@ -212,9 +215,11 @@ const PayrollTableCard = () => {
                                     paginator.setPage(1);
                                     api.triggerReload();
                                 }}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -224,11 +229,13 @@ const PayrollTableCard = () => {
                                     // exportHandler.resetForm();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <Table
                     dataSet={api.dataSet}

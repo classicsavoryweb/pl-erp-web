@@ -36,6 +36,7 @@ import {
 import ViewTimeKeepingModal from "./ViewTimeKeepingModal";
 import ChooseTimeKeepingModal from "./ChooseTimeKeepingModal";
 import FetchOvertimeModal from "./FetchOvertimeModal";
+import Accordion from "@/components/common/Accordion";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -385,8 +386,10 @@ const OvertimeTableCard = ({
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -449,18 +452,20 @@ const OvertimeTableCard = ({
                             options={statusOption}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&
                             <>
                                 { hasExport &&
-                                    <div className="w-[100px]">
+                                    <div>
                                         <Button
                                             label="Export"
                                             type="button"
@@ -473,12 +478,14 @@ const OvertimeTableCard = ({
                                                 exportHandler.submitForm();
                                             }}
                                             variant="success"
+                                            isIcon
+                                            iconType="export"
                                         />    
                                     </div>
                                 }
                             </>
                         }
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -488,11 +495,13 @@ const OvertimeTableCard = ({
                                     formHandler.submitForm();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons

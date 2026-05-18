@@ -397,7 +397,7 @@ const EntriesReviewTableCard = ({
                         />
                     </Grid>
                     <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Search"
                                 onClick={() => {
@@ -406,9 +406,34 @@ const EntriesReviewTableCard = ({
                                     paginator.setPage(1);
                                     api.triggerReload();
                                 }}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
-                        <div className="w-[100px]">
+                        {(exportPermission === "" || permissions.includes(exportPermission)) &&
+                            <>
+                                { hasExport &&
+                                    <div>
+                                        <Button
+                                            label="Export"
+                                            type="button"
+                                            onClick={() => {
+                                                exportHandler.setValues(prev => ({
+                                                    ...prev,
+                                                    ...formHandler.values
+                                                }));
+
+                                                exportHandler.submitForm();
+                                            }}
+                                            variant="success"
+                                            isIcon
+                                            iconType="export"
+                                        />    
+                                    </div>
+                                }
+                            </>
+                        }
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -424,6 +449,8 @@ const EntriesReviewTableCard = ({
                                     api.triggerReload();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                         {canGenerate &&
@@ -448,27 +475,6 @@ const EntriesReviewTableCard = ({
                                     }}
                                 />
                             </div>
-                        }
-                        {(exportPermission === "" || permissions.includes(exportPermission)) &&
-                            <>
-                                { hasExport &&
-                                    <div className="w-[100px]">
-                                        <Button
-                                            label="Export"
-                                            type="button"
-                                            onClick={() => {
-                                                exportHandler.setValues(prev => ({
-                                                    ...prev,
-                                                    ...formHandler.values
-                                                }));
-
-                                                exportHandler.submitForm();
-                                            }}
-                                            variant="success"
-                                        />    
-                                    </div>
-                                }
-                            </>
                         }
                     </div>
                 </form>

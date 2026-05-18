@@ -18,6 +18,7 @@ import Grid from "@/components/common/Grid";
 import Dropdown from "@/components/common/Dropdown";
 import Textfield from "@/components/common/Textfield";
 import Button from "@/components/common/Button";
+import Accordion from "@/components/common/Accordion";
 
 const BDOCashCardTableCard = () => {
     
@@ -168,8 +169,9 @@ const BDOCashCardTableCard = () => {
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -194,8 +196,8 @@ const BDOCashCardTableCard = () => {
                             onChange={formHandler.handleChange}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 label="Search"
                                 onClick={() => {
@@ -204,9 +206,11 @@ const BDOCashCardTableCard = () => {
                                     paginator.setPage(1);
                                     api.triggerReload();
                                 }}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -216,11 +220,13 @@ const BDOCashCardTableCard = () => {
                                     formHandler.resetForm();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <div className="flex justify-end">
                     <div>

@@ -19,6 +19,8 @@ import CutOffDropDown from "../../../generic/CutOffDropDown";
 import Button from "@/components/common/Button";
 import BankAccountTypeDropDown from "../../../generic/BankAccounTypeDropDown";
 import BranchDropDown from "../../../generic/BranchDropDown";
+import Accordion from "@/components/common/Accordion";
+import DropDownButtons from "@/components/common/DropDownButtons";
 
 const PayrollProofListTableCard = () => {
     const api = useApiCall();
@@ -173,10 +175,33 @@ const PayrollProofListTableCard = () => {
         }
     });
 
+    const actionsSettings = [
+        {
+            label: "Generate Converter",
+            onClick: async () => {
+                if (formHandler.values.bank_account_type_id !== "ALL" && Number(formHandler.values.bank_account_type_id) !== 0) {
+                    const isConfirmed = await confirm({
+                        title: "Generate Converter",
+                        message: "Are you sure you want to generate converter?"
+                    });
+
+                    if (isConfirmed) {
+                        formHandler.setFieldValue("action", "generate");
+                        formHandler.submitForm();
+                    }
+                } else {
+                    toast.error("Cannot generate converter");
+                }
+            }
+        }
+    ];
+
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={5}>
                         <BankAccountTypeDropDown
@@ -236,7 +261,7 @@ const PayrollProofListTableCard = () => {
                             onChange={formHandler.handleChange}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
+                    <div className="flex justify-end gap-x-1">
                         <div>
                             <Button
                                 label="Search"
@@ -250,29 +275,8 @@ const PayrollProofListTableCard = () => {
                                     }
                                     api.triggerReload();
                                 }}
-                            />    
-                        </div>
-                        { formHandler.values.bank_account_type_id !== "ALL" && Number(formHandler.values.bank_account_type_id) !== 0 &&
-                            <div>
-                                <Button
-                                    variant="success"
-                                    label="Converter"
-                                    type="button"
-                                    onClick={() => {
-                                        formHandler.setFieldValue("action", "generate");
-                                        formHandler.submitForm();
-                                    }}
-                                />    
-                            </div>
-                        }
-                        <div>
-                            <Button
-                                label="Reset"
-                                type="button"
-                                onClick={() => {
-                                    formHandler.resetForm();
-                                }}
-                                variant="secondary"
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
                         <div>
@@ -284,12 +288,33 @@ const PayrollProofListTableCard = () => {
                                     formHandler.setFieldValue("action", "export");
                                     formHandler.submitForm();
                                 }}
+                                isIcon
+                                iconType="export"
+                            />    
+                        </div>
+                        <div>
+                            <Button
+                                label="Reset"
+                                type="button"
+                                onClick={() => {
+                                    formHandler.resetForm();
+                                }}
+                                variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
+                <div className="flex justify-end">
+                    <div>
+                        <DropDownButtons
+                            actions={actionsSettings}
+                        />
+                    </div>
+                </div>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={

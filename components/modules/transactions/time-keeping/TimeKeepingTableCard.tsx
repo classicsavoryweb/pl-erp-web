@@ -23,6 +23,7 @@ import CutOffDropDown from "../../generic/CutOffDropDown";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import { useModal } from "@/hooks/modal";
 import EditUndertimeModal from "./EditUndertimeModal";
+import Accordion from "@/components/common/Accordion";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -294,8 +295,10 @@ const TimeKeepingTableCard = ({
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -351,8 +354,8 @@ const TimeKeepingTableCard = ({
                         />
 
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 label="Search"
                                 onClick={() => {
@@ -361,34 +364,14 @@ const TimeKeepingTableCard = ({
                                     paginator.setPage(1);
                                     api.triggerReload();
                                 }}
-                            />    
-                        </div>
-                        {/* <div className="w-[100px]">
-                            <Button
-                                label="Generate"
-                                onClick={() => {
-                                    formHandler.setFieldValue("action", "generate");
-                                    formHandler.submitForm();
-                                }}
-                            />    
-                        </div> */}
-                        <div className="w-[100px]">
-                            <Button
-                                label="Reset"
-                                type="button"
-                                onClick={() => {
-                                    api.setDataSet([]);
-                                    formHandler.resetForm();
-                                    exportHandler.resetForm();
-                                    setBranch(null);
-                                }}
-                                variant="secondary"
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&
                             <>
                                 { hasExport &&
-                                    <div className="w-[100px]">
+                                    <div>
                                         <Button
                                             label="Export"
                                             type="button"
@@ -401,14 +384,31 @@ const TimeKeepingTableCard = ({
                                                 exportHandler.submitForm();
                                             }}
                                             variant="success"
+                                            isIcon
+                                            iconType="export"
                                         />    
                                     </div>
                                 }
                             </>
                         }
+                        <div>
+                            <Button
+                                label="Reset"
+                                type="button"
+                                onClick={() => {
+                                    api.setDataSet([]);
+                                    formHandler.resetForm();
+                                    exportHandler.resetForm();
+                                    setBranch(null);
+                                }}
+                                variant="secondary"
+                                isIcon
+                                iconType="reset"
+                            />    
+                        </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <p className=" font-semibold text-red-800 dark:text-red-500">Timekeeping</p>
                 <Table

@@ -29,6 +29,7 @@ import FetchScheduleModal from "./FetchScheduleModal";
 // import ActionDropDown from "@/components/common/ActionDropDown";
 // import TransferTimeKeepingBranchModal from "./TransferTimeKeepingBranchModal";
 import TransferTimeKeepingBranchAllModal from "./TransferTimeKeepingBranchAllModal";
+import Accordion from "@/components/common/Accordion";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -224,8 +225,10 @@ const ScheduleTimeTableCard = ({
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -280,18 +283,20 @@ const ScheduleTimeTableCard = ({
                             })}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&
                             <>
                                 { hasExport &&
-                                    <div className="w-[100px]">
+                                    <div>
                                         <Button
                                             label="Export"
                                             type="button"
@@ -304,12 +309,14 @@ const ScheduleTimeTableCard = ({
                                                 exportHandler.submitForm();
                                             }}
                                             variant="success"
+                                            isIcon
+                                            iconType="export"
                                         />    
                                     </div>
                                 }
                             </>
                         }
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -319,11 +326,13 @@ const ScheduleTimeTableCard = ({
                                     formHandler.submitForm();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons

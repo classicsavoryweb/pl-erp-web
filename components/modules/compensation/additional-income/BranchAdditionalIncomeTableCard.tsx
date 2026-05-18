@@ -20,6 +20,7 @@ import moment from "moment";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import Dropdown from "@/components/common/Dropdown";
 import BranchDropDown from "../../generic/BranchDropDown";
+import Accordion from "@/components/common/Accordion";
 
 const BranchAdditionalIncomeTableCard = () => {
     const api = useApiCall();
@@ -117,8 +118,10 @@ const BranchAdditionalIncomeTableCard = () => {
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <CutOffDropDown
@@ -148,19 +151,23 @@ const BranchAdditionalIncomeTableCard = () => {
                             onChange={formHandler.handleChange}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                                isIcon
+                                iconType="search"
                             />
                         </div>
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Export"
                                 type="button"
                                 variant="success"
+                                isIcon
+                                iconType="export"
                                 onClick={async () => {
                                     const resp = await exportBranchAdditionalIncome({
                                         cutoff_start: formHandler.values.cutoff_start,
@@ -195,7 +202,7 @@ const BranchAdditionalIncomeTableCard = () => {
                                 }}
                             />
                         </div>
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -204,11 +211,13 @@ const BranchAdditionalIncomeTableCard = () => {
                                     formHandler.submitForm();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <div className="flex justify-end">
                     <div>

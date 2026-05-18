@@ -24,6 +24,7 @@ import Button from "@/components/common/Button";
 import ViewThirteenthMonthMonthlyAllocationModal from "./ViewThirteenthMonthMonthlyAllocationModal";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import { AuthContext } from "@/context/AuthProvider";
+import Accordion from "@/components/common/Accordion";
 
 const ThirteenthMonthTableCard = () => {
     const api = useApiCall();
@@ -221,8 +222,9 @@ const ThirteenthMonthTableCard = () => {
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800">Filters</p>
+            <Accordion
+                title="Filters"
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -269,15 +271,17 @@ const ThirteenthMonthTableCard = () => {
                             options={typeOption}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 type="submit"
                                 label="Search"
-                                onClick={() => {}} 
+                                onClick={() => {}}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -286,11 +290,13 @@ const ThirteenthMonthTableCard = () => {
                                     formHandler.submitForm();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons

@@ -30,6 +30,7 @@ import FetchATDCshubModal from "./FetchATDCshubModal";
 import ViewATDModal from "./ViewATDModal";
 import BranchDropDown from "../../generic/BranchDropDown";
 import ATDDeductionDropDown from "../../generic/ATDDeductionDropDown";
+import Accordion from "@/components/common/Accordion";
 
 interface ATDTableInterface {
     hasExport?: boolean;
@@ -249,8 +250,10 @@ const ATDTableCard = ({
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <SearchEmployeeDropDown
@@ -320,18 +323,20 @@ const ATDTableCard = ({
                             onChange={formHandler.handleChange}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
                         {(exportPermission === "" || permissions.includes(exportPermission)) &&
                             <>
                                 { hasExport &&
-                                    <div className="w-[100px]">
+                                    <div>
                                         <Button
                                             label="Export"
                                             type="button"
@@ -343,12 +348,14 @@ const ATDTableCard = ({
                                                 exportHandler.submitForm();
                                             }}
                                             variant="success"
+                                            isIcon
+                                            iconType="export"
                                         />    
                                     </div>
                                 }
                             </>
                         }
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -359,11 +366,13 @@ const ATDTableCard = ({
                                     setEmployee({});
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons

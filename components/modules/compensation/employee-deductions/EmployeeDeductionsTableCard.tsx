@@ -31,6 +31,7 @@ import ImportEmployeeDeductionsModal from "./ImportEmployeeDeductionsModal";
 import ActivityLogsModal from "../../generic/ActivityLogsModal";
 import { formatNumber } from "@/helper/amount";
 import CountLabel from "@/components/common/CountLabel";
+import Accordion from "@/components/common/Accordion";
 
 interface EmployeeDeductionsInterface {
     hasExport?: boolean;
@@ -372,8 +373,10 @@ const EmployeeDeductionsTableCard = ({
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <SearchEmployeeDropDown
@@ -432,7 +435,7 @@ const EmployeeDeductionsTableCard = ({
                         /> 
                     </Grid>
                     <div className="flex flex-wrap items-end justify-between gap-4">
-                        <div className="flex flex-wrap items-end gap-2">
+                        <div className="flex flex-wrap items-end gap-1">
                             <CountLabel
                                 label="Active Deductions"
                                 count={summary.deduction_count}
@@ -442,18 +445,20 @@ const EmployeeDeductionsTableCard = ({
                                 count={summary.total_balance}
                             />
                         </div>
-                        <div className="flex justify-end gap-x-2">
-                            <div className="w-[100px]">
+                        <div className="flex justify-end gap-x-1">
+                            <div>
                                 <Button
                                     type="submit"
                                     label="Search"
                                     onClick={() => {}}
+                                    isIcon
+                                    iconType="search"
                                 />    
                             </div>
                             {(exportPermission === "" || permissions.includes(exportPermission)) &&
                                 <>
                                     { hasExport &&
-                                        <div className="w-[100px]">
+                                        <div>
                                             <Button
                                                 label="Export"
                                                 type="button"
@@ -465,12 +470,14 @@ const EmployeeDeductionsTableCard = ({
                                                     exportHandler.submitForm();
                                                 }}
                                                 variant="success"
+                                                isIcon
+                                                iconType="export"
                                             />    
                                         </div>
                                     }
                                 </>
                             }
-                            <div className="w-[100px]">
+                            <div>
                                 <Button
                                     label="Reset"
                                     type="button"
@@ -481,12 +488,14 @@ const EmployeeDeductionsTableCard = ({
                                         setEmployee({});
                                     }}
                                     variant="secondary"
+                                    isIcon
+                                    iconType="reset"
                                 />    
                             </div>
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons

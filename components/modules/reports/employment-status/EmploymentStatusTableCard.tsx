@@ -16,6 +16,7 @@ import { useModal } from "@/hooks/modal";
 import EmploymentStatusModal from "./EmploymentStatusModal";
 import Link from "next/link";
 import { useEffect } from "react"; 
+import Accordion from "@/components/common/Accordion";
 
 const EmploymentStatusTableCard = () => {
     const [reportData, setReport] = useState<any[]>([]);
@@ -104,8 +105,10 @@ const EmploymentStatusTableCard = () => {
                 modal={printModal}
                 reports={reportData}
             />
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <BranchDropDown
@@ -151,17 +154,20 @@ const EmploymentStatusTableCard = () => {
                             error={formHandler.errors.year}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Print"
+                                variant="success"
                                 type="button"
                                 onClick={() => {
                                     formHandler.validateForm();
@@ -169,9 +175,11 @@ const EmploymentStatusTableCard = () => {
                                         printModal.onOpen();
                                     }
                                 }}
+                                isIcon
+                                iconType="print"
                             />    
                         </div>
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -180,11 +188,13 @@ const EmploymentStatusTableCard = () => {
                                     formHandler.resetForm();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <p className=" font-semibold text-red-800 dark:text-red-500">Employees</p>
                 <Table

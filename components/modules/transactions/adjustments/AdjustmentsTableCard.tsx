@@ -26,6 +26,7 @@ import { approveAdjustments, getAdjustment, getAllAdjustments, unapproveAdjustme
 import CreateAdjustmentsModal from "./CreateAdjustmentsModal";
 import { useState } from "react";
 import ViewAdjustmentModal from "./ViewAdjustmentModal";
+import Accordion from "@/components/common/Accordion";
 
 const AdjustmentsTableCard = () => {
     const api = useApiCall();
@@ -286,8 +287,10 @@ const AdjustmentsTableCard = () => {
 
     return (
         <>
-            <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+            <Accordion
+                title="Filters"
+                isExpanded
+            >
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -338,15 +341,17 @@ const AdjustmentsTableCard = () => {
                             options={statusOption}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
+                    <div className="flex justify-end gap-x-1">
+                        <div>
                             <Button
                                 type="submit"
                                 label="Search"
                                 onClick={() => {}}
+                                isIcon
+                                iconType="search"
                             />    
                         </div>
-                        <div className="w-[100px]">
+                        <div>
                             <Button
                                 label="Reset"
                                 type="button"
@@ -355,11 +360,13 @@ const AdjustmentsTableCard = () => {
                                     formHandler.submitForm();
                                 }}
                                 variant="secondary"
+                                isIcon
+                                iconType="reset"
                             />    
                         </div>
                     </div>
                 </form>
-            </Card>
+            </Accordion>
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
