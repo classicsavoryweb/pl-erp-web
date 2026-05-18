@@ -431,51 +431,60 @@ const FilterCard = ({
                             />
                         }
                     </Grid>
-                    <div className="flex justify-end gap-x-2">
-                        <div className="w-[100px]">
-                            <Button
-                                type="submit"
-                                label="Search"
-                                onClick={() => {}}
-                            />    
-                        </div>
-                        
-                        { (exportPermission === "" || permissions.includes(exportPermission)) &&
-                            <>
-                                { hasExport &&
-                                    <div className="w-[100px]">
-                                        <Button
-                                            label="Export"
-                                            type="button"
-                                            onClick={() => {
-                                                exportHandler.setValues(prev => ({
-                                                    ...prev,
-                                                    ...formHandler.values
-                                                }));
+                    <div className="flex justify-between gap-x-2">
+                        <div></div>
+                        <div className="flex gap-x-1">
+                            <div>
+                                <Button
+                                    type="submit"
+                                    label="Search"
+                                    onClick={() => {}}
+                                    isIcon
+                                    iconType="search"
+                                />    
+                            </div>
+                            
+                            { (exportPermission === "" || permissions.includes(exportPermission)) &&
+                                <>
+                                    { hasExport &&
+                                        <div>
+                                            <Button
+                                                label="Export"
+                                                type="button"
+                                                onClick={() => {
+                                                    exportHandler.setValues(prev => ({
+                                                        ...prev,
+                                                        ...formHandler.values
+                                                    }));
 
-                                                if (!withExportOptions) {
-                                                    exportHandler.submitForm();
-                                                } else {
-                                                    optionModal.onOpen();
-                                                }
-                                            }}
-                                            variant="success"
-                                        />    
-                                    </div>
-                                }
-                            </>
-                        }
-                        <div className="w-[100px]">
-                            <Button
-                                label="Reset"
-                                type="button"
-                                onClick={() => {
-                                    formHandler.resetForm();
-                                    exportHandler.resetForm();
-                                    formHandler.submitForm();
-                                }}
-                                variant="secondary"
-                            />    
+                                                    if (!withExportOptions) {
+                                                        exportHandler.submitForm();
+                                                    } else {
+                                                        optionModal.onOpen();
+                                                    }
+                                                }}
+                                                variant="success"
+                                                isIcon
+                                                iconType="export"
+                                            />    
+                                        </div>
+                                    }
+                                </>
+                            }
+                            <div>
+                                <Button
+                                    label="Reset"
+                                    type="button"
+                                    onClick={() => {
+                                        formHandler.resetForm();
+                                        exportHandler.resetForm();
+                                        formHandler.submitForm();
+                                    }}
+                                    variant="secondary"
+                                    isIcon
+                                    iconType="reset"
+                                />    
+                            </div>
                         </div>
                     </div>
                 </form>
