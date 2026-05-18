@@ -29,6 +29,8 @@ import SearchEmployeeDropDown from "../../generic/SearchEmployeeDropDown";
 import ViewEmployeeDeduction from "./ViewEmployeeDeduction";
 import ImportEmployeeDeductionsModal from "./ImportEmployeeDeductionsModal";
 import ActivityLogsModal from "../../generic/ActivityLogsModal";
+import { formatNumber } from "@/helper/amount";
+import CountLabel from "@/components/common/CountLabel";
 
 interface EmployeeDeductionsInterface {
     hasExport?: boolean;
@@ -430,20 +432,15 @@ const EmployeeDeductionsTableCard = ({
                         /> 
                     </Grid>
                     <div className="flex flex-wrap items-end justify-between gap-4">
-                        <div className="flex flex-wrap items-end gap-2 text-xs text-slate-700 dark:text-slate-200">
-                            <div className="min-w-[120px]">
-                                <p className="text-[10px] font-medium uppercase leading-4 text-slate-500 dark:text-slate-400">Number of Deductions</p>
-                                <p className="text-base font-semibold">{summary.deduction_count.toLocaleString("en-US")}</p>
-                            </div>
-                            <div className="min-w-[96px]">
-                                <p className="text-[10px] font-medium uppercase leading-4 text-slate-500 dark:text-slate-400">Total Balance</p>
-                                <p className="text-base font-semibold">
-                                    {summary.total_balance.toLocaleString("en-US", {
-                                        minimumFractionDigits: 2,
-                                        maximumFractionDigits: 2,
-                                    })}
-                                </p>
-                            </div>
+                        <div className="flex flex-wrap items-end gap-2">
+                            <CountLabel
+                                label="Active Deductions"
+                                count={summary.deduction_count}
+                            />
+                            <CountLabel
+                                label="Remaing Balance"
+                                count={summary.total_balance}
+                            />
                         </div>
                         <div className="flex justify-end gap-x-2">
                             <div className="w-[100px]">

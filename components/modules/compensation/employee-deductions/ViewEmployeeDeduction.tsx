@@ -103,6 +103,14 @@ const ViewEmployeeDeduction = ({
                 value={data.remarks ?? ""}
                 disabled
             />
+            { data.end_loan_status == "Yes" &&
+                <TextArea
+                    label="End Loan Reason"
+                    name="end_loan_reason"
+                    value={data.end_loan_reason ?? ""}
+                    disabled
+                />
+            }
         </Modal>
     );
 };
