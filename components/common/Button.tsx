@@ -15,6 +15,7 @@ interface ButtonInterface {
     variant?: "primary" | "secondary" | "success";
     isIcon?: boolean;
     iconType?: "search" | "export" | "reset" | "print";
+    combineIconWithLabel?: boolean;
 };
 
 const Button = ({
@@ -26,6 +27,7 @@ const Button = ({
     variant = "primary",
     isIcon = false,
     iconType = "search",
+    combineIconWithLabel = false
 }: ButtonInterface) => {
 
     const isDisabled = disabled || loading;
@@ -68,7 +70,7 @@ const Button = ({
                 disabled={loading}
                 onClick={onClick}
             >
-                <div className="flex justify-center items-center">
+                <div className="flex justify-center gap-x-1 items-center">
                     {
                         loading ?
                         <LoadingState/>
@@ -76,6 +78,7 @@ const Button = ({
                         ? label
                         : icon
                     }
+                    { combineIconWithLabel && label }
                 </div>
             </button>
         </div>
