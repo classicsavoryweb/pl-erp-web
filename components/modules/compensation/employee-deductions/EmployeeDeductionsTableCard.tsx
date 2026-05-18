@@ -434,7 +434,7 @@ const EmployeeDeductionsTableCard = ({
                             onChange={formHandler.handleChange}
                         /> 
                     </Grid>
-                    <div className="flex flex-wrap items-end justify-between gap-4">
+                    <div className="flex flex-wrap items-center justify-between gap-4">
                         <div className="flex flex-wrap items-end gap-1">
                             <CountLabel
                                 label="Active Deductions"
