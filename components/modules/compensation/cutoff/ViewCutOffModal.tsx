@@ -1,3 +1,5 @@
+"use client";
+
 import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
@@ -5,12 +7,19 @@ import Timeline from "../../generic/Timeline";
 import moment from "moment";
 import Button from "@/components/common/Button";
 import confirm from "@/components/common/Confirm";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { finalizeCutOff, initializeCutOff, reComputeIncentives } from "@/api/compensation/cut-off";
 import { toast } from "react-toastify";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { useModal } from "@/hooks/modal";
 import GeneratePayrollModal from "./GeneratePayrollModal";
+import { AuthContext } from "@/context/AuthProvider";
+
+type ActionType = {
+    label: string;
+    onClick: () => void;
+    disabled?: boolean;
+};
 
 interface ModalInterface {
     modal: any;
@@ -23,6 +32,7 @@ const ViewCutOffModal = ({
 }: ModalInterface) => {
     const [value, setValue] = useState<any>({});
     const generatePayrollModal = useModal();
+    const { permissions } = useContext(AuthContext);
 
     useEffect(() => {
         if (modal.isShowing) {
@@ -31,7 +41,7 @@ const ViewCutOffModal = ({
     }, [modal.isShowing]);
 
     const actions = [
-        {
+        permissions.includes("initialize_compensation_cutoff_setup") && {
             label: "Initialize",
             onClick: async () => {
                 const isConfirmed = await confirm({
@@ -53,13 +63,13 @@ const ViewCutOffModal = ({
                 });
             }
         },
-        {
+        permissions.includes("generate_payroll_compensation_cutoff_setup") && {
             label: "Generate Payroll",
             onClick: () => {
                 generatePayrollModal.onOpen();      
             }
         },
-        {
+        permissions.includes("recompute_incentives_compensation_cutoff_setup") && {
             label: "Compute Incentives",
             onClick: async () => {
                 const isConfirmed = await confirm({
@@ -81,7 +91,7 @@ const ViewCutOffModal = ({
                 });
             }
         },
-        {
+        permissions.includes("finalize_compensation_cutoff_setup") && {
             label: "Finalize Cutoff",
             onClick: async () => {
                 const isConfirmed = await confirm({
@@ -103,7 +113,7 @@ const ViewCutOffModal = ({
                 });             
             }
         },
-    ];
+    ].filter((action): action is ActionType => Boolean(action));
 
     const filteredActions =
         data.part == 1

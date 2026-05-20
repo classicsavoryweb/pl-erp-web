@@ -180,15 +180,8 @@ const PayrollProofListTableCard = () => {
             label: "Generate Converter",
             onClick: async () => {
                 if (formHandler.values.bank_account_type_id !== "ALL" && Number(formHandler.values.bank_account_type_id) !== 0) {
-                    const isConfirmed = await confirm({
-                        title: "Generate Converter",
-                        message: "Are you sure you want to generate converter?"
-                    });
-
-                    if (isConfirmed) {
-                        formHandler.setFieldValue("action", "generate");
-                        formHandler.submitForm();
-                    }
+                    formHandler.setFieldValue("action", "generate");
+                    formHandler.submitForm();
                 } else {
                     toast.error("Cannot generate converter");
                 }
