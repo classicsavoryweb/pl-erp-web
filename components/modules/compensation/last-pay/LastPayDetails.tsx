@@ -1,6 +1,6 @@
 "use client";
 
-import { getInitialLastPay, removeLastPayDeduction } from "@/api/compensation/last-pay";
+import { getInitialLastPay, reloadLastPayDeductions, removeLastPayDeduction } from "@/api/compensation/last-pay";
 import Button from "@/components/common/Button";
 import Grid from "@/components/common/Grid";
 import LoadingState from "@/components/common/LoadingState";
@@ -17,6 +17,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import Checkbox from "@/components/common/Checkbox";
 
 interface LastPayInterface {
+    lastPayId?: string;
     employeeNumber: string;
     disabled?: boolean;
     formHandler: any;
@@ -24,6 +25,7 @@ interface LastPayInterface {
 };
 
 const LastPayDetails = ({
+    lastPayId,
     employeeNumber,
     disabled,
     formHandler,
@@ -33,6 +35,7 @@ const LastPayDetails = ({
     const api = useApiCall();
     const editModal = useModal();
     const [data, setData] = useState<any>({});
+    const [reloadingDeductions, setReloadingDeductions] = useState(false);
 
     const getDeductionValue = (deduction: any) => {
         if (deduction?.deduction?.description === "SSS Loans") {
@@ -54,6 +57,61 @@ const LastPayDetails = ({
             reference_doc: deduction?.reference_doc,
             amount: Number(deduction?.balance ?? deduction?.amount ?? 0)
         }));
+    };
+
+    const applyLastPayDetails = (details: any) => {
+        api.setData(details);
+        const initialCompanyDeductions = details.company_deductions ?? [];
+        const initialGovDeductions = details.government_deductions ?? [];
+        const initialSssCompany = initialCompanyDeductions.filter(
+            (deduction: any) => deduction?.deduction?.description === "SSS Loans"
+        );
+        const initialSssGov = initialGovDeductions.filter(
+            (deduction: any) => deduction?.deduction?.description === "SSS Loans"
+        );
+        const sssDetailsSource = initialSssCompany.length ? initialSssCompany : initialSssGov;
+
+        formHandler.setValues({
+            incentives : details.incentives,
+            meal_allowance : details.meal_allowance,
+            payroll_hold : details.payroll_hold,
+            sales : details.sales,
+            sl_vl : details.sl_vl,
+            tax_refund : details.tax_refund,
+            thirteenth_month : details.thirteenth_month,
+            total_deductions : details.total_deductions,
+            last_pay : details.last_pay,
+            year : details.year,
+            sss_loans: details.sss_loans ?? "No",
+            sss_loans_details: buildSssDetails(sssDetailsSource),
+        });
+    };
+
+    const handleReloadDeductions = async () => {
+        if (!lastPayId) return;
+
+        const isConfirmed = await confirm({
+            title: "Reload Deductions",
+            message: "Reload deductions for this unposted last pay?"
+        });
+
+        if (!isConfirmed) return;
+
+        setReloadingDeductions(true);
+        try {
+            const resp = await reloadLastPayDeductions(lastPayId);
+
+            if (!resp.error) {
+                applyLastPayDetails(resp.data);
+                toast.success("Deductions reloaded successfully");
+            } else {
+                toast.error(resp.data.message);
+            }
+        } catch {
+            toast.error("Error encountered");
+        } finally {
+            setReloadingDeductions(false);
+        }
     };
 
     const computeTotals = () => {
@@ -105,31 +163,7 @@ const LastPayDetails = ({
         getInitialLastPay(employeeNumber)
         .then((resp) => {
             if (!resp.error) {
-                api.setData(resp.data);
-                const initialCompanyDeductions = resp.data.company_deductions ?? [];
-                const initialGovDeductions = resp.data.government_deductions ?? [];
-                const initialSssCompany = initialCompanyDeductions.filter(
-                    (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-                );
-                const initialSssGov = initialGovDeductions.filter(
-                    (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-                );
-                const sssDetailsSource = initialSssCompany.length ? initialSssCompany : initialSssGov;
-
-                formHandler.setValues({
-                    incentives : resp.data.incentives,
-                    meal_allowance : resp.data.meal_allowance,
-                    payroll_hold : resp.data.payroll_hold,
-                    sales : resp.data.sales,
-                    sl_vl : resp.data.sl_vl,
-                    tax_refund : resp.data.tax_refund,
-                    thirteenth_month : resp.data.thirteenth_month,
-                    total_deductions : resp.data.total_deductions,
-                    last_pay : resp.data.last_pay,
-                    year : resp.data.year,
-                    sss_loans: resp.data.sss_loans ?? "No",
-                    sss_loans_details: buildSssDetails(sssDetailsSource),
-                });
+                applyLastPayDetails(resp.data);
             } else {
                 toast.error("Fetching initial last pay error");
             }
@@ -468,7 +502,20 @@ const LastPayDetails = ({
                     />
                 </Grid>
 
-                <p className="mt-3">Company Deductions</p>
+                <div className="mt-3 flex items-center justify-between gap-3">
+                    <p>Company Deductions</p>
+                    {!disabled && lastPayId &&
+                        <div className="w-[170px]">
+                            <Button
+                                type="button"
+                                label="Reload Deductions"
+                                variant="secondary"
+                                loading={reloadingDeductions}
+                                onClick={handleReloadDeductions}
+                            />
+                        </div>
+                    }
+                </div>
                 <Table
                     dataSet={companyDeductionsForDisplay}
                     columnSettings={deductionColumnSettings}

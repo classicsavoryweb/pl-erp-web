@@ -116,6 +116,11 @@ const PostLastPayPreviewModal = ({
             return;
         }
 
+        if (toAmount(preview?.totals?.computed_last_pay) < 0) {
+            toast.error("Last pay is negative cannot be posted");
+            return;
+        }
+
         setPosting(true);
         postLastPay(data.id)
             .then((resp) => {
@@ -228,7 +233,7 @@ const PostLastPayPreviewModal = ({
                 <div className="w-[160px]">
                     <Button
                         label="Post Last Pay"
-                        variant="success"
+                        variant="primary"
                         onClick={handlePost}
                         loading={posting}
                         disabled={!preview || loading || error}

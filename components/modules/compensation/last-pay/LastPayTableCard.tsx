@@ -9,12 +9,13 @@ import { toast } from "react-toastify";
 import Badge from "@/components/common/Badge";
 import { useFilter } from "@/hooks/use-filter";
 import FilterCard from "../../cards/FilterCard";
-import { getAllLastPays } from "@/api/compensation/last-pay";
+import { exportAllLastPays, getAllLastPays } from "@/api/compensation/last-pay";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { useModal } from "@/hooks/modal";
 import CreateLastPayModal from "./CreateLastPayModal";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import { useState } from "react";
+import moment from "moment";
 import ViewLastPayModal from "./ViewLastPayModal";
 import EditLastPayModal from "./EditLastPayModal";
 import LastPayComputationEditModal from "./LastPayComputationEditModal";
@@ -87,6 +88,11 @@ const LastPayTableCard = () => {
             columnHead: "Branch",
             path: "employee.current_branch.short_name",
             columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Last Pay",
+            path: "last_pay",
+            columnType: COLUMNTYPES.amount,
         },
         {
             columnHead: "Status",
@@ -211,6 +217,9 @@ const LastPayTableCard = () => {
                     },
                 ]}
                 defaultColumnSelected="employee.full_name"
+                hasExport
+                api={exportAllLastPays}
+                exportFileName={`LAST-PAY-${moment().format("YYYY-MM-DD")}.xls`}
                 withBranch
                 withStatus
                 statusOption={[
