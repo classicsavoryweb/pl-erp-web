@@ -12,7 +12,8 @@ interface SelectInterface {
     error?: string;
     value?: string;
     required?: boolean;
-    disabled?: boolean; 
+    disabled?: boolean;
+    withAllOption?: boolean;
 }
 
 const ActiveInactiveDropDown = ({
@@ -24,7 +25,7 @@ const ActiveInactiveDropDown = ({
     value,
     required = false,
     disabled = false, 
-    
+    withAllOption = false,
 }: SelectInterface) => {
 
     return (
@@ -35,18 +36,37 @@ const ActiveInactiveDropDown = ({
             onChange={onChange}
             error={error}
             value={value}
-            options={[
-                {
-                    label: "Active",
-                    value: "active"
-                },
-                {
-                    label: "Inactive",
-                    value: "inactive"
-                }
-            ]}
+            options={
+                withAllOption
+                ?
+                [
+                    {
+                        label: "All",
+                        value: "all"
+                    },
+                    {
+                        label: "Active",
+                        value: "active"
+                    },
+                    {
+                        label: "Inactive",
+                        value: "inactive"
+                    }
+                ]
+                :
+                [
+                    {
+                        label: "Active",
+                        value: "active"
+                    },
+                    {
+                        label: "Inactive",
+                        value: "inactive"
+                    }
+                ]
+            }
             required={required}
-            disabled={disabled} 
+            disabled={disabled}
         />
     );
 };

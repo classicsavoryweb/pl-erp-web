@@ -59,19 +59,27 @@ export const reportRoutes: Route[] = [
                 ]
             },
             {
-                name: "BDO Cash Card",
-                pathname: "/reports/bdo-cash-card",
-                permission: "view_reports_bdo_cash_card",
-            },
-            {
-                name: "13th Month Pay",
-                pathname: "/reports/13th-month-pay",
-                permission: "view_reports_13th_month_pay",
-            },
-            {
                 name: "Pay Slip",
                 pathname: "/reports/pay-slip",
                 permission: "view_reports_pay_slip",
+            },
+            {
+                name: "Employees",
+                pathname: "/reports/employees",
+                permission: "",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "BDO Cash Card",
+                        pathname: "/reports/employees/bdo-cash-card",
+                        permission: "view_reports_bdo_cash_card",
+                    },
+                    {
+                        name: "Bank Account History",
+                        pathname: "/reports/employees/bank-account-history",
+                        permission: "perform_reports_bank_account_history"
+                    }
+                ]
             },
             {
                 name: "Timekeeping",
@@ -101,6 +109,11 @@ export const reportRoutes: Route[] = [
                         name: "Deductions",
                         pathname: "/reports/payroll/deductions",
                         permission: "view_reports_deductions"
+                    },
+                    {
+                        name: "13th Month Pay",
+                        pathname: "/reports/payroll/13th-month-pay",
+                        permission: "view_reports_13th_month_pay",
                     },
                 ]
             },
