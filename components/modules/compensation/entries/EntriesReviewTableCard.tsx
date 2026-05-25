@@ -25,6 +25,7 @@ import { useBranchStore } from "@/stores/useBranchStore";
 import { getActiveCutOff } from "@/api/compensation/cut-off";
 import { useModal } from "@/hooks/modal";
 import DateRangeConfirmModal from "./DateRangeConfirmModal";
+import DropDownButtons from "@/components/common/DropDownButtons";
 interface FilterInterface {
     hasExport?: boolean;
     exportPermission?: string;
@@ -333,6 +334,21 @@ const EntriesReviewTableCard = ({
         }
     });
 
+    const actionSettings = [
+        {
+            label: "Generate",
+            onClick: () => {
+                generateModal.onOpen();
+            }
+        },
+        {
+            label: "Send to APSYS",
+            onClick: () => {
+                sendToApsysModal.onOpen();
+            }
+        },
+    ];
+
     return (
         <>
             <Card>
@@ -453,34 +469,18 @@ const EntriesReviewTableCard = ({
                                 iconType="reset"
                             />    
                         </div>
-                        {canGenerate &&
-                            <div className="w-[120px]">
-                                <Button
-                                    label="Generate"
-                                    type="button"
-                                    onClick={() => {
-                                        generateModal.onOpen();
-                                    }}
-                                />
-                            </div>
-                        }
-                        {canGenerate &&
-                            <div className="w-[140px]">
-                                <Button
-                                    label="Send to APSYS"
-                                    type="button"
-                                    variant="success"
-                                    onClick={() => {
-                                        sendToApsysModal.onOpen();
-                                    }}
-                                />
-                            </div>
-                        }
                     </div>
                 </form>
             </Card>
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">{title}</p>
+                <div className="flex items-center justify-between gap-x-3">
+                    <p className="font-semibold text-red-800 dark:text-red-500">{title}</p>
+                    {canGenerate &&
+                        <DropDownButtons
+                            actions={actionSettings}
+                        />
+                    }
+                </div>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}

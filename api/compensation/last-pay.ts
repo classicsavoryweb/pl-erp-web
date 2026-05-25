@@ -10,6 +10,20 @@ export const getAllLastPays = async (payload: {}) => {
     return resData;
 }
 
+export const exportAllLastPays = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-all-last-pay',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+    });
+
+    return resData;
+}
+
 export const getAllHoldedEmployees = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-all-holded-employees',
@@ -44,6 +58,15 @@ export const editLastPayRecord = async (payload: {}, lastPayId: string) => {
         func_path: `/edit-last-pay/${lastPayId}`,
         method: 'POST',
         payload: payload
+    });
+
+    return resData;
+}
+
+export const reloadLastPayDeductions = async (lastPayId: string) => {
+    const resData = await axiosHelper({
+        func_path: `/reload-last-pay-deductions/${lastPayId}`,
+        method: 'POST',
     });
 
     return resData;

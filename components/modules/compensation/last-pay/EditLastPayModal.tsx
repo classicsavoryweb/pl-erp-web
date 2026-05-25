@@ -105,6 +105,7 @@ const EditLastPayModal = ({
             />
 
             <LastPayDetails
+                lastPayId={data.id}
                 employeeNumber={data.employee?.employee_number}
                 formHandler={formHandler}
                 isOpen={modal.isShowing}
