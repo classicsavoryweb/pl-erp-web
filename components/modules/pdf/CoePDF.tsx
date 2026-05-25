@@ -178,8 +178,8 @@ const CoePDF = ({
                 }
 
                 <View style={styles.signature}>
-                    <Text style={styles.bold}>{process.env.NEXT_PUBLIC_HR_SIGNATORY}</Text>
-                    <Text>{process.env.NEXT_PUBLIC_HR_SIGNATORY_POSITION}</Text>
+                    <Text style={styles.bold}>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY}</Text>
+                    <Text>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY_POSITION}</Text>
                 </View>
             </Page>
         </Document>
