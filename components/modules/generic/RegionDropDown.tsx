@@ -38,7 +38,8 @@ const RegionDropDown = ({
     }, []);
 
     const regionOptions = useMemo(() => {
-        const options = regions
+        const regionList = Array.isArray(regions) ? regions : [];
+        const options = regionList
             .map((region: RegionOption) => {
                 const name = region.name?.trim();
                 const description = region.description?.trim();
