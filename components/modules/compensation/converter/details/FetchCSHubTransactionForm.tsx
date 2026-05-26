@@ -247,6 +247,8 @@ const FetchCSHubTransactionForm = ({
                                             }
                                         }).catch(() => {
                                             toast.error("Error encountered");
+                                        }).finally(() => {
+                                            setLoading(false);
                                         });
                                     }
                                 }}
