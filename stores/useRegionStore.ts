@@ -11,20 +11,24 @@ export const useRegionStore = create<RegionStore>()((set, get) => ({
     regions: [],
     loading: false,
     getRegions: async () => {
-        try {
-            set({
-                loading: true,
-            });
-            const resp = await getRegions();
-            set({
-                regions: resp.data.regions,
-                loading: false,
-            });
-        } catch {
-            set({
-                regions: [],
-                loading: false,
-            });
+        if (get().regions.length === 0) {
+            try {
+                set({
+                    loading: true,
+                });
+                const resp = await getRegions();
+                const regions = resp?.data?.regions;
+
+                set({
+                    regions: Array.isArray(regions) ? regions : [],
+                    loading: false,
+                });
+            } catch {
+                set({
+                    regions: [],
+                    loading: false,
+                });
+            }
         }
     },
 }));
