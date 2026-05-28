@@ -99,6 +99,11 @@ const BranchesTableCard = () => {
             columnType: COLUMNTYPES.string,
         },
         {
+            columnHead: "Rate Code",
+            path: "rate_code",
+            columnType: COLUMNTYPES.string,
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status,
@@ -209,6 +214,7 @@ const BranchesTableCard = () => {
                 filterHandler={filter}
                 hasDateRange
                 withStatus
+                withRateCode
                 dateLabel="Date Opened"
                 hasExport
                 api={exportAllBranches}
