@@ -21,6 +21,7 @@ import moment from "moment";
 import FilterBranchDropDown from "../generic/FilterBranchDropDown";
 import AgencyDropDown from "../generic/AgencyDropDown";
 import { toast } from "react-toastify";
+import RateCodeDropDown from "../generic/RateCodeDropDown";
 
 interface FilterInterface {
     hasDateRange?: boolean;
@@ -34,6 +35,7 @@ interface FilterInterface {
     withPosition?: boolean;
     withEmploymentStatus?: boolean;
     withEmployeeType?: boolean;
+    withRateCode?: boolean;
     isExpanded?: boolean,
     defaultColumnSelected?: string;
     dateLabel?: string;
@@ -65,6 +67,7 @@ const FilterCard = ({
     withPosition = false,
     withEmploymentStatus = false,
     withEmployeeType = false,
+    withRateCode = false,
     defaultColumnSelected = "",
     dateLabel = "Date",
     hasExport = false,
@@ -116,6 +119,7 @@ const FilterCard = ({
             employee_status_id: "",
             type: "",
             agency_id: "",
+            rate_code: "",
             year: moment().year(),
             month: "",
             sortColumn: "",
@@ -160,6 +164,7 @@ const FilterCard = ({
             employee_status_id: "",
             type: "",
             agency_id: "",
+            rate_code: "",
             sortColumn: "",
             sort: "",
             fields: [],
@@ -304,6 +309,15 @@ const FilterCard = ({
                                 value={formHandler.values.status}
                                 onChange={formHandler.handleChange}
                                 options={statusOption}
+                            />
+                        }
+                        { withRateCode &&
+                            <RateCodeDropDown
+                                placeholder="select rate code"
+                                label="Rate Code"
+                                name="rate_code"
+                                value={formHandler.values.rate_code}
+                                onChange={formHandler.handleChange}
                             />
                         }
                         { withEmployeeStatus &&
