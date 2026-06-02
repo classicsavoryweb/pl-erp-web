@@ -224,7 +224,8 @@ const FetchCSHubTransactionForm = ({
                                                     for_liquidation: trans.healthcare_transaction_type.for_liquidation ?? null,
                                                     transaction_number: trans.trans_no,
                                                     type: trasanctionsFormHandler.values.type,
-                                                    exam_type: trans?.health_loan_exam_type?.description ?? null
+                                                    exam_type: trans?.health_loan_exam_type?.description ?? null,
+                                                    is_liquidated: trans.is_liquidated ?? null
                                                 });
                                             }
                                         });
