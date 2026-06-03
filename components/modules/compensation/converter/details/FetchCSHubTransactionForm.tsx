@@ -239,6 +239,7 @@ const FetchCSHubTransactionForm = ({
                                                 if (transactionDataset.length == selectedTransactions.length) {
                                                     modal.onClose();
                                                     setDataset([]);
+                                                    setReset(prev => !prev);
                                                     trasanctionsFormHandler.resetForm();
                                                 }
 

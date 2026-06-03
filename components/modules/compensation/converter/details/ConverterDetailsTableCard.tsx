@@ -240,7 +240,10 @@ const ConverterDetailsTableCard = () => {
             />
             <FetchCSHubTransactionForm
                 modal={fetchModal}
-                onSubmitCallback={api.triggerReload}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    fetchModal.onClose();
+                }}   
             />
             <ImportConverterTransactionForm
                 modal={importModal}
