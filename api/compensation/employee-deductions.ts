@@ -129,3 +129,23 @@ export const getATDAllowedDeductions = async () => {
 
     return resData;
 };
+
+export const getAllHealthcareForSalaryDeduction = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-all-healthcare-for-salary-deductions',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const createHealthCareForSalaryDeduction = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/create-healthcare-for-salary-deductions`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};

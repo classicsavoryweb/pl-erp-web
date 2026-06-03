@@ -32,6 +32,7 @@ import ActivityLogsModal from "../../generic/ActivityLogsModal";
 import { formatNumber } from "@/helper/amount";
 import CountLabel from "@/components/common/CountLabel";
 import Accordion from "@/components/common/Accordion";
+import FetchSalaryDeductionForm from "./FetchSalaryDeductionForm";
 
 interface EmployeeDeductionsInterface {
     hasExport?: boolean;
@@ -51,6 +52,7 @@ const EmployeeDeductionsTableCard = ({
     const viewModal = useModal();
     const editLoanModal = useModal();
     const importModal = useModal();
+    const salaryDeductionModal = useModal();
     const activityLogsModal = useModal();
     const [data, setData] = useState<any>({});
     const [employee, setEmployee] = useState<any>({});
@@ -254,6 +256,12 @@ const EmployeeDeductionsTableCard = ({
     ];
 
     const actionSettings = [
+        {
+            label: "Fetch For Salary Deduction",
+            onClick: () => {
+                salaryDeductionModal.onOpen();
+            }
+        },
         {
             label: "Create new deduction",
             onClick: () => {
@@ -542,6 +550,14 @@ const EmployeeDeductionsTableCard = ({
                 modal={activityLogsModal}
                 data={data}
                 logName="Employee Deductions"
+            />
+
+            <FetchSalaryDeductionForm
+                modal={salaryDeductionModal}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    salaryDeductionModal.onClose();
+                }}
             />
         </>
     );
