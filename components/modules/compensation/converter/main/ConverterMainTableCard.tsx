@@ -273,7 +273,10 @@ const ConverterMainTableCard = () => {
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
+                    }).finally(() => {
+                        api.triggerReload();
                     });
+
                 }
             }
         },
