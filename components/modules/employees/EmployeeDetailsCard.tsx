@@ -253,14 +253,14 @@ const EmployeeDetailsCard = () => {
                         detail={employee.current_branch?.group_head}
                     />
                 </Card>
-                { (employee.education && ( employee.education.college || employee.education.highschool)) &&
+                
                     <>
                         <div className="py-[2px]"/>
                         <Card
                             loading={loading}
                         >
                             <p className="font-semibold text-red-800 dark:text-red-500">Education</p>
-                            { employee.education && employee.education?.college &&
+                            
                                 <>
                                     <EmployeeBasicInfo
                                         label="College"
@@ -276,11 +276,10 @@ const EmployeeDetailsCard = () => {
                                     />
                                     <EmployeeBasicInfo
                                         label="Duration"
-                                        detail={`${employee.education?.college_date_started} - ${employee.education?.college_date_graduated}`}
+                                        detail={employee.education?.college_date_started && employee.education?.college_date_graduated}
                                     />
                                 </>
-                            }
-                            { employee.education && employee.education?.highschool &&
+
                                 <>
                                     { employee.education?.college &&
                                         <div className="py-3">
@@ -298,13 +297,15 @@ const EmployeeDetailsCard = () => {
                                     />
                                     <EmployeeBasicInfo
                                         label="Duration"
-                                        detail={`${employee.education?.highschool_date_started} - ${employee.education?.highschool_date_graduated}`}
+                                        detail={employee.education?.highschool_date_started && employee.education?.highschool.date_graduated}
+                                       
+                                        
                                     />
                                 </>
-                            }
+                            
                         </Card>
                     </>
-                }
+                
                 { employee.dependents && employee.dependents.length > 0 &&
                     <>
                         <div className="py-[2px]"/>
