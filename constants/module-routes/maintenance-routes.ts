@@ -270,6 +270,24 @@ export const maintenanceRoutes: Route[] = [
                     },
                 ]
             },
+            {
+                name: "Uniform",
+                pathname: "/maintenance/uniform",
+                permission: "",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "Suppliers",
+                        pathname: "/maintenance/uniform/suppliers",
+                        permission: "view_maintenance_suppliers",
+                    },
+                    {
+                        name: "Sizes",
+                        pathname: "/maintenance/uniform/suppliers",
+                        permission: "view_maintenance_sizes",
+                    },
+                ]
+            },
         ]
     }
 ];
