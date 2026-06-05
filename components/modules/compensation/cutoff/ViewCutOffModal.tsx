@@ -8,12 +8,13 @@ import moment from "moment";
 import Button from "@/components/common/Button";
 import confirm from "@/components/common/Confirm";
 import { useContext, useEffect, useState } from "react";
-import { finalizeCutOff, initializeCutOff, reComputeIncentives } from "@/api/compensation/cut-off";
+import { finalizeCutOff, reComputeIncentives } from "@/api/compensation/cut-off";
 import { toast } from "react-toastify";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import { useModal } from "@/hooks/modal";
 import GeneratePayrollModal from "./GeneratePayrollModal";
 import { AuthContext } from "@/context/AuthProvider";
+import InitializePayrollModal from "./InitializePayrollModal";
 
 type ActionType = {
     label: string;
@@ -32,6 +33,7 @@ const ViewCutOffModal = ({
 }: ModalInterface) => {
     const [value, setValue] = useState<any>({});
     const generatePayrollModal = useModal();
+    const initializePayrollModal = useModal();
     const { permissions } = useContext(AuthContext);
 
     useEffect(() => {
@@ -43,24 +45,8 @@ const ViewCutOffModal = ({
     const actions = [
         permissions.includes("initialize_compensation_cutoff_setup") && {
             label: "Initialize",
-            onClick: async () => {
-                const isConfirmed = await confirm({
-                    title: "Initialize Cutoff",
-                    message: "Are you sure you want to initialize cutoff"
-                });
-
-                isConfirmed &&
-                initializeCutOff(value.id)
-                .then((resp) => {
-                    if (!resp.error) {
-                        setValue(resp.data.cut_off);
-                        toast.success(resp.data.message);
-                    } else {
-                        toast.error(resp.data.message);
-                    }
-                }).catch(() => {
-                    toast.error("Error encountered");
-                });
+            onClick: () => {
+                initializePayrollModal.onOpen();
             }
         },
         permissions.includes("generate_payroll_compensation_cutoff_setup") && {
@@ -203,6 +189,9 @@ const ViewCutOffModal = ({
         </Modal>
         <GeneratePayrollModal
             modal={generatePayrollModal}
+        />
+        <InitializePayrollModal
+            modal={initializePayrollModal}
         />
         </>
     );
