@@ -283,7 +283,7 @@ export const maintenanceRoutes: Route[] = [
                     },
                     {
                         name: "Sizes",
-                        pathname: "/maintenance/uniform/suppliers",
+                        pathname: "/maintenance/uniform/sizes",
                         permission: "view_maintenance_sizes",
                     },
                 ]
