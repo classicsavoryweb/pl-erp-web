@@ -58,6 +58,7 @@ const Page = () => {
             is_hold: payrollDetails.details.is_hold,
             save_changes: false,
             reload_deductions: false,
+            modify_deductions: formHandler.values.modify_deductions,
         });
     }, [payrollDetails]);
 
@@ -93,6 +94,7 @@ const Page = () => {
             remarks: payrollDetails.remarks,
             save_changes: false,
             reload_deductions: false,
+            modify_deductions: false,
         },
         validateOnChange: false,
         onSubmit: async (values) => {

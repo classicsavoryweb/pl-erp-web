@@ -56,6 +56,7 @@ const PayrollDeductionTableCard = ({ formHandler } : {formHandler : any}) => {
                 formHandler.setFieldValue("deductions", newDeductionArray);
                 formHandler.setFieldValue("save_changes", false);
                 formHandler.setFieldValue("reload_deductions", false);
+                formHandler.setFieldValue("modify_deductions", true);
                 formHandler.submitForm();
             }
         }
@@ -75,6 +76,7 @@ const PayrollDeductionTableCard = ({ formHandler } : {formHandler : any}) => {
                             onClick={() => {
                                 formHandler.setFieldValue("save_changes", false);
                                 formHandler.setFieldValue("reload_deductions", true);
+                                formHandler.setFieldValue("modify_deductions", true);
                                 formHandler.submitForm();
                             }}
                         >
