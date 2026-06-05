@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../../generic/ActiveInactiveDropDown";
 import TextArea from "@/components/common/TextArea";
-import { createUniform } from "@/api/maintenance/uniform";
+import { createUniformSizes } from "@/api/maintenance/uniform-sizes";
 import confirm from "@/components/common/Confirm";
 
 interface FormModalInterface {
@@ -15,7 +15,7 @@ interface FormModalInterface {
     onSubmitCallback: () => void;
 };
 
-const CreateUniformForm = ({
+const CreateUniformSizesForm = ({
     modal,
     onSubmitCallback
 }: FormModalInterface) => {
@@ -38,9 +38,10 @@ const CreateUniformForm = ({
             });
 
             if (isConfirmed) {
-                setSubmitting(true);
-                createUniform(values)
-                .then((resp) => {
+                try {
+                    setSubmitting(true);
+                    const resp = await createUniformSizes(values);
+
                     if(!resp.error) {
                         toast.success("Training title created successfully");
                         onSubmitCallback();
@@ -49,11 +50,11 @@ const CreateUniformForm = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch (err) {
                     toast.error("Error encountered");
-                }).finally((() => {
+                } finally {
                     setSubmitting(false);
-                }));
+                };
             }
         }
     });
@@ -79,9 +80,7 @@ const CreateUniformForm = ({
                     required
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.description}
-                />
-               
-            
+                />                           
                 <ActiveInactiveDropDown
                     label="Status"
                     placeholder="select status"
@@ -91,7 +90,6 @@ const CreateUniformForm = ({
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.status}
                 />
-
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">
@@ -103,7 +101,6 @@ const CreateUniformForm = ({
                                 createFormHandler.resetForm();
                             }}
                         />
-
                         <Button
                             type="submit"
                             label="Submit"
@@ -117,4 +114,4 @@ const CreateUniformForm = ({
     );
 };
 
-export default CreateUniformForm;
+export default CreateUniformSizesForm;

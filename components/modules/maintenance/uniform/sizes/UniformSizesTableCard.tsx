@@ -12,9 +12,9 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import Badge from "@/components/common/Badge";
-import { getUniform } from "@/api/maintenance/uniform";
-import CreateUniformForm from "./CreateUniformSizeForm";
-import EditUniformForm from "./EditUnifromSizeForm";
+import { getUniformSizes } from "@/api/maintenance/uniform-sizes";
+import CreateUniformSizeForm from "./CreateUniformSizeForm";
+import EditUniformSizesForm from "./EditUnifromSizeForm";
 import FilterCard from "../../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
@@ -30,7 +30,7 @@ const UniformSizesTableCard = () => {
 
     useAsyncEffect(() => {
         api.setLoading(true);
-        getUniform({
+        getUniformSizes({
             page: paginator.page,
             per_page: paginator.per_page,
             ...filter.filters
@@ -125,11 +125,11 @@ const UniformSizesTableCard = () => {
                     actions={tableActions}
                 />
             </Card>
-            <CreateUniformForm
+            <CreateUniformSizeForm
                 modal={createModal}
                 onSubmitCallback={api.triggerReload}
             />
-            <EditUniformForm
+            <EditUniformSizesForm
                 modal={editModal}
                 onSubmitCallback={api.triggerReload}
                 formValue={data}

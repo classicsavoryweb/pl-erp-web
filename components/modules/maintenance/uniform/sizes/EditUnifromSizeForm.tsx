@@ -7,7 +7,7 @@ import * as Yup from "yup";
 import { toast } from "react-toastify";
 import ActiveInactiveDropDown from "../../../generic/ActiveInactiveDropDown";
 import TextArea from "@/components/common/TextArea";
-import { editUniform } from "@/api/maintenance/uniform";
+import { editUniformSizes } from "@/api/maintenance/uniform-sizes";
 import confirm from "@/components/common/Confirm";
 import { useEffect } from "react";
 
@@ -17,7 +17,7 @@ interface FormModalInterface {
     formValue:any;
 };
 
-const EditUniformForm = ({
+const EditUniformSizesForm = ({
     modal,
     onSubmitCallback,
     formValue
@@ -41,9 +41,10 @@ const EditUniformForm = ({
             });
 
             if (isConfirmed) {
-                setSubmitting(true);
-                editUniform(values , formValue.id)
-                .then((resp) => {
+                try {
+                    setSubmitting(true);
+                    const resp = await editUniformSizes(values,formValue);
+                
                     if(!resp.error) {
                         toast.success("Training title created successfully");
                         onSubmitCallback();
@@ -52,11 +53,11 @@ const EditUniformForm = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch (err) {
                     toast.error("Error encountered");
-                }).finally((() => {
+                } finally {
                     setSubmitting(false);
-                }));
+                };
             }
         }
     });
@@ -78,8 +79,7 @@ const EditUniformForm = ({
             loading={modal.loading}
             size="md"
         >
-            <form onSubmit={editFormHandler.handleSubmit}>
-           
+            <form onSubmit={editFormHandler.handleSubmit}>           
                 <TextArea
                     label="Description"
                     placeholder="enter title"
@@ -88,9 +88,7 @@ const EditUniformForm = ({
                     required
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.description}
-                />
-               
-            
+                />                           
                 <ActiveInactiveDropDown
                     label="Status"
                     placeholder="select status"
@@ -100,7 +98,6 @@ const EditUniformForm = ({
                     onChange={editFormHandler.handleChange}
                     error={editFormHandler.errors.status}
                 />
-
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">
@@ -112,7 +109,6 @@ const EditUniformForm = ({
                                 editFormHandler.resetForm();
                             }}
                         />
-
                         <Button
                             type="submit"
                             label="Submit"
@@ -126,4 +122,4 @@ const EditUniformForm = ({
     );
 };
 
-export default EditUniformForm;
+export default EditUniformSizesForm;
