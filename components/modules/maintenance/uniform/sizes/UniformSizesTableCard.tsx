@@ -39,7 +39,7 @@ const UniformSizesTableCard = () => {
             if (resp.error) {
                 toast.error("Error fetching training titles");
             } else {
-                api.setDataSet(resp.data);
+                api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
                 paginator.setPaginationData(resp.data);
             }
