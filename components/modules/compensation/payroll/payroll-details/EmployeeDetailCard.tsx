@@ -8,6 +8,7 @@ import { AuthContext } from "@/context/AuthProvider";
 import { useContext, useEffect, useState } from "react";
 import BranchDropDown from "../../../generic/BranchDropDown";
 import Checkbox from "@/components/common/Checkbox";
+import moment from "moment";
 
 const EmployeeDetailCard = ({formHandler}: {formHandler: any}) => {
     const { loading, payrollDetails } = useContext(PayrollContext);
@@ -18,7 +19,10 @@ const EmployeeDetailCard = ({formHandler}: {formHandler: any}) => {
             size="small"
             loading={loading}
         >
-            <p className="font-semibold text-red-800 dark:text-red-500">Employee Details</p>
+            <div className="flex justify-between items-center">
+                <p className="font-semibold text-red-800 dark:text-red-500">Employee Details</p>
+                <p>Last Update: {moment(payrollDetails.updated_at).format("MMM. D, YYYY hh:mm:ss A")}</p>
+            </div>
             <Grid cols={3}> 
                 <Textfield
                     disabled
