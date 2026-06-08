@@ -10,6 +10,20 @@ export const getUniformSizes = async (payload?: {}) => {
     return resData;
 };
 
+export const exportUniformSizes = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-uniform-sizes',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    })
+
+    return resData;
+};
+
 export const createUniformSizes = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/create-uniform-sizes',
