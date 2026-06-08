@@ -20,6 +20,19 @@ export const createUniformSupplier = async (payload: {}) => {
     return resData;
 };
 
+export const exportUniformSupplier = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-uniform-supplier',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+        }
+    })
+
+    return resData;
+};
 
 
 

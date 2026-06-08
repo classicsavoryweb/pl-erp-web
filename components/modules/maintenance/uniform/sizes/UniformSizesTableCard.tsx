@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import Badge from "@/components/common/Badge";
-import { getUniformSizes } from "@/api/maintenance/uniform-sizes";
+import { getUniformSizes, exportUniformSizes } from "@/api/maintenance/uniform-sizes";
 import CreateUniformSizeForm from "./CreateUniformSizeForm";
 import EditUniformSizesForm from "./EditUnifromSizeForm";
 import FilterCard from "../../../cards/FilterCard";
@@ -106,8 +106,12 @@ const UniformSizesTableCard = () => {
                     
                 ]}
                 filterHandler={filter}
+                hasExport
+                api={exportUniformSizes}
+                exportFileName={`Sizes-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="description"
                 callBack={() => {
-                    paginator.setPage(1);
+                paginator.setPage(1);
                 }}
             />
             <Card>

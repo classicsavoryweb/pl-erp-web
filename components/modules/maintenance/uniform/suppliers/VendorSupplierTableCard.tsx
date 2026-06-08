@@ -9,11 +9,12 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { getUniformSupplier } from "@/api/maintenance/vendor-supplier";
+import { getUniformSupplier , exportUniformSupplier} from "@/api/maintenance/vendor-supplier";
 import AddVendorSupplierFormInactive from "./AddVendorSupplierForm";
 import FilterCard from "../../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import DropDownButtons from "@/components/common/DropDownButtons";
+import moment from "moment";
 
 const VendorSupplierTable = () => {
     const api = useApiCall();
@@ -87,6 +88,10 @@ const VendorSupplierTable = () => {
                     
                 ]}
                 filterHandler={filter}
+                hasExport
+                api={exportUniformSupplier}
+                exportFileName={`SUPPLIER-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="vendor_number"
                 callBack={() => {
                     paginator.setPage(1);
                 }}
