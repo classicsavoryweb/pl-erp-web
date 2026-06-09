@@ -85,3 +85,13 @@ export const reComputeIncentives = async (id: number | string) => {
 
     return resData;
 };
+
+export const getBranchesToRegeneratePayroll = async () => {
+    const resData = await axiosHelper({
+        func_path: `/get-branches-to-regenerate-payroll`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+
