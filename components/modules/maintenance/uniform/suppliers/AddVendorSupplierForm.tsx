@@ -31,7 +31,7 @@ const AddVendorSupplierFormInactive = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Add Vendor",
+                title: "Add Supplier",
                 message: "Are you sure you want to add this Vendor?"
             });
             if (isConfirmed) {
@@ -40,7 +40,7 @@ const AddVendorSupplierFormInactive = ({
                     const resp = await createUniformSupplier(values);
 
                     if(!resp.error) {
-                        toast.success("Training title created successfully");
+                        toast.success("Adding Supplier successfully");
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
