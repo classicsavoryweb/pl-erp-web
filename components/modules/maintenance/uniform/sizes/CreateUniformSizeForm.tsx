@@ -33,7 +33,7 @@ const CreateUniformSizesForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Create Training Title",
+                title: "Create Uniform Size",
                 message: "Are you sure you want to create?"
             });
 
@@ -43,7 +43,7 @@ const CreateUniformSizesForm = ({
                     const resp = await createUniformSizes(values);
 
                     if(!resp.error) {
-                        toast.success("Training title created successfully");
+                        toast.success("Uniform Size created successfully");
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();
@@ -71,16 +71,15 @@ const CreateUniformSizesForm = ({
             size="md"
         >
             <form onSubmit={createFormHandler.handleSubmit}>
-           
-                <TextArea
+                 <TextArea
                     label="Description"
-                    placeholder="enter title"
+                    placeholder="enter description"
                     name="description"
                     value={createFormHandler.values.description}
                     required
                     onChange={createFormHandler.handleChange}
                     error={createFormHandler.errors.description}
-                />                           
+                />                          
                 <ActiveInactiveDropDown
                     label="Status"
                     placeholder="select status"
