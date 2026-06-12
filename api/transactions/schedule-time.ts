@@ -64,6 +64,16 @@ export const transferTimeKeepingBranchAll = async (payload: {}) => {
     return resData;
 };
 
+export const editScheduleTime = async (payload: {}, id: number | string) => {
+    const resData = await axiosHelper({
+        func_path: `/edit-schedule-time/${id}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const validateImportTransactionsScheduleTime = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: '/validate-import-transactions-schedule-time',
