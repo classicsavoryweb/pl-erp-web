@@ -45,6 +45,16 @@ export const uniformRoutes: Route[] = [
                 pathname: "/uniform/request-and-issuance",
                 permission: "view_uniform_request_and_issuance"
             },
+            {
+                name: "Replenishment Request",
+                pathname: "/uniform/replenishment-request",
+                permission: "view_uniform_replenishment_request"
+            },
+            {
+                name: "Receiving of Stocks",
+                pathname: "/uniform/receiving-stocks",
+                permission: "view_uniform_receiving_stocks"
+            },
         ]
     }
 ];

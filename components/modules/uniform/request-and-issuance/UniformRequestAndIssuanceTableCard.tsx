@@ -138,7 +138,7 @@ const UniformSizesTableCard = () => {
             },
         },
         {
-            hidden:(item : any) => item.status == "Cancelled",
+            hidden: (item: any) => !["Unposted", "Reviewing"].includes(item.status),
             label: "Cancel",
             onClick: (item: any) => {
                 setData(item);

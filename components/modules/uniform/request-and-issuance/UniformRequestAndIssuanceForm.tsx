@@ -107,7 +107,13 @@ const UniformRequestAndIssuanceForm = ({
             total_amount: Yup.number().min(1).required("Total Amount is required."),
             status: Yup.string().required("Status is required."),
             sent_email: Yup.string().required("Sent Email is required."),
-            items: Yup.array().min(1)    
+            items: Yup.array()
+                .min(1, "At least one request item is required.")
+                .max(20, "A request can contain at most 20 items.")
+                .of(Yup.object({
+                    item_no: Yup.string().required(),
+                    requested_quantity: Yup.number().integer().min(1).required(),
+                })),
         }),
         
         onSubmit: async (values, {resetForm, setSubmitting}) => {
@@ -183,20 +189,6 @@ const UniformRequestAndIssuanceForm = ({
             }
         }, [modal.isShowing, formValue, mode]);
    
-    const requestItemsColumns = [
-        { columnHead: "Type of Uniform", path: "description", columnType: COLUMNTYPES.string },
-        { columnHead: "Size", path: "size", columnType: COLUMNTYPES.string },
-        { columnHead: "Gender", path: "gender", columnType: COLUMNTYPES.string },
-        { columnHead: "Stocks on hand", path: "stock_on_hand", columnType: COLUMNTYPES.string },
-        { columnHead: "Requested Quantity", path: "requested_quantity", columnType: COLUMNTYPES.string },
-        { columnHead: "Remaining Quantity", path: "remaining_quantity", columnType: COLUMNTYPES.string },
-        { columnHead: "UOM", path: "uom", columnType: COLUMNTYPES.string },
-        { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.string },
-        { columnHead: "Total Amount ", path: "total_amount", columnType: COLUMNTYPES.string },
-        { columnHead: "Item Remarks", path: "item_remarks", columnType: COLUMNTYPES.string },
-
-    ]   
-
     const addRequest = () => {
         if(!itemdraft.item_no){
             toast.error("Description is required");
@@ -207,6 +199,17 @@ const UniformRequestAndIssuanceForm = ({
             toast.error("Requested must be greater that zero");
             return;
         }
+
+        if(Number(itemdraft.requested_quantity) > Number(itemdraft.stock_on_hand)){
+            toast.error(`Requested quantity exceeds available stock (${itemdraft.stock_on_hand}).`);
+            return;
+        }
+
+        if(createFormHandler.values.items.length >= 20){
+            toast.error("A request can contain at most 20 items.");
+            return;
+        }
+
         const existing = createFormHandler.values.items.some((item: any) =>
         item.item_no === itemdraft.item_no) ;
 
@@ -248,6 +251,33 @@ const UniformRequestAndIssuanceForm = ({
 
         toast.success("Item removed successfully");
     };
+
+    const requestItemsColumns = [
+        { columnHead: "Type of Uniform", path: "description", columnType: COLUMNTYPES.string },
+        { columnHead: "Size", path: "size", columnType: COLUMNTYPES.string },
+        { columnHead: "Gender", path: "gender", columnType: COLUMNTYPES.string },
+        { columnHead: "Stocks on hand", path: "stock_on_hand", columnType: COLUMNTYPES.string },
+        { columnHead: "Requested Quantity", path: "requested_quantity", columnType: COLUMNTYPES.string },
+        { columnHead: "Remaining Quantity", path: "remaining_quantity", columnType: COLUMNTYPES.string },
+        { columnHead: "UOM", path: "uom", columnType: COLUMNTYPES.string },
+        { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.string },
+        { columnHead: "Total Amount ", path: "total_amount", columnType: COLUMNTYPES.string },
+        { columnHead: "Item Remarks", path: "item_remarks", columnType: COLUMNTYPES.string },
+        ...(!isView ? [{
+            columnHead: "Action",
+            path: "item_no",
+            columnType: COLUMNTYPES.function,
+            function: (requestItem: any) => (
+                <button
+                    type="button"
+                    className="font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
+                    onClick={() => removeRequest(requestItem)}
+                >
+                    Remove
+                </button>
+            ),
+        }] : []),
+    ];
         
     
     const grandTotal = createFormHandler.values.items.reduce(
@@ -264,7 +294,7 @@ const UniformRequestAndIssuanceForm = ({
                 createFormHandler.resetForm();
             }}
             loading={modal.loading}
-            size="lg"
+            size={mode === "create" ? "xxl" : "lg"}
         >
             <form onSubmit={createFormHandler.handleSubmit}>
                 
@@ -305,68 +335,58 @@ const UniformRequestAndIssuanceForm = ({
                             );
                         }}
                     />
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3">
+                <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
                     <Dropdown
-                            label="Issuance Type"
-                            placeholder="select option"
-                            name="issuance_type"
-                            value={createFormHandler.values.issuance_type}
-                            required
-                            onChange={createFormHandler.handleChange}
-                            error={createFormHandler.errors.issuance_type}
-                            options={freeOrATD}
-                            disabled={isView}
+                        label="Issuance Type"
+                        placeholder="select option"
+                        name="issuance_type"
+                        value={createFormHandler.values.issuance_type}
+                        required
+                        onChange={createFormHandler.handleChange}
+                        error={createFormHandler.errors.issuance_type}
+                        options={freeOrATD}
+                        disabled={isView}
                     />
                     <Textfield
                         label="Branch"
                         placeholder="branch"
                         name="employee_branch"
-                        value={createFormHandler.values.position ?? ""}
-                        error={createFormHandler.errors.position}
-                        disabled
-                        
-                    />
-
-                    <Textfield
-                        label="Branch"
-                        placeholder="branch"
-                        name="employee_branch"
-                        value={createFormHandler.values.position ?? ""}
-                        error={createFormHandler.errors.position}
-                        disabled
-                    />
-                    <Textfield
-                        label="Positions"
-                        placeholder="positions"
-                        name="employee_positions"
                         value={createFormHandler.values.branch ?? ""}
                         error={createFormHandler.errors.branch}
                         disabled
                     />
                     <Textfield
+                        label="Position"
+                        placeholder="position"
+                        name="employee_position"
+                        value={createFormHandler.values.position ?? ""}
+                        error={createFormHandler.errors.position}
+                        disabled
+                    />
+                    <Textfield
                         label="Date Hired"
-                        placeholder="vendor number"
+                        placeholder="date hired"
                         name="employee_date_hired"
-                        value={createFormHandler.values.date_hired?? ""}
+                        value={createFormHandler.values.date_hired ?? ""}
                         error={createFormHandler.errors.date_hired}
                         disabled
                     />
-                     <Textfield
+                    <Textfield
                         label="Total"
-                        placeholder="All Total"
+                        placeholder="total amount"
                         name="total_amount"
-                        value={grandTotal}
+                        value={grandTotal.toFixed(2)}
                         disabled
-                    />  
+                    />
                 </div>
-                <Table
-                    dataSet={createFormHandler.values.items}
-                    columnSettings={requestItemsColumns}
-                    withActions={!isView}
-                    actions={[{ label: "Remove", onClick: removeRequest }]} 
-                    smallText
-                    dataKey="item_no"
-                />
+                {mode === "view" && (
+                    <Table
+                        dataSet={createFormHandler.values.items}
+                        columnSettings={requestItemsColumns}
+                        smallText
+                        dataKey="item_no"
+                    />
+                )}
                 {mode === "create" ? null : (  
                 <div>
                     <hr className="mt-6 pb-2 text-slate-300" /> 
@@ -451,7 +471,16 @@ const UniformRequestAndIssuanceForm = ({
                 )}
                 {mode === "view" ? null : (
                 <div>
-                    <hr className="mt-6 pb-2 text-slate-300" />
+                    <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
+                        <span>Request Items</span>
+                        <button
+                            type="button"
+                            className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
+                            onClick={addRequest}
+                        >
+                            Add Request
+                        </button>
+                    </div>
                     <SearchableDropDown
                         label="Description"
                         placeholder="select description"
@@ -484,7 +513,7 @@ const UniformRequestAndIssuanceForm = ({
                 </div>
                 )}
                 {mode === "view" ? null : (
-                 <div className="grid grid-cols-2 md:grid-cols-4 gap-x-3">
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-4">
                     <Textfield
                         label="Gender"
                         placeholder="Gender"
@@ -522,33 +551,34 @@ const UniformRequestAndIssuanceForm = ({
                         disabled
                     />             
                     <Textfield
-                            label="Request Quantity"
-                            name="request quantity"
-                            type="number"
-                            value={itemdraft.requested_quantity}
-                            onChange={(e: any) => {
-                                const qty = Math.max(0, Number(e.target.value));
-                                const unitPrice = Number(itemdraft.standard_unit_price) || 0;
-                                const onHand = Number(itemdraft.stock_on_hand);
+                        label="Request Quantity"
+                        name="request_quantity"
+                        type="number"
+                        value={itemdraft.requested_quantity}
+                        onChange={(e: any) => {
+                            const qty = Math.max(0, Number(e.target.value));
+                            const unitPrice = Number(itemdraft.standard_unit_price) || 0;
+                            const onHand = Number(itemdraft.stock_on_hand);
 
-                                setitemdraft({
-                                    ...itemdraft,
-                                    requested_quantity: qty,
-                                    total_amount: qty * unitPrice,
-                                    remaining_quantity: onHand - qty ,
-                                });
-                            }}
+                            setitemdraft({
+                                ...itemdraft,
+                                requested_quantity: qty,
+                                total_amount: qty * unitPrice,
+                                remaining_quantity: onHand - qty,
+                            });
+                        }}
                     />
-                      <Textfield
-                        label="Unit Price"
-                        placeholder="Unit Price"
-                        name="standard_unit_price"
-                        value={itemdraft.standard_unit_price}                        
-                    />                       
+                    <Textfield
+                        label="Total Amount"
+                        placeholder="Total Amount"
+                        name="item_total_amount"
+                        value={Number(itemdraft.total_amount || 0).toFixed(2)}
+                        disabled
+                    />
                 </div>
                 )}
                 {mode === "view" ? null : (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3">
+                <div>
                 <Textfield
                     label="Item Remarks"
                     name="item_remarks"
@@ -556,14 +586,20 @@ const UniformRequestAndIssuanceForm = ({
                     value={itemdraft.item_remarks}
                     onChange={(e: any) => setitemdraft({ ...itemdraft, item_remarks: e.target.value })}
                 />
-                <Button
-                    label="Add Request"                
-                    onClick={addRequest}
-                />                     
-                </div>                
+                </div>
                  )}                                                                                                                                        
-                <div className="flex justify-end">
-                    {mode === "view" ? null : (
+                {mode === "view" ? null : (
+                <Table
+                    dataSet={createFormHandler.values.items}
+                    columnSettings={requestItemsColumns}
+                    smallText
+                    dataKey="item_no"
+                />
+                )}
+                {mode === "view" ? null : (
+                    <>
+                    <hr className="mt-6 pb-2 text-slate-300" />
+                    <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">
                         <Button
                             label="Cancel"
@@ -583,9 +619,10 @@ const UniformRequestAndIssuanceForm = ({
                             loading={createFormHandler.isSubmitting}
                             onClick={()=>{}}
                         />
-                    </div>    
-                    )}          
-                </div>
+                    </div>
+                    </div>
+                    </>
+                )}
             </form>
         </Modal>
     );
