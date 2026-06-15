@@ -40,6 +40,11 @@ export const uniformRoutes: Route[] = [
                 pathname: "/uniform/item-masterlist",
                 permission: "view_uniform_item_masterlist"
             },
+            {
+                name: "Request and Issuance",
+                pathname: "/uniform/request-and-issuance",
+                permission: "view_uniform_request_and_issuance"
+            },
         ]
     }
 ];
