@@ -22,6 +22,7 @@ type ActionType = {
     label: string;
     onClick: (data: any) => void;
     disabled?: boolean;
+    hidden?: (data: any) => boolean;
 };
 
 interface TableInterface {
