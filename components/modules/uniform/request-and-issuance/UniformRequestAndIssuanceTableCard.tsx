@@ -19,6 +19,7 @@ import CancelRequestAndIssuance from "./UniformRequestAndIssuanceCancelForm"
 import UniformRequestAndIssuanceForm from "./UniformRequestAndIssuanceForm";
 import moment from "moment";
 import DropDownButtons from "@/components/common/DropDownButtons";
+import ActionDropDown from "@/components/common/ActionDropDown";
 
 
 
@@ -51,6 +52,47 @@ const UniformSizesTableCard = () => {
             .catch(() => toast.error("Error encountered"))
             .finally(() => api.setLoading(false));
     }, [paginator.reload, api.reload, filter.reload]);
+
+    const tableActions = (item: any) => [
+        {
+            label: "View",
+            onClick: () => {
+                setData(item);
+                viewModal.onOpen();
+            },
+        },
+        item.status === "Unposted" && {
+            label: "Reviewing",
+            onClick: async () => {
+                const isConfirmed = await confirm(
+                    "Are you sure you want to mark this as Reviewing?"
+                );
+
+                if (!isConfirmed) return;
+
+                await updateRequestStatus(item.id, "Reviewing");
+                toast.success("Marked as Reviewing");
+                api.triggerReload();
+            },
+        },
+        item.status === "Reviewing" && {
+            label: "Posted",
+            onClick: async () => {
+                if (!confirm("Are you sure you want to mark this as Posted?")) return;
+
+                await updateRequestStatus(item.id, "Posted");
+                toast.success("Marked As Posted");
+                api.triggerReload();
+            },
+        },
+        ["Unposted", "Reviewing"].includes(item.status) && {
+            label: "Cancel",
+            onClick: () => {
+                setData(item);
+                cancelModal.onOpen();
+            },
+        },
+    ].filter((action): action is { label: string; onClick: () => void } => Boolean(action));
 
     const columnSettings = [
         { columnHead: "Request Number", path: "request_number", columnType: COLUMNTYPES.string },
@@ -90,6 +132,17 @@ const UniformSizesTableCard = () => {
         { columnHead: "Sent Email", path: "sent_email", columnType: COLUMNTYPES.string },
         { columnHead: "Payroll Entry", path: "payroll_entry", columnType: COLUMNTYPES.string },
         { columnHead: "Payroll Sent Date", path: "payroll_sent_date", columnType: COLUMNTYPES.string },
+        {
+            columnHead: "Action",
+            path: "id",
+            columnType: COLUMNTYPES.function,
+            function: (item: any) => (
+                <ActionDropDown
+                    data={item}
+                    actions={tableActions(item)}
+                />
+            ),
+        },
         
         
     ];
@@ -102,51 +155,6 @@ const UniformSizesTableCard = () => {
             }
         },
     ];
-    
-   const tableActions = [
-        {
-            label: "View",
-            onClick: (item: any) => {
-                setData(item);
-                viewModal.onOpen();
-            },
-        },
-        {
-            label: "Reviewing",
-            hidden: (item: any) => item.status !== "Unposted",
-            onClick: async (item: any) => {
-                const isConfirmed = await confirm(
-                    "Are you sure you want to mark this as Reviewing?"
-                );
-
-                if (!isConfirmed) return;
-
-                await updateRequestStatus(item.id, "Reviewing");
-                toast.success("Marked as Reviewing");
-                api.triggerReload();
-            },
-        },
-        {
-            label: "Posted",
-            hidden: (item: any) => item.status !== "Reviewing",
-             onClick: async (item: any) => {
-                if (!confirm("Are you sure you want to mark this as Posted?")) return;
-
-                await updateRequestStatus(item.id, "Posted");
-                toast.success("Marked As Posted");
-                api.triggerReload();
-            },
-        },
-        {
-            hidden: (item: any) => !["Unposted", "Reviewing"].includes(item.status),
-            label: "Cancel",
-            onClick: (item: any) => {
-                setData(item);
-                cancelModal.onOpen();
-            },
-        },
-    ];
-
     return (
         <>
             <FilterCard
@@ -183,8 +191,6 @@ const UniformSizesTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    withActions
-                    actions={tableActions}        
                 />
             </Card>
              <UniformRequestAndIssuanceForm 

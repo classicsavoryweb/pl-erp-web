@@ -9,7 +9,6 @@ type ActionType = {
     onClick: (data: any) => void;
     permission?: string;
     disabled?: boolean;
-    hidden?: (data: any) => boolean;
 };
 
 interface DropdownInterface {
@@ -31,15 +30,10 @@ const ActionDropDown = ({
     const [toggle, setToggle] = useState<boolean>(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const { permissions } = useContext(AuthContext);
-   const availableActions = actions.filter((action) => {
-    const hasPermission =
-        !action.permission || permissions.includes(action.permission);
-
-    const isVisible =
-        !action.hidden || !action.hidden(data);
-
-    return hasPermission && isVisible;
-});
+    const availableActions = actions.filter((action) => {
+        if (!action.permission) return true;
+        return permissions.includes(action.permission);
+    });
     const primaryAction = availableActions[0];
     const isDirect = direct === true;
     const isDisabled = isDirect && (!primaryAction || primaryAction.disabled);
