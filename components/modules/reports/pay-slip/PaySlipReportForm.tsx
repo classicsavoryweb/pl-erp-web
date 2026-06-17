@@ -293,6 +293,7 @@ const PaySlipReportForm = () => {
                             }}
                             value={formHandler.values.employee}
                             error={formHandler.errors.employee_id}
+                            status="all"
                         />
                     }
 
