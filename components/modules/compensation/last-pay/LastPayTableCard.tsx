@@ -21,6 +21,7 @@ import EditLastPayModal from "./EditLastPayModal";
 import LastPayComputationEditModal from "./LastPayComputationEditModal";
 import PostLastPayPreviewModal from "./PostLastPayPreviewModal";
 import TaxRefundComputationModal from "./TaxRefundComputationModal";
+import ActivityLogsModal from "../../generic/ActivityLogsModal";
 
 const LastPayTableCard = () => {
     const api = useApiCall();
@@ -33,6 +34,7 @@ const LastPayTableCard = () => {
     const computationModal = useModal();
     const postPreviewModal = useModal();
     const taxRefundComputationModal = useModal();
+    const activityLogsModal = useModal();
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -132,6 +134,7 @@ const LastPayTableCard = () => {
                             actionSettings[0],
                             actionSettings[1],
                             actionSettings[2],
+                            actionSettings[5],
                         ];
                         break;
                     case "Unposted":
@@ -141,6 +144,7 @@ const LastPayTableCard = () => {
                             actionSettings[2],
                             actionSettings[3],
                             actionSettings[4],
+                            actionSettings[5],
                         ];
                         break;
                 };
@@ -186,6 +190,13 @@ const LastPayTableCard = () => {
             label: "Edit",
             onClick: (data:any) => {
                 editModal.onOpen();
+                setData(data);
+            }
+        },
+        {
+            label: "Logs",
+            onClick: (data:any) => {
+                activityLogsModal.onOpen();
                 setData(data);
             }
         },
@@ -288,6 +299,13 @@ const LastPayTableCard = () => {
 
             <TaxRefundComputationModal
                 modal={taxRefundComputationModal}
+                data={data}
+            />
+
+            <ActivityLogsModal
+                modal={activityLogsModal}
+                title="Activity Logs"
+                logName="Last Pay"
                 data={data}
             />
         </>

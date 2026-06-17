@@ -1,6 +1,6 @@
 "use client";
 
-import { getInitialLastPay, reloadLastPayDeductions, removeLastPayDeduction } from "@/api/compensation/last-pay";
+import { getInitialLastPay, getLastPay, reloadLastPayDeductions, removeLastPayDeduction } from "@/api/compensation/last-pay";
 import Button from "@/components/common/Button";
 import Grid from "@/components/common/Grid";
 import LoadingState from "@/components/common/LoadingState";
@@ -15,6 +15,7 @@ import { useModal } from "@/hooks/modal";
 import EditLastPayDeductionDetails from "./EditLastPayDeductionDetails";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import Checkbox from "@/components/common/Checkbox";
+import { useAsyncEffect } from "@/hooks/async-effect";
 
 interface LastPayInterface {
     lastPayId?: string;
@@ -22,6 +23,7 @@ interface LastPayInterface {
     disabled?: boolean;
     formHandler: any;
     isOpen?: boolean;
+    isEdit?: boolean;
 };
 
 const LastPayDetails = ({
@@ -29,187 +31,51 @@ const LastPayDetails = ({
     employeeNumber,
     disabled,
     formHandler,
-    isOpen
+    isOpen = false,
+    isEdit = false
 }: LastPayInterface) => {
     
     const api = useApiCall();
     const editModal = useModal();
     const [data, setData] = useState<any>({});
-    const [reloadingDeductions, setReloadingDeductions] = useState(false);
 
-    const getDeductionValue = (deduction: any) => {
-        if (deduction?.deduction?.description === "SSS Loans") {
-            const override = (formHandler.values.sss_loans_details ?? []).find(
-                (item: any) => item?.reference_doc === deduction?.reference_doc
-            );
-            if (override && override?.amount !== undefined && override?.amount !== null) {
-                return Number(override.amount);
-            }
-            return Number(deduction?.balance ?? deduction?.amount ?? 0);
-        }
-
-        const amount = deduction?.balance ?? deduction?.amount ?? 0;
-        return Number(amount);
-    };
-
-    const buildSssDetails = (deductions: any[]) => {
-        return deductions.map((deduction: any) => ({
-            reference_doc: deduction?.reference_doc,
-            amount: Number(deduction?.balance ?? deduction?.amount ?? 0)
-        }));
-    };
-
-    const applyLastPayDetails = (details: any) => {
-        api.setData(details);
-        const initialCompanyDeductions = details.company_deductions ?? [];
-        const initialGovDeductions = details.government_deductions ?? [];
-        const initialSssCompany = initialCompanyDeductions.filter(
-            (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-        );
-        const initialSssGov = initialGovDeductions.filter(
-            (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-        );
-        const sssDetailsSource = initialSssCompany.length ? initialSssCompany : initialSssGov;
-
-        formHandler.setValues({
-            incentives : details.incentives,
-            meal_allowance : details.meal_allowance,
-            payroll_hold : details.payroll_hold,
-            sales : details.sales,
-            sl_vl : details.sl_vl,
-            tax_refund : details.tax_refund,
-            thirteenth_month : details.thirteenth_month,
-            total_deductions : details.total_deductions,
-            last_pay : details.last_pay,
-            year : details.year,
-            sss_loans: details.sss_loans ?? "No",
-            sss_loans_details: buildSssDetails(sssDetailsSource),
-        });
-    };
-
-    const handleReloadDeductions = async () => {
-        if (!lastPayId) return;
-
-        const isConfirmed = await confirm({
-            title: "Reload Deductions",
-            message: "Reload deductions for this unposted last pay?"
-        });
-
-        if (!isConfirmed) return;
-
-        setReloadingDeductions(true);
-        try {
-            const resp = await reloadLastPayDeductions(lastPayId);
-
-            if (!resp.error) {
-                applyLastPayDetails(resp.data);
-                toast.success("Deductions reloaded successfully");
+    useAsyncEffect(() => {
+        if (isOpen) {
+            if (!isEdit) {
+                getInitialLastPay(employeeNumber)
+                .then((resp) => {
+                    if (!resp.error) {
+                        formHandler.setValues(resp.data);
+                    } else {
+                        toast.error("Fetching initial last pay error");
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally(() => {
+                    api.setLoading(false);
+                });
             } else {
-                toast.error(resp.data.message);
+                getLastPay(employeeNumber)
+                .then((resp) => {
+                    if (!resp.error) {
+                        formHandler.setValues(resp.data);
+                    } else {
+                        toast.error("Fetching last pay error");
+                    }
+                }).catch(() => {
+                    toast.error("Error encountered");
+                }).finally(() => {
+                    api.setLoading(false);
+                });
             }
-        } catch {
-            toast.error("Error encountered");
-        } finally {
-            setReloadingDeductions(false);
         }
-    };
-
-    const computeTotals = () => {
-        const baseCompanyDeductions = (api.data.company_deductions ?? []).filter(
-            (deduction: any) => deduction?.deduction?.description !== "SSS Loans"
-        );
-        const existingSssDeductions = (api.data.company_deductions ?? []).filter(
-            (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-        );
-        const governmentSssDeductions = (api.data.government_deductions ?? []).filter(
-            (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-        );
-
-        const includeSssLoans = formHandler.values.sss_loans === "Yes";
-        const sssDeductionsForPreview = includeSssLoans
-            ? (existingSssDeductions.length ? existingSssDeductions : governmentSssDeductions)
-            : [];
-
-        const companyTotal = baseCompanyDeductions.reduce((sum: number, deduction: any) => {
-            return sum + getDeductionValue(deduction);
-        }, 0);
-
-        const sssTotal = sssDeductionsForPreview.reduce((sum: number, deduction: any) => {
-            return sum + getDeductionValue(deduction);
-        }, 0);
-
-        const totalDeductions = companyTotal + sssTotal;
-
-        const lastPay = (
-            Number(formHandler.values.payroll_hold ?? 0) +
-            Number(formHandler.values.thirteenth_month ?? 0) +
-            Number(formHandler.values.incentives ?? 0) +
-            Number(formHandler.values.sl_vl ?? 0) +
-            Number(formHandler.values.meal_allowance ?? 0) +
-            Number(formHandler.values.tax_refund ?? 0) +
-            Number(formHandler.values.sales ?? 0)
-        ) - totalDeductions;
-
-        return {
-            totalDeductions,
-            lastPay
-        };
-    };
-
-    useEffect(() => {
-        if (isOpen === false) return;
-
-        api.setLoading(true);
-        getInitialLastPay(employeeNumber)
-        .then((resp) => {
-            if (!resp.error) {
-                applyLastPayDetails(resp.data);
-            } else {
-                toast.error("Fetching initial last pay error");
-            }
-        }).catch(() => {
-            toast.error("Error encountered");
-        }).finally(() => {
-            api.setLoading(false);
-        });
-    }, [employeeNumber, isOpen]);
-
-    useEffect(() => {
-        if (api.loading) return;
-
-        const totals = computeTotals();
-
-        if (Number(formHandler.values.total_deductions) !== totals.totalDeductions) {
-            formHandler.setFieldValue("total_deductions", totals.totalDeductions);
-        }
-
-        if (Number(formHandler.values.last_pay) !== totals.lastPay) {
-            formHandler.setFieldValue("last_pay", totals.lastPay);
-        }
-    }, [
-        api.loading,
-        api.data,
-        formHandler.values.sss_loans,
-        formHandler.values.sss_loans_details,
-        formHandler.values.incentives,
-        formHandler.values.meal_allowance,
-        formHandler.values.payroll_hold,
-        formHandler.values.sales,
-        formHandler.values.sl_vl,
-        formHandler.values.tax_refund,
-        formHandler.values.thirteenth_month,
-    ]);
+    }, [isOpen, employeeNumber]);
 
     const deductionColumnSettings = [
         {
             columnHead: "Type",
-            path: "deduction.description",
+            path: "deduction_type",
             columnType: COLUMNTYPES.string
-        },
-        {
-            columnHead: "Balance",
-            path: "balance",
-            columnType: COLUMNTYPES.amount
         },
         {
             columnHead: "Amount",
@@ -221,14 +87,14 @@ const LastPayDetails = ({
             path: "action",
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
-                if (data.deduction?.description !== "SSS Loans") {
+                if (data.category !== "SSS") {
                     return "—";
                 }
 
-                if (data.__source === "preview") {
+                if (data.category === "SSS") {
                     const actions = [
                         {
-                            label: "Edit Balance",
+                            label: "Edit Amount",
                             onClick: () => {
                                 editModal.onOpen();
                                 setData(data);
@@ -237,8 +103,12 @@ const LastPayDetails = ({
                         {
                             label: "Remove",
                             onClick: () => {
-                                formHandler.setFieldValue("sss_loans", "No");
-                                formHandler.setFieldValue("sss_loans_details", []);
+                                formHandler.setFieldValue("company_deductions", [
+                                    ...formHandler.values.company_deductions.filter((item: any) => item.employee_deduction_id !== data.employee_deduction_id)
+                                ]);
+
+                                formHandler.setFieldValue("save_changes", false);
+                                formHandler.submitForm();
                             }
                         }
                     ];
@@ -248,149 +118,9 @@ const LastPayDetails = ({
                         actions={actions}
                     />;
                 }
-
-                const actions = [
-                    {
-                        label: "Edit Balance",
-                        onClick: () => {
-                            editModal.onOpen();
-                            setData(data);
-                        }
-                    },
-                    {
-                        label: "Remove",
-                        onClick: async () => {
-                            const isConfirmed = await confirm({
-                                message: "Are you sure you want to save changes",
-                                title: "Deduction"
-                            });
-
-                            if (!isConfirmed) return;
-
-                            try {
-                                const resp = await removeLastPayDeduction(employeeNumber, {
-                                    reference_doc: data.reference_doc
-                                });
-
-                                if (!resp.error) {
-                                    toast.success(resp.data.message);
-                                    const updatedCompanyDeductions = (api.data.company_deductions ?? [])
-                                        .filter((deduction: any) => deduction?.reference_doc !== data.reference_doc);
-
-                                    api.setData({
-                                        ...api.data,
-                                        company_deductions: updatedCompanyDeductions
-                                    });
-
-                                    formHandler.setFieldValue("sss_loans_details", []);
-
-                                    const remainingSss = updatedCompanyDeductions.filter(
-                                        (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-                                    );
-
-                                    if (remainingSss.length === 0 && formHandler.values.sss_loans === "Yes") {
-                                        formHandler.setFieldValue("sss_loans", "No");
-                                    }
-                                } else {
-                                    toast.error(resp.data.message);
-                                }
-                            } catch {
-                                toast.error("Error encountered");
-                            }
-                        }
-                    }
-                ];
-
-                return <ActionDropDown
-                    data={data}
-                    actions={actions}
-                />;
             }
         }
     ];
-
-    const includeSssLoans = formHandler.values.sss_loans === "Yes";
-    const baseCompanyDeductions = (api.data.company_deductions ?? []).filter(
-        (deduction: any) => deduction?.deduction?.description !== "SSS Loans"
-    );
-    const existingSssDeductions = (api.data.company_deductions ?? []).filter(
-        (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-    );
-    const governmentSssDeductions = (api.data.government_deductions ?? []).filter(
-        (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-    );
-    const sssDeductionsSource = existingSssDeductions.length
-        ? existingSssDeductions
-        : governmentSssDeductions;
-    const sssDeductionsForDisplay = includeSssLoans ? sssDeductionsSource : [];
-    const govBalanceMap = new Map(
-        (api.data.government_deductions ?? [])
-            .filter((deduction: any) => deduction?.deduction?.description === "SSS Loans")
-            .map((deduction: any) => [
-                deduction?.reference_doc,
-                Number(deduction?.balance ?? 0)
-            ])
-    );
-    const govAmountMap = new Map(
-        (api.data.government_deductions ?? [])
-            .filter((deduction: any) => deduction?.deduction?.description === "SSS Loans")
-            .map((deduction: any) => [
-                deduction?.reference_doc,
-                Number(deduction?.amount ?? 0)
-            ])
-    );
-    const sssOverrideMap = new Map(
-        (formHandler.values.sss_loans_details ?? []).map((item: any) => [
-            item?.reference_doc,
-            Number(item?.amount ?? 0)
-        ])
-    );
-
-    const normalizeDisplay = (deduction: any) => {
-        if (deduction?.deduction?.description === "SSS Loans") {
-            const overrideAmount = sssOverrideMap.get(deduction?.reference_doc);
-            const amountValue = govAmountMap.get(deduction?.reference_doc)
-                ?? deduction?.original_amount
-                ?? deduction?.amount
-                ?? 0;
-            const balanceValue = overrideAmount
-                ?? deduction?.balance
-                ?? govBalanceMap.get(deduction?.reference_doc)
-                ?? null;
-            return {
-                ...deduction,
-                balance: balanceValue,
-                amount: amountValue
-            };
-        }
-
-        const nonSssBalance = deduction?.balance ?? deduction?.amount;
-        if (nonSssBalance !== undefined && nonSssBalance !== null) {
-            return {
-                ...deduction,
-                balance: nonSssBalance,
-                amount: nonSssBalance
-            };
-        }
-
-        return deduction;
-    };
-
-    const companyDeductionsForDisplay = includeSssLoans
-        ? [
-            ...baseCompanyDeductions.map((deduction: any) => normalizeDisplay({ ...deduction, __source: "company" })),
-            ...sssDeductionsForDisplay.map((deduction: any) => normalizeDisplay({
-                ...deduction,
-                __source: existingSssDeductions.length ? "company" : "preview"
-            }))
-        ]
-        : baseCompanyDeductions.map((deduction: any) => normalizeDisplay({ ...deduction, __source: "company" }));
-    const governmentDeductionsForDisplay = (api.data.government_deductions ?? []).map((deduction: any) =>
-        normalizeDisplay({ ...deduction, __source: "government" })
-    );
-
-
-
 
     return (
         api.loading
@@ -510,14 +240,17 @@ const LastPayDetails = ({
                                 type="button"
                                 label="Reload Deductions"
                                 variant="secondary"
-                                loading={reloadingDeductions}
-                                onClick={handleReloadDeductions}
+                                onClick={() => {
+                                    formHandler.setFieldValue("reload_deductions", true);
+                                    formHandler.setFieldValue("save_changes", false);
+                                    formHandler.handleSubmit();
+                                }}
                             />
                         </div>
                     }
                 </div>
                 <Table
-                    dataSet={companyDeductionsForDisplay}
+                    dataSet={formHandler.values.company_deductions}
                     columnSettings={deductionColumnSettings}
                     smallText
                 />
@@ -540,42 +273,36 @@ const LastPayDetails = ({
                             checked={formHandler.values.sss_loans === "Yes"}
                             value="sss_loans"
                             onChange={(e) => {
-                                const value = e.target.value;
-
                                 if (e.target.checked) {
-                                    formHandler.setFieldValue(value, "Yes");
-                                    formHandler.setFieldValue(
-                                        "sss_loans_details",
-                                        buildSssDetails(
-                                            (api.data.government_deductions ?? []).filter(
-                                                (deduction: any) => deduction?.deduction?.description === "SSS Loans"
-                                            )
-                                        )
-                                    );
+                                    formHandler.setFieldValue("company_deductions",[
+                                        ...formHandler.values.company_deductions,
+                                        ...formHandler.values.government_deductions.filter((item: any) => item.category === "SSS")
+                                    ]);
+                                    formHandler.setFieldValue("sss_loans", "Yes");
                                 } else {
-                                    formHandler.setFieldValue(value, "No");
-                                    formHandler.setFieldValue("sss_loans_details", []);
+                                    formHandler.setFieldValue("company_deductions",[
+                                        ...formHandler.values.company_deductions.filter((item: any) => item.category !== "SSS")
+                                    ]);
+                                    formHandler.setFieldValue("sss_loans", "No ");
                                 }
+
+                                formHandler.setFieldValue("save_changes", false);
+                                formHandler.submitForm();
                             }}
                         />
                     </div>
                 </div>
                 <Table
-                    dataSet={governmentDeductionsForDisplay}
+                    dataSet={formHandler.values.government_deductions}
                     columnSettings={[
                         {
                             columnHead: "Type",
-                            path: "deduction.description",
+                            path: "deduction_type",
                             columnType: COLUMNTYPES.string
                         },
                         {
                             columnHead: "Balance",
                             path: "balance",
-                            columnType: COLUMNTYPES.amount
-                        },
-                        {
-                            columnHead: "Amount",
-                            path: "amount",
                             columnType: COLUMNTYPES.amount
                         },
                     ]}
@@ -599,7 +326,9 @@ const LastPayDetails = ({
                             type="submit"
                             label="Submit"
                             loading={formHandler.isSubmitting}
-                            onClick={() => {}}
+                            onClick={() => {
+                                formHandler.setFieldValue("save_changes", true);
+                            }}
                         />
                     </div>
                 }
@@ -608,72 +337,21 @@ const LastPayDetails = ({
                 modal={editModal}
                 formValue={data}
                 onUpdated={(updatedDeduction: any) => {
-                    const isSssLoan = updatedDeduction?.deduction?.description === "SSS Loans";
-                    if (updatedDeduction?.__source === "preview") {
-                        const currentDetails = formHandler.values.sss_loans_details ?? [];
-                        const nextDetails = [
-                            ...currentDetails.filter(
-                                (item: any) => item?.reference_doc !== updatedDeduction?.reference_doc
-                            ),
-                            {
-                                reference_doc: updatedDeduction?.reference_doc,
-                                amount: Number(updatedDeduction?.amount ?? 0)
-                            }
-                        ];
-                        formHandler.setFieldValue("sss_loans_details", nextDetails);
-                        return;
-                    }
-
-                    if (isSssLoan) {
-                        const currentDetails = formHandler.values.sss_loans_details ?? [];
-                        const nextDetails = [
-                            ...currentDetails.filter(
-                                (item: any) => item?.reference_doc !== updatedDeduction?.reference_doc
-                            ),
-                            {
-                                reference_doc: updatedDeduction?.reference_doc,
-                                amount: Number(updatedDeduction?.amount ?? 0)
-                            }
-                        ];
-                        formHandler.setFieldValue("sss_loans_details", nextDetails);
-                    }
-
-                    const updatedCompanyDeductions = (api.data.company_deductions ?? []).map((deduction: any) => {
-                        if (deduction?.id === updatedDeduction?.id) {
-                            if (deduction?.deduction?.description === "SSS Loans") {
+                    formHandler.setFieldValue("company_deductions", [
+                        ...formHandler.values.company_deductions.map((item:any) => {
+                            if (item.employee_deduction_id == updatedDeduction.employee_deduction_id) {
                                 return {
-                                    ...deduction,
-                                    balance: updatedDeduction.amount
-                                };
+                                    ...item,
+                                    amount: updatedDeduction.amount
+                                }
+                            } else {
+                                return item;
                             }
-
-                            return {
-                                ...deduction,
-                                amount: updatedDeduction.amount
-                            };
-                        }
-
-                        return deduction;
-                    });
-
-                    const updatedGovernmentDeductions = isSssLoan
-                        ? (api.data.government_deductions ?? []).map((deduction: any) => {
-                            if (deduction?.reference_doc === updatedDeduction?.reference_doc) {
-                                return {
-                                    ...deduction,
-                                    balance: updatedDeduction.amount
-                                };
-                            }
-
-                            return deduction;
                         })
-                        : (api.data.government_deductions ?? []);
-
-                    api.setData({
-                        ...api.data,
-                        company_deductions: updatedCompanyDeductions,
-                        government_deductions: updatedGovernmentDeductions
-                    });
+                    ]);
+                    formHandler.setFieldValue("save_changes", false);
+                    formHandler.submitForm();
+                    
                 }}
             />
         </>

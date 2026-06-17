@@ -118,3 +118,22 @@ export const editLastPayDeductionDetails = async (lastPayDeductionId: string, pa
 
     return resData;
 };
+
+export const previewLastPayComputation = async (employeeNumber: string | number ,payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/preview-last-pay-computation/${employeeNumber}`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+}
+
+export const getLastPay = async (employeeNumber: string | number) => {
+    const resData = await axiosHelper({
+        func_path: `/get-last-pay/${employeeNumber}`,
+        method: 'GET',
+    });
+
+    return resData;
+}
