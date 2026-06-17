@@ -132,7 +132,8 @@ const Page = () => {
 
     useEffect(() => {
         const handleKeyDown = (e: any) => {
-            if (e.key === "Tab" && payrollDetails.status == "final") {
+            if (e.key === "Tab") {
+                e.preventDefault();
                 formHandler.setFieldValue("save_changes", false);
                 formHandler.setFieldValue("reload_deductions", false);
                 formHandler.submitForm();

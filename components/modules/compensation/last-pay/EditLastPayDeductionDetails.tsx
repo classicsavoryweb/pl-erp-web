@@ -25,68 +25,28 @@ const EditLastPayDeductionDetails = ({
     const editFormHandler = useFormik({
         initialValues: {
             amount: "",
+            employee_deduction_id: "",
         },
         validateOnChange: false,
         onSubmit: async (values, {resetForm, setSubmitting}) => {
-            const isPreview = formValue?.__source === "preview";
-            const isConfirmed = await confirm({
-                title: "Edit Deduction",
-                message: "Are you sure you want to save changes?"
+            onUpdated && onUpdated({
+                amount: values.amount,
+                employee_deduction_id: values.employee_deduction_id,
             });
-
-            if(isConfirmed) {
-                if (isPreview) {
-                    onUpdated?.({
-                        ...formValue,
-                        amount: values.amount
-                    });
-                    modal.onClose();
-                    resetForm();
-                    return;
-                }
-
-                setSubmitting(true);
-                editLastPayDeductionDetails(formValue.id, {
-                    amount: values.amount
-                }).then((resp) => {
-                    if (!resp.error) {
-                        toast.success(resp.data.message);
-                        onUpdated?.({
-                            ...formValue,
-                            amount: values.amount
-                        });
-                        modal.onClose();
-                        resetForm();
-                    } else {
-                        toast.error(resp.data.message);
-                    }
-                }).catch(() => {
-                    toast.error("Error encountered");
-                }).finally(() => {
-                    setSubmitting(false);
-                });
-            }
-
+            modal.onClose();
         }
     });
 
     useEffect(() => {
         if (modal.isShowing) {
-            if (formValue?.deduction?.description === "SSS Loans") {
-                editFormHandler.setValues({
-                    ...formValue,
-                    amount: formValue?.balance ?? formValue?.amount ?? ""
-                });
-            } else {
-                editFormHandler.setValues(formValue);
-            }
+            editFormHandler.setValues(formValue);
         }
     }, [modal.isShowing]);
 
     return (
         <Modal
             isShowing={modal.isShowing}
-            title="Edit Balance"
+            title="Edit Amount"
             onClose={() => {
                 modal.onClose();
                 editFormHandler.resetForm();
@@ -96,7 +56,7 @@ const EditLastPayDeductionDetails = ({
         >
             <form onSubmit={editFormHandler.handleSubmit}>
                 <Textfield
-                    label="Balance"
+                    label="Amount"
                     name="amount"
                     type="number"
                     value={editFormHandler.values.amount}

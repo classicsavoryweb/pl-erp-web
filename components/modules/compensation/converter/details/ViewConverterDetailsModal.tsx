@@ -33,17 +33,27 @@ const ViewConverterDetailsModal = ({
             <Textfield
                 label="Employee"
                 disabled
-                value={data.employee.full_name ?? ""}
+                value={data.employee?.full_name ?? ""}
             />
             <Textfield
                 label="Transaction Type"
                 disabled
-                value={data.transaction_type.description ?? ""}
+                value={data.transaction_type?.description ?? ""}
             />
             <Textfield
-                label="Approved Amount"
+                label="Amount"
                 disabled
-                value={data.approved_amount ?? ""}
+                value={data.amount ?? ""}
+            />
+            <Textfield
+                label="Added By"
+                disabled
+                value={data.admin_added?.full_name ?? ""}
+            />
+            <TextArea
+                label="Remarks"
+                disabled
+                value={data.remarks ?? ""}
             />
         </Modal>
     );
