@@ -12,7 +12,7 @@ import BranchDropDown from "../generic/BranchDropDown";
 import EmploymentStatusDropdown from "../generic/EmploymentStatusDropDown";
 import EmployeeTypeDropDown from "../generic/EmployeeTypeDropDown";
 import confirm from "@/components/common/Confirm";
-import { useContext, useEffect } from "react";
+import { ReactNode, useContext, useEffect } from "react";
 import { AuthContext } from "@/context/AuthProvider";
 import { useModal } from "@/hooks/modal";
 import Modal from "@/components/common/Modal";
@@ -53,6 +53,7 @@ interface FilterInterface {
     columnSort?: boolean;
     filterValues?: any;
     triggerSort?: boolean;
+    children?: ReactNode;
 };
 const FilterCard = ({
     isExpanded = false,
@@ -101,6 +102,7 @@ const FilterCard = ({
     exportOptions,
     columnSort = false,
     filterValues,
+    children,
 }: FilterInterface) => {
 
     const optionModal = useModal();
@@ -446,7 +448,7 @@ const FilterCard = ({
                         }
                     </Grid>
                     <div className="flex justify-between gap-x-2">
-                        <div></div>
+                        <div>{children}</div>
                         <div className="flex gap-x-1">
                             <div>
                                 <Button

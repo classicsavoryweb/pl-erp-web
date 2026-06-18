@@ -21,6 +21,7 @@ import FilterCard from "@/components/modules/cards/FilterCard";
 import ResendBatchModalForm from "./ResendBatchModalForm";
 import ViewLogsModal from "./ViewLogsModal";
 import ViewExcludedTransactions from "./ViewExcludedTransactions";
+import CountLabel from "@/components/common/CountLabel";
 
 const ConverterMainTableCard = () => {
     const api = useApiCall();
@@ -34,6 +35,10 @@ const ConverterMainTableCard = () => {
     const [dataSet, setDataSet] = useState<any[]>([]);
     const filterHandler = useFilter();
     const [excludedTransactions, setExcludedTransactions] = useState<any[]>([]);
+    const [summary, setSummary] = useState({
+        total_count: 0,
+        total_amount: 0,
+    });
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -46,9 +51,14 @@ const ConverterMainTableCard = () => {
             if (resp.error) {
                 toast.error("Error fetching converter details");
             } else {
-                api.setDataSet(resp.data.data);
-                paginator.setPage(resp.data.current_page);
-                paginator.setPaginationData(resp.data);
+                const converters = resp.data.converters ?? resp.data;
+                api.setDataSet(converters.data);
+                paginator.setPage(converters.current_page);
+                paginator.setPaginationData(converters);
+                setSummary({
+                    total_count: Number(resp.data.summary?.total_count ?? 0),
+                    total_amount: Number(resp.data.summary?.total_amount ?? 0),
+                });
             }
         })
         .catch(() => {
@@ -385,7 +395,18 @@ const ConverterMainTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
-            />
+            >
+                <div className="flex flex-wrap items-end gap-4">
+                    <CountLabel
+                        label="Total Count"
+                        count={summary.total_count}
+                    />
+                    <CountLabel
+                        label="Total Amount"
+                        count={summary.total_amount}
+                    />
+                </div>
+            </FilterCard>
             <Card>
                 <div className="flex justify-end">
                     <div>
