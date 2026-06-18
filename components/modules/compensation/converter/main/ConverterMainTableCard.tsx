@@ -396,7 +396,7 @@ const ConverterMainTableCard = () => {
                     paginator.setPage(1);
                 }}
             >
-                <div className="flex flex-wrap items-end gap-1">
+                <div className="flex flex-wrap items-end gap-4">
                     <CountLabel
                         label="Total Count"
                         count={summary.total_count}
