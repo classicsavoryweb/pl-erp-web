@@ -51,6 +51,11 @@ export const transactionRoutes: Route[] = [
                 permission: "view_transactions_overtime",
             },
             {
+                name: "Travel Overtime",
+                pathname: "/transactions/travel-overtime",
+                permission: "view_transactions_travel_overtime",
+            },
+            {
                 name: "Adjustments",
                 pathname: "/transactions/adjustments",
                 permission: "view_transactions_adjustments",
