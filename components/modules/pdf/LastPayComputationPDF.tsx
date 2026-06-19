@@ -298,7 +298,8 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
     const taxRefund = Number(data?.tax_refund ?? 0);
     const incentives = Number(data?.incentives ?? 0);
     const payLeave = Number(data?.sl_vl ?? 0);
-    const otherIncentive = Number(data?.sales ?? 0) + Number(data?.meal_allowance ?? data?.meal ?? 0);
+    const salesIncentives = Number(data?.sales ?? 0);
+    const mealAllowance = Number(data?.meal_allowance ?? data?.meal ?? 0);
     const salary = Number(data?.payroll_hold ?? 0);
 
     const customAmountItems = Array.isArray(data?.computation_items_override)
@@ -308,7 +309,7 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
         return sum + Number(item?.amount ?? 0);
     }, 0);
 
-    const subTotal = thirteenthMonth + taxRefund + incentives + payLeave + otherIncentive + salary + customAmountTotal;
+    const subTotal = thirteenthMonth + taxRefund + incentives + payLeave + salesIncentives + mealAllowance + salary + customAmountTotal;
 
     const deductionSummaryOverride = data?.deduction_summary_override;
     const deductionSummary = deductionSummaryOverride ?? buildDeductionSummary(data?.deductions ?? []);
@@ -435,8 +436,12 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
                             <Text style={styles.payValue}>{formatAmount(payLeave)}</Text>
                         </View>
                         <View style={styles.payRow}>
-                            <Text style={styles.payLabel}>OTHER INCENTIVE:</Text>
-                            <Text style={styles.payValue}>{formatAmount(otherIncentive)}</Text>
+                            <Text style={styles.payLabel}>SALES INCENTIVE:</Text>
+                            <Text style={styles.payValue}>{formatAmount(salesIncentives)}</Text>
+                        </View>
+                        <View style={styles.payRow}>
+                            <Text style={styles.payLabel}>MEAL ALLOWANCE:</Text>
+                            <Text style={styles.payValue}>{formatAmount(mealAllowance)}</Text>
                         </View>
                         <View style={styles.payRow}>
                             <Text style={styles.payLabel}>SALARY:</Text>

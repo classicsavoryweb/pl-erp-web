@@ -6,7 +6,7 @@ import Grid from "@/components/common/Grid";
 import Button from "@/components/common/Button";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
-import { getInitialLastPay } from "@/api/compensation/last-pay";
+import { getLastPay } from "@/api/compensation/last-pay";
 import { getEmployee } from "@/api/employee";
 import { toast } from "react-toastify";
 import { useContext, useEffect, useMemo, useState } from "react";
@@ -152,7 +152,7 @@ const LastPayComputationEditModal = ({
         api.setLoading(true);
 
         Promise.all([
-            getInitialLastPay(employeeNumber),
+            getLastPay(employeeNumber),
             getEmployee(employeeNumber),
             preparerEmployeeNumber && preparerEmployeeNumber !== employeeNumber
                 ? getEmployee(preparerEmployeeNumber)
@@ -216,10 +216,10 @@ const LastPayComputationEditModal = ({
             payroll_hold: data?.payroll_hold ?? details?.payroll_hold,
             thirteenth_month: data?.thirteenth_month ?? details?.thirteenth_month,
             incentives: data?.incentives ?? details?.incentives,
-            sl_vl: data?.sl_vl ?? details?.sl_vl,
-            meal_allowance: data?.meal_allowance ?? details?.meal_allowance ?? data?.meal,
+            sl_vl: details?.sl_vl ?? data?.sl_vl,
+            meal_allowance: details?.meal_allowance ?? data?.meal_allowance ?? details?.meal ?? data?.meal,
             tax_refund: data?.tax_refund ?? details?.tax_refund,
-            sales: data?.sales ?? details?.sales,
+            sales: details?.sales ?? data?.sales,
             total_deductions: data?.total_deductions ?? details?.total_deductions,
             last_pay: data?.last_pay ?? details?.last_pay,
             employee: details?.employee ?? data?.employee,
