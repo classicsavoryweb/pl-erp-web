@@ -26,6 +26,7 @@ import { exportAllTravelOvertimes, getAllTravelOvertimes } from "@/api/transacti
 import { useState } from "react";
 import CreateTravelOvertimeModal from "./CreateTravelOvertimeModal";
 import EditTravelOvertimeModal from "./EditTravelOvertimeModal";
+import ImportTravelTimeModal from "./ImportTravelTimeModal";
 
 const TravelOvertimeTableCard = () => {
     const api = useApiCall();
@@ -290,6 +291,9 @@ const TravelOvertimeTableCard = () => {
                 modal={editModal}
                 callBack={api.triggerReload}
                 data={data}
+            />
+            <ImportTravelTimeModal
+                modal={importModal}
             />
         </>
     );

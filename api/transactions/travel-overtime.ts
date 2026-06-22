@@ -43,3 +43,16 @@ export const editTravelOvertime = async (payload: {}, id: number | string) => {
 
     return resData;
 };
+
+export const importTravelOvertime = async (payload: {}) => {    
+    const resData = await axiosHelper({
+        func_path: '/import-travel-overtime',
+        method: 'POST',
+        payload: payload,
+        additionalHeaders: {
+            "Content-Type": "multipart/form-data"
+        }
+    });
+
+    return resData;
+};
