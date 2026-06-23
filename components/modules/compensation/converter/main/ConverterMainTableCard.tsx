@@ -38,6 +38,8 @@ const ConverterMainTableCard = () => {
     const [summary, setSummary] = useState({
         total_count: 0,
         total_amount: 0,
+        total_pending: 0,
+        total_generated: 0
     });
 
     useAsyncEffect(() => {
@@ -58,7 +60,9 @@ const ConverterMainTableCard = () => {
                 setSummary({
                     total_count: Number(resp.data.summary?.total_count ?? 0),
                     total_amount: Number(resp.data.summary?.total_amount ?? 0),
-                });
+                    total_pending: Number(resp.data.summary?.total_pending ?? 0),
+                    total_generated: Number(resp.data.summary?.total_generated?? 0),
+                });      
             }
         })
         .catch(() => {
@@ -404,6 +408,14 @@ const ConverterMainTableCard = () => {
                     <CountLabel
                         label="Total Amount"
                         count={summary.total_amount}
+                    />
+                     <CountLabel
+                        label="Total Pending"
+                        count={summary.total_pending}
+                    />
+                     <CountLabel
+                        label="Total Generated"
+                        count={summary.total_generated}
                     />
                 </div>
             </FilterCard>
