@@ -24,6 +24,7 @@ export interface PayrollDetails {
   taxable_adjustment: string
   non_taxable_adjustment: string
   cancelled_off: string
+  cancelled_off_overtime_amount: string
   gross_pay: string
   employee_sss: string
   employer_sss: string
@@ -280,6 +281,7 @@ export interface PayrollProcessDetails {
   regular_days: string
   special_leave: string
   cancelled_off: string
+  cancelled_off_overtime: string
   special_holiday: string
   legal_holiday: string
   regular_overtime: string

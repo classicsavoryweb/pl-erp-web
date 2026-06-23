@@ -43,6 +43,7 @@ const defaultPayrollDetails: PayrollDetails = {
     taxable_adjustment: "",
     non_taxable_adjustment: "",
     cancelled_off: "",
+    cancelled_off_overtime_amount: "",
     gross_pay: "",
     employee_sss: "",
     employer_sss: "",
