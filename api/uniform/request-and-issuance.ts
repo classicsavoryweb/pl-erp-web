@@ -34,9 +34,32 @@ export const exportAllRequestAndIssuance = async (payload?: {}) => {
     return resData;
 };
 
+export const exportRequestAndIssuanceDetails = async (id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/export-uniform-request-and-issuance/${id}/details`,
+        method: "GET",
+        responseType: "blob",
+        additionalHeaders: {
+            Accept: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        },
+    });
+
+    return resData;
+};
+
 export const createUniformRequestAndIssuance = async (payload: {}) => {
     const resData = await axiosHelper({
         func_path: "/create-uniform-request-and-issuance",
+        method: "POST",
+        payload,
+    });
+
+    return resData;
+};
+
+export const reviewUniformRequestAndIssuance = async (id: number, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/uniform-request/${id}/review`,
         method: "POST",
         payload,
     });
