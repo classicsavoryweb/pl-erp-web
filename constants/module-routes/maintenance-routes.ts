@@ -286,6 +286,16 @@ export const maintenanceRoutes: Route[] = [
                         pathname: "/maintenance/uniform/sizes",
                         permission: "view_maintenance_sizes",
                     },
+                    {
+                        name: "Period Lock Issuance",
+                        pathname: "/maintenance/uniform/period-lock-issuance",
+                        permission: "view_uniform_period_lock_issuance",
+                    },
+                    {
+                        name: "Period Lock Receiving",
+                        pathname: "/maintenance/uniform/period-lock-receiving",
+                        permission: "view_uniform_period_lock_receiving",
+                    },
                 ]
             },
         ]

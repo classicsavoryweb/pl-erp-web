@@ -4,15 +4,14 @@ import Textfield from "@/components/common/Textfield";
 import Dropdown from "@/components/common/Dropdown";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
 import { useFormik } from "formik";
-import { createUniformItem, editUniformItem, getUniformItemOptions } from "@/api/uniform/item-masterlist";
 import * as Yup from "yup";
 import TextArea from "@/components/common/TextArea";
 import { toast } from "react-toastify";
-import { createUniformRequestAndIssuance } from "@/api/uniform/request-and-issuance";
+import { createUniformRequestAndIssuance, reviewUniformRequestAndIssuance } from "@/api/uniform/request-and-issuance";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import confirm from "@/components/common/Confirm";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
-import { useEffect,useState } from "react";
+import { useEffect,useMemo,useState } from "react";
 import { getDropDownMasterlist } from "@/api/uniform/request-and-issuance"
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
@@ -20,7 +19,7 @@ import moment from "moment";
 
 interface UniformRequestFormProps {
     modal: any;
-    mode: "create" | "view";
+    mode: "create" | "view" | "review";
     formValue?: any;
     onSubmitCallback: () => void;
 };
@@ -34,6 +33,7 @@ const defaultValues = {
     item_no : "",
     employee_name: "",
     employee_id: "",
+    gender: "",
     issuance_type: "",
     branch: "",         
     position: "",
@@ -66,6 +66,7 @@ const UniformRequestAndIssuanceForm = ({
 }: UniformRequestFormProps) => {
     const [item , setitem] = useState<any[]>([]);
     const isView = mode === "view";
+    const isReview = mode === "review";
     const [itemdraft, setitemdraft] = useState({
         item_no: "",
         description: "",
@@ -80,6 +81,34 @@ const UniformRequestAndIssuanceForm = ({
         item_remarks:"",
         uniform_item_no:""
     });
+    const normalizeGender = (gender?: string) => {
+        const normalized = (gender ?? "").trim().toLowerCase();
+
+        if (["m", "male"].includes(normalized)) return "male";
+        if (["f", "female"].includes(normalized)) return "female";
+        if (["n/a", "na", "unisex"].includes(normalized)) return "unisex";
+
+        return normalized;
+    };
+
+    const getReviewAvailableStock = (selected: any) => {
+        const currentStock = Number(selected?.stock_on_hand ?? 0);
+
+        if (!isReview) return currentStock;
+
+        const originalItem = (formValue?.items ?? []).find((item: any) =>
+            (item.item_no ?? item.uniform_item_no) === selected?.item_no
+        );
+
+        return currentStock + Number(originalItem?.requested_quantity ?? 0);
+    };
+
+    const getFormItems = (items: any[] = []) => {
+        return items.map((item: any) => ({
+            ...item,
+            item_no: item.item_no || item.uniform_item_no || "",
+        }));
+    };
 
     useAsyncEffect(() => {
         if (!modal.isShowing) return;
@@ -119,8 +148,10 @@ const UniformRequestAndIssuanceForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Create Uniform Request",
-                message: "Are you sure you want to create this request?"
+                title: isReview ? "Review Uniform Request" : "Create Uniform Request",
+                message: isReview
+                    ? "Are you sure you want to save this reviewed request?"
+                    : "Are you sure you want to create this request?"
             });
 
              if (!isConfirmed) return;
@@ -132,36 +163,66 @@ const UniformRequestAndIssuanceForm = ({
                 items: values.items,
             };
 
-            const submitter = mode === "create"
-                ? createUniformRequestAndIssuance(payload)
-                : editUniformItem(payload, formValue.id);
+            const submitRequest = async (requestPayload: any) => {
+                return mode === "create"
+                    ? createUniformRequestAndIssuance(requestPayload)
+                    : reviewUniformRequestAndIssuance(formValue.id, requestPayload);
+            };
 
-            submitter
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(mode === "create" ? "Request Created Successfully" : "");
-                        onSubmitCallback();
-                        modal.onClose();
-                        resetForm();
-                    } else {
-                        toast.error(resp.data.message);
-                    }
-                })
-                .catch((err) => {
-                    toast.error("Request failed - check console");
-                });
+            try {
+                let resp = await submitRequest(payload);
+
+                if (resp.error && resp.data?.requires_confirmation) {
+                    const accepted = await confirm({
+                        title: "Free Uniform Warning",
+                        message: resp.data.message,
+                    });
+
+                    if (!accepted) return;
+
+                    resp = await submitRequest({
+                        ...payload,
+                        confirm_free_uniform_duplicate: true,
+                    });
+                }
+
+                if (!resp.error) {
+                    toast.success(mode === "create" ? "Request Created Successfully" : "Request Reviewed Successfully");
+                    onSubmitCallback();
+                    modal.onClose();
+                    resetForm();
+                } else {
+                    toast.error(resp.data?.message ?? "Request failed");
+                }
+            } catch (err) {
+                toast.error("Request failed - check console");
+            } finally {
+                setSubmitting(false);
+            }
         }
     });
+    const filteredItems = useMemo(() => {
+        const employeeGender = normalizeGender(createFormHandler.values.gender);
+
+        if (!employeeGender) return item;
+
+        return item.filter((record) => {
+            const itemGender = normalizeGender(record?.gender?.code ?? record?.gender?.description);
+
+            return !itemGender || itemGender === "unisex" || itemGender === employeeGender;
+        });
+    }, [item, createFormHandler.values.gender]);
  
 
     useEffect(() => {
             if (!modal.isShowing) return;
     
-            if (mode === "view" && formValue) {
+            if ((mode === "view" || mode === "review") && formValue) {
                 createFormHandler.setValues({
                     item_no:formValue.item_no ?? "",
                     employee_name: formValue.employee_name ?? "",
                     employee_id: formValue.employee_id ?? "",
+                    gender: formValue.gender ?? "",
                     issuance_type: formValue.issuance_type ?? "",
                     branch: formValue.branch ?? "",
                     position: formValue.position ?? "",
@@ -181,7 +242,7 @@ const UniformRequestAndIssuanceForm = ({
                     cancelled_by:formValue.cancelled_by ?? "",
                     date_cancelled:formValue.date_cancelled ?? "",
                     cancel_reason:formValue.cancel_reason ?? "",
-                    items: formValue.items ?? [],
+                    items: getFormItems(formValue.items),
                     
                 });
             } else {
@@ -288,13 +349,13 @@ const UniformRequestAndIssuanceForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title={mode === "create" ? "Create Request" : "View Request"}
+            title={mode === "create" ? "Create Request" : isReview ? "Review Request" : "View Request"}
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
             }}
             loading={modal.loading}
-            size={mode === "create" ? "xxl" : "lg"}
+            size={mode === "create" || isReview ? "xxl" : "lg"}
         >
             <form onSubmit={createFormHandler.handleSubmit}>
                 
@@ -320,6 +381,11 @@ const UniformRequestAndIssuanceForm = ({
                             );
 
                             createFormHandler.setFieldValue(
+                                "gender",
+                                employee?.gender ?? ""
+                            );
+
+                            createFormHandler.setFieldValue(
                                 "branch",
                                 employee?.current_branch?.name ?? ""
                             );
@@ -333,6 +399,11 @@ const UniformRequestAndIssuanceForm = ({
                                 "date_hired",
                                 employee?.date_hired ?? ""
                             );
+
+                            createFormHandler.setFieldValue("items", []);
+                            setitemdraft({item_no:"",description:"",size:"",gender:"",stock_on_hand:"",requested_quantity:0,remaining_quantity:0,
+                                standard_unit:"",standard_unit_price:"",total_amount:0,item_remarks:"",uniform_item_no:"",
+                            });
                         }}
                     />
                 <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
@@ -489,6 +560,7 @@ const UniformRequestAndIssuanceForm = ({
                         disabled={isView}
                         onChange={(e: any) => {
                             const selected = e.target.obj;
+                            const stockOnHand = getReviewAvailableStock(selected);
 
                             setitemdraft({
                                 ...itemdraft,
@@ -496,13 +568,13 @@ const UniformRequestAndIssuanceForm = ({
                                 uniform_item_no: selected?.item_no ?? "", 
                                 description: selected?.description ?? "",
                                 gender: selected?.gender?.code ?? "",
-                                stock_on_hand: selected?.stock_on_hand ?? "",
+                                stock_on_hand: String(stockOnHand),
                                 size: selected?.size?.description ?? "",
                                 standard_unit: selected?.standard_unit ?? "",
                                 standard_unit_price: selected?.standard_unit_price ?? "",
                             });
                         }}                            
-                        options={item.map((item) => ({
+                        options={filteredItems.map((item) => ({
                             label: item.description,
                             value: item.item_no,
                             obj: item,
@@ -600,19 +672,7 @@ const UniformRequestAndIssuanceForm = ({
                     <>
                     <hr className="mt-6 pb-2 text-slate-300" />
                     <div className="flex justify-end">
-                    <div className="w-1/2 flex justify-end items-center gap-x-2">
-                        <Button
-                            label="Cancel"
-                            variant="secondary"
-                            onClick={() => {
-                                modal.onClose();
-                                createFormHandler.resetForm();
-                               setitemdraft({item_no:"",description:"",size:"",gender:"",stock_on_hand:"",requested_quantity:0,remaining_quantity:0,
-                                    standard_unit:"",standard_unit_price:"",total_amount:1,item_remarks:"",uniform_item_no:""
-                                });
-                                
-                            }}
-                        />
+                    <div className="w-[120px]">
                         <Button
                             type="submit"
                             label="Submit"
