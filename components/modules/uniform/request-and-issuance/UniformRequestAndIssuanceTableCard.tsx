@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import Badge from "@/components/common/Badge";
 import { useState } from "react";
-import { getAllRequestAndIssuance , exportAllRequestAndIssuance , exportRequestAndIssuanceDetails, updateRequestStatus} from "@/api/uniform/request-and-issuance";
+import { getAllRequestAndIssuance , exportAllRequestAndIssuance , updateRequestStatus} from "@/api/uniform/request-and-issuance";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import CancelRequestAndIssuance from "./UniformRequestAndIssuanceCancelForm"
@@ -27,7 +27,6 @@ const UniformSizesTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const viewModal = useModal();
-    const reviewModal = useModal();
     const cancelModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
@@ -62,22 +61,18 @@ const UniformSizesTableCard = () => {
                 viewModal.onOpen();
             },
         },
-        {
-            label: "Detailed Export",
-            onClick: () => downloadDetailedExport(item),
-        },
         item.status === "Unposted" && {
-            label: "Review",
-            onClick: () => {
-                setData(item);
-                reviewModal.onOpen();
-            },
-        },
-        item.status === "Reviewing" && {
-            label: "Edit Review",
-            onClick: () => {
-                setData(item);
-                reviewModal.onOpen();
+            label: "Reviewing",
+            onClick: async () => {
+                const isConfirmed = await confirm(
+                    "Are you sure you want to mark this as Reviewing?"
+                );
+
+                if (!isConfirmed) return;
+
+                await updateRequestStatus(item.id, "Reviewing");
+                toast.success("Marked as Reviewing");
+                api.triggerReload();
             },
         },
         item.status === "Reviewing" && {
@@ -98,31 +93,6 @@ const UniformSizesTableCard = () => {
             },
         },
     ].filter((action): action is { label: string; onClick: () => void } => Boolean(action));
-
-    const downloadDetailedExport = async (item: any) => {
-        const resp = await exportRequestAndIssuanceDetails(item.id);
-        const payload = resp?.data ?? resp;
-        const isBlob = payload instanceof Blob;
-        const isArrayBuffer = payload && payload.byteLength !== undefined;
-
-        if (!resp || resp.error || (!isBlob && !isArrayBuffer)) {
-            toast.error(resp?.data?.message || resp?.message || "Export failed. Please try again.");
-            return;
-        }
-
-        const blob = isBlob ? payload : new Blob([payload], {
-            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-        });
-        const downloadUrl = window.URL.createObjectURL(blob);
-        const anchor = document.createElement("a");
-
-        anchor.href = downloadUrl;
-        anchor.download = `REQUEST-AND-ISSUANCE-DETAILED-${item.request_number}.xlsx`;
-        document.body.appendChild(anchor);
-        anchor.click();
-        anchor.remove();
-        window.URL.revokeObjectURL(downloadUrl);
-    };
 
     const columnSettings = [
         { columnHead: "Request Number", path: "request_number", columnType: COLUMNTYPES.string },
@@ -228,15 +198,9 @@ const UniformSizesTableCard = () => {
                 mode = "create"
                 onSubmitCallback={api.triggerReload}
             />
-            <UniformRequestAndIssuanceForm
+            <UniformRequestAndIssuanceForm 
                 modal = {viewModal}
                 mode = "view"
-                formValue={data}
-                onSubmitCallback={api.triggerReload}
-            />
-            <UniformRequestAndIssuanceForm
-                modal = {reviewModal}
-                mode = "review"
                 formValue={data}
                 onSubmitCallback={api.triggerReload}
             />

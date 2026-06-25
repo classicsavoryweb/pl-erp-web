@@ -55,21 +55,6 @@ export const uniformRoutes: Route[] = [
                 pathname: "/uniform/receiving-stocks",
                 permission: "view_uniform_receiving_stocks"
             },
-            {
-                name: "Weighted Average",
-                pathname: "/uniform/weighted-average",
-                permission: "view_uniform_weighted_average"
-            },
-            {
-                name: "Physical Count",
-                pathname: "/uniform/physical-count",
-                permission: "view_uniform_physical_count"
-            },
-            {
-                name: "Variance Report",
-                pathname: "/uniform/variance-report",
-                permission: "view_uniform_variance_report"
-            },
         ]
     }
 ];
