@@ -42,7 +42,7 @@ const DropdownLink = ({
                     text-gray-500
                     dark:text-slate-200
                     focus:outline-none
-                    text-[12px]
+                    text-[11px]
                 `}
 
                 onClick={() => {
@@ -93,7 +93,7 @@ const DropdownLink = ({
                                             py-[7px]
                                             items-center
                                             font-medium
-                                            text-[12px]
+                                            text-[11px]
                                             px-2
                                             focus:outline-none
                                             ${active ? "text-red-800" : "text-gray-500"}

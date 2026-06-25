@@ -9,7 +9,7 @@ const PageTitle = ({
     return (
         <>
             <title>{`${title} | Classic Savory ERP`}</title>
-            <p className="text-[15px] font-semibold text-gray-500 pb-2 tracking-[.020rem] dark:text-slate-200">
+            <p className="text-[13.5px] font-semibold text-gray-500 pb-2 tracking-[.020rem] dark:text-slate-200">
                 {title}
             </p>
         </>
