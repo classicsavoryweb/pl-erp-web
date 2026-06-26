@@ -38,7 +38,7 @@ const defaultValues = {
     branch: "",         
     position: "",
     date_hired: "",
-    total_amount: 1,
+    total_amount: 0,
     status: "Unposted",
     sent_email: "No",
     payroll_entry: "",
@@ -77,7 +77,7 @@ const UniformRequestAndIssuanceForm = ({
         remaining_quantity: 0,
         standard_unit:"",
         standard_unit_price:"",
-        total_amount: 1,
+        total_amount: 0,
         item_remarks:"",
         uniform_item_no:""
     });
@@ -133,7 +133,7 @@ const UniformRequestAndIssuanceForm = ({
             branch: Yup.string().required("Branch is required."),
             position: Yup.string().required("Position is required."),
             date_hired: Yup.string().required("Date Hired is required."),
-            total_amount: Yup.number().min(1).required("Total Amount is required."),
+            total_amount: Yup.number().min(0).required("Total Amount is required."),
             status: Yup.string().required("Status is required."),
             sent_email: Yup.string().required("Sent Email is required."),
             items: Yup.array()

@@ -20,6 +20,7 @@ import UniformRequestAndIssuanceForm from "./UniformRequestAndIssuanceForm";
 import moment from "moment";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import confirm from "@/components/common/Confirm";
 
 
 
@@ -83,7 +84,12 @@ const UniformSizesTableCard = () => {
         item.status === "Reviewing" && {
             label: "Posted",
             onClick: async () => {
-                if (!confirm("Are you sure you want to mark this as Posted?")) return;
+                const isConfirmed = await confirm({
+                    title: "Post Uniform Request",
+                    message: "Are you sure you want to mark this as Posted?",
+                });
+
+                if (!isConfirmed) return;
 
                 await updateRequestStatus(item.id, "Posted");
                 toast.success("Marked As Posted");
