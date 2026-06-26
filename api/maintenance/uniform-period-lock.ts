@@ -6,14 +6,8 @@ export const getUniformPeriodLocks = (payload?: {}) => axiosHelper({
     payload,
 });
 
-export const createUniformPeriodLock = (payload: {}) => axiosHelper({
-    func_path: "/create-uniform-period-lock",
-    method: "POST",
-    payload,
-});
-
-export const editUniformPeriodLock = (id: number, payload: {}) => axiosHelper({
-    func_path: `/edit-uniform-period-lock/${id}`,
+export const saveUniformPeriodLockPeriod = (payload: {}) => axiosHelper({
+    func_path: "/save-uniform-period-lock-period",
     method: "POST",
     payload,
 });

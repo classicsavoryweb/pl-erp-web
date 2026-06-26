@@ -1,68 +1,61 @@
 "use client";
 
-import {
-    createUniformPeriodLock,
-    editUniformPeriodLock,
-} from "@/api/maintenance/uniform-period-lock";
+import { saveUniformPeriodLockPeriod } from "@/api/maintenance/uniform-period-lock";
 import Button from "@/components/common/Button";
 import confirm from "@/components/common/Confirm";
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
-import ActiveInactiveDropDown from "@/components/modules/generic/ActiveInactiveDropDown";
 import { useFormik } from "formik";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+import UniformPeriodLockStatusDropDown from "./UniformPeriodLockStatusDropDown";
 
 interface Props {
     modal: any;
     formValue?: any;
     onSubmitCallback: () => void;
-    lockType: "Issuance" | "Receiving";
 }
 
 const defaultValues = {
-    period_name: "",
-    lock_type: "Issuance",
+    issuance_id: "",
+    receiving_id: "",
     date_from: "",
     date_to: "",
-    status: "active",
+    issuance_status: "inactive",
+    receiving_status: "inactive",
 };
 
-const UniformPeriodLockForm = ({ modal, formValue, onSubmitCallback, lockType }: Props) => {
-    const isEdit = Boolean(formValue?.id);
-    const initialValues = { ...defaultValues, lock_type: lockType };
+const UniformPeriodLockPeriodForm = ({ modal, formValue, onSubmitCallback }: Props) => {
+    const isEdit = Boolean(formValue?.issuance?.id || formValue?.receiving?.id);
 
     const form = useFormik({
-        initialValues,
+        initialValues: defaultValues,
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            period_name: Yup.string().required("Period name is required."),
-            lock_type: Yup.string().required("Lock type is required."),
             date_from: Yup.string().required("Date from is required."),
             date_to: Yup.string().required("Date to is required."),
-            status: Yup.string().required("Status is required."),
+            issuance_status: Yup.string().required("Issuance lock is required."),
+            receiving_status: Yup.string().required("Receiving lock is required."),
         }),
         onSubmit: async (values, { setSubmitting }) => {
             const isConfirmed = await confirm({
-                title: isEdit ? "Update Uniform Period" : "Create Uniform Period",
+                title: isEdit ? "Update Date Period" : "Create Date Period",
                 message: "Are you sure you want to submit?",
             });
             if (!isConfirmed) return;
 
             try {
                 setSubmitting(true);
-                const resp = isEdit
-                    ? await editUniformPeriodLock(formValue.id, { ...values, lock_type: lockType })
-                    : await createUniformPeriodLock({ ...values, lock_type: lockType });
+                const resp = await saveUniformPeriodLockPeriod(values);
 
                 if (!resp.error) {
-                    toast.success(isEdit ? "Uniform period updated successfully" : "Uniform period created successfully");
+                    toast.success(isEdit ? "Date period updated successfully" : "Date period created successfully");
                     onSubmitCallback();
                     modal.onClose();
-                    form.resetForm({ values: initialValues });
+                    form.resetForm({ values: defaultValues });
                 } else {
-                    toast.error(resp.data?.message ?? "Unable to save uniform period.");
+                    toast.error(resp.data?.message ?? "Unable to save date period.");
                 }
             } catch {
                 toast.error("Error encountered");
@@ -75,38 +68,30 @@ const UniformPeriodLockForm = ({ modal, formValue, onSubmitCallback, lockType }:
     useEffect(() => {
         if (formValue) {
             form.setValues({
-                period_name: formValue.period_name ?? "",
-                lock_type: lockType,
+                issuance_id: formValue.issuance?.id ?? "",
+                receiving_id: formValue.receiving?.id ?? "",
                 date_from: formValue.date_from ?? "",
                 date_to: formValue.date_to ?? "",
-                status: formValue.status ?? "active",
+                issuance_status: formValue.issuance?.status ?? "inactive",
+                receiving_status: formValue.receiving?.status ?? "inactive",
             });
         } else {
-            form.setFieldValue("lock_type", lockType);
+            form.resetForm({ values: defaultValues });
         }
-    }, [formValue, lockType]);
+    }, [formValue]);
 
     return (
         <Modal
             isShowing={modal.isShowing}
-            title={isEdit ? "Edit Uniform Period" : "Create Uniform Period"}
+            title={isEdit ? "Edit Date Period" : "Create Date Period"}
             onClose={() => {
                 modal.onClose();
-                form.resetForm({ values: initialValues });
+                form.resetForm({ values: defaultValues });
             }}
             loading={modal.loading}
             size="md"
         >
             <form onSubmit={form.handleSubmit}>
-                <Textfield
-                    label="Period Name"
-                    placeholder="enter period name"
-                    name="period_name"
-                    value={form.values.period_name}
-                    required
-                    onChange={form.handleChange}
-                    error={form.errors.period_name}
-                />
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2">
                     <Textfield
                         label="Date From"
@@ -127,14 +112,24 @@ const UniformPeriodLockForm = ({ modal, formValue, onSubmitCallback, lockType }:
                         error={form.errors.date_to}
                     />
                 </div>
-                <ActiveInactiveDropDown
-                    label="Status"
-                    name="status"
-                    value={form.values.status}
-                    required
-                    onChange={form.handleChange}
-                    error={form.errors.status}
-                />
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2">
+                    <UniformPeriodLockStatusDropDown
+                        label="Issuance Lock"
+                        name="issuance_status"
+                        value={form.values.issuance_status}
+                        required
+                        onChange={form.handleChange}
+                        error={form.errors.issuance_status}
+                    />
+                    <UniformPeriodLockStatusDropDown
+                        label="Receiving Lock"
+                        name="receiving_status"
+                        value={form.values.receiving_status}
+                        required
+                        onChange={form.handleChange}
+                        error={form.errors.receiving_status}
+                    />
+                </div>
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">
@@ -143,7 +138,7 @@ const UniformPeriodLockForm = ({ modal, formValue, onSubmitCallback, lockType }:
                             variant="secondary"
                             onClick={() => {
                                 modal.onClose();
-                                form.resetForm({ values: initialValues });
+                                form.resetForm({ values: defaultValues });
                             }}
                         />
                         <Button
@@ -159,4 +154,4 @@ const UniformPeriodLockForm = ({ modal, formValue, onSubmitCallback, lockType }:
     );
 };
 
-export default UniformPeriodLockForm;
+export default UniformPeriodLockPeriodForm;

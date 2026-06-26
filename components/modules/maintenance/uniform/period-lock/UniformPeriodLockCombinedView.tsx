@@ -1,6 +1,7 @@
 "use client";
 
 import { getUniformPeriodLocks } from "@/api/maintenance/uniform-period-lock";
+import Badge from "@/components/common/Badge";
 import Card from "@/components/common/Card";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import Table from "@/components/common/Table";
@@ -15,13 +16,9 @@ import usePagination from "@/hooks/pagination";
 import moment from "moment";
 import { useContext, useState } from "react";
 import { toast } from "react-toastify";
-import UniformPeriodLockForm from "./UniformPeriodLockForm";
+import UniformPeriodLockPeriodForm from "./UniformPeriodLockPeriodForm";
 
-interface Props {
-    lockType: "Issuance" | "Receiving";
-}
-
-const UniformPeriodLockTableCard = ({ lockType }: Props) => {
+const UniformPeriodLockCombinedView = () => {
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const createModal = useModal();
@@ -29,17 +26,15 @@ const UniformPeriodLockTableCard = ({ lockType }: Props) => {
     const paginator = usePagination();
     const filter = useFilter();
     const [selected, setSelected] = useState<any>(null);
-    const performPermission = lockType === "Issuance"
-        ? "perform_uniform_period_lock_issuance"
-        : "perform_uniform_period_lock_receiving";
-    const canPerform = permissions.includes(performPermission);
+    const canPerform = permissions.includes("perform_uniform_period_lock");
+    const statusLabel = (status: string) => status === "active" ? "Open" : "Lock";
 
     useAsyncEffect(() => {
         api.setLoading(true);
         getUniformPeriodLocks({
             page: paginator.page,
             per_page: paginator.per_page,
-            lock_type: lockType,
+            combined: true,
             ...filter.filters,
         })
             .then((resp: any) => {
@@ -56,16 +51,40 @@ const UniformPeriodLockTableCard = ({ lockType }: Props) => {
     }, [paginator.reload, api.reload, filter.reload]);
 
     const columnSettings = [
-        { columnHead: "Period Name", path: "period_name", columnType: COLUMNTYPES.string },
-        { columnHead: "Date From", path: "date_from", columnType: COLUMNTYPES.date },
-        { columnHead: "Date To", path: "date_to", columnType: COLUMNTYPES.date },
-        { columnHead: "Status", path: "status", columnType: COLUMNTYPES.status },
+        {
+            columnHead: "Date Period",
+            path: "date_from",
+            columnType: COLUMNTYPES.function,
+            function: (record: any) => {
+                const dateFrom = record.date_from ? moment(record.date_from).format("MMMM DD, YYYY") : "";
+                const dateTo = record.date_to ? moment(record.date_to).format("MMMM DD, YYYY") : "";
+
+                if (!dateFrom && !dateTo) return "-";
+                return `${dateFrom} - ${dateTo}`;
+            },
+        },
+        {
+            columnHead: "Issuance Lock",
+            path: "issuance.status",
+            columnType: COLUMNTYPES.function,
+            function: (record: any) => record.issuance
+                ? <Badge status={record.issuance.status === "inactive" ? "danger" : "success"} label={statusLabel(record.issuance.status)} />
+                : "-",
+        },
+        {
+            columnHead: "Receiving Lock",
+            path: "receiving.status",
+            columnType: COLUMNTYPES.function,
+            function: (record: any) => record.receiving
+                ? <Badge status={record.receiving.status === "inactive" ? "danger" : "success"} label={statusLabel(record.receiving.status)} />
+                : "-",
+        },
     ];
 
     const tableActions = [
         {
-            label: "Edit",
-            permission: performPermission,
+            label: "Edit Date Period",
+            permission: "perform_uniform_period_lock",
             onClick: (record: any) => {
                 setSelected({
                     ...record,
@@ -77,33 +96,35 @@ const UniformPeriodLockTableCard = ({ lockType }: Props) => {
         },
     ];
 
+    const addActions = [
+        {
+            label: "Create Date Period",
+            disabled: !canPerform,
+            onClick: () => {
+                setSelected(null);
+                createModal.onOpen();
+            },
+        },
+    ];
+
     return (
         <>
             <FilterCard
                 columnSettings={[
-                    { columnHead: "Period Name", path: "period_name" },
+                    { columnHead: "Date From", path: "date_from" },
+                    { columnHead: "Date To", path: "date_to" },
                     { columnHead: "Status", path: "status" },
                     { columnHead: "Prepared By", path: "prepared_by" },
                     { columnHead: "Updated By", path: "updated_by" },
                 ]}
                 filterHandler={filter}
-                defaultColumnSelected="period_name"
+                defaultColumnSelected="date_from"
                 callBack={() => paginator.setPage(1)}
             />
             <Card>
                 {canPerform && (
                     <div className="flex justify-end gap-x-3">
-                        <DropDownButtons
-                            actions={[
-                                {
-                                    label: "Add Uniform Period",
-                                    onClick: () => {
-                                        setSelected(null);
-                                        createModal.onOpen();
-                                    },
-                                },
-                            ]}
-                        />
+                        <DropDownButtons actions={addActions} />
                     </div>
                 )}
                 <Table
@@ -115,19 +136,17 @@ const UniformPeriodLockTableCard = ({ lockType }: Props) => {
                     actions={tableActions}
                 />
             </Card>
-            <UniformPeriodLockForm
+            <UniformPeriodLockPeriodForm
                 modal={createModal}
-                lockType={lockType}
                 onSubmitCallback={api.triggerReload}
             />
-            <UniformPeriodLockForm
+            <UniformPeriodLockPeriodForm
                 modal={editModal}
                 formValue={selected}
-                lockType={lockType}
                 onSubmitCallback={api.triggerReload}
             />
         </>
     );
 };
 
-export default UniformPeriodLockTableCard;
+export default UniformPeriodLockCombinedView;

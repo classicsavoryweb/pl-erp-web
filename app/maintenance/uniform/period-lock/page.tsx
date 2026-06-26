@@ -1,11 +1,11 @@
 import PageTitle from "@/components/common/PageTitle";
-import UniformPeriodLockTableCard from "@/components/modules/maintenance/uniform/period-lock/UniformPeriodLockTableCard";
+import UniformPeriodLockCombinedView from "@/components/modules/maintenance/uniform/period-lock/UniformPeriodLockCombinedView";
 
 const Page = () => {
     return (
         <>
-            <PageTitle title="Period Lock Issuance" />
-            <UniformPeriodLockTableCard lockType="Issuance" />
+            <PageTitle title="Period Lock" />
+            <UniformPeriodLockCombinedView />
         </>
     );
 };
