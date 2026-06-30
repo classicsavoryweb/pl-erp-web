@@ -19,12 +19,13 @@ import { previewPayrollComputation } from "@/api/compensation/payroll";
 import * as Yup from "yup";
 import IncentivesCard from "@/components/modules/compensation/payroll/payroll-details/IncentivesCard";
 import TardinessHistoryCard from "@/components/modules/compensation/payroll/payroll-details/TardinessHistoryCard";
+import TardinessDetails from "@/components/modules/compensation/payroll/payroll-details/TardinessDetails";
 
 const Page = () => {
     const params = useParams();
     const payrollId = params["payroll-id"];
     const { permissions } = useContext(AuthContext);
-    const {setPayrollDetails, payrollDetails } = useContext(PayrollContext);
+    const {setPayrollDetails, payrollDetails, cutOff } = useContext(PayrollContext);
 
     useEffect(() => {
         formHandler.setValues({
@@ -184,9 +185,15 @@ const Page = () => {
                     {/* <div className="mt-[16px]">
                         <TardinessHistoryCard/>
                     </div> */}
-                    { (permissions.includes("perform_compensation_incentives")) &&
+                    { (permissions.includes("perform_compensation_incentives") && Number(cutOff.part) == 1 ) &&
                         <div className="mt-[16px]">
                             <IncentivesCard/>
+                        </div>
+                    }
+
+                    { Number(cutOff.part) == 2 &&
+                        <div className="mt-[16px]">
+                            <TardinessDetails/>
                         </div>
                     }
                 </div>

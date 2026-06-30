@@ -397,4 +397,13 @@ export interface TardinessOffense {
   updated_at: string;
 }
 
+export interface CutOff {
+  id: number;
+  cut_off: string;
+  start_date: string;
+  end_date: string;
+  pay_date: string;
+  status: string;
+  part: string;
+}
 

@@ -90,3 +90,13 @@ export const updatePayrollTimekeepingBranch = async (id: number, payload: {}) =>
 
     return resData;
 };
+
+export const getEmployeeMonthlyTardiness = async (employeeNumber: string, payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-monthly-tardiness/${employeeNumber}`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
