@@ -103,7 +103,7 @@ const PayrollProofListTableCard = () => {
                 ...getCurrentCutoff()
             },
             selected_cutoff: getCurrentCutoff().range,
-            bank_account_type_id: "1",
+            bank_account_type_id: "ALL",
             type: "PAYROLL",
             year: moment().year(),
             branch_id: "",
