@@ -204,10 +204,7 @@ const UniformRequestAndIssuanceForm = ({
             }
             };
            try {
-    let resp = await submitRequest(payload);
-
-    console.log(resp);
-       
+        let resp = await submitRequest(payload);   
         if (resp.errors) {
             const firstError = Object.values(resp.errors).flat()?.[0];
             toast.error(firstError || resp.message || "Request failed");
@@ -446,7 +443,7 @@ const UniformRequestAndIssuanceForm = ({
             case "Posted":
                 return "bg-green-600 text-white";
             case "Reviewed":
-                return "bg-yellow-500 text-white";
+                return "bg-orange-600 text-white";
             case "Cancelled":
                 return "bg-red-600 text-white";
             default:
@@ -519,7 +516,7 @@ const UniformRequestAndIssuanceForm = ({
                     <div className="col-span-1">
                         <button
                             disabled
-                            className={`w-full py-3 text-lg font-semibold rounded-md ${getStatusButtonClass(
+                            className={`w-full py-3 text-lg font-semibold rounded-full ${getStatusButtonClass(
                                 createFormHandler.values.status
                             )}`}
                         >
@@ -619,7 +616,7 @@ const UniformRequestAndIssuanceForm = ({
                         error={createFormHandler.errors.created_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.date_requested
@@ -635,7 +632,7 @@ const UniformRequestAndIssuanceForm = ({
                         error={createFormHandler.errors.reviewed_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.date_reviewed
@@ -651,7 +648,7 @@ const UniformRequestAndIssuanceForm = ({
                         error={createFormHandler.errors.posted_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.date_posted
@@ -676,7 +673,23 @@ const UniformRequestAndIssuanceForm = ({
                         }
                         disabled
                     />       
-                    </div>
+                    <Textfield
+                        label="Payroll Entry:"
+                        name="created_by"
+                        value={createFormHandler.values.cancelled_by ?? ""}
+                        error={createFormHandler.errors.posted_by}
+                        disabled                       
+                    />
+                    <Textfield
+                        label="Payroll send Date"
+                        value={
+                            createFormHandler.values.date_cancelled
+                                ? moment(createFormHandler.values.date_cancelled).format("MMMM DD, YYYY h:mm A")
+                                : "-"
+                        }
+                        disabled
+                    />       
+                </div>
                     <div>
                         <TextArea
                             label="Cancel Reason"
@@ -686,6 +699,7 @@ const UniformRequestAndIssuanceForm = ({
                             disabled
                         />
                     </div>
+                    
                     
                 </div>
                 )}
@@ -724,7 +738,7 @@ const UniformRequestAndIssuanceForm = ({
                             });
                         }}                            
                         options={filteredItems.map((item) => ({
-                            label: item.description,
+                            label: `${item.description}-(${item.gender?.code})-${item.size?.description}`,
                             value: item.item_no,
                             obj: item,
                         }
@@ -828,14 +842,14 @@ const UniformRequestAndIssuanceForm = ({
                     <>
                     <hr className="mt-6 pb-2 text-slate-300" />
                     <div className="flex justify-end">
-                    <div className="w-[120px]">
-                        <Button
-                            type="submit"
-                            label="Submit"
-                            loading={createFormHandler.isSubmitting}
-                            onClick={()=>{}}
-                        />
-                    </div>
+                        <div className="w-[120px]">
+                            <Button
+                                type="submit"
+                                label="Submit"
+                                loading={createFormHandler.isSubmitting}
+                                onClick={()=>{}}
+                            />
+                        </div>
                     </div>
                     </>
                 )}
