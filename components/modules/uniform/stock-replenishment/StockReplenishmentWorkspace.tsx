@@ -76,6 +76,7 @@ const lineInputClassName = [
 ].join(" ");
 
 const numericLineInputClassName = `${lineInputClassName} text-right`;
+const readOnlyNumericLineInputClassName = `${numericLineInputClassName} cursor-default !border-slate-300 !bg-slate-200 !text-slate-600 focus:!border-slate-300 dark:!border-neutral-700 dark:!bg-neutral-900 dark:!text-neutral-400`;
 
 const messageOf = (response: any) =>
     response?.data?.message ?? response?.message ?? "Unable to complete the request.";
@@ -403,9 +404,13 @@ const StockReplenishmentWorkspace = ({
     const updateRequestItem = (index: number, field: string, value: string) => {
         setRequestForm((form) => ({
             ...form,
-            items: form.items.map((item, itemIndex) =>
-                itemIndex === index ? { ...item, [field]: value } : item
-            ),
+            items: form.items.map((item, itemIndex) => {
+                if (itemIndex !== index) return item;
+                if (field === "requested_qty") {
+                    return { ...item, requested_qty: value, approved_qty: value };
+                }
+                return { ...item, [field]: value };
+            }),
         }));
     };
 
@@ -985,29 +990,31 @@ const StockReplenishmentWorkspace = ({
                                 accept=".xlsx,.xls,.csv,.txt"
                                 onChange={(event) => handleImportItems(event.target.files?.[0])}
                             />
-                            <button
-                                type="button"
-                                className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer disabled:text-slate-400 disabled:no-underline"
-                                disabled={!requestForm.supplier_id || submitting}
-                                onClick={handleGenerateList}
-                            >
-                                Generate List
-                            </button>
-                            <button
-                                type="button"
-                                className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer disabled:text-slate-400 disabled:no-underline"
-                                disabled={!requestForm.supplier_id || submitting}
-                                onClick={() => importInputRef.current?.click()}
-                            >
-                                Import Supplier/Item List
-                            </button>
-                            <button
-                                type="button"
-                                className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
-                                onClick={() => addRequestItem(requestItemId)}
-                            >
-                                Add Request
-                            </button>
+                            <div className="w-[140px]">
+                                <Button
+                                    type="button"
+                                    label="Generate List"
+                                    disabled={!requestForm.supplier_id || submitting}
+                                    loading={submitting}
+                                    onClick={handleGenerateList}
+                                />
+                            </div>
+                            <div className="w-[220px]">
+                                <Button
+                                    type="button"
+                                    label="Import Supplier/Item List"
+                                    disabled={!requestForm.supplier_id || submitting}
+                                    onClick={() => importInputRef.current?.click()}
+                                />
+                            </div>
+                            <div className="w-[130px]">
+                                <Button
+                                    type="button"
+                                    label="Add Request"
+                                    disabled={submitting}
+                                    onClick={() => addRequestItem(requestItemId)}
+                                />
+                            </div>
                         </div>
                     </div>
                     <SearchableDropDown
@@ -1354,7 +1361,7 @@ const ModalFooter = ({ loading }: any) => (
 
 const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
     <div className="my-3 overflow-x-auto">
-        <table className="w-full min-w-[850px] border-collapse text-sm">
+        <table className="w-full min-w-[1000px] border-collapse text-sm">
             <thead className="bg-red-800 text-white">
                 <tr>
                     <th className="p-2 text-left">Item</th>
@@ -1364,6 +1371,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                     {mode === "receiving" && <th className="p-2 text-right">Remaining</th>}
                     {mode === "receiving" && <th className="p-2 text-right">Receiving Now</th>}
                     <th className="p-2 text-right">Unit Price</th>
+                    <th className="p-2 text-right">Total Amount</th>
                     <th className="p-2 text-left">Remarks</th>
                     {mode === "request" && <th className="w-20 p-2 text-left">Action</th>}
                 </tr>
@@ -1372,7 +1380,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                 {items.length === 0 && (
                     <tr>
                         <td
-                            colSpan={mode === "request" ? 7 : 6}
+                            colSpan={mode === "request" ? 8 : 7}
                             className="border p-4 text-center"
                         >
                             <EmptyState />
@@ -1397,9 +1405,9 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                         )}
                         {mode === "request" && (
                             <td className="border border-slate-300 p-1">
-                                <input type="number" min="0.01" step="0.01" className={numericLineInputClassName}
+                                <input type="number" min="0.01" step="0.01" className={readOnlyNumericLineInputClassName}
                                     value={line.approved_qty}
-                                    onChange={(event) => onChange(index, "approved_qty", event.target.value)} />
+                                    readOnly />
                             </td>
                         )}
                         {mode === "receiving" && (
@@ -1415,9 +1423,13 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                             </td>
                         )}
                         <td className="border border-slate-300 p-1">
-                            <input type="number" min="0" step="0.01" className={numericLineInputClassName}
+                            <input type="number" min="0" step="0.01" className={mode === "request" ? readOnlyNumericLineInputClassName : numericLineInputClassName}
                                 value={line.unit_price}
+                                readOnly={mode === "request"}
                                 onChange={(event) => onChange(index, "unit_price", event.target.value)} />
+                        </td>
+                        <td className="border border-slate-300 p-2 text-right">
+                            {(Number((mode === "request" ? line.approved_qty : line.quantity) || 0) * Number(line.unit_price || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="border border-slate-300 p-1">
                             <input className={lineInputClassName} value={line.remarks}

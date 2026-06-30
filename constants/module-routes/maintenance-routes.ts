@@ -291,6 +291,11 @@ export const maintenanceRoutes: Route[] = [
                         pathname: "/maintenance/uniform/period-lock",
                         permission: "view_uniform_period_lock",
                     },
+                    {
+                        name: "Free Uniform Limit",
+                        pathname: "/maintenance/uniform/free-uniform-limit",
+                        permission: "view_uniform_free_uniform_limit",
+                    },
                 ]
             },
         ]

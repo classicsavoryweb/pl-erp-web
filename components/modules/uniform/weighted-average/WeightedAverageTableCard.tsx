@@ -19,6 +19,7 @@ import Badge from "@/components/common/Badge";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import  WeightedAverageForm  from "./WeightAverageForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import confirm from "@/components/common/Confirm";
 
 const WeightedAverageTable = () => {
     const api = useApiCall();
@@ -63,9 +64,10 @@ const WeightedAverageTable = () => {
             item.status === "Unposted" && {
                 label: "Reviewed",
                 onClick: async () => {
-                    const isConfirmed = await confirm(
-                        "Are you sure you want to mark this as Reviewed?"
-                    );
+                    const isConfirmed = await confirm({
+                        title: "Review Weighted Average",
+                        message: "Are you sure you want to mark this as Reviewed?",
+                    });
     
                     if (!isConfirmed) return;
     
@@ -77,7 +79,12 @@ const WeightedAverageTable = () => {
             ["Reviewed", "Reviewing"].includes(item.status) && {
                 label: "Posted",
                 onClick: async () => {
-                    if (!confirm("Are you sure you want to mark this as Posted?")) return;
+                    const isConfirmed = await confirm({
+                        title: "Post Weighted Average",
+                        message: "Are you sure you want to mark this as Posted?",
+                    });
+
+                    if (!isConfirmed) return;
     
                     await updateWeightStatus(item.id, "Posted");
                     toast.success("Marked As Posted");
@@ -87,7 +94,12 @@ const WeightedAverageTable = () => {
             ["Unposted", "Reviewed", "Reviewing"].includes(item.status) && {
                 label: "Cancel",
                 onClick: async () => {
-                    if (!confirm("Are you sure you want to cancel this weighted average?")) return;
+                    const isConfirmed = await confirm({
+                        title: "Cancel Weighted Average",
+                        message: "Are you sure you want to cancel this weighted average?",
+                    });
+
+                    if (!isConfirmed) return;
 
                     await updateWeightStatus(item.id, "Cancelled");
                     toast.success("Weighted average cancelled");
