@@ -146,7 +146,7 @@ const UniformSizesTableCard = () => {
         
         { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
         
-        { columnHead: "Sent Email", path: "sent_email", columnType: COLUMNTYPES.string },
+        // { columnHead: "Sent Email", path: "sent_email", columnType: COLUMNTYPES.string },
         { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" = "default";

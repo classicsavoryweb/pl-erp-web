@@ -438,16 +438,16 @@ const UniformRequestAndIssuanceForm = ({
         (sum: number, item: any) => sum + Number(item.total_amount || 0),
         0
     );
-    const getStatusButtonClass = (status: string) => {
+    const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
         switch (status) {
             case "Posted":
-                return "bg-green-600 text-white";
+                return "success";
             case "Reviewed":
-                return "bg-orange-600 text-white";
+                return "warning";
             case "Cancelled":
-                return "bg-red-600 text-white";
+                return "danger";
             default:
-                return "bg-gray-500 text-white";
+                return "default";
         }
     };
     
@@ -463,7 +463,7 @@ const UniformRequestAndIssuanceForm = ({
             size={mode === "create" || isReview || isPost ? "xxl" : "lg"}
         >
             <form onSubmit={createFormHandler.handleSubmit}>
-                <div className="grid grid-cols-4 gap-3 items-end">
+                <div className="grid grid-cols-4 gap-1 items-end">
                     <div className="col-span-3">
                         <EmployeeDropDown
                             label="Name"
@@ -513,15 +513,13 @@ const UniformRequestAndIssuanceForm = ({
                         />
                     </div>
                      {mode !== "create"  &&  ( 
-                    <div className="col-span-1">
-                        <button
-                            disabled
-                            className={`w-full py-3 text-lg font-semibold rounded-full ${getStatusButtonClass(
-                                createFormHandler.values.status
-                            )}`}
-                        >
-                            {createFormHandler.values.status}
-                        </button>
+                   <div className="col-span-1 w-full flex justify-center">
+                        <div className="scale-170 -translate-y-3">
+                            <Badge
+                                status={getStatusBadge(createFormHandler.values.status)}
+                                label={createFormHandler.values.status}
+                            />
+                        </div>
                     </div>
                     )}
                 </div>
