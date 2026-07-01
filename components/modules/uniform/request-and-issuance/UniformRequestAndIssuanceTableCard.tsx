@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import Badge from "@/components/common/Badge";
 import { useState } from "react";
-import { getAllRequestAndIssuance , exportAllRequestAndIssuance , updateRequestStatus} from "@/api/uniform/request-and-issuance";
+import { getAllRequestAndIssuance , exportAllRequestAndIssuance , exportRequestAndIssuanceDetails, updateRequestStatus} from "@/api/uniform/request-and-issuance";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import CancelRequestAndIssuance from "./UniformRequestAndIssuanceCancelForm"
@@ -20,6 +20,7 @@ import UniformRequestAndIssuanceForm from "./UniformRequestAndIssuanceForm";
 import moment from "moment";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import confirm from "@/components/common/Confirm";
 
 
 
@@ -27,6 +28,8 @@ const UniformSizesTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const viewModal = useModal();
+    const reviewModal = useModal();
+    const postModal = useModal();
     const cancelModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
@@ -61,31 +64,25 @@ const UniformSizesTableCard = () => {
                 viewModal.onOpen();
             },
         },
+        {
+            label: "Detailed Export",
+            onClick: () => downloadDetailedExport(item),
+        },
         item.status === "Unposted" && {
-            label: "Reviewing",
-            onClick: async () => {
-                const isConfirmed = await confirm(
-                    "Are you sure you want to mark this as Reviewing?"
-                );
-
-                if (!isConfirmed) return;
-
-                await updateRequestStatus(item.id, "Reviewing");
-                toast.success("Marked as Reviewing");
-                api.triggerReload();
+            label: "Review",
+            onClick: () => {
+                setData(item);
+                reviewModal.onOpen();
             },
         },
-        item.status === "Reviewing" && {
-            label: "Posted",
-            onClick: async () => {
-                if (!confirm("Are you sure you want to mark this as Posted?")) return;
-
-                await updateRequestStatus(item.id, "Posted");
-                toast.success("Marked As Posted");
-                api.triggerReload();
-            },
+        item.status === "Reviewed" && {
+            label: "Post",
+            onClick: () => {
+                setData(item);
+                postModal.onOpen();
+            }
         },
-        ["Unposted", "Reviewing"].includes(item.status) && {
+        ["Unposted", "Reviewed"].includes(item.status) && {
             label: "Cancel",
             onClick: () => {
                 setData(item);
@@ -94,16 +91,62 @@ const UniformSizesTableCard = () => {
         },
     ].filter((action): action is { label: string; onClick: () => void } => Boolean(action));
 
+    const downloadDetailedExport = async (item: any) => {
+        const resp = await exportRequestAndIssuanceDetails(item.id);
+        const payload = resp?.data ?? resp;
+        const isBlob = payload instanceof Blob;
+        const isArrayBuffer = payload && payload.byteLength !== undefined;
+
+        if (!resp || resp.error || (!isBlob && !isArrayBuffer)) {
+            toast.error(resp?.data?.message || resp?.message || "Export failed. Please try again.");
+            return;
+        }
+
+        const blob = isBlob ? payload : new Blob([payload], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+
+        anchor.href = downloadUrl;
+        anchor.download = `REQUEST-AND-ISSUANCE-DETAILED-${item.request_number}.xlsx`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.URL.revokeObjectURL(downloadUrl);
+    };
+
     const columnSettings = [
         { columnHead: "Request Number", path: "request_number", columnType: COLUMNTYPES.string },
-        { columnHead: "Date Requested", path: "date_requested", columnType: COLUMNTYPES.date },
-        { columnHead: "Date Posted", path: "date_posted", columnType: COLUMNTYPES.date },
+        { columnHead: "Date Requested", path: "date_requested", columnType: COLUMNTYPES.function,
+            function: (data: any) =>
+                data.date_requested ? moment(data.date_requested).format("MM/DD/YY") : "-",
+         },
+        { columnHead: "Date Posted", path: "date_posted", columnType: COLUMNTYPES.function ,
+            function: (data : any) =>
+                data.date_posted ? moment(data.date_posted).format("MM/DD/YY") : "-", 
+         },
         { columnHead: "Full Name", path: "employee_name", columnType: COLUMNTYPES.string },
-        { columnHead: "Issuance Type", path: "issuance_type", columnType: COLUMNTYPES.string },
-        { columnHead: "Branch", path: "branch", columnType: COLUMNTYPES.string },
+        { columnHead: "Issuance Type", path: "issuance_type", columnType: COLUMNTYPES.function,
+            function: (row : any ) =>{
+            const value = row.issuance_type;
+                if(value == "Authority To Deduct"){
+                    return ("ATD");
+                }else{
+                    return ("FREE")
+                }
+            },
+        },
+        { columnHead: "Branch", path: "branches.short_name", columnType: COLUMNTYPES.string },
         { columnHead: "Position", path: "position", columnType: COLUMNTYPES.string },
-        { columnHead: "Date Hired", path: "date_hired", columnType: COLUMNTYPES.date },
-        { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.string },
+        { columnHead: "Date Hired", path: "date_hired", columnType: COLUMNTYPES.function,
+            function: (data: any) =>
+                data.date_hired ? moment(data.date_hired).format("MM/DD/YY") : "-"
+        },
+        
+        { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
+        
+        // { columnHead: "Sent Email", path: "sent_email", columnType: COLUMNTYPES.string },
         { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" = "default";
@@ -115,7 +158,7 @@ const UniformSizesTableCard = () => {
                     case "Cancelled":
                         status = "danger";
                         break;
-                    case "Reviewing":
+                    case "Reviewed":
                         status = "warning";
                         break;
                     default:
@@ -129,9 +172,6 @@ const UniformSizesTableCard = () => {
                 />
          }
         },
-        { columnHead: "Sent Email", path: "sent_email", columnType: COLUMNTYPES.string },
-        { columnHead: "Payroll Entry", path: "payroll_entry", columnType: COLUMNTYPES.string },
-        { columnHead: "Payroll Sent Date", path: "payroll_sent_date", columnType: COLUMNTYPES.string },
         {
             columnHead: "Action",
             path: "id",
@@ -169,6 +209,11 @@ const UniformSizesTableCard = () => {
                         path: "status",
                         columnType: COLUMNTYPES.status
                     },
+                    {
+                        columnHead: "Issuance Type",
+                        path: "issuance_type",
+                        columnType: COLUMNTYPES.string
+                    }
                     
                 ]}
                 filterHandler={filter}
@@ -198,13 +243,26 @@ const UniformSizesTableCard = () => {
                 mode = "create"
                 onSubmitCallback={api.triggerReload}
             />
-            <UniformRequestAndIssuanceForm 
+            <UniformRequestAndIssuanceForm
                 modal = {viewModal}
                 mode = "view"
                 formValue={data}
                 onSubmitCallback={api.triggerReload}
             />
-              <CancelRequestAndIssuance
+            <UniformRequestAndIssuanceForm
+                modal = {reviewModal}
+                mode = "review"
+                formValue={data}
+                onSubmitCallback={api.triggerReload}
+            />
+            <UniformRequestAndIssuanceForm
+                modal = {postModal}
+                mode = "post"
+                formValue={data}
+                onSubmitCallback={api.triggerReload}
+            />
+
+            <CancelRequestAndIssuance
                 modal = {cancelModal}
                 onSubmitCallback={api.triggerReload}
                 formValue={data}

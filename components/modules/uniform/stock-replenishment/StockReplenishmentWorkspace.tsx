@@ -3,14 +3,20 @@
 import {
     cancelReceiving,
     cancelReplenishment,
+    closeReplenishment,
     createReceiving,
     createReplenishment,
+    exportReceivingDetails,
+    exportReplenishmentDetails,
+    generateReplenishmentList,
     getReceivableReplenishments,
     getReceivings,
     getReplenishments,
     getStockOptions,
+    importReplenishmentItems,
     postReceiving,
     postReplenishment,
+    replaceReplenishmentSupplier,
     reviewReceiving,
     reviewReplenishment,
 } from "@/api/uniform/stock-replenishment";
@@ -21,6 +27,7 @@ import confirm from "@/components/common/Confirm";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import Dropdown from "@/components/common/Dropdown";
+import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/common/Modal";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
 import Table from "@/components/common/Table";
@@ -35,7 +42,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import { useFilter } from "@/hooks/use-filter";
 import usePagination from "@/hooks/pagination";
 import moment from "moment";
-import { useContext, useMemo, useState } from "react";
+import { useContext, useMemo, useRef, useState } from "react";
 import { toast } from "react-toastify";
 
 export type StockModule = "requests" | "receiving";
@@ -69,6 +76,7 @@ const lineInputClassName = [
 ].join(" ");
 
 const numericLineInputClassName = `${lineInputClassName} text-right`;
+const readOnlyNumericLineInputClassName = `${numericLineInputClassName} cursor-default !border-slate-300 !bg-slate-200 !text-slate-600 focus:!border-slate-300 dark:!border-neutral-700 dark:!bg-neutral-900 dark:!text-neutral-400`;
 
 const messageOf = (response: any) =>
     response?.data?.message ?? response?.message ?? "Unable to complete the request.";
@@ -102,9 +110,16 @@ const StockReplenishmentWorkspace = ({
     const [requestItemId, setRequestItemId] = useState("");
     const [requestOpen, setRequestOpen] = useState(false);
     const [receivingOpen, setReceivingOpen] = useState(false);
+    const importInputRef = useRef<HTMLInputElement | null>(null);
     const [cancelTarget, setCancelTarget] = useState<{ kind: StockModule; record: any } | null>(null);
     const [cancelReason, setCancelReason] = useState("");
     const [cancelSubmitting, setCancelSubmitting] = useState(false);
+    const [closeTarget, setCloseTarget] = useState<any>(null);
+    const [closeReason, setCloseReason] = useState("");
+    const [closeSubmitting, setCloseSubmitting] = useState(false);
+    const [replaceTarget, setReplaceTarget] = useState<any>(null);
+    const [replacementSupplierId, setReplacementSupplierId] = useState("");
+    const [replaceSubmitting, setReplaceSubmitting] = useState(false);
     const [detail, setDetail] = useState<any>(null);
     const [detailType, setDetailType] = useState<StockModule>(module);
 
@@ -173,6 +188,16 @@ const StockReplenishmentWorkspace = ({
         setCancelReason("");
     };
 
+    const closeCloseModal = () => {
+        setCloseTarget(null);
+        setCloseReason("");
+    };
+
+    const closeReplaceModal = () => {
+        setReplaceTarget(null);
+        setReplacementSupplierId("");
+    };
+
     const closeRequestModal = () => {
         setRequestOpen(false);
         setRequestForm(createEmptyRequest());
@@ -218,6 +243,136 @@ const StockReplenishmentWorkspace = ({
         }
     };
 
+    const submitClose = async () => {
+        const reason = closeReason.trim();
+        if (!closeTarget || !reason) {
+            toast.error("Close reason is required.");
+            return;
+        }
+
+        const accepted = await confirm({
+            title: "Close Record",
+            message: "Are you sure you want to close this replenishment request?",
+        });
+        if (!accepted) return;
+
+        setCloseSubmitting(true);
+        try {
+            const response = await closeReplenishment(closeTarget.id, reason);
+            if (response.error) {
+                toast.error(messageOf(response));
+                return;
+            }
+
+            toast.success(response.data.message);
+            closeCloseModal();
+            api.triggerReload();
+        } catch {
+            toast.error("Error encountered");
+        } finally {
+            setCloseSubmitting(false);
+        }
+    };
+
+    const submitReplaceSupplier = async () => {
+        if (!replaceTarget || !replacementSupplierId) {
+            toast.error("Replacement supplier is required.");
+            return;
+        }
+
+        const accepted = await confirm({
+            title: "Replace Supplier",
+            message: "Are you sure you want to replace this replenishment supplier?",
+        });
+        if (!accepted) return;
+
+        setReplaceSubmitting(true);
+        try {
+            const response = await replaceReplenishmentSupplier(replaceTarget.id, replacementSupplierId);
+            if (response.error) {
+                toast.error(messageOf(response));
+                return;
+            }
+
+            toast.success(response.data.message);
+            closeReplaceModal();
+            api.triggerReload();
+        } catch {
+            toast.error("Error encountered");
+        } finally {
+            setReplaceSubmitting(false);
+        }
+    };
+
+    const applyGeneratedItems = (generatedItems: any[]) => {
+        setRequestForm((form) => ({
+            ...form,
+            items: generatedItems.map((line: any) => ({
+                uniform_item_id: line.uniform_item_id,
+                item: line.item,
+                requested_qty: Number(line.requested_qty ?? 1),
+                approved_qty: Number(line.approved_qty ?? line.requested_qty ?? 1),
+                unit_price: Number(line.unit_price ?? 0),
+                remarks: line.remarks ?? "",
+            })),
+        }));
+    };
+
+    const handleGenerateList = async () => {
+        if (!requestForm.supplier_id) {
+            toast.error("Supplier is required before generating a list.");
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            const response = await generateReplenishmentList({
+                supplier_id: requestForm.supplier_id,
+                replenishment_type: requestForm.replenishment_type,
+            });
+            if (response.error) {
+                toast.error(messageOf(response));
+                return;
+            }
+
+            applyGeneratedItems(response.data.items ?? []);
+            toast.success(response.data.message);
+        } catch {
+            toast.error("Error encountered");
+        } finally {
+            setSubmitting(false);
+        }
+    };
+
+    const handleImportItems = async (file?: File) => {
+        if (!file) return;
+        if (!requestForm.supplier_id) {
+            toast.error("Supplier is required before importing items.");
+            if (importInputRef.current) importInputRef.current.value = "";
+            return;
+        }
+
+        setSubmitting(true);
+        try {
+            const response = await importReplenishmentItems({
+                supplier_id: requestForm.supplier_id,
+                supplier_item_file: file,
+            });
+            if (response.error) {
+                toast.error(messageOf(response));
+                return;
+            }
+
+            applyGeneratedItems(response.data.items ?? []);
+            toast.success(response.data.message);
+        } catch {
+            toast.error("Error encountered");
+        } finally {
+            setSubmitting(false);
+            if (importInputRef.current) importInputRef.current.value = "";
+        }
+    };
+
     const addRequestItem = (itemId: string) => {
         const item = items.find((record) => String(record.id) === String(itemId));
         if (!itemId) {
@@ -249,9 +404,13 @@ const StockReplenishmentWorkspace = ({
     const updateRequestItem = (index: number, field: string, value: string) => {
         setRequestForm((form) => ({
             ...form,
-            items: form.items.map((item, itemIndex) =>
-                itemIndex === index ? { ...item, [field]: value } : item
-            ),
+            items: form.items.map((item, itemIndex) => {
+                if (itemIndex !== index) return item;
+                if (field === "requested_qty") {
+                    return { ...item, requested_qty: value, approved_qty: value };
+                }
+                return { ...item, [field]: value };
+            }),
         }));
     };
 
@@ -377,11 +536,41 @@ const StockReplenishmentWorkspace = ({
                 break;
             case "Reviewed":
             case "Partially Received":
+            case "Closed":
                 status = "warning";
                 break;
         }
 
         return <Badge label={record.status} status={status} />;
+    };
+
+    const downloadDetailedExport = async (record: any, kind: StockModule) => {
+        const response = kind === "requests"
+            ? await exportReplenishmentDetails(record.id)
+            : await exportReceivingDetails(record.id);
+        const payload = response?.data ?? response;
+        const isBlob = payload instanceof Blob;
+        const isArrayBuffer = payload && payload.byteLength !== undefined;
+
+        if (!response || response.error || (!isBlob && !isArrayBuffer)) {
+            toast.error(response?.data?.message || response?.message || "Export failed. Please try again.");
+            return;
+        }
+
+        const blob = isBlob ? payload : new Blob([payload], {
+            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        });
+        const downloadUrl = window.URL.createObjectURL(blob);
+        const anchor = document.createElement("a");
+        const transactionNo = kind === "requests" ? record.request_no : record.receiving_no;
+        const prefix = kind === "requests" ? "REPLENISHMENT-DETAILED" : "RECEIVING-DETAILED";
+
+        anchor.href = downloadUrl;
+        anchor.download = `${prefix}-${transactionNo}.xlsx`;
+        document.body.appendChild(anchor);
+        anchor.click();
+        anchor.remove();
+        window.URL.revokeObjectURL(downloadUrl);
     };
 
     const requestColumns = [
@@ -407,6 +596,9 @@ const StockReplenishmentWorkspace = ({
                         setDetail(record);
                         setDetailType("requests");
                     },
+                }, {
+                    label: "Detailed Export",
+                    onClick: () => downloadDetailedExport(record, "requests"),
                 }];
 
                 if (record.status === "Unposted") {
@@ -433,9 +625,25 @@ const StockReplenishmentWorkspace = ({
 
                 if (["Unposted", "Reviewed"].includes(record.status)) {
                     actions.push({
+                        label: "Replace Supplier",
+                        permission: performPermission,
+                        onClick: () => {
+                            setReplaceTarget(record);
+                            setReplacementSupplierId("");
+                        },
+                    });
+                    actions.push({
                         label: "Cancel",
                         permission: performPermission,
                         onClick: () => setCancelTarget({ kind: "requests", record }),
+                    });
+                }
+
+                if (["Posted", "Partially Received"].includes(record.status)) {
+                    actions.push({
+                        label: "Close Record",
+                        permission: performPermission,
+                        onClick: () => setCloseTarget(record),
                     });
                 }
 
@@ -468,6 +676,9 @@ const StockReplenishmentWorkspace = ({
                         setDetail(record);
                         setDetailType("receiving");
                     },
+                }, {
+                    label: "Detailed Export",
+                    onClick: () => downloadDetailedExport(record, "receiving"),
                 }];
 
                 if (record.status === "Unposted") {
@@ -540,6 +751,7 @@ const StockReplenishmentWorkspace = ({
                         { label: "Posted", value: "Posted" },
                         { label: "Partially Received", value: "Partially Received" },
                         { label: "Fully Received", value: "Fully Received" },
+                        { label: "Closed", value: "Closed" },
                         { label: "Cancelled", value: "Cancelled" },
                     ]
                     : [
@@ -601,6 +813,101 @@ const StockReplenishmentWorkspace = ({
                                 type="submit"
                                 label="Submit"
                                 loading={cancelSubmitting}
+                                onClick={() => {}}
+                            />
+                        </div>
+                    </div>
+                </form>
+            </Modal>
+
+            <Modal
+                isShowing={Boolean(closeTarget)}
+                title="Close Record"
+                onClose={closeCloseModal}
+                size="md"
+            >
+                <form
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        submitClose();
+                    }}
+                >
+                    <Textfield
+                        label="Request Number"
+                        name="request_no"
+                        value={closeTarget?.request_no ?? ""}
+                        disabled
+                    />
+                    <TextArea
+                        label="Close Reason"
+                        placeholder="Enter close reason"
+                        name="close_reason"
+                        value={closeReason}
+                        onChange={(event: any) => setCloseReason(event.target.value)}
+                    />
+                    <hr className="mt-6 pb-2 text-slate-300" />
+                    <div className="flex justify-end">
+                        <div className="w-1/2 flex justify-end items-center gap-x-2">
+                            <Button
+                                label="Cancel"
+                                variant="secondary"
+                                onClick={closeCloseModal}
+                            />
+                            <Button
+                                type="submit"
+                                label="Submit"
+                                loading={closeSubmitting}
+                                onClick={() => {}}
+                            />
+                        </div>
+                    </div>
+                </form>
+            </Modal>
+
+            <Modal
+                isShowing={Boolean(replaceTarget)}
+                title="Replace Supplier"
+                onClose={closeReplaceModal}
+                size="md"
+            >
+                <form
+                    onSubmit={(event) => {
+                        event.preventDefault();
+                        submitReplaceSupplier();
+                    }}
+                >
+                    <Textfield
+                        label="Current Supplier"
+                        name="current_supplier"
+                        value={replaceTarget?.supplier?.vendor_name ?? ""}
+                        disabled
+                    />
+                    <SearchableDropDown
+                        label="Replacement Supplier"
+                        placeholder="select supplier"
+                        name="replacement_supplier_id"
+                        value={replacementSupplierId}
+                        required
+                        onChange={(event) => setReplacementSupplierId(event.target.value)}
+                        options={suppliers
+                            .filter((supplier) => String(supplier.id) !== String(replaceTarget?.supplier_id))
+                            .map((supplier) => ({
+                                label: supplier.vendor_name,
+                                value: String(supplier.id),
+                            }))}
+                    />
+                    <hr className="mt-6 pb-2 text-slate-300" />
+                    <div className="flex justify-end">
+                        <div className="w-1/2 flex justify-end items-center gap-x-2">
+                            <Button
+                                label="Cancel"
+                                variant="secondary"
+                                onClick={closeReplaceModal}
+                            />
+                            <Button
+                                type="submit"
+                                label="Submit"
+                                loading={replaceSubmitting}
                                 onClick={() => {}}
                             />
                         </div>
@@ -675,13 +982,40 @@ const StockReplenishmentWorkspace = ({
                     </div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Request Items</span>
-                        <button
-                            type="button"
-                            className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
-                            onClick={() => addRequestItem(requestItemId)}
-                        >
-                            Add Request
-                        </button>
+                        <div className="flex flex-wrap justify-end gap-x-3 gap-y-2">
+                            <input
+                                ref={importInputRef}
+                                type="file"
+                                className="hidden"
+                                accept=".xlsx,.xls,.csv,.txt"
+                                onChange={(event) => handleImportItems(event.target.files?.[0])}
+                            />
+                            <div className="w-[140px]">
+                                <Button
+                                    type="button"
+                                    label="Generate List"
+                                    disabled={!requestForm.supplier_id || submitting}
+                                    loading={submitting}
+                                    onClick={handleGenerateList}
+                                />
+                            </div>
+                            <div className="w-[220px]">
+                                <Button
+                                    type="button"
+                                    label="Import Supplier/Item List"
+                                    disabled={!requestForm.supplier_id || submitting}
+                                    onClick={() => importInputRef.current?.click()}
+                                />
+                            </div>
+                            <div className="w-[130px]">
+                                <Button
+                                    type="button"
+                                    label="Add Request"
+                                    disabled={submitting}
+                                    onClick={() => addRequestItem(requestItemId)}
+                                />
+                            </div>
+                        </div>
                     </div>
                     <SearchableDropDown
                         label="Description"
@@ -705,7 +1039,7 @@ const StockReplenishmentWorkspace = ({
                         }))}
                     />
                     <TextArea
-                        label="Remarks"
+                        label="Overall Remarks"
                         name="remarks"
                         value={requestForm.remarks}
                         onChange={(event) => setRequestForm({
@@ -713,7 +1047,7 @@ const StockReplenishmentWorkspace = ({
                             remarks: event.target.value,
                         })}
                     />
-                    <ModalFooter loading={submitting} onCancel={closeRequestModal} />
+                    <ModalFooter loading={submitting} />
                 </form>
             </Modal>
 
@@ -821,7 +1155,7 @@ const StockReplenishmentWorkspace = ({
                             remarks: event.target.value,
                         })}
                     />
-                    <ModalFooter loading={submitting} onCancel={closeReceivingModal} />
+                    <ModalFooter loading={submitting} />
                 </form>
             </Modal>
 
@@ -976,24 +1310,44 @@ const StockReplenishmentWorkspace = ({
                         value={formatAuditDate(detail?.cancelled_at)}
                         disabled
                     />
+                    {detailType === "requests" && (
+                        <>
+                            <Textfield
+                                label="Closed By:"
+                                value={detail?.closed_by ?? ""}
+                                disabled
+                            />
+                            <Textfield
+                                label="Date & Time"
+                                value={formatAuditDate(detail?.closed_at)}
+                                disabled
+                            />
+                        </>
+                    )}
                 </div>
                 <TextArea
                     label="Cancel Reason"
                     value={detail?.cancelled_reason ?? ""}
                     disabled
                 />
+                {detailType === "requests" && (
+                    <TextArea
+                        label="Close Reason"
+                        value={detail?.closed_reason ?? ""}
+                        disabled
+                    />
+                )}
             </Modal>
 
         </>
     );
 };
 
-const ModalFooter = ({ loading, onCancel }: any) => (
+const ModalFooter = ({ loading }: any) => (
     <>
         <hr className="mt-6 pb-2 text-slate-300" />
         <div className="flex justify-end">
-            <div className="w-1/2 flex justify-end items-center gap-x-2">
-                <Button label="Cancel" variant="secondary" onClick={onCancel} />
+            <div className="w-[120px]">
                 <Button
                     type="submit"
                     label="Submit"
@@ -1007,7 +1361,7 @@ const ModalFooter = ({ loading, onCancel }: any) => (
 
 const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
     <div className="my-3 overflow-x-auto">
-        <table className="w-full min-w-[850px] border-collapse text-sm">
+        <table className="w-full min-w-[1000px] border-collapse text-sm">
             <thead className="bg-red-800 text-white">
                 <tr>
                     <th className="p-2 text-left">Item</th>
@@ -1017,6 +1371,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                     {mode === "receiving" && <th className="p-2 text-right">Remaining</th>}
                     {mode === "receiving" && <th className="p-2 text-right">Receiving Now</th>}
                     <th className="p-2 text-right">Unit Price</th>
+                    <th className="p-2 text-right">Total Amount</th>
                     <th className="p-2 text-left">Remarks</th>
                     {mode === "request" && <th className="w-20 p-2 text-left">Action</th>}
                 </tr>
@@ -1025,10 +1380,11 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                 {items.length === 0 && (
                     <tr>
                         <td
-                            colSpan={mode === "request" ? 7 : 6}
-                            className="border p-4 text-center text-slate-500"
+                            colSpan={mode === "request" ? 8 : 7}
+                            className="border p-4 text-center"
                         >
-                            No items selected.
+                            <EmptyState />
+                            <p>No data available...</p>
                         </td>
                     </tr>
                 )}
@@ -1049,9 +1405,9 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                         )}
                         {mode === "request" && (
                             <td className="border border-slate-300 p-1">
-                                <input type="number" min="0.01" step="0.01" className={numericLineInputClassName}
+                                <input type="number" min="0.01" step="0.01" className={readOnlyNumericLineInputClassName}
                                     value={line.approved_qty}
-                                    onChange={(event) => onChange(index, "approved_qty", event.target.value)} />
+                                    readOnly />
                             </td>
                         )}
                         {mode === "receiving" && (
@@ -1067,9 +1423,13 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                             </td>
                         )}
                         <td className="border border-slate-300 p-1">
-                            <input type="number" min="0" step="0.01" className={numericLineInputClassName}
+                            <input type="number" min="0" step="0.01" className={mode === "request" ? readOnlyNumericLineInputClassName : numericLineInputClassName}
                                 value={line.unit_price}
+                                readOnly={mode === "request"}
                                 onChange={(event) => onChange(index, "unit_price", event.target.value)} />
+                        </td>
+                        <td className="border border-slate-300 p-2 text-right">
+                            {(Number((mode === "request" ? line.approved_qty : line.quantity) || 0) * Number(line.unit_price || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="border border-slate-300 p-1">
                             <input className={lineInputClassName} value={line.remarks}

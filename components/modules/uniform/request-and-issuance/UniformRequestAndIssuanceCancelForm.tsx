@@ -39,7 +39,7 @@ const CancelRequestAndIssuance = ({
                     const resp = await cancelRequestAndIssuanceID(values,formValue.id);
 
                     if(!resp.error) {
-                        toast.success("Adding Supplier successfully");
+                        toast.success("Cancel request successfully!");
                         onSubmitCallback();
                         modal.onClose();
                         resetForm();

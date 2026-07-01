@@ -43,7 +43,7 @@ const EditUniformSizesForm = ({
             if (isConfirmed) {
                 try {
                     setSubmitting(true);
-                    const resp = await editUniformSizes(values,formValue);
+                    const resp = await editUniformSizes(values,formValue.id);
                 
                     if(!resp.error) {
                         toast.success("Training title created successfully");

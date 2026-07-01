@@ -4,23 +4,24 @@ import Textfield from "@/components/common/Textfield";
 import Dropdown from "@/components/common/Dropdown";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
 import { useFormik } from "formik";
-import { createUniformItem, editUniformItem, getUniformItemOptions } from "@/api/uniform/item-masterlist";
 import * as Yup from "yup";
 import TextArea from "@/components/common/TextArea";
 import { toast } from "react-toastify";
-import { createUniformRequestAndIssuance } from "@/api/uniform/request-and-issuance";
+import { createUniformRequestAndIssuance, reviewUniformRequestAndIssuance , updateRequestStatus } from "@/api/uniform/request-and-issuance";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import confirm from "@/components/common/Confirm";
 import EmployeeDropDown from "../../generic/EmployeeDropDown";
-import { useEffect,useState } from "react";
+import { useEffect,useMemo,useState } from "react";
 import { getDropDownMasterlist } from "@/api/uniform/request-and-issuance"
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import moment from "moment";
+import Badge from "@/components/common/Badge";
+import { create } from "lodash";
 
 interface UniformRequestFormProps {
     modal: any;
-    mode: "create" | "view";
+    mode: "create" | "view" | "review" | "post";
     formValue?: any;
     onSubmitCallback: () => void;
 };
@@ -34,11 +35,12 @@ const defaultValues = {
     item_no : "",
     employee_name: "",
     employee_id: "",
+    gender: "",
     issuance_type: "",
     branch: "",         
     position: "",
     date_hired: "",
-    total_amount: 1,
+    total_amount: 0,
     status: "Unposted",
     sent_email: "No",
     payroll_entry: "",
@@ -66,20 +68,66 @@ const UniformRequestAndIssuanceForm = ({
 }: UniformRequestFormProps) => {
     const [item , setitem] = useState<any[]>([]);
     const isView = mode === "view";
-    const [itemdraft, setitemdraft] = useState({
-        item_no: "",
-        description: "",
-        size:"",
-        gender:"",
-        stock_on_hand:"",
-        requested_quantity: 0,
-        remaining_quantity: 0,
-        standard_unit:"",
-        standard_unit_price:"",
-        total_amount: 1,
-        item_remarks:"",
-        uniform_item_no:""
-    });
+    const isReview = mode === "review";
+    const isPost = mode === "post"
+    type ItemDraft = {
+    item_no: string;
+    description: string;
+    size: string;
+    gender: string;
+    stock_on_hand: string;
+    requested_quantity: number | "",
+    remaining_quantity: number;
+    standard_unit: string;
+    standard_unit_price: string;
+    total_amount: number;
+    item_remarks: string;
+    uniform_item_no: string;
+};
+    
+    const [itemdraft, setitemdraft] = useState<ItemDraft>({
+    item_no: "",
+    description: "",
+    size: "",
+    gender: "",
+    stock_on_hand: "",
+    requested_quantity: 0, // number now
+    remaining_quantity: 0,
+    standard_unit: "",
+    standard_unit_price: "",
+    total_amount: 0,
+    item_remarks: "",
+    uniform_item_no: "",
+});
+ 
+    const normalizeGender = (gender?: string) => {
+        const normalized = (gender ?? "").trim().toLowerCase();
+
+        if (["m", "male"].includes(normalized)) return "male";
+        if (["f", "female"].includes(normalized)) return "female";
+        if (["n/a", "na", "unisex"].includes(normalized)) return "unisex";
+
+        return normalized;
+    };
+
+    const getReviewAvailableStock = (selected: any) => {
+        const currentStock = Number(selected?.stock_on_hand ?? 0);
+
+        if (!isReview) return currentStock;
+
+        const originalItem = (formValue?.items ?? []).find((item: any) =>
+            (item.item_no ?? item.uniform_item_no) === selected?.item_no
+        );
+
+        return currentStock + Number(originalItem?.requested_quantity ?? 0);
+    };
+
+    const getFormItems = (items: any[] = []) => {
+        return items.map((item: any) => ({
+            ...item,
+            item_no: item.item_no || item.uniform_item_no || "",
+        }));
+    };
 
     useAsyncEffect(() => {
         if (!modal.isShowing) return;
@@ -104,7 +152,7 @@ const UniformRequestAndIssuanceForm = ({
             branch: Yup.string().required("Branch is required."),
             position: Yup.string().required("Position is required."),
             date_hired: Yup.string().required("Date Hired is required."),
-            total_amount: Yup.number().min(1).required("Total Amount is required."),
+            total_amount: Yup.number().min(0).required("Total Amount is required."),
             status: Yup.string().required("Status is required."),
             sent_email: Yup.string().required("Sent Email is required."),
             items: Yup.array()
@@ -119,8 +167,16 @@ const UniformRequestAndIssuanceForm = ({
         onSubmit: async (values, {resetForm, setSubmitting}) => {
 
             const isConfirmed = await confirm({
-                title: "Create Uniform Request",
-                message: "Are you sure you want to create this request?"
+                title: isReview
+                    ? "Review Uniform Request"
+                    : isPost
+                    ? "Post Uniform Request"
+                    : "Create Uniform Request",
+                message: isReview
+                    ? "Are you sure you want to save this reviewed request?"
+                    :isPost
+                    ? "Are you sure you want to post this request?"
+                    : "Are you sure you want to create this request?"
             });
 
              if (!isConfirmed) return;
@@ -132,36 +188,90 @@ const UniformRequestAndIssuanceForm = ({
                 items: values.items,
             };
 
-            const submitter = mode === "create"
-                ? createUniformRequestAndIssuance(payload)
-                : editUniformItem(payload, formValue.id);
+            const submitRequest = async (requestPayload: any) => {
+            switch (mode) {
+                case "create":
+                return createUniformRequestAndIssuance(requestPayload);
 
-            submitter
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(mode === "create" ? "Request Created Successfully" : "");
-                        onSubmitCallback();
-                        modal.onClose();
-                        resetForm();
-                    } else {
-                        toast.error(resp.data.message);
-                    }
-                })
-                .catch((err) => {
-                    toast.error("Request failed - check console");
-                });
+                case "review":
+                return reviewUniformRequestAndIssuance(formValue.id, requestPayload);
+
+                case "post":
+                return updateRequestStatus(formValue.id, "Posted");
+
+                default:
+                throw new Error("Invalid mode");
+            }
+            };
+           try {
+        let resp = await submitRequest(payload);   
+        if (resp.errors) {
+            const firstError = Object.values(resp.errors).flat()?.[0];
+            toast.error(firstError || resp.message || "Request failed");
+            return;
+        }
+        if (resp.error) {
+            const firstError = Object.values(resp.data?.errors ?? {}).flat()?.[0];
+            toast.error(firstError || resp.data?.message || "Request failed");
+            return;
+        }
+
+
+    toast.success(
+        isReview
+            ? "Request Reviewed Successfully"
+            : isPost
+            ? "Post Successfully"
+            : "Create Request Successfully"
+    );
+
+    onSubmitCallback();
+    modal.onClose();
+    resetForm();
+
+} finally {
+    setSubmitting(false);
+}
         }
     });
- 
+        const filteredItems = useMemo(() => {
+        const employeeGender = normalizeGender(createFormHandler.values.gender);
+        const issuanceType = createFormHandler.values.issuance_type;
+
+            return item.filter((record) => {
+                const itemGender = normalizeGender(
+                    record?.gender?.code ?? record?.gender?.description
+                );
+
+                const genderMatch =
+                    !employeeGender ||
+                    !itemGender ||
+                    itemGender === "unisex" ||
+                    itemGender === employeeGender;
+                
+                const issuanceMatch = 
+                    issuanceType === "Free Uniform" 
+                    ? record.free_uniform === true
+                    : true;
+
+                return genderMatch && issuanceMatch;
+            });
+        }, [
+            item,
+            createFormHandler.values.gender,
+            createFormHandler.values.issuance_type,
+        ]);
+    
 
     useEffect(() => {
             if (!modal.isShowing) return;
     
-            if (mode === "view" && formValue) {
+            if ((mode === "view" || mode === "review" || mode === "post") && formValue) {
                 createFormHandler.setValues({
                     item_no:formValue.item_no ?? "",
                     employee_name: formValue.employee_name ?? "",
                     employee_id: formValue.employee_id ?? "",
+                    gender: formValue.gender ?? "",
                     issuance_type: formValue.issuance_type ?? "",
                     branch: formValue.branch ?? "",
                     position: formValue.position ?? "",
@@ -181,7 +291,7 @@ const UniformRequestAndIssuanceForm = ({
                     cancelled_by:formValue.cancelled_by ?? "",
                     date_cancelled:formValue.date_cancelled ?? "",
                     cancel_reason:formValue.cancel_reason ?? "",
-                    items: formValue.items ?? [],
+                    items: getFormItems(formValue.items),
                     
                 });
             } else {
@@ -257,13 +367,57 @@ const UniformRequestAndIssuanceForm = ({
         { columnHead: "Size", path: "size", columnType: COLUMNTYPES.string },
         { columnHead: "Gender", path: "gender", columnType: COLUMNTYPES.string },
         { columnHead: "Stocks on hand", path: "stock_on_hand", columnType: COLUMNTYPES.string },
-        { columnHead: "Requested Quantity", path: "requested_quantity", columnType: COLUMNTYPES.string },
+        {
+        columnHead: "Requested Quantity",
+        path: "requested_quantity",
+        columnType: isReview ? COLUMNTYPES.function : COLUMNTYPES.string,
+
+        function: (row: any) => {
+    if (!isReview) return row.requested_quantity;
+
+    const items = createFormHandler.values.items;
+
+    const current = items.find((i: any) => i.item_no === row.item_no);
+
+    return (
+        <Textfield
+            label=""
+            type="number"
+            value={
+                current?.requested_quantity === 0
+                    ? ""
+                    : current?.requested_quantity ?? ""
+            }
+            onChange={(e: any) => {
+                const value = e.target.value;
+                const qty = value === "" ? 0 : Number(value);
+
+                const updated = items.map((i: any) => {
+                    if (i.item_no !== row.item_no) return i;
+
+                    const stock = Number(i.stock_on_hand || 0);
+                    const price = Number(i.unit_price || 0);
+
+                    return {
+                        ...i,
+                        requested_quantity: qty,
+                        remaining_quantity: stock - qty,
+                        total_amount: qty * price, 
+                    };
+                });
+
+                createFormHandler.setFieldValue("items", updated);
+            }}
+        />
+    );
+}
+        },
         { columnHead: "Remaining Quantity", path: "remaining_quantity", columnType: COLUMNTYPES.string },
         { columnHead: "UOM", path: "uom", columnType: COLUMNTYPES.string },
         { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.string },
-        { columnHead: "Total Amount ", path: "total_amount", columnType: COLUMNTYPES.string },
-        { columnHead: "Item Remarks", path: "item_remarks", columnType: COLUMNTYPES.string },
-        ...(!isView ? [{
+        { columnHead: "Total Amount ", path: "total_amount", columnType: COLUMNTYPES.amount },
+        { columnHead: "Item Remarks", path: "item_remarks", columnType: COLUMNTYPES.string }, 
+        ...(!isView && !isPost? [{
             columnHead: "Action",
             path: "item_no",
             columnType: COLUMNTYPES.function,
@@ -284,68 +438,129 @@ const UniformRequestAndIssuanceForm = ({
         (sum: number, item: any) => sum + Number(item.total_amount || 0),
         0
     );
+    const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+        switch (status) {
+            case "Posted":
+                return "success";
+            case "Reviewed":
+                return "warning";
+            case "Cancelled":
+                return "danger";
+            default:
+                return "default";
+        }
+    };
     
     return (
         <Modal
             isShowing={modal.isShowing}
-            title={mode === "create" ? "Create Request" : "View Request"}
+            title={mode === "create" ? "Create Request" : isReview ? "Review Request" : isPost ? "Post Request" : "View Request" }
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
             }}
             loading={modal.loading}
-            size={mode === "create" ? "xxl" : "lg"}
+            size={mode === "create" || isReview || isPost ? "xxl" : "lg"}
         >
             <form onSubmit={createFormHandler.handleSubmit}>
-                
-                    <EmployeeDropDown
-                        label="Name"
-                        placeholder="select employee"
-                        name="employee_name"
-                        value={createFormHandler.values.employee_id}
-                        error={createFormHandler.errors.employee_id}
-                        disabled={isView}
-                        required
-                        onChange={(event: any) => {
-                            const employee = event.target.obj;
+                <div className="grid grid-cols-4 gap-1 items-end">
+                    <div className="col-span-3">
+                        <EmployeeDropDown
+                            label="Name"
+                            placeholder="select employee"
+                            name="employee_name"
+                            value={createFormHandler.values.employee_id}
+                            error={createFormHandler.errors.employee_id}
+                            disabled={isView || isPost || isReview}
+                            required
+                            onChange={(event: any) => {
+                                const employee = event.target.obj;
+                                createFormHandler.setFieldValue(
+                                    "employee_id",
+                                    employee.employee_number
+                                );
 
-                            createFormHandler.setFieldValue(
-                                "employee_id",
-                                employee.employee_number
-                            );
+                                createFormHandler.setFieldValue(
+                                    "employee_name",
+                                    employee.full_name
+                                );
 
-                            createFormHandler.setFieldValue(
-                                "employee_name",
-                                employee.full_name
-                            );
+                                createFormHandler.setFieldValue(
+                                    "gender",
+                                    employee?.gender ?? ""
+                                );
 
-                            createFormHandler.setFieldValue(
-                                "branch",
-                                employee?.current_branch?.name ?? ""
-                            );
+                                createFormHandler.setFieldValue(
+                                    "branch",
+                                    employee?.current_branch?.name ?? ""
+                                );
 
-                            createFormHandler.setFieldValue(
-                                "position",
-                                employee?.current_position?.description ?? ""
-                            );
+                                createFormHandler.setFieldValue(
+                                    "position",
+                                    employee?.current_position?.description ?? ""
+                                );
 
-                            createFormHandler.setFieldValue(
-                                "date_hired",
-                                employee?.date_hired ?? ""
-                            );
-                        }}
-                    />
+                                createFormHandler.setFieldValue(
+                                    "date_hired",
+                                    employee?.date_hired ?? ""
+                                );
+
+                                createFormHandler.setFieldValue("items", []);
+                                setitemdraft({item_no:"",description:"",size:"",gender:"",stock_on_hand:"",requested_quantity:0,remaining_quantity:0,
+                                    standard_unit:"",standard_unit_price:"",total_amount:0,item_remarks:"",uniform_item_no:"",
+                                });
+                            }}
+                        />
+                    </div>
+                     {mode !== "create"  &&  ( 
+                   <div className="col-span-1 w-full flex justify-center">
+                        <div className="scale-170 -translate-y-3">
+                            <Badge
+                                status={getStatusBadge(createFormHandler.values.status)}
+                                label={createFormHandler.values.status}
+                            />
+                        </div>
+                    </div>
+                    )}
+                </div>
                 <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
+                    
                     <Dropdown
                         label="Issuance Type"
                         placeholder="select option"
                         name="issuance_type"
                         value={createFormHandler.values.issuance_type}
                         required
-                        onChange={createFormHandler.handleChange}
+                        onChange={async (e: any) => {
+                            const newValue = e.target.value;
+                            if (createFormHandler.values.items.length > 0) {
+                                const confirmed = await confirm({
+                                    title: "Change Issuance Type",
+                                    message: "Changing the issuance type will remove all added request items. Continue?",
+                                });
+
+                                if (!confirmed) return;
+                            }
+                             createFormHandler.setFieldValue("issuance_type", newValue);
+                            createFormHandler.setFieldValue("items", []);
+                            setitemdraft({
+                                item_no: "",
+                                description: "",
+                                size: "",
+                                gender: "",
+                                stock_on_hand: "",
+                                requested_quantity: 0,
+                                remaining_quantity: 0,
+                                standard_unit: "",
+                                standard_unit_price: "",
+                                total_amount: 0,
+                                item_remarks: "",
+                                uniform_item_no: "",
+                            });
+                        }}
                         error={createFormHandler.errors.issuance_type}
                         options={freeOrATD}
-                        disabled={isView}
+                        disabled={isView || isPost || isReview}
                     />
                     <Textfield
                         label="Branch"
@@ -367,10 +582,10 @@ const UniformRequestAndIssuanceForm = ({
                         label="Date Hired"
                         placeholder="date hired"
                         name="employee_date_hired"
-                        value={createFormHandler.values.date_hired ?? ""}
+                        value={createFormHandler.values.date_hired ? moment(createFormHandler.values.date_hired).format("MM/DD/YY") : ""}
                         error={createFormHandler.errors.date_hired}
                         disabled
-                    />
+                    /> 
                     <Textfield
                         label="Total"
                         placeholder="total amount"
@@ -387,7 +602,7 @@ const UniformRequestAndIssuanceForm = ({
                         dataKey="item_no"
                     />
                 )}
-                {mode === "create" ? null : (  
+                {mode !== "review" && mode !== "create" && mode!=="post" &&  ( 
                 <div>
                     <hr className="mt-6 pb-2 text-slate-300" /> 
                     <p>Report Log:</p>          
@@ -399,7 +614,7 @@ const UniformRequestAndIssuanceForm = ({
                         error={createFormHandler.errors.created_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.date_requested
@@ -415,7 +630,7 @@ const UniformRequestAndIssuanceForm = ({
                         error={createFormHandler.errors.reviewed_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.date_reviewed
@@ -431,7 +646,7 @@ const UniformRequestAndIssuanceForm = ({
                         error={createFormHandler.errors.posted_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.date_posted
@@ -456,7 +671,23 @@ const UniformRequestAndIssuanceForm = ({
                         }
                         disabled
                     />       
-                    </div>
+                    <Textfield
+                        label="Payroll Entry:"
+                        name="created_by"
+                        value={createFormHandler.values.cancelled_by ?? ""}
+                        error={createFormHandler.errors.posted_by}
+                        disabled                       
+                    />
+                    <Textfield
+                        label="Payroll send Date"
+                        value={
+                            createFormHandler.values.date_cancelled
+                                ? moment(createFormHandler.values.date_cancelled).format("MMMM DD, YYYY h:mm A")
+                                : "-"
+                        }
+                        disabled
+                    />       
+                </div>
                     <div>
                         <TextArea
                             label="Cancel Reason"
@@ -467,9 +698,10 @@ const UniformRequestAndIssuanceForm = ({
                         />
                     </div>
                     
+                    
                 </div>
                 )}
-                {mode === "view" ? null : (
+                {mode === "view" ? null :  mode!=="post" &&  (
                 <div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Request Items</span>
@@ -489,6 +721,7 @@ const UniformRequestAndIssuanceForm = ({
                         disabled={isView}
                         onChange={(e: any) => {
                             const selected = e.target.obj;
+                            const stockOnHand = getReviewAvailableStock(selected);
 
                             setitemdraft({
                                 ...itemdraft,
@@ -496,14 +729,14 @@ const UniformRequestAndIssuanceForm = ({
                                 uniform_item_no: selected?.item_no ?? "", 
                                 description: selected?.description ?? "",
                                 gender: selected?.gender?.code ?? "",
-                                stock_on_hand: selected?.stock_on_hand ?? "",
+                                stock_on_hand: String(stockOnHand),
                                 size: selected?.size?.description ?? "",
                                 standard_unit: selected?.standard_unit ?? "",
                                 standard_unit_price: selected?.standard_unit_price ?? "",
                             });
                         }}                            
-                        options={item.map((item) => ({
-                            label: item.description,
+                        options={filteredItems.map((item) => ({
+                            label: `${item.description}-(${item.gender?.code})-${item.size?.description}`,
                             value: item.item_no,
                             obj: item,
                         }
@@ -512,7 +745,7 @@ const UniformRequestAndIssuanceForm = ({
                     />
                 </div>
                 )}
-                {mode === "view" ? null : (
+                {mode === "view" ? null : mode!=="post" &&  (
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-4">
                     <Textfield
                         label="Gender"
@@ -554,17 +787,23 @@ const UniformRequestAndIssuanceForm = ({
                         label="Request Quantity"
                         name="request_quantity"
                         type="number"
-                        value={itemdraft.requested_quantity}
+                        value={itemdraft.requested_quantity === ""
+                                ? ""
+                                : itemdraft.requested_quantity
+                        }
                         onChange={(e: any) => {
-                            const qty = Math.max(0, Number(e.target.value));
-                            const unitPrice = Number(itemdraft.standard_unit_price) || 0;
-                            const onHand = Number(itemdraft.stock_on_hand);
+                            const value = e.target.value;
+
+                            const qty =
+                                value === "" ? "" : Math.max(1, Number(value));
 
                             setitemdraft({
                                 ...itemdraft,
                                 requested_quantity: qty,
-                                total_amount: qty * unitPrice,
-                                remaining_quantity: onHand - qty,
+                                total_amount:
+                                    qty === "" ? 0 : Number(qty) * Number(itemdraft.standard_unit_price || 0),
+                                remaining_quantity:
+                                    qty === "" ? 0 : Number(itemdraft.stock_on_hand) - Number(qty),
                             });
                         }}
                     />
@@ -584,6 +823,7 @@ const UniformRequestAndIssuanceForm = ({
                     name="item_remarks"
                     type="text"
                     value={itemdraft.item_remarks}
+                    disabled = {isPost}
                     onChange={(e: any) => setitemdraft({ ...itemdraft, item_remarks: e.target.value })}
                 />
                 </div>
@@ -600,26 +840,14 @@ const UniformRequestAndIssuanceForm = ({
                     <>
                     <hr className="mt-6 pb-2 text-slate-300" />
                     <div className="flex justify-end">
-                    <div className="w-1/2 flex justify-end items-center gap-x-2">
-                        <Button
-                            label="Cancel"
-                            variant="secondary"
-                            onClick={() => {
-                                modal.onClose();
-                                createFormHandler.resetForm();
-                               setitemdraft({item_no:"",description:"",size:"",gender:"",stock_on_hand:"",requested_quantity:0,remaining_quantity:0,
-                                    standard_unit:"",standard_unit_price:"",total_amount:1,item_remarks:"",uniform_item_no:""
-                                });
-                                
-                            }}
-                        />
-                        <Button
-                            type="submit"
-                            label="Submit"
-                            loading={createFormHandler.isSubmitting}
-                            onClick={()=>{}}
-                        />
-                    </div>
+                        <div className="w-[120px]">
+                            <Button
+                                type="submit"
+                                label="Submit"
+                                loading={createFormHandler.isSubmitting}
+                                onClick={()=>{}}
+                            />
+                        </div>
                     </div>
                     </>
                 )}
