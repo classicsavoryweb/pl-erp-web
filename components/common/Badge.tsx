@@ -8,8 +8,9 @@ const Badge = ({
     label
 }: BadgeStatus) => {
     return (
-            <p
-                className={`inline-block px-2 py-1 m-[2px]
+        <div>
+            <span
+                className={`inline-block px-2 py-1
                     ${status === "default" && "bg-zinc-700"}
                     ${status === "danger" && "bg-red-800"}
                     ${status === "warning" && "bg-orange-600"}
@@ -21,7 +22,8 @@ const Badge = ({
                 `}
             >
                 {label}
-            </p>
+            </span>
+        </div>
     );
 };
 
