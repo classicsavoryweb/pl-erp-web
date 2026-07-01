@@ -2,6 +2,7 @@
 
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
+import Badge from "@/components/common/Badge";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useApiCall } from "@/hooks/api-call";
@@ -282,7 +283,8 @@ const EmployeeDeductionsTableCard = ({
             column_type: "",
             employee_id: "",
             date_created_from: "", 
-            date_created_to: "", 
+            date_created_to: "",
+            status:"", 
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -397,6 +399,8 @@ const EmployeeDeductionsTableCard = ({
                                 paginator.setPage(1);
                                 setEmployee(selectedEmployee);
                                 formHandler.setFieldValue("employee_id", selectedEmployee.id);
+                                formHandler.setFieldValue("status", selectedEmployee.status);
+                                console.log(selectedEmployee.status);
                             }}
                             value={employee}
                             error={formHandler.errors.employee_id}
@@ -442,8 +446,8 @@ const EmployeeDeductionsTableCard = ({
                             onChange={formHandler.handleChange}
                         /> 
                     </Grid>
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex flex-wrap items-end gap-1">
+                    <div className="flex items-end justify-between gap-4 max-h-[100px]">
+                        <div className="flex items-end gap-1">
                             <CountLabel
                                 label="Active Deductions"
                                 count={summary.deduction_count}
@@ -452,6 +456,18 @@ const EmployeeDeductionsTableCard = ({
                                 label="Remaing Balance"
                                 count={summary.total_balance}
                             />
+                            {formHandler.values.status && (
+                            <div className="flex flex-col gap-0">
+                                <p className="text-[10px] lead-4 font-medium text-slate-500 dark:text-slate-400">
+                                    Employee Status
+                                </p>
+
+                                <Badge
+                                    status={formHandler.values.status === "active" ? "success" : "danger"}
+                                    label={formHandler.values.status}
+                                />
+                            </div>
+                            )}
                         </div>
                         <div className="flex justify-end gap-x-1">
                             <div>
