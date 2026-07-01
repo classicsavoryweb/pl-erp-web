@@ -2,11 +2,12 @@
 
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
+import TextArea from "@/components/common/TextArea";
 import Grid from "@/components/common/Grid";
 import Button from "@/components/common/Button";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
-import { getLastPay } from "@/api/compensation/last-pay";
+import { getLastPay, updateLastPayRemarks } from "@/api/compensation/last-pay";
 import { getEmployee } from "@/api/employee";
 import { toast } from "react-toastify";
 import { useContext, useEffect, useMemo, useState } from "react";
@@ -17,6 +18,7 @@ import LastPayComputationModal from "./LastPayComputationModal";
 interface LastPayComputationEditModalProps {
     modal: any;
     data: any;
+    onUpdated?: () => void;
 }
 
 type CustomLineItem = {
@@ -109,7 +111,8 @@ const computeDeductionSummary = (deductions: any[]): DeductionSummary => {
 
 const LastPayComputationEditModal = ({
     modal,
-    data
+    data,
+    onUpdated,
 }: LastPayComputationEditModalProps) => {
     const api = useApiCall();
     const previewModal = useModal();
@@ -136,6 +139,7 @@ const LastPayComputationEditModal = ({
         basic_salary: 0,
         daily_rate: 0,
         cola: 0,
+        remarks: "",
     });
     const [initializedKey, setInitializedKey] = useState<string | null>(null);
     const { userDetails } = useContext(AuthContext);
@@ -225,6 +229,7 @@ const LastPayComputationEditModal = ({
             employee: details?.employee ?? data?.employee,
             prepared_by: preparedBy || data?.prepared_by || details?.prepared_by,
             prepared_by_title: preparedByTitle || data?.prepared_by_title || details?.prepared_by_title,
+            remarks: details?.remarks ?? data?.remarks ?? "",
         };
     }, [details, data, preparedBy, preparedByTitle]);
 
@@ -268,6 +273,7 @@ const LastPayComputationEditModal = ({
             basic_salary: baseBasicSalary,
             daily_rate: baseDailyRate,
             cola: toNumber(baseData?.cola ?? baseEmployee?.cola ?? 0),
+            remarks: baseData?.remarks ?? "",
         });
     }, [
         modal.isShowing,
@@ -348,6 +354,7 @@ const LastPayComputationEditModal = ({
             basic_salary: toNumber(draft.basic_salary),
             daily_rate: toNumber(draft.daily_rate),
             cola: toNumber(draft.cola),
+            remarks: draft.remarks,
             deduction_summary_override: deductionSummary,
             computation_items_override: customAmounts,
             deduction_items_override: customDeductions,
@@ -370,6 +377,33 @@ const LastPayComputationEditModal = ({
             ...prev,
             [field]: e.target.value,
         }));
+    };
+
+    const handleSaveRemarks = async () => {
+        const lastPayId = baseData?.id ?? data?.id;
+        if (!lastPayId) return;
+
+        api.setLoading(true);
+        try {
+            const resp = await updateLastPayRemarks(lastPayId, {
+                remarks: draft.remarks,
+            });
+
+            if (!resp.error) {
+                toast.success("Remarks updated successfully");
+                setDetails((prev: any) => ({
+                    ...prev,
+                    remarks: draft.remarks,
+                }));
+                onUpdated?.();
+            } else {
+                toast.error(resp.data?.message ?? "Error updating remarks");
+            }
+        } catch {
+            toast.error("Error encountered");
+        } finally {
+            api.setLoading(false);
+        }
     };
 
     const handleDeductionChange = (field: keyof DeductionSummary) => (e: any) => {
@@ -441,7 +475,7 @@ const LastPayComputationEditModal = ({
                 loading={api.loading}
             >
                 <p className="text-sm text-slate-500 mb-2">
-                   Note: Changes here only affect the PDF preview/print and will not update the employee record.
+                   Note: Amount and signatory changes only affect the PDF preview/print. Remarks are saved to the record.
                 </p>
 
                 <p className="font-semibold mt-2">Computation Amounts</p>
@@ -696,7 +730,22 @@ const LastPayComputationEditModal = ({
                     />
                 </Grid>
 
+                <div className="mt-4">
+                    <TextArea
+                        label="Remarks"
+                        value={draft.remarks}
+                        onChange={handleDraftTextChange("remarks")}
+                    />
+                </div>
+
                 <div className="flex justify-end gap-2 mt-4">
+                    <div className="w-40">
+                        <Button
+                            label="Save Remarks"
+                            variant="success"
+                            onClick={handleSaveRemarks}
+                        />
+                    </div>
                     <div className="w-40">
                         <Button
                             label="Preview PDF"

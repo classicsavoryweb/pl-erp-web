@@ -67,11 +67,6 @@ const LastPayTableCard = () => {
             columnType: COLUMNTYPES.date,
         },
         {
-            columnHead: "Last Pay Number",
-            path: "last_pay_number",
-            columnType: COLUMNTYPES.string,
-        },
-        {
             columnHead: "Employee Name",
             path: "employee.full_name",
             columnType: COLUMNTYPES.string,
@@ -95,6 +90,11 @@ const LastPayTableCard = () => {
             columnHead: "Last Pay",
             path: "last_pay",
             columnType: COLUMNTYPES.amount,
+        },
+        {
+            columnHead: "Remarks",
+            path: "remarks",
+            columnType: COLUMNTYPES.string,
         },
         {
             columnHead: "Status",
@@ -287,6 +287,9 @@ const LastPayTableCard = () => {
             <LastPayComputationEditModal
                 modal={computationModal}
                 data={data}
+                onUpdated={() => {
+                    api.triggerReload();
+                }}
             />
 
             <PostLastPayPreviewModal
