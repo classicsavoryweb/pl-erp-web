@@ -7,6 +7,7 @@ import Button from "@/components/common/Button";
 import moment from "moment";
 import Checkbox from "@/components/common/Checkbox";
 import { exportAllReportsSSSContributions } from "@/api/reports/reports-sss";
+import { toast } from "react-toastify";
 
 interface ModalInterface {
     modal: any;
@@ -52,10 +53,15 @@ const SSSMonthlyContributionModal = ({
 
             if (isConfirmed) {
                 unique_api && unique_api(values).then((resp: any) => {
-                    const blob = new Blob([resp.data], {
-                        type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
-                    });
-                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const payload = resp?.data ?? resp;
+                    const contentType = String(resp?.headers?.["content-type"] ?? payload?.type ?? "").toLowerCase();
+
+                    if (!(payload instanceof Blob) || contentType.includes("application/json") || contentType.includes("text/html")) {
+                        toast.error("Error Downloading Excel");
+                        return;
+                    }
+
+                    const downloadUrl = window.URL.createObjectURL(payload);
                     const a = document.createElement('a');
     
                     a.href = downloadUrl;
@@ -63,6 +69,7 @@ const SSSMonthlyContributionModal = ({
                     document.body.appendChild(a);
                     a.click();
                     a.remove();
+                    window.URL.revokeObjectURL(downloadUrl);
                 });
             }
         }

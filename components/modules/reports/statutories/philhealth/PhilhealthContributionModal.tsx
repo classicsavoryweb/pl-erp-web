@@ -54,12 +54,14 @@ const PhilhealthContributionModal = ({
             if (isConfirmed) {
                 unique_api && unique_api(values).then(async (resp: any) => {
                     const payload = resp?.data ?? resp;
-                    const blob = payload.type === "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
-                        ? payload
-                        : new Blob([payload], {
-                            type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        });
-                    const downloadUrl = window.URL.createObjectURL(blob);
+                    const contentType = String(resp?.headers?.["content-type"] ?? payload?.type ?? "").toLowerCase();
+
+                    if (!(payload instanceof Blob) || contentType.includes("application/json") || contentType.includes("text/html")) {
+                        toast.error("Error Downloading Excel");
+                        return;
+                    }
+
+                    const downloadUrl = window.URL.createObjectURL(payload);
                     const a = document.createElement('a');
     
                     a.href = downloadUrl;
