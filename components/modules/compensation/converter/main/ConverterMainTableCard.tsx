@@ -372,6 +372,7 @@ const ConverterMainTableCard = () => {
                 withBranch
                 withStatus
                 hasExport
+                defaultColumnSelected="batch_number"
                 exportFileName={`CONVERTER-TRANSACTIONS-LIST-${moment().format('YYYY-MM-DD')}.xls`}
                 api={exportConverterBatchTransactions}
                 statusOption={[
