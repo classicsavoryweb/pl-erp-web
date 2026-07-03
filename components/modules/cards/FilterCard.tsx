@@ -243,6 +243,9 @@ const FilterCard = ({
             }
         }
     }, [filterValues]);
+    const selectedFields = exportHandler.values.fields || []; 
+    const normalOptions = exportOptions?.filter(o => o.value !== "check_all") || []; 
+    const allSelected = normalOptions.length > 0 && selectedFields.length === normalOptions.length;
 
     return (
         <>
@@ -514,6 +517,24 @@ const FilterCard = ({
                 onClose={optionModal.onClose}
                 size="lg"
             >
+               <div className="pb-2 flex justify-between items-center">
+                    <p className="text-xs font-semibold">
+                        Employee Details
+                    </p>
+
+                    <Checkbox
+                        label="Select All"
+                        value="check_all"
+                        checked={allSelected}
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                exportHandler.setFieldValue("fields", [...normalOptions]);
+                            } else {
+                                exportHandler.setFieldValue("fields", []);
+                            }
+                        }}
+                    />
+                </div>
                 <Grid cols={3}>
                     { exportOptions && exportOptions.map((option, key) => {
                         return (
@@ -530,11 +551,15 @@ const FilterCard = ({
                                         } else {
                                             exportHandler.setFieldValue(
                                                 "fields",
-                                                exportHandler.values.fields.filter((field) => field !== option)
+                                                exportHandler.values.fields.filter(
+                                                    (field: any) => field.value !== option.value
+                                                )
                                             );
                                         }
                                     }}
-                                    checked={option.checked ?? undefined}
+                                    checked={selectedFields.some(
+                                        (field: any) => field.value === option.value
+                                    )}
                                 />
                             </div>
                         );

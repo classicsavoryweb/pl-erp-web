@@ -83,7 +83,7 @@ const UniformRequestAndIssuanceForm = ({
     total_amount: number;
     item_remarks: string;
     uniform_item_no: string;
-};
+    };
     
     const [itemdraft, setitemdraft] = useState<ItemDraft>({
     item_no: "",
@@ -91,14 +91,14 @@ const UniformRequestAndIssuanceForm = ({
     size: "",
     gender: "",
     stock_on_hand: "",
-    requested_quantity: 0, // number now
+    requested_quantity: 0,
     remaining_quantity: 0,
     standard_unit: "",
     standard_unit_price: "",
     total_amount: 0,
     item_remarks: "",
     uniform_item_no: "",
-});
+    });
  
     const normalizeGender = (gender?: string) => {
         const normalized = (gender ?? "").trim().toLowerCase();
@@ -203,64 +203,65 @@ const UniformRequestAndIssuanceForm = ({
                 throw new Error("Invalid mode");
             }
             };
-           try {
-        let resp = await submitRequest(payload);   
-        if (resp.errors) {
-            const firstError = Object.values(resp.errors).flat()?.[0];
-            toast.error(firstError || resp.message || "Request failed");
-            return;
-        }
-        if (resp.error) {
-            const firstError = Object.values(resp.data?.errors ?? {}).flat()?.[0];
-            toast.error(firstError || resp.data?.message || "Request failed");
-            return;
-        }
+            try {
+            let resp = await submitRequest(payload);   
+            if (resp.errors) {
+                const firstError = Object.values(resp.errors).flat()?.[0];
+                toast.error(firstError || resp.message || "Request failed");
+                return;
+            }
+            if (resp.error) {
+                const firstError = Object.values(resp.data?.errors ?? {}).flat()?.[0];
+                toast.error(firstError || resp.data?.message || "Request failed");
+                return;
+            }
 
 
-    toast.success(
-        isReview
-            ? "Request Reviewed Successfully"
-            : isPost
-            ? "Post Successfully"
-            : "Create Request Successfully"
-    );
+            toast.success(
+                isReview
+                    ? "Request Reviewed Successfully"
+                    : isPost
+                    ? "Post Successfully"
+                    : "Create Request Successfully"
+            );
 
-    onSubmitCallback();
-    modal.onClose();
-    resetForm();
+            onSubmitCallback();
+            modal.onClose();
+            resetForm();
 
-} finally {
-    setSubmitting(false);
-}
+            } finally {
+                setSubmitting(false);
+            }
         }
     });
         const filteredItems = useMemo(() => {
-        const employeeGender = normalizeGender(createFormHandler.values.gender);
-        const issuanceType = createFormHandler.values.issuance_type;
+            const employeeGender = normalizeGender(createFormHandler.values.gender);
+            const issuanceType = createFormHandler.values.issuance_type;
 
-            return item.filter((record) => {
-                const itemGender = normalizeGender(
-                    record?.gender?.code ?? record?.gender?.description
-                );
+                return item.filter((record) => {
+                    const itemGender = normalizeGender(
+                        record?.gender?.code ?? record?.gender?.description
+                    );
 
-                const genderMatch =
-                    !employeeGender ||
-                    !itemGender ||
-                    itemGender === "unisex" ||
-                    itemGender === employeeGender;
-                
-                const issuanceMatch = 
-                    issuanceType === "Free Uniform" 
-                    ? record.free_uniform === true
-                    : true;
+                    const genderMatch =
+                        !employeeGender ||
+                        !itemGender ||
+                        itemGender === "unisex" ||
+                        itemGender === employeeGender;
+                    
+                    const issuanceMatch = 
+                        issuanceType === "Free Uniform" 
+                        ? record.free_uniform === true
+                        : true;
 
-                return genderMatch && issuanceMatch;
-            });
+                    return genderMatch && issuanceMatch;
+                });
         }, [
             item,
             createFormHandler.values.gender,
             createFormHandler.values.issuance_type,
-        ]);
+            ]
+        );
     
 
     useEffect(() => {
@@ -372,45 +373,45 @@ const UniformRequestAndIssuanceForm = ({
         path: "requested_quantity",
         columnType: isReview ? COLUMNTYPES.function : COLUMNTYPES.string,
 
-        function: (row: any) => {
-    if (!isReview) return row.requested_quantity;
+            function: (row: any) => {
+            if (!isReview) return row.requested_quantity;
 
-    const items = createFormHandler.values.items;
+            const items = createFormHandler.values.items;
 
-    const current = items.find((i: any) => i.item_no === row.item_no);
+            const current = items.find((i: any) => i.item_no === row.item_no);
 
-    return (
-        <Textfield
-            label=""
-            type="number"
-            value={
-                current?.requested_quantity === 0
-                    ? ""
-                    : current?.requested_quantity ?? ""
+            return (
+                <Textfield
+                    label=""
+                    type="number"
+                    value={
+                        current?.requested_quantity === 0
+                            ? ""
+                            : current?.requested_quantity ?? ""
+                    }
+                    onChange={(e: any) => {
+                        const value = e.target.value;
+                        const qty = value === "" ? 0 : Number(value);
+
+                        const updated = items.map((i: any) => {
+                            if (i.item_no !== row.item_no) return i;
+
+                            const stock = Number(i.stock_on_hand || 0);
+                            const price = Number(i.unit_price || 0);
+
+                            return {
+                                ...i,
+                                requested_quantity: qty,
+                                remaining_quantity: stock - qty,
+                                total_amount: qty * price, 
+                            };
+                        });
+
+                        createFormHandler.setFieldValue("items", updated);
+                    }}
+                />
+                );
             }
-            onChange={(e: any) => {
-                const value = e.target.value;
-                const qty = value === "" ? 0 : Number(value);
-
-                const updated = items.map((i: any) => {
-                    if (i.item_no !== row.item_no) return i;
-
-                    const stock = Number(i.stock_on_hand || 0);
-                    const price = Number(i.unit_price || 0);
-
-                    return {
-                        ...i,
-                        requested_quantity: qty,
-                        remaining_quantity: stock - qty,
-                        total_amount: qty * price, 
-                    };
-                });
-
-                createFormHandler.setFieldValue("items", updated);
-            }}
-        />
-    );
-}
         },
         { columnHead: "Remaining Quantity", path: "remaining_quantity", columnType: COLUMNTYPES.string },
         { columnHead: "UOM", path: "uom", columnType: COLUMNTYPES.string },
@@ -587,6 +588,7 @@ const UniformRequestAndIssuanceForm = ({
                         disabled
                     /> 
                     <Textfield
+                        type="number"
                         label="Total"
                         placeholder="total amount"
                         name="total_amount"

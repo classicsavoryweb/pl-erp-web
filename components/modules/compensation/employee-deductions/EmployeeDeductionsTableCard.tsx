@@ -400,7 +400,6 @@ const EmployeeDeductionsTableCard = ({
                                 setEmployee(selectedEmployee);
                                 formHandler.setFieldValue("employee_id", selectedEmployee.id);
                                 formHandler.setFieldValue("status", selectedEmployee.status);
-                                console.log(selectedEmployee.status);
                             }}
                             value={employee}
                             error={formHandler.errors.employee_id}
