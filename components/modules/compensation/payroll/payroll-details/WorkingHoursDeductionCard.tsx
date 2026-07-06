@@ -22,7 +22,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
             formHandler.setFieldValue("save_changes", false);
             formHandler.setFieldValue("reload_deductions", false);
             formHandler.submitForm();
-        }, 500);
+        }, 750);
 
         return () => clearTimeout(delayDebounce);
     }, [toggle]);
