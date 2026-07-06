@@ -12,7 +12,7 @@ import PayrollDeductionTableCard from "@/components/modules/compensation/payroll
 import { useFormik } from "formik";
 import { PayrollContext } from "@/context/PayrollProvider";
 import { AuthContext } from "@/context/AuthProvider";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
 import { previewPayrollComputation } from "@/api/compensation/payroll";
@@ -136,6 +136,10 @@ const Page = () => {
     useEffect(() => {
         const handleKeyDown = (e: any) => {
             if (e.key === "Tab") {
+                if (payrollDetails.status == "final") {
+                    return;
+                }
+
                 e.preventDefault();
                 formHandler.setFieldValue("save_changes", false);
                 formHandler.setFieldValue("reload_deductions", false);
@@ -148,7 +152,7 @@ const Page = () => {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, []);
+    }, [payrollDetails.status]);
 
 
     return (
