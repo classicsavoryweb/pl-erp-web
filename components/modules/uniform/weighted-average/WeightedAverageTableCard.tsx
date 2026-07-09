@@ -24,6 +24,8 @@ import confirm from "@/components/common/Confirm";
 const WeightedAverageTable = () => {
     const api = useApiCall();
     const createModal = useModal();
+    const reviewModal = useModal();
+    const postModal = useModal();
     const viewModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
@@ -63,32 +65,16 @@ const WeightedAverageTable = () => {
             },
             item.status === "Unposted" && {
                 label: "Reviewed",
-                onClick: async () => {
-                    const isConfirmed = await confirm({
-                        title: "Review Weighted Average",
-                        message: "Are you sure you want to mark this as Reviewed?",
-                    });
-    
-                    if (!isConfirmed) return;
-    
-                    await updateWeightStatus(item.id, "Reviewed");
-                    toast.success("Marked as Reviewed");
-                    api.triggerReload();
+                onClick:  () => {
+                   setData(item)
+                    reviewModal.onOpen();
                 },
             },
             ["Reviewed", "Reviewing"].includes(item.status) && {
                 label: "Posted",
                 onClick: async () => {
-                    const isConfirmed = await confirm({
-                        title: "Post Weighted Average",
-                        message: "Are you sure you want to mark this as Posted?",
-                    });
-
-                    if (!isConfirmed) return;
-    
-                    await updateWeightStatus(item.id, "Posted");
-                    toast.success("Marked As Posted");
-                    api.triggerReload();
+                   setData(item);
+                   postModal.onOpen();  
                 },
             },
             ["Unposted", "Reviewed", "Reviewing"].includes(item.status) && {
@@ -135,8 +121,13 @@ const WeightedAverageTable = () => {
 
     const columnSettings = [
         { columnHead: "WA Number", path: "weighted_id", columnType: COLUMNTYPES.string },
-        { columnHead: "Posting Date", path: "prepared_at", columnType: COLUMNTYPES.date },
-        { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function, function: (data: any) => {
+        { columnHead: "Posting Date", path: "prepared_at", columnType: COLUMNTYPES.function,
+            function: (data: any) =>
+                data.prepared_at ? moment(data.prepared_at).format("MM/DD/YYYY") : "-",
+         },
+        { columnHead: "Posted By", path: "posted_by", columnType: COLUMNTYPES.string },
+        { columnHead: "Remarks", path: "overall_remarks", columnType: COLUMNTYPES.string },
+         { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function, function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" = "default";
 
                 switch(data.status) {
@@ -161,8 +152,6 @@ const WeightedAverageTable = () => {
                     
                 />
          }},
-        { columnHead: "Posted By", path: "posted_by", columnType: COLUMNTYPES.string },
-        { columnHead: "Remarks", path: "overall_remarks", columnType: COLUMNTYPES.string },
         {
             columnHead: "Action",
             path: "id",
@@ -185,16 +174,6 @@ const WeightedAverageTable = () => {
             }
         },
     ];
-
-    // const tableActions = [
-    //     {
-    //         label: "View",
-    //         onClick:(item: any) =>{
-    //             setData(item);
-    //             viewModal.onOpen();
-    //         }
-    //     }
-    // ];
     return (
         <>
             <FilterCard
@@ -238,6 +217,18 @@ const WeightedAverageTable = () => {
                 <WeightedAverageForm 
                 modal = {viewModal}
                 mode = "view"
+                formValue={data}
+                onSubmitCallback= {api.triggerReload}
+                />
+                <WeightedAverageForm 
+                modal = {reviewModal}
+                mode = "review"
+                formValue={data}
+                onSubmitCallback= {api.triggerReload}
+                />
+                <WeightedAverageForm 
+                modal = {postModal}
+                mode = "post"
                 formValue={data}
                 onSubmitCallback= {api.triggerReload}
                 />

@@ -24,6 +24,14 @@ export const exportAllWeightAverage = async (payload?: {}) => {
     return resData;
 };
 
+export const updateUnitPrice = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/update-item-price",
+        method: "POST",
+        payload,
+    })
+}
+
 export const exportWeightAverageDetails = async (id: number) => {
     const resData = await axiosHelper({
         func_path: `/export-weight-average/${id}/details`,

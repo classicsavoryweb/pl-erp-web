@@ -15,13 +15,15 @@ import { useModal } from "@/hooks/modal";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import { getDropDownMasterlist } from "@/api/uniform/request-and-issuance"
-import { createWeightAverage , getWeightAverageItems , getWeightAverageById } from "@/api/uniform/weighted-average";
+import { createWeightAverage , getWeightAverageItems , getWeightAverageById , updateWeightStatus , updateUnitPrice } from "@/api/uniform/weighted-average";
 import moment from "moment";
 import  WeightedAverageItem  from "./WeightAverageItemView";
+import { create } from "lodash";
+import ActionDropDown from "@/components/common/ActionDropDown";
 
 interface WeightAverageFormProps{
     modal: any;
-    mode: "create" | "view";
+    mode: "create" | "view" | "review" | "post";
     formValue?: any;
     onSubmitCallback: () => void;
 }
@@ -52,498 +54,628 @@ const defaultValues = {
 }
 
 const WeightedAverageForm = ({
-    
     modal,
     mode,
     formValue,
     onSubmitCallback,
-}: WeightAverageFormProps) => {
-    const [ item, setitem ] = useState<any[]>([]);
-    const api = useApiCall();
-    const isView = mode == "view";
-    const [selectedItem, setSelectedItem] = useState<any>(null);
-    const [currentPage, setCurrentPage] = useState(1);
-    const perPage = 10;
+    }: WeightAverageFormProps) => {
+        const [ item, setitem ] = useState<any[]>([]);
+        const api = useApiCall();
+        const isView = mode == "view";
+        const isReview = mode == "review";
+        const isPost = mode == "post";
+        const [selectedItem, setSelectedItem] = useState<any>(null);
+        const [password , setPassword] = useState("");
+        const viewItemModal = useModal();
+        const additionalChargeModal = useModal();
+        const changeUnitPriceModal = useModal();
+        const passwordModal = useModal();
+        const [chargeDraft, setChargeDraft] = useState({
+            index: -1,
+            additional_charge: "",
+            reason: "",
+        });
+        const [changeUnitPrice, setChangeUnitPrice] = useState({
+            index: -1,
+            change_unit_price: "",
+        });
+        const [itemdraft , setitemdraft]  = useState({
+            weighted_id_number : "",
+            uniform_item_no : "",
+            description : "",
+            standard_uom : "",
+            current_price : "",
+            total_quantity : "",
+            standard_uom_two : "",
+            total_amount : "",
+            new_standard_price : "",
+            other_charges : "",
+            standard_difference : "",
+            reason : "",
+        });
+        useAsyncEffect(() => {
+            if(!modal.isShowing) return;
+            getDropDownMasterlist()
+                .then((resp) => {
+                    if (resp.error) {
+                        toast.error("Error fetching options");
+                        return;
+                    }
+                setitem(resp.data.items ?? []);
+                })
+                .catch(() => toast.error("Error encountered"));
+        },[modal.isShowing]);
+
+        const createFormHandler = useFormik({  
+            initialValues  :defaultValues,
+            validateOnChange: false,
+            validationSchema: Yup.object().shape({
+                tag:Yup.string().required("Tag is Required."),
+                date_posted: Yup.string()
+                .required("Date Posted is Required")
+                .test(
+                        "not-future",
+                        "Posting Date cannot be later than today",
+                        function (value) {
+                            if (!value) return false;
+
+                            return moment(value).isSameOrBefore(
+                                moment().format("YYYY-MM-DD"),
+                                "day"
+                            );
+                        }
+                    ),
+                date_from:Yup.string()
+                .required("Date From is Required")
+                .test(
+                        "not-future",
+                        "Date From cannot be later than today",
+                        function (value) {
+                            if (!value) return false;
+
+                            return moment(value).isSameOrBefore(
+                                moment().format("YYYY-MM-DD"),
+                                "day"
+                            );
+                        }
+                    ),
+                date_to:Yup.string()
+                .required("Date From is Required")
+                .test(
+                        "not-future",
+                        "Date To cannot be later than today",
+                        function (value) {
+                            if (!value) return false;
+
+                            return moment(value).isSameOrBefore(
+                                moment().format("YYYY-MM-DD"),
+                                "day"
+                            );
+                        }
+                    ),
+                overall_remarks:Yup.string().nullable(),
+                items:Yup.array()
+                    .min(1,"At least one item is required")
+                    .max(40,"A contain maximum is 40.")
+                    .of(Yup.object({
+                        uniform_item_no: Yup.string().required(),
+                        item_remarks : Yup.string().nullable(),
+                        new_standard_price : Yup.string().required()
+                    })),
+                    
+            }),
+
+            onSubmit: async (values , {resetForm, setSubmitting}) =>{
+                const isConfirmed = await confirm({
+                    title: isReview 
+                        ? "Review Weighted Average"
+                        :isPost 
+                        ? "Post Weighted Average"
+                        : "Create Weighted Average",
+                    message: isReview
+                        ? "Are you sure you Reviewed this Weighted Average?"
+                        :isPost
+                        ? "Are you sure you want to post this Weighted Average"
+                        : "Are you sure yo want to create this Weighted Average?"
+                });
+
+                if(!isConfirmed) return;
+                
+                setSubmitting(true);
+                const payload = {
+                    ...values,
+                    items: values.items,
+                };
+
+                const submitRequest = async (requestPayload: any) => {
+                    
+                    switch(mode){
+                        case "create":
+                            return createWeightAverage(requestPayload);
+                        case "review":
+                            return updateWeightStatus(formValue.id,"Reviewed");
+                        case "post": 
+                            return updateWeightStatus(formValue.id,"Posted");
+                        default:
+                            throw new Error("Invalid Mode");
+                    }
+                };
+
+                try{
+                let resp = await submitRequest(payload);   
+                    if (resp.errors) {
+                        const firstError = Object.values(resp.errors).flat()?.[0];
+                        toast.error(firstError || resp.message || "Request failed");
+                        return;
+                    }
+                    if (resp.error) {
+                        const firstError = Object.values(resp.data?.errors ?? {}).flat()?.[0];
+                        toast.error(firstError || resp.data?.message || "Request failed");
+                        return;
+                    }
+                    toast.success(
+                        isReview
+                        ? "Weighted Average Reviewed Successfully"
+                        : isPost
+                        ? "Weighted Average Post Successfully"
+                        : "Create Weighted Average Successfully"
+                    );
+
+                    onSubmitCallback();
+                    modal.onClose();
+                    resetForm();
+                }finally{
+                        setSubmitting(false);
+                }
+            }     
+        });
+        const items = createFormHandler.values.items || [];
     
-    const viewItemModal = useModal();
-    const additionalChargeModal = useModal();
-    const [chargeDraft, setChargeDraft] = useState({
-        index: -1,
-        additional_charge: "",
-        reason: "",
-    });
-    const [itemdraft , setitemdraft]  = useState({
-        weighted_id_number : "",
-        uniform_item_no : "",
-        description : "",
-        standard_uom : "",
-        current_price : "",
-        total_quantity : "",
-        standard_uom_two : "",
-        total_amount : "",
-        new_standard_price : "",
-        other_charges : "",
-        standard_difference : "",
-        reason : "",
-    });
-    useAsyncEffect(() => {
-        if(!modal.isShowing) return;
-        getDropDownMasterlist()
-            .then((resp) => {
-                if (resp.error) {
-                    toast.error("Error fetching options");
+        useEffect(() => {
+            if(!modal.isShowing) return;
+
+            if((mode === "view" || mode === "review" || mode === "post")&& formValue){
+                createFormHandler.setValues({
+                    tag : formValue.tag ?? "",
+                    date_posted: formValue.date_posted ?? "",
+                    date_from : formValue.date_from ?? "",
+                    date_to : formValue.date_to ?? "",
+                    status : formValue.status ?? "",
+                    overall_remarks : formValue.overall_remarks ?? "",
+                    prepared_by : formValue.prepared_by ?? "",
+                    prepared_at : formValue.prepared_at ?? "",
+                    reviewed_by : formValue.reviewed_by ?? "",
+                    reviewed_at : formValue.reviewed_at ?? "",
+                    posted_by : formValue.posted_by ?? "",
+                    posted_at : formValue.posted_at ?? "",
+                    cancelled_by : formValue.cancelled_by ?? "",
+                    cancelled_at : formValue.cancelled_at ?? "",
+                    cancel_reason : formValue.cancel_reason ?? "",
+                    items: formValue.items ?? [],
+                });
+            }else{
+                createFormHandler.setValues(defaultValues);
+            }
+        },[modal.isShowing, formValue, mode]);
+    
+        const generateItems = async () => {
+            const dateFrom = moment(createFormHandler.values.date_from);
+            const dateTo = moment(createFormHandler.values.date_to);
+            const today = moment();
+            if (
+                moment(createFormHandler.values.date_from).isAfter(
+                    moment(createFormHandler.values.date_to),
+                    "day"
+                )
+            ) {
+                toast.error("Date From cannot be later than Date To.");
+                return;
+            }
+            if (
+                dateFrom.month() !== dateTo.month() ||
+                dateFrom.year() !== dateTo.year()
+            ) {
+                toast.error("Date From and Date To must be within the same month.");
+                return;
+            }
+
+                if (dateTo.isAfter(today, "day")) {
+                toast.error("Date To cannot be later than today.");
+                return;
+            }
+            if(!createFormHandler.values.tag ){
+                toast.error("Need a Tag Selection");
+                return;
+            }
+            try {
+                const resp = await getWeightAverageItems({
+                    date_from: createFormHandler.values.date_from,
+                    date_to: createFormHandler.values.date_to,
+                    tag: createFormHandler.values.tag,
+                });
+                const rows = resp?.data ?? [];
+
+                if (!Array.isArray(rows) || rows.length === 0) {
+                    toast.info("No data found");
+                    createFormHandler.setFieldValue("items", []);
                     return;
                 }
-            setitem(resp.data.items ?? []);
-            })
-            .catch(() => toast.error("Error encountered"));
-    },[modal.isShowing]);
 
-    const createFormHandler = useFormik({
-        initialValues  :defaultValues,
-        validateOnChange: false,
-        validationSchema: Yup.object().shape({
-            tag:Yup.string().required("Tag is Required."),
-            date_posted: Yup.string()
-            .required("Date Posted is Required")
-            .test(
-                    "not-future",
-                    "Posting Date cannot be later than today",
-                    function (value) {
-                        if (!value) return false;
+                if (!Array.isArray(rows)) {
+                    console.error("Invalid rows format:", rows);
+                    toast.error("Invalid response format");
+                    return;
+                }
 
-                        return moment(value).isSameOrBefore(
-                            moment().format("YYYY-MM-DD"),
-                            "day"
-                        );
-                    }
-                ),
-            date_from:Yup.string()
-            .required("Date From is Required")
-            .test(
-                    "not-future",
-                    "Date From cannot be later than today",
-                    function (value) {
-                        if (!value) return false;
+                const mapped = rows.map((row: any) => ({
+                    item_no: row.item_no,
+                    uniform_item_no: row.uniform_item_no,
+                    description: row.description,
+                    standard_uom: row.standard_uom,
+                    current_price: row.current_price,
+                    total_quantity: row.total_quantity,
+                    standard_uom_two: row.standard_uom_two,
+                    total_amount: row.total_amount,
+                    new_standard_price: row.new_standard_price,
+                    other_charges: row.other_charges,
+                    standard_difference: row.standard_difference,
+                    reason: row.reason,
+                }));
 
-                        return moment(value).isSameOrBefore(
-                            moment().format("YYYY-MM-DD"),
-                            "day"
-                        );
-                    }
-                ),
-            date_to:Yup.string()
-            .required("Date From is Required")
-            .test(
-                    "not-future",
-                    "Date To cannot be later than today",
-                    function (value) {
-                        if (!value) return false;
-
-                        return moment(value).isSameOrBefore(
-                            moment().format("YYYY-MM-DD"),
-                            "day"
-                        );
-                    }
-                ),
-            overall_remarks:Yup.string().nullable(),
-            items:Yup.array()
-                .min(1,"At least one item is required")
-                .max(40,"A contain maximum is 40.")
-                .of(Yup.object({
-                    item_no: Yup.string().required(),
-                    item_remarks : Yup.string().nullable(),
-                    new_standard_price : Yup.string().required()
-                })),
-        }),
-
-        onSubmit: async (values , {resetForm, setSubmitting}) =>{
-            const isConfirmed = await confirm({
-                title: " Generate Weight Average",
-                message: "Are you sure you want to generate weight average?"
-            });
-
-            if(!isConfirmed) return;
-            
-            setSubmitting(true);
-            const payload = {
-                ...values,
-                items: values.items,
-            };
-            const submitter = mode == "create"
-            ? createWeightAverage(payload) : Promise.resolve(null);;
-
-            submitter
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(mode === "create" ? "Weight Average Created Successfully" : "");
-                        onSubmitCallback();
-                        modal.onClose();
-                        resetForm();
-                    }else{
-                        toast.error(resp.data.message);
-                    }
-                })
-                .catch((err) => {
-                    toast.error("Request failed")
-                });
-        }
-        
-    });
-    const items = createFormHandler.values.items || [];
-
-    const paginatedItems = items.slice(
-        (currentPage - 1) * perPage,
-        currentPage * perPage
-    );
-
-    const paginator = {
-        paginationData: {
-            current_page: currentPage,
-            last_page: Math.ceil(items.length / perPage),
-            total: items.length,
-            from: items.length === 0 ? 0 : (currentPage - 1) * perPage + 1,
-            to: Math.min(currentPage * perPage, items.length),
-        },
-        onClickSetPageNumber: (page: number) => {
-            setCurrentPage(page);
-        },
-    };
-    
-    useEffect(() => {
-        if(!modal.isShowing) return;
-
-        if(mode === "view" && formValue){
-            createFormHandler.setValues({
-                tag : formValue.tag ?? "",
-                date_posted: formValue.date_posted ?? "",
-                date_from : formValue.date_from ?? "",
-                date_to : formValue.date_to ?? "",
-                status : formValue.status ?? "",
-                overall_remarks : formValue.overall_remarks ?? "",
-                prepared_by : formValue.prepared_by ?? "",
-                prepared_at : formValue.prepared_at ?? "",
-                reviewed_by : formValue.reviewed_by ?? "",
-                reviewed_at : formValue.reviewed_at ?? "",
-                posted_by : formValue.posted_by ?? "",
-                posted_at : formValue.posted_at ?? "",
-                cancelled_by : formValue.cancelled_by ?? "",
-                cancelled_at : formValue.cancelled_at ?? "",
-                cancel_reason : formValue.cancel_reason ?? "",
-                items: formValue.items ?? [],
-            });
-        }else{
-            createFormHandler.setValues(defaultValues);
-        }
-    },[modal.isShowing, formValue, mode]);
-
-    const addWeightAverage = () =>{
-        if(!itemdraft.uniform_item_no){
-            toast.error("Description is Required");
-            return;
-        }
-        if(createFormHandler.values.items.length >= 40){
-            toast.error("A request can contain at most 20 items.");
-            return;
-        }
-        const existing = createFormHandler.values.items.some((item: any) =>
-        item.item_no === itemdraft.uniform_item_no) ;
-
-        if(existing){
-            toast.error("Item Description already exist")
-            return;
-        }
-
-        createFormHandler.setFieldValue("items",[
-            ...createFormHandler.values.items,
-            {
-                ...itemdraft,
-                description: itemdraft.description || itemdraft.uniform_item_no
+                createFormHandler.setFieldValue("items", mapped);
+                toast.success("Items loaded successfully");
+            } catch (err) {
+                console.error(err);
+                toast.error("Failed to load items");
             }
-        ]);
-        setitemdraft({
-            weighted_id_number:"",uniform_item_no: "",description: "",standard_uom:"",current_price:"",total_quantity:"",standard_uom_two:"",total_amount:"",new_standard_price:"",other_charges:"",standard_difference:"",reason:"",
-        });
-    };
-    
-    const generateItems = async () => {
-    try {
-        const resp = await getWeightAverageItems({
-            date_from: createFormHandler.values.date_from,
-            date_to: createFormHandler.values.date_to,
-            tag: createFormHandler.values.tag,
-        });
-        const rows = resp?.data ?? [];
-
-        if (!Array.isArray(rows) || rows.length === 0) {
-            toast.info("No data found");
-            createFormHandler.setFieldValue("items", []);
-            return;
-        }
-
-        if (!Array.isArray(rows)) {
-            console.error("Invalid rows format:", rows);
-            toast.error("Invalid response format");
-            return;
-        }
-
-        const mapped = rows.map((row: any) => ({
-            item_no: row.item_no,
-            uniform_item_no: row.uniform_item_no,
-            description: row.description,
-            standard_uom: row.standard_uom,
-            current_price: row.current_price,
-            total_quantity: row.total_quantity,
-            standard_uom_two: row.standard_uom_two,
-            total_amount: row.total_amount,
-            new_standard_price: row.new_standard_price,
-            other_charges: row.other_charges,
-            standard_difference: row.standard_difference,
-            reason: row.reason,
-        }));
-
-        createFormHandler.setFieldValue("items", mapped);
-        toast.success("Items loaded successfully");
-    } catch (err) {
-        console.error(err);
-        toast.error("Failed to load items");
-    }
-};
-
-    const openAdditionalCharge = (requestItem: any) => {
-        const index = createFormHandler.values.items.findIndex((item: any) =>
-            item.item_no === requestItem.item_no
-        );
-
-        if (index < 0) return;
-
-        setChargeDraft({
-            index,
-            additional_charge: String(requestItem.other_charges ?? ""),
-            reason: requestItem.reason ?? "",
-        });
-        additionalChargeModal.onOpen();
-    };
-
-    const saveAdditionalCharge = () => {
-        const additionalCharge = Number(chargeDraft.additional_charge || 0);
-
-        if (Number.isNaN(additionalCharge) || additionalCharge < 0) {
-            toast.error("Additional charge must be zero or greater");
-            return;
-        }
-
-        if (additionalCharge > 0 && !chargeDraft.reason.trim()) {
-            toast.error("Reason is required when additional charge is not zero");
-            return;
-        }
-
-        const rows = [...createFormHandler.values.items];
-        const row = rows[chargeDraft.index];
-
-        if (!row) return;
-
-        const totalAmount = Number(row.total_amount || 0);
-        const totalQuantity = Number(row.total_quantity || 0);
-        const currentPrice = Number(row.current_price || 0);
-        const baseStandardPrice = totalQuantity > 0 ? totalAmount / totalQuantity : 0;
-        const newStandardPrice = baseStandardPrice + additionalCharge;
-
-        rows[chargeDraft.index] = {
-            ...row,
-            other_charges: additionalCharge.toFixed(2),
-            new_standard_price: newStandardPrice.toFixed(2),
-            standard_difference: (newStandardPrice - currentPrice).toFixed(2),
-            reason: chargeDraft.reason,
-            item_remarks: chargeDraft.reason,
         };
 
-        createFormHandler.setFieldValue("items", rows);
-        additionalChargeModal.onClose();
-    };
+        const openAdditionalCharge = (requestItem: any) => {
+            const index = createFormHandler.values.items.findIndex((item: any) =>
+                item.item_no === requestItem.item_no
+            );
 
-    const weightAverageColumn =[
-        {columnHead: "Item Code" , path: "uniform_item_no" , columnType:COLUMNTYPES.string },
-        {columnHead: "Item Description" , path: "description" , columnType:COLUMNTYPES.string },
-        {columnHead: "Standard UOM" , path: "standard_uom" , columnType:COLUMNTYPES.string },
-        {columnHead: "Current Standard Price" , path: "current_price" , columnType:COLUMNTYPES.string },
-        {columnHead: "Total Quantity" , path: "total_quantity" , columnType:COLUMNTYPES.string },
-        {columnHead: "Standard UOM" , path: "standard_uom" , columnType:COLUMNTYPES.string },
-        {columnHead: "Total Amount" , path: "total_amount" , columnType:COLUMNTYPES.string },
-        {columnHead: "New Standard Price" , path: "new_standard_price" , columnType:COLUMNTYPES.string },
-        {columnHead: "Additional Charges" , path: "other_charges" , columnType:COLUMNTYPES.string },
-        {columnHead: "Standard Price Differences" , path: "standard_difference" , columnType:COLUMNTYPES.string },
-        ...(!isView ? [{
-            columnHead: "Action",
-            path: "uniform_item_no",
-            columnType: COLUMNTYPES.function,
-            function: (requestItem: any) => (
-            <Button
-                label="Charge"
-                type="button"
-                onClick={() => openAdditionalCharge(requestItem)}
-            />
-        ),
-    }] : []),
-        ...(isView ? [{
-            columnHead: "Action",
-            path: "uniform_item_no",
-            columnType: COLUMNTYPES.function,
-            function: (requestItem: any) => (
-            <Button
-                label="View"
-                type="button"
-               onClick={async () => {
-                    try {
-                        const resp = await getWeightAverageById(requestItem.id);
+            if (index < 0) return;
 
-                        if (!resp?.error) {
-                            setSelectedItem(resp.data);
-                            viewItemModal.onOpen();
-                        } else {
-                            toast.error("Failed to load item details");
+            setChargeDraft({
+                index,
+                additional_charge: String(requestItem.other_charges ?? ""),
+                reason: requestItem.reason ?? "",
+            });
+            additionalChargeModal.onOpen();
+        };
+
+        const openchangeUnitPrice = (requestItem: any) => {
+            const index = createFormHandler.values.items.findIndex((item: any) =>
+                (item.item_no ?? item.uniform_item_no) === 
+                (requestItem.item_no ?? requestItem.uniform_item_no)
+            );
+
+            if (index < 0) return;
+
+            setChangeUnitPrice({
+                index,
+                change_unit_price: String(requestItem.current_price ?? ""),
+            });
+        };
+
+        const saveChangeUnitPrice = async () => {
+            const unitPrice = Number(changeUnitPrice.change_unit_price || 0);
+            const row = createFormHandler.values.items[changeUnitPrice.index];
+
+            if (!row) return;
+
+            try {
+                await updateUnitPrice({
+                    item_no: row.item_no ?? row.uniform_item_no,
+                    standard_unit_price: unitPrice,
+                });
+
+                toast.success("Price Updated Successfully.");
+                changeUnitPriceModal.onClose();
+            } catch (error) {
+                toast.error("Error Updating Price");
+            }
+        };
+
+        const saveAdditionalCharge = () => {
+            const additionalCharge = Number(chargeDraft.additional_charge || 0);
+
+            if (Number.isNaN(additionalCharge) || additionalCharge < 0) {
+                toast.error("Additional charge must be zero or greater");
+                return;
+            }
+
+            if (additionalCharge > 0 && !chargeDraft.reason.trim()) {
+                toast.error("Reason is required when additional charge is not zero");
+                return;
+            }
+
+            const rows = [...createFormHandler.values.items];
+            const row = rows[chargeDraft.index];
+
+            if (!row) return;
+
+            const totalAmount = Number(row.total_amount || 0);
+            const totalQuantity = Number(row.total_quantity || 0);
+            const currentPrice = Number(row.current_price || 0);
+            const baseStandardPrice = totalQuantity > 0 ? totalAmount / totalQuantity : 0;
+            const newStandardPrice = baseStandardPrice + additionalCharge;
+
+            rows[chargeDraft.index] = {
+                ...row,
+                other_charges: additionalCharge.toFixed(2),
+                new_standard_price: newStandardPrice.toFixed(2),
+                standard_difference: (newStandardPrice - currentPrice).toFixed(2),
+                reason: chargeDraft.reason,
+                item_remarks: chargeDraft.reason,
+            };
+
+            createFormHandler.setFieldValue("items", rows);
+            additionalChargeModal.onClose();
+        };
+
+        const tableActions = [
+            ...(mode !== "create"
+                ? [{
+                    label: "View",
+                    onClick: async (requestItem: any) => {
+                        try {
+                            const resp = await getWeightAverageById(requestItem.id);
+
+                            if (!resp?.error) {
+                                setSelectedItem(resp.data);
+                                viewItemModal.onOpen();
+                            } else {
+                                toast.error("Failed to load item details");
+                            }
+                        } catch (err) {
+                            toast.error("Request failed");
                         }
-                    } catch (err) {
-                        toast.error("Request failed");
-                    }
-                }}
-            />
-        ),
-    }]
-    : []),
-        
-        
-    ];
+                    },
+                }]
+                : []),
+            {
+                label: "Charge",
+                onClick: async (requestItem : any) => {
+                    openAdditionalCharge(requestItem)}
+                
+            },
+            {
+                label: "Change Unit Price",
+                onClick: async (requestItem : any ) => {
+                    openchangeUnitPrice(requestItem);
+                    passwordModal.onOpen(); 
+                }
+            }
+            
+        ]
+
+        const weightAverageColumn =[
+            {columnHead: "Item Code" , path: "uniform_item_no" , columnType:COLUMNTYPES.string },
+            {columnHead: "Item Description" , path: "description" , columnType:COLUMNTYPES.string },
+            {columnHead: "Standard UOM" , path: "standard_uom" , columnType:COLUMNTYPES.string },
+            {columnHead: "Current Standard Price" , path: "current_price" , columnType:COLUMNTYPES.string },
+            {columnHead: "Total Quantity" , path: "total_quantity" , columnType:COLUMNTYPES.string },
+            {columnHead: "Standard UOM" , path: "standard_uom" , columnType:COLUMNTYPES.string },
+            {columnHead: "Total Amount" , path: "total_amount" , columnType:COLUMNTYPES.string },
+            {columnHead: "New Standard Price" , path: "new_standard_price" , columnType:COLUMNTYPES.string },
+            {columnHead: "Additional Charges" , path: "other_charges" , columnType:COLUMNTYPES.string },
+            {columnHead: "Standard Price Differences" , path: "standard_difference" , columnType:COLUMNTYPES.function,
+                function:(item : any) => {
+                    const difference = Number(item.standard_difference || 0);
+                    return (
+                        <span className={difference < 0 ? "text-red-500" : ""}>
+                            {item.standard_difference}
+                        </span>
+                    )
+                }
+            },
+        ];
     
     return (
         <Modal 
             isShowing={modal.isShowing}
-            title={mode === "create" ? "Generate Weight Average" : "View Weight Average"}
+            title={mode === "create" ? "Generate Weighted Average" : 
+                isReview ? "Review Weighted Average" :
+                isPost ? "Post Weighted Average" :
+                "View Weighted Average"
+            }
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
             }}
             loading={modal.loading}
-            size = {mode === "create" ? "xxl" : "xl"}
+            size = {mode === "create" || isReview || isView || isPost ? "xxl" : "xxl"}
         >
-        <form onSubmit={createFormHandler.handleSubmit}>
-            <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
-                <Textfield
-                    label="Posting Date"
-                    placeholder="posting_date"
-                    name="date_posted"
-                    value={createFormHandler.values.date_posted ?? ""}
-                    onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.date_posted}
-                    type="date"
-                    disabled={isView}
-                />
-                <Dropdown
-                    label="Tag Selection"
-                    placeholder="select option"
-                    name="tag"
-                    value={createFormHandler.values.tag}
-                    required
-                    onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.tag}
-                    options={tagSelectionDropDown}
-                />
-                <Textfield
-                    label="Date From"
-                    placeholder="date_from"
-                    name="date_from"
-                    value={createFormHandler.values.date_from ?? ""}
-                    onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.date_from}
-                    type="date"
-                    disabled={isView}
-                />
-                <Textfield
-                    label="Date To"
-                    placeholder="date_to"
-                    name="date_to"
-                    value={createFormHandler.values.date_to ?? ""}
-                    onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.date_to}
-                    type="date"
-                    disabled={isView}
-                />     
-            </div> 
-            <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
-                <Textfield
-                    label="Overall Remarks"
-                    name="overall_remarks"
-                    value={createFormHandler.values.overall_remarks ?? ""}
-                    onChange={createFormHandler.handleChange}
-                    error={createFormHandler.errors.overall_remarks}
-                    disabled={isView}
-                />
-            </div>
-            {mode === "view" ? null : (
-                  <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
-                    <span>Request Data</span>
-                    <button
-                        type="button"
-                        className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
-                        onClick={generateItems}
-                        disabled={isView}
-                    >
-                        Generate Data
-                    </button>
-                </div>
-            )}           
-             <Table
-                dataSet={createFormHandler.values.items}
-                columnSettings={weightAverageColumn}
-                smallText
-                dataKey="item_no"
-                paginator={paginator}
-            />
-            <Modal
-                isShowing={additionalChargeModal.isShowing}
-                title="Additional Charge"
-                onClose={additionalChargeModal.onClose}
-                size="md"
-            >
-                <div className="grid grid-cols-1 gap-3">
+            <form onSubmit={createFormHandler.handleSubmit}>
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
                     <Textfield
-                        label="Additional Charge"
-                        name="additional_charge"
-                        type="number"
-                        value={chargeDraft.additional_charge}
-                        onChange={(event: any) => setChargeDraft({
-                            ...chargeDraft,
-                            additional_charge: event.target.value,
-                        })}
+                        label="Posting Date"
+                        placeholder="posting_date"
+                        name="date_posted"
+                        value={createFormHandler.values.date_posted ?? ""}
+                        onChange={createFormHandler.handleChange}
+                        error={createFormHandler.errors.date_posted}
+                        type="date"
+                        disabled
                     />
-                    <TextArea
-                        label="Reason"
-                        name="reason"
-                        value={chargeDraft.reason}
-                        onChange={(event: any) => setChargeDraft({
-                            ...chargeDraft,
-                            reason: event.target.value,
-                        })}
+                    <Dropdown
+                        label="Tag Selection"
+                        placeholder="select option"
+                        name="tag"
+                        value={createFormHandler.values.tag}
+                        required
+                        onChange={createFormHandler.handleChange}
+                        error={createFormHandler.errors.tag}
+                        options={tagSelectionDropDown}
+                        disabled = {isView || isPost || isReview}
                     />
-                    <div className="flex justify-end gap-x-2">
+                    <Textfield
+                        label="Date From"
+                        placeholder="date_from"
+                        name="date_from"
+                        value={createFormHandler.values.date_from ?? ""}
+                        onChange={createFormHandler.handleChange}
+                        error={createFormHandler.errors.date_from}
+                        type="date"
+                        disabled={isView || isPost || isReview}
+                    />
+                    <Textfield
+                        label="Date To"
+                        placeholder="date_to"
+                        name="date_to"
+                        value={createFormHandler.values.date_to ?? ""}
+                        onChange={createFormHandler.handleChange}
+                        error={createFormHandler.errors.date_to}
+                        type="date"
+                        disabled={isView || isPost || isReview}
+                    />     
+                </div> 
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
+                    <Textfield
+                        label="Overall Remarks"
+                        name="overall_remarks"
+                        value={createFormHandler.values.overall_remarks ?? ""}
+                        onChange={createFormHandler.handleChange}
+                        error={createFormHandler.errors.overall_remarks}
+                        disabled={isView || isPost || isReview}
+                    />
+                </div>
+            {mode !== "create" ? null : (
+                <div className="flex font-semibold border-b border-slate-300 items-center gap-4">
+                    <div className = "flex-[5]">
+                        <span>Request Data</span>
+                    </div>
+                    <div className = "flex-[1]">
                         <Button
-                            label="Cancel"
-                            variant="secondary"
-                            onClick={additionalChargeModal.onClose}
-                        />
-                        <Button
-                            label="Save"
-                            onClick={saveAdditionalCharge}
+                            type="button"
+                            label="Generate Data"
+                            onClick={generateItems}
                         />
                     </div>
                 </div>
-            </Modal>
-            <WeightedAverageItem
-                modal={viewItemModal}
-                mode="view"
-                formValue={selectedItem}
-                onSubmitCallback={api.triggerReload}
-            />
+            )}           
+                <div className="max-h-[500px] overflow-y-auto overflow-x-auto rounded-md">
+                    <Table
+                        dataSet={createFormHandler.values.items || []}
+                        columnSettings={weightAverageColumn}
+                        smallText
+                        dataKey="item_no"
+                        withActions
+                        actions={tableActions}
+                    />
+                </div>
+                <Modal
+                    isShowing={additionalChargeModal.isShowing}
+                    title="Additional Charge"
+                    onClose={additionalChargeModal.onClose}
+                    size="md"
+                >
+                    <div className="grid grid-cols-1 gap-3">
+                        <Textfield
+                            label="Additional Charge"
+                            name="additional_charge"
+                            type="number"
+                            value={chargeDraft.additional_charge}
+                            onChange={(event: any) => setChargeDraft({
+                                ...chargeDraft,
+                                additional_charge: event.target.value,
+                            })}
+                        />
+                        <TextArea
+                            label="Reason"
+                            name="reason"
+                            value={chargeDraft.reason}
+                            onChange={(event: any) => setChargeDraft({
+                                ...chargeDraft,
+                                reason: event.target.value,
+                            })}
+                        />
+                        <div className="flex justify-end gap-x-2">
+                            <Button
+                                label="Cancel"
+                                variant="secondary"
+                                onClick={additionalChargeModal.onClose}
+                            />
+                            <Button
+                                label="Save"
+                                onClick={saveAdditionalCharge}
+                            />
+                        </div>
+                    </div>
+                </Modal>
+                <Modal
+                    isShowing={changeUnitPriceModal.isShowing}
+                    title="Change Unit Price"
+                    onClose={changeUnitPriceModal.onClose}
+                    size="md"
+                >
+                    <div className="grid grid-cols-1 gap-3">
+                        <Textfield
+                            label="Additional Charge"
+                            name="change_unit_price"
+                            type="number"
+                            value={changeUnitPrice.change_unit_price}
+                            onChange={(event: any) => setChangeUnitPrice({
+                                ...changeUnitPrice,
+                                change_unit_price: event.target.value,
+                            })}
+                        />
+                        <div className="flex justify-end gap-x-2">
+                            <Button
+                                label="Cancel"
+                                variant="secondary"
+                                onClick={changeUnitPriceModal.onClose}
+                            />
+                            <Button
+                                label="Save"
+                                onClick={saveChangeUnitPrice}
+                            />
+                        </div>
+                    </div>
+                </Modal>
+                <Modal
+                    isShowing={passwordModal.isShowing}
+                    title="Enter Password"
+                    onClose={passwordModal.onClose}
+                    size="sm"
+                >
+                    <Textfield
+                        label="Password"
+                        type="password"
+                        value={password}
+                        onChange={(e: any) => setPassword(e.target.value)}
+                    />
+
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={passwordModal.onClose}
+                        />
+
+                        <Button
+                            label="Confirm"
+                            onClick={() => {
+                                if (password !== "admin123") {
+                                    toast.error("Invalid password");
+                                    return;
+                                }
+
+                                passwordModal.onClose();
+                                setPassword("");
+                                changeUnitPriceModal.onOpen();
+                            }}
+                        />
+                    </div>
+                </Modal>
+                <WeightedAverageItem
+                    modal={viewItemModal}
+                    mode="view"
+                    formValue={selectedItem}
+                    onSubmitCallback={api.triggerReload}
+                />
             {mode === "create" ? null : (  
                 <div>
                     <hr className="mt-6 pb-2 text-slate-300" /> 
@@ -556,7 +688,7 @@ const WeightedAverageForm = ({
                         error={createFormHandler.errors.prepared_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.prepared_at
@@ -572,7 +704,7 @@ const WeightedAverageForm = ({
                         error={createFormHandler.errors.reviewed_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.reviewed_at
@@ -588,7 +720,7 @@ const WeightedAverageForm = ({
                         error={createFormHandler.errors.posted_by}
                         disabled                       
                     />
-                 <Textfield
+                    <Textfield
                         label="Date & Time"
                         value={
                             createFormHandler.values.posted_at
@@ -624,36 +756,39 @@ const WeightedAverageForm = ({
                         />
                     </div>             
                 </div>
-                )}
-                {mode === "view" ? null : (
-                    <>
-                    <hr className="mt-6 pb-2 text-slate-300" />
-                    <div className="flex justify-end">
-                    <div className="w-1/2 flex justify-end items-center gap-x-2">
-                        <Button
-                            label="Cancel"
-                            variant="secondary"
-                            onClick={() => {
-                                modal.onClose();
-                                createFormHandler.resetForm();
-                               setitemdraft({weighted_id_number:"",uniform_item_no:"",description:"",standard_uom:"",standard_uom_two:"",current_price:"",total_quantity:"",new_standard_price:"",
-                                    other_charges:"",total_amount:"",standard_difference:"",reason:""
-                                });
-                          
-                            }}
-                        />
-                        <Button
-                            type="submit"
-                            label="Submit"
-                            loading={createFormHandler.isSubmitting}
-                            onClick={createFormHandler.handleSubmit}
-                        />
-                    </div>
-                    </div>
-                    </>
-                )}
-                
-                </form>
+                    )}
+            {mode === "view" ? null : (
+                <>
+                <hr className="mt-6 pb-2 text-slate-300" />
+                <div className="flex justify-end">
+                <div className="w-1/2 flex justify-end items-center gap-x-2">
+                    <Button
+                        label="Cancel"
+                        variant="secondary"
+                        onClick={() => {
+                            modal.onClose();
+                            createFormHandler.resetForm();
+                        setitemdraft({weighted_id_number:"",uniform_item_no:"",description:"",standard_uom:"",standard_uom_two:"",current_price:"",total_quantity:"",new_standard_price:"",
+                                other_charges:"",total_amount:"",standard_difference:"",reason:""
+                            });
+                    
+                        }}
+                    />
+                    <Button
+                        type="submit"
+                        label={mode === "review" ? "Review"
+                            :mode === "post" ? "Post" 
+                            : "Submit"
+                        }
+                        loading={createFormHandler.isSubmitting}
+                        onClick={() => {}}
+                    />
+                </div>
+                </div>
+                </>
+            )}
+                        
+            </form>
         </Modal>
     )
 };
