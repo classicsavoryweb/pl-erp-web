@@ -49,7 +49,7 @@ const UniformSizesTableCard = () => {
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
-                paginator.setPaginationData(resp.data);                       
+                paginator.setPaginationData(resp.data);                     
             }                    
             })
             .catch(() => toast.error("Error encountered"))
@@ -121,7 +121,17 @@ const UniformSizesTableCard = () => {
         { columnHead: "Date Requested", path: "date_requested", columnType: COLUMNTYPES.function,
             function: (data: any) =>
                 data.date_requested ? moment(data.date_requested).format("MM/DD/YY") : "-",
-         },
+        },
+        { columnHead: "Item Name", path: "",columnType: COLUMNTYPES.function,
+            function:(row : any) => row.items?.[0]?.description ?? "-"
+        //     function: (row: any) =>
+        // row.items?.map((item: any) => item.description).join(", ") ?? "-"
+        },
+        { columnHead: "Quantity", path:"", columnType: COLUMNTYPES.function,
+            function:(row : any) => row.items?.[0]?.requested_quantity ?? "-"
+        //  function:(row : any) =>
+        //      row.items?.map((item: any) => item.description).join(", ") ?? "-"
+        },
         { columnHead: "Date Posted", path: "date_posted", columnType: COLUMNTYPES.function ,
             function: (data : any) =>
                 data.date_posted ? moment(data.date_posted).format("MM/DD/YY") : "-", 
@@ -141,7 +151,7 @@ const UniformSizesTableCard = () => {
         { columnHead: "Position", path: "position", columnType: COLUMNTYPES.string },
         { columnHead: "Date Hired", path: "date_hired", columnType: COLUMNTYPES.function,
             function: (data: any) =>
-                data.date_hired ? moment(data.date_hired).format("MM/DD/YY") : "-"
+                data.date_hired ? moment(data.date_hired).format("MM/DD/YYYY") : "-"
         },
         
         { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
@@ -200,8 +210,8 @@ const UniformSizesTableCard = () => {
             <FilterCard
                 columnSettings={[
                     {
-                        columnHead: "Description",
-                        path: "description",
+                        columnHead: "Employee Name",
+                        path: "employee_name",
                         columnType: COLUMNTYPES.string
                     },
                     {
@@ -218,7 +228,7 @@ const UniformSizesTableCard = () => {
                 ]}
                 filterHandler={filter}
                 exportFileName={`Sizes-${moment().format("YYYY-MM-DD")}.xls`}
-                defaultColumnSelected="description"
+                defaultColumnSelected="employee_name"
                  hasExport
                 api={exportAllRequestAndIssuance}
                 callBack={() => {
