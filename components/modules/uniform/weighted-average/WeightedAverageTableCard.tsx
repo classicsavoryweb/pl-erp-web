@@ -188,6 +188,12 @@ const WeightedAverageTable = () => {
                         path: "status",
                         columnType: COLUMNTYPES.status
                     },
+                    {
+                        columnHead: "Weighted Average Number",
+                        path: "weighted_id",
+                        columnType: COLUMNTYPES.string
+
+                    }
                     
                 ]}
                 filterHandler={filter}

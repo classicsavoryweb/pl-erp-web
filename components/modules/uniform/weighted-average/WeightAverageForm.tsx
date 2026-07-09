@@ -435,19 +435,23 @@ const WeightedAverageForm = ({
                     },
                 }]
                 : []),
-            {
+        ...(mode !== "view" && mode !== "post"
+            ?[{
                 label: "Charge",
                 onClick: async (requestItem : any) => {
                     openAdditionalCharge(requestItem)}
                 
-            },
-            {
+            }]
+            :[]),
+        ...(mode !== "view" && mode !== "post"
+            ?[{
                 label: "Change Unit Price",
                 onClick: async (requestItem : any ) => {
                     openchangeUnitPrice(requestItem);
                     passwordModal.onOpen(); 
                 }
-            }
+            }]
+            :[]),
             
         ]
 
@@ -646,10 +650,12 @@ const WeightedAverageForm = ({
                         type="password"
                         value={password}
                         onChange={(e: any) => setPassword(e.target.value)}
+                        
                     />
 
                     <div className="flex justify-end gap-2 mt-4">
                         <Button
+                            type="button"
                             label="Cancel"
                             variant="secondary"
                             onClick={passwordModal.onClose}
@@ -657,6 +663,7 @@ const WeightedAverageForm = ({
 
                         <Button
                             label="Confirm"
+                            type="button"
                             onClick={() => {
                                 if (password !== "admin123") {
                                     toast.error("Invalid password");
