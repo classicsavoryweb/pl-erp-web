@@ -147,14 +147,8 @@ const UniformRequestAndIssuanceForm = ({
         initialValues:defaultValues,        
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            employee_name: Yup.string().required("Name is required."),
+            employee_id: Yup.number().required("Name is required"),
             issuance_type: Yup.string().required("Issuance Type is required."),
-            branch: Yup.string().required("Branch is required."),
-            position: Yup.string().required("Position is required."),
-            date_hired: Yup.string().required("Date Hired is required."),
-            total_amount: Yup.number().min(0).required("Total Amount is required."),
-            status: Yup.string().required("Status is required."),
-            sent_email: Yup.string().required("Sent Email is required."),
             items: Yup.array()
                 .min(1, "At least one request item is required.")
                 .max(20, "A request can contain at most 20 items.")
@@ -165,6 +159,10 @@ const UniformRequestAndIssuanceForm = ({
         }),
         
         onSubmit: async (values, {resetForm, setSubmitting}) => {
+             if (values.items.length === 0) {
+                toast.error("Please add at least one request item.");
+                return;
+            }
 
             const isConfirmed = await confirm({
                 title: isReview
@@ -204,31 +202,30 @@ const UniformRequestAndIssuanceForm = ({
             }
             };
             try {
-            let resp = await submitRequest(payload);   
-            if (resp.errors) {
-                const firstError = Object.values(resp.errors).flat()?.[0];
-                toast.error(firstError || resp.message || "Request failed");
-                return;
-            }
-            if (resp.error) {
-                const firstError = Object.values(resp.data?.errors ?? {}).flat()?.[0];
-                toast.error(firstError || resp.data?.message || "Request failed");
-                return;
-            }
+                let resp = await submitRequest(payload);   
+                if (resp.errors) {
+                    const firstError = Object.values(resp.errors).flat()?.[0];
+                    toast.error(firstError || resp.message || "Request failed");
+                    return;
+                }
+                if (resp.error) {
+                    const firstError = Object.values(resp.data?.errors ?? {}).flat()?.[0];
+                    toast.error(firstError || resp.data?.message || "Request failed");
+                    return;
+                }
 
 
-            toast.success(
-                isReview
-                    ? "Request Reviewed Successfully"
-                    : isPost
-                    ? "Post Successfully"
-                    : "Create Request Successfully"
-            );
+                toast.success(
+                    isReview
+                        ? "Request Reviewed Successfully"
+                        : isPost
+                        ? "Post Successfully"
+                        : "Create Request Successfully"
+                );
 
-            onSubmitCallback();
-            modal.onClose();
-            resetForm();
-
+                onSubmitCallback();
+                modal.onClose();
+                resetForm();
             } finally {
                 setSubmitting(false);
             }
@@ -561,7 +558,7 @@ const UniformRequestAndIssuanceForm = ({
                         }}
                         error={createFormHandler.errors.issuance_type}
                         options={freeOrATD}
-                        disabled={isView || isPost || isReview}
+                        disabled={isView || isPost || isReview || !createFormHandler.values.employee_id }
                     />
                     <Textfield
                         label="Branch"
@@ -707,20 +704,13 @@ const UniformRequestAndIssuanceForm = ({
                 <div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Request Items</span>
-                        <button
-                            type="button"
-                            className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
-                            onClick={addRequest}
-                        >
-                            Add Request
-                        </button>
                     </div>
                     <SearchableDropDown
                         label="Description"
                         placeholder="select description"
                         name="vendor_no"
                         value={itemdraft.item_no}
-                        disabled={isView}
+                        disabled={isView || !createFormHandler.values.employee_id || !createFormHandler.values.issuance_type}
                         onChange={(e: any) => {
                             const selected = e.target.obj;
                             const stockOnHand = getReviewAvailableStock(selected);
@@ -818,18 +808,31 @@ const UniformRequestAndIssuanceForm = ({
                     />
                 </div>
                 )}
-                {mode === "view" ? null : (
-                <div>
-                <Textfield
-                    label="Item Remarks"
-                    name="item_remarks"
-                    type="text"
-                    value={itemdraft.item_remarks}
-                    disabled = {isPost}
-                    onChange={(e: any) => setitemdraft({ ...itemdraft, item_remarks: e.target.value })}
-                />
+                 {mode === "view" ? null : (
+                <div  className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-4">
+                   
+                    <div className = "lg:col-span-3">
+                        <Textfield
+                            label="Item Remarks"
+                            name="item_remarks"
+                            type="text"
+                            value={itemdraft.item_remarks}
+                            disabled = {isPost}
+                            onChange={(e: any) => setitemdraft({ ...itemdraft, item_remarks: e.target.value })}
+                        />
+                    </div>
+                    {mode === "post" ? null : (
+                    <div className="lg:col-span-1 mt-3">
+                        <Button
+                            type="button"
+                            label="Add Request"
+                            onClick={addRequest}
+                        />
+                    </div>
+                    )}
                 </div>
-                 )}                                                                                                                                        
+                 )}
+                                                                                                                                                  
                 {mode === "view" ? null : (
                 <Table
                     dataSet={createFormHandler.values.items}
@@ -845,14 +848,28 @@ const UniformRequestAndIssuanceForm = ({
                         <div className="w-[120px]">
                             <Button
                                 type="submit"
-                                label="Submit"
+                                label={mode === "create" ? "Submit" 
+                                    :mode === "review" ? "Review"
+                                    :mode === "post" ? "Post"
+                                    : "Submit"
+                                }
                                 loading={createFormHandler.isSubmitting}
-                                onClick={()=>{}}
+                                onClick={async () => {
+                                    const errors = await createFormHandler.validateForm();
+
+                                    if (errors.items) {
+                                        toast.error(errors.items as string);
+                                        return;
+                                    }
+
+                                    createFormHandler.handleSubmit();
+                                }}
                             />
                         </div>
                     </div>
                     </>
                 )}
+                
             </form>
         </Modal>
     );
