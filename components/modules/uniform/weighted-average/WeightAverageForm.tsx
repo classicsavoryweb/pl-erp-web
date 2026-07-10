@@ -425,6 +425,7 @@ const WeightedAverageForm = ({
 
                             if (!resp?.error) {
                                 setSelectedItem(resp.data);
+                                console.log(setSelectedItem(resp.data));
                                 viewItemModal.onOpen();
                             } else {
                                 toast.error("Failed to load item details");
@@ -435,23 +436,20 @@ const WeightedAverageForm = ({
                     },
                 }]
                 : []),
-        ...(mode !== "view" && mode !== "post"
-            ?[{
+            {
                 label: "Charge",
                 onClick: async (requestItem : any) => {
-                    openAdditionalCharge(requestItem)}
-                
-            }]
-            :[]),
-        ...(mode !== "view" && mode !== "post"
-            ?[{
+                    openAdditionalCharge(requestItem)
+                }
+            },
+            {
                 label: "Change Unit Price",
                 onClick: async (requestItem : any ) => {
                     openchangeUnitPrice(requestItem);
                     passwordModal.onOpen(); 
                 }
-            }]
-            :[]),
+            },
+       
             
         ]
 
