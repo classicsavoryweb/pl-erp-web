@@ -663,7 +663,7 @@ const WeightedAverageForm = ({
                             label="Confirm"
                             type="button"
                             onClick={() => {
-                                if (password !== "admin123") {
+                                if (password !== process.env.NEXT_PUBLIC_WEIGHTED_AVERAGE_PASSWORD ) {
                                     toast.error("Invalid password");
                                     return;
                                 }
