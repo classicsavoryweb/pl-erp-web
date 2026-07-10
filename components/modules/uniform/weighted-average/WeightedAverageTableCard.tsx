@@ -124,7 +124,7 @@ const WeightedAverageTable = () => {
         { columnHead: "Posting Date", path: "prepared_at", columnType: COLUMNTYPES.function,
             function: (data: any) =>
                 data.prepared_at ? moment(data.prepared_at).format("MM/DD/YYYY") : "-",
-         },
+        },
         { columnHead: "Posted By", path: "posted_by", columnType: COLUMNTYPES.string },
         { columnHead: "Remarks", path: "overall_remarks", columnType: COLUMNTYPES.string },
          { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function, function: (data: any) => {
@@ -138,7 +138,6 @@ const WeightedAverageTable = () => {
                         status = "danger";
                         break;
                     case "Reviewed":
-                    case "Reviewing":
                         status = "warning";
                         break;
                     default:
@@ -218,7 +217,6 @@ const WeightedAverageTable = () => {
                     paginator={paginator}
                     
                 />
-                
                 
                 <WeightedAverageForm 
                 modal = {viewModal}
