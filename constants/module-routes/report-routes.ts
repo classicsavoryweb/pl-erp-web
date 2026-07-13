@@ -115,6 +115,11 @@ export const reportRoutes: Route[] = [
                         pathname: "/reports/payroll/13th-month-pay",
                         permission: "view_reports_13th_month_pay",
                     },
+                    {
+                        name: "BIR 1601-C",
+                        pathname: "/reports/payroll/bir-1601c",
+                        permission: "view_reports_bir_1601c",
+                    },
                 ]
             },
         ]

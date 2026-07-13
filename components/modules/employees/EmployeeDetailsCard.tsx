@@ -297,9 +297,7 @@ const EmployeeDetailsCard = () => {
                                     />
                                     <EmployeeBasicInfo
                                         label="Duration"
-                                        detail={employee.education?.highschool_date_started && employee.education?.highschool.date_graduated}
-                                       
-                                        
+                                        detail={employee.education?.highschool_date_started && employee.education?.highschool_date_graduated}
                                     />
                                 </>
                             
