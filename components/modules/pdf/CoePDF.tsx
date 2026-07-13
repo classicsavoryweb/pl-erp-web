@@ -154,7 +154,7 @@ const CoePDF = ({
                             <View style={styles.section}>
                                 <Text hyphenationCallback={(word: string) => [word]}>
                                     {INDENT}
-                                    For further verification regarding {data.gender === "Male" ? "his " : "her "}performance and other employment records, please feel free to reach us at 09178242418 or email us at {process.env.NEXT_PUBLIC_HR_EMAIL}.
+                                    For further verification regarding {data.gender === "Male" ? "his " : "her "}performance and other employment records, please feel free to reach us at {process.env.NEXT_PUBLIC_SECONDARY_HR_CONTACT} or email us at {process.env.NEXT_PUBLIC_HR_EMAIL}.
                                 </Text>
                             </View>
                             :
