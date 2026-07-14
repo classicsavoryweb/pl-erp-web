@@ -78,6 +78,14 @@ const ActualTimeTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
+            columnHead: "Day",
+            path: "date",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return moment(data.date).format('ddd').toUpperCase();
+            }
+        },
+        {
             columnHead: "Date",
             path: "date",
             columnType: COLUMNTYPES.date
