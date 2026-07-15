@@ -422,10 +422,8 @@ const WeightedAverageForm = ({
                     onClick: async (requestItem: any) => {
                         try {
                             const resp = await getWeightAverageById(requestItem.id);
-
                             if (!resp?.error) {
                                 setSelectedItem(resp.data);
-                                console.log(setSelectedItem(resp.data));
                                 viewItemModal.onOpen();
                             } else {
                                 toast.error("Failed to load item details");
@@ -640,7 +638,10 @@ const WeightedAverageForm = ({
                 <Modal
                     isShowing={passwordModal.isShowing}
                     title="Enter Password"
-                    onClose={passwordModal.onClose}
+                    onClose={ () => {
+                        passwordModal.onClose();
+                        setPassword("");
+                    }}
                     size="sm"
                 >
                     <Textfield
@@ -655,8 +656,11 @@ const WeightedAverageForm = ({
                         <Button
                             type="button"
                             label="Cancel"
-                            variant="secondary"
-                            onClick={passwordModal.onClose}
+                            variant="secondary"     
+                            onClick={() => {   
+                                passwordModal.onClose();   
+                                setPassword("");
+                            }}
                         />
 
                         <Button

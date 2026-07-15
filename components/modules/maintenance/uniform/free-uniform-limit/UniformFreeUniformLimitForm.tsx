@@ -12,6 +12,7 @@ import { useFormik } from "formik";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+import moment from "moment";
 
 interface FormModalInterface {
     modal: any;
@@ -25,12 +26,15 @@ const UniformFreeUniformLimitForm = ({
     formValue,
 }: FormModalInterface) => {
     const isEdit = Boolean(formValue?.id);
+    const today = new Date().toISOString().split("T")[0];
 
     const formHandler = useFormik({
         initialValues: {
             description: "",
             allowed_count: 1,
             status: "active",
+            date_from: moment().format("YYYY-MM-DD"),
+            date_to: moment().format("YYYY-MM-DD"),
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -40,8 +44,16 @@ const UniformFreeUniformLimitForm = ({
                 .required("Allowed count is required.")
                 .min(1, "Allowed count must be at least 1."),
             status: Yup.string().required("Status is required."),
+            date_from:Yup.date().required("Date From is required."),
+            date_to:Yup.date().required("Date To is required.")
         }),
         onSubmit: async (values, { resetForm, setSubmitting }) => {
+
+            if( formHandler.values.date_from > formHandler.values.date_to){
+                toast.error("Date from can`t be later than Date to");
+                return;
+            }
+            
             const isConfirmed = await confirm({
                 title: isEdit ? "Edit Free Uniform Limit" : "Create Free Uniform Limit",
                 message: isEdit
@@ -85,6 +97,8 @@ const UniformFreeUniformLimitForm = ({
                 description: formValue.description ?? "",
                 allowed_count: formValue.allowed_count ?? 1,
                 status: formValue.status ?? "active",
+                date_from: formValue.date_from ?? "",
+                date_to: formValue.date_to ?? "",
             });
         }
     }, [modal.isShowing, formValue]);
@@ -101,34 +115,56 @@ const UniformFreeUniformLimitForm = ({
             size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <TextArea
-                    label="Description"
-                    placeholder="enter description"
-                    name="description"
-                    value={formHandler.values.description}
-                    required
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.description}
-                />
-                <Textfield
-                    type="number"
-                    label="Allowed Count"
-                    placeholder="enter allowed count"
-                    name="allowed_count"
-                    value={formHandler.values.allowed_count}
-                    required
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.allowed_count}
-                />
-                <ActiveInactiveDropDown
-                    label="Status"
-                    placeholder="select status"
-                    name="status"
-                    value={formHandler.values.status}
-                    required
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.status}
-                />
+                <div>
+                    <TextArea
+                        label="Description"
+                        placeholder="enter description"
+                        name="description"
+                        value={formHandler.values.description}
+                        required
+                        onChange={formHandler.handleChange}
+                        error={formHandler.errors.description}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <Textfield 
+                            type="date"
+                            label= "Date From"
+                            name="date_from"
+                            value={formHandler.values.date_from}
+                            required
+                            onChange={formHandler.handleChange}
+                            error= {formHandler.errors.date_from}
+                        />
+                        <Textfield 
+                            type="date"
+                            label="Date To"
+                            name="date_to"
+                            value={formHandler.values.date_to}
+                            required
+                            onChange={formHandler.handleChange}
+                            error={formHandler.errors.date_to}
+                        />
+                    </div>
+                    <Textfield
+                        type="number"
+                        label="Allowed Count"
+                        placeholder="enter allowed count"
+                        name="allowed_count"
+                        value={formHandler.values.allowed_count}
+                        required
+                        onChange={formHandler.handleChange}
+                        error={formHandler.errors.allowed_count}
+                    />
+                    <ActiveInactiveDropDown
+                        label="Status"
+                        placeholder="select status"
+                        name="status"
+                        value={formHandler.values.status}
+                        required
+                        onChange={formHandler.handleChange}
+                        error={formHandler.errors.status}
+                    />
+                </div>
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">

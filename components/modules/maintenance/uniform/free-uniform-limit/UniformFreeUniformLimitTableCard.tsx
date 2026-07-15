@@ -59,6 +59,26 @@ const UniformFreeUniformLimitTableCard = () => {
             columnType: COLUMNTYPES.string,
         },
         {
+            columnHead: "Date Posted",
+            path: "created_at",
+            columnType: COLUMNTYPES.date  
+        },
+        {
+            columnHead: "Date From",
+            path: "date_from",
+            columnType: COLUMNTYPES.date,
+        },
+        {
+            columnHead: "Date To",
+            path: "date_to",
+            columnType: COLUMNTYPES.date
+        },
+        {
+            columnHead: "Posted By",
+            path: "created_by",
+            columnType: COLUMNTYPES.string,
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.status,
