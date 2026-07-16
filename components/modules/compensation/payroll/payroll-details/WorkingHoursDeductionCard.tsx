@@ -18,14 +18,20 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
     const [type, setType] = useState<"tardiness" | "undertime">("tardiness");
 
     useEffect(() => {
-        const delayDebounce = setTimeout(() => {
-            formHandler.setFieldValue("save_changes", false);
-            formHandler.setFieldValue("reload_deductions", false);
-            formHandler.submitForm();
-        }, 750);
-
-        return () => clearTimeout(delayDebounce);
-    }, [toggle]);
+        if (toggle) {
+            const delayDebounce = setTimeout(() => {
+                formHandler.setFieldValue("save_changes", false);
+                formHandler.setFieldValue("reload_deductions", false);
+                formHandler.submitForm();
+            }, 750);
+    
+            return () => clearTimeout(delayDebounce);
+        }
+    }, [
+        toggle,
+        formHandler.values.tardiness_minutes.length,
+        formHandler.values.undertime_minutes.length,
+    ]);
 
     return (
         <>
@@ -83,7 +89,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                                         const minutes = [...formHandler.values.tardiness_minutes];
                                                         minutes.splice(idx, 1)
                                                         formHandler.setFieldValue("tardiness_minutes", minutes);
-                                                        setToggle(prev => !prev);
+                                                        setToggle(true);
                                                     }}
                                                 >
                                                     Remove
@@ -163,7 +169,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                                         const minutes = [...formHandler.values.undertime_minutes];
                                                         minutes.splice(idx, 1)
                                                         formHandler.setFieldValue("undertime_minutes", minutes);
-                                                        setToggle(prev => !prev);
+                                                        setToggle(true);
                                                     }}
                                                 >
                                                     Remove
