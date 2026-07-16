@@ -227,7 +227,7 @@ const UniformSizesTableCard = () => {
                     
                 ]}
                 filterHandler={filter}
-                exportFileName={`Sizes-${moment().format("YYYY-MM-DD")}.xls`}
+                exportFileName={`Request-and-Issuance-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="employee_name"
                  hasExport
                 api={exportAllRequestAndIssuance}
