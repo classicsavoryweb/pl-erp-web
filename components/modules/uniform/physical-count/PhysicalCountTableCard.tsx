@@ -186,7 +186,6 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 remarks: physicalForm.remarks,
                 items: physicalForm.items,
             });
-            console.log('test',physicalForm.items);
 
             if (resp?.error || resp?.errors) {
                 toast.error(responseMessage(resp));
@@ -316,8 +315,6 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
             const data = XLSX.utils.sheet_to_json<any>(worksheet);
 
-            console.log("Excel data:", data);
-
             const importedItems = data.map((row) => ({
                 uniform_item_id: row["ID"] ?? "",
                 item_no: row["Item Code"] ?? "",
@@ -331,8 +328,6 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 physical_count: Number(row["Physical Count"] ?? 0),
                 item_remarks: row["Item Remarks"] ?? "",
             }));
-
-            console.log("Mapped items:", importedItems);
 
             setPhysicalForm(prev => ({
                 ...prev,
@@ -439,6 +434,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         { columnHead: "Outgoing", path: "total_outgoing", columnType: COLUMNTYPES.amount },
         { columnHead: "Should Be", path: "should_be_inventory", columnType: COLUMNTYPES.amount },
         { columnHead: "Physical Count", path: "physical_count", columnType: COLUMNTYPES.amount },
+        { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount},
         { columnHead: "Remarks", path: "item_remarks", columnType: COLUMNTYPES.string },
     ];
 
@@ -569,6 +565,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                             <Textfield label="Counted By" value={selected.counted_by ?? ""} disabled />
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
+                            <Textfield label ="Total Amount of all items" value={money(selected.items_sum_total_amount)} disabled />
                         </div>
 
                         <TextArea label="Remarks" value={selected.remarks ?? ""} disabled />
