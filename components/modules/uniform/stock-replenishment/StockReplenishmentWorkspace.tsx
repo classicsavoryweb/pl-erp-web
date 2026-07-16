@@ -1386,31 +1386,35 @@ const StockReplenishmentWorkspace = ({
                         disabled
                     />
                 )}
-                 <div className="mt-auto flex justify-end gap-2 pt-4">
-                    <Button
-                        label="Close"
-                        onClick={() => {
-                            setDetail(null);
-                            setIsReview(false);
-                        }}
-                    />
+                <div className="grid grid-cols-4">
+                    <div className="col-span-2"></div>
 
-                    {(isReview || isPost || isReviewReceive || isPostReceive) && (
+                    <div className="col-span-2 mt-auto flex justify-end gap-2 pt-4">
                         <Button
-                            label={(isPost || isPostReceive) ? "Post" : "Review"}
+                            label="Close"
                             onClick={() => {
-                                if (isPost) {
-                                    runAction("Post Request", () => postReplenishment(detail.id));
-                                } else if (isPostReceive) {
-                                    runAction("Post Receiving", () => postReceiving(detail.id));
-                                } else if (isReview) {
-                                    runAction("Review Request", () => reviewReplenishment(detail.id));
-                                } else if (isReviewReceive) {
-                                    runAction("Review Receiving", () => reviewReceiving(detail.id));
-                                }
+                                setDetail(null);
+                                setIsReview(false);
                             }}
                         />
-                    )}
+
+                        {(isReview || isPost || isReviewReceive || isPostReceive) && (
+                            <Button
+                                label={(isPost || isPostReceive) ? "Post" : "Review"}
+                                onClick={() => {
+                                    if (isPost) {
+                                        runAction("Post Request", () => postReplenishment(detail.id));
+                                    } else if (isPostReceive) {
+                                        runAction("Post Receiving", () => postReceiving(detail.id));
+                                    } else if (isReview) {
+                                        runAction("Review Request", () => reviewReplenishment(detail.id));
+                                    } else if (isReviewReceive) {
+                                        runAction("Review Receiving", () => reviewReceiving(detail.id));
+                                    }
+                                }}
+                            />
+                        )}
+                    </div>
                 </div>
             </Modal>
 

@@ -70,6 +70,7 @@ const UniformRequestAndIssuanceForm = ({
     const isView = mode === "view";
     const isReview = mode === "review";
     const isPost = mode === "post"
+    const isCreate = mode === "create";
     type ItemDraft = {
     item_no: string;
     description: string;
@@ -366,50 +367,56 @@ const UniformRequestAndIssuanceForm = ({
         { columnHead: "Gender", path: "gender", columnType: COLUMNTYPES.string },
         { columnHead: "Stocks on hand", path: "stock_on_hand", columnType: COLUMNTYPES.string },
         {
-        columnHead: "Requested Quantity",
-        path: "requested_quantity",
-        columnType: isReview ? COLUMNTYPES.function : COLUMNTYPES.string,
+    columnHead: "Requested Quantity",
+    path: "requested_quantity",
+    columnType: (isReview || isCreate)
+        ? COLUMNTYPES.function
+        : COLUMNTYPES.string,
 
-            function: (row: any) => {
-            if (!isReview) return row.requested_quantity;
+    function: (row: any) => {
+        if (isReview && isCreate) {
+            return row.requested_quantity;
+        }
 
-            const items = createFormHandler.values.items;
+        const items = createFormHandler.values.items;
 
-            const current = items.find((i: any) => i.item_no === row.item_no);
+        const current = items.find(
+            (i: any) => i.item_no === row.item_no
+        );
 
-            return (
-                <Textfield
-                    label=""
-                    type="number"
-                    value={
-                        current?.requested_quantity === 0
-                            ? ""
-                            : current?.requested_quantity ?? ""
-                    }
-                    onChange={(e: any) => {
-                        const value = e.target.value;
-                        const qty = value === "" ? 0 : Number(value);
+        return (
+            <Textfield
+                label=""
+                type="number"
+                value={
+                    current?.requested_quantity === 0
+                        ? ""
+                        : current?.requested_quantity ?? ""
+                }
+                onChange={(e: any) => {
+                    const value = e.target.value;
+                    const qty = value === "" ? 0 : Number(value);
 
-                        const updated = items.map((i: any) => {
-                            if (i.item_no !== row.item_no) return i;
+                    const updated = items.map((i: any) => {
+                        if (i.item_no !== row.item_no) return i;
 
-                            const stock = Number(i.stock_on_hand || 0);
-                            const price = Number(i.unit_price || 0);
+                        const stock = Number(i.stock_on_hand || 0);
+                        const price = Number(i.unit_price || 0);
 
-                            return {
-                                ...i,
-                                requested_quantity: qty,
-                                remaining_quantity: stock - qty,
-                                total_amount: qty * price, 
-                            };
-                        });
+                        return {
+                            ...i,
+                            requested_quantity: qty,
+                            remaining_quantity: stock - qty,
+                            total_amount: qty * price,
+                        };
+                    });
 
-                        createFormHandler.setFieldValue("items", updated);
-                    }}
-                />
-                );
-            }
-        },
+                    createFormHandler.setFieldValue("items", updated);
+                }}
+            />
+        );
+    }
+},
         { columnHead: "Remaining Quantity", path: "remaining_quantity", columnType: COLUMNTYPES.string },
         { columnHead: "UOM", path: "uom", columnType: COLUMNTYPES.string },
         { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.string },
