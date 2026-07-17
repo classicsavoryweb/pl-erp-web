@@ -34,6 +34,14 @@ export const createUser = async (payload: {}) => {
     return resData;
 };
 
+export const getUsers = async (payload?: {}) => {
+    return await axiosHelper({
+        func_path: '/get-users',
+        method: 'GET',
+        payload: payload
+    });
+};
+
 export const editUser = async (payload: {}, id: number) => {
     const resData = await axiosHelper({
         func_path: `/edit-user/${id}`,

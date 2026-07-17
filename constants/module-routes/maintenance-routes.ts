@@ -270,6 +270,29 @@ export const maintenanceRoutes: Route[] = [
                     },
                 ]
             },
+            {
+                name: "Petty Cash",
+                pathname: "/maintenance/petty-cash",
+                permission: "",
+                isDropDown: true,
+                subLinks: [
+                    {
+                        name: "Expense Type",
+                        pathname: "/maintenance/petty-cash/expense-type",
+                        permission: "view_expense_type"
+                    },
+                    {
+                        name: "Approvers",
+                        pathname: "/maintenance/petty-cash/approvers",
+                        permission: "view_petty_cash_approver"
+                    },
+                    {
+                        name: "Custodian",
+                        pathname: "/maintenance/petty-cash/custodian",
+                        permission: "view_petty_cash_custodian"
+                    }
+                ]
+            },
         ]
     }
 ];
