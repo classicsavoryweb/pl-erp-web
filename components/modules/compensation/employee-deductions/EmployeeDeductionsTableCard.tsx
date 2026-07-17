@@ -166,7 +166,7 @@ const EmployeeDeductionsTableCard = ({
             function: (data: any) => {
                 let actions = [];
                 
-                if (permissions.includes("end_loan_compensation_deductions")) {
+                if (permissions.includes("edit_compensation_deductions")) {
                     actions.push({
                         label: "Edit",
                         onClick: () => {
