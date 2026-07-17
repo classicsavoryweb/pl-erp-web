@@ -780,6 +780,22 @@ const StockReplenishmentWorkspace = ({
         (total, item) => total + Number(item.quantity || 0) * Number(item.unit_price || 0),
         0
     );
+    
+    const replenishmentbutton = [
+        {
+            label: "Add Request",
+            onClick : () => addRequestItem(requestItemId)
+        },
+        {
+            label: "Generate List",
+            onClick: handleGenerateList
+        },
+        {
+            label: "Import Supplier/Item list",
+            onClick : () => importInputRef.current?.click()    
+        }
+
+    ];
 
     return (
         <>
@@ -1045,30 +1061,13 @@ const StockReplenishmentWorkspace = ({
                                 accept=".xlsx,.xls,.csv,.txt"
                                 onChange={(event) => handleImportItems(event.target.files?.[0])}
                             />
-                            <div className="w-[140px]">
-                                <Button
-                                    type="button"
-                                    label="Generate List"
-                                    disabled={!requestForm.supplier_id || submitting}
-                                    loading={submitting}
-                                    onClick={handleGenerateList}
-                                />
-                            </div>
-                            <div className="w-[220px]">
-                                <Button
-                                    type="button"
-                                    label="Import Supplier/Item List"
-                                    disabled={!requestForm.supplier_id || submitting}
-                                    onClick={() => importInputRef.current?.click()}
-                                />
-                            </div>
-                            <div className="w-[130px]">
-                                <Button
-                                    type="button"
-                                    label="Add Request"
-                                    disabled={submitting}
-                                    onClick={() => addRequestItem(requestItemId)}
-                                />
+                            <div
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <DropDownButtons actions={replenishmentbutton} />
                             </div>
                         </div>
                     </div>
