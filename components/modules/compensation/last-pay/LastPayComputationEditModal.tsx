@@ -254,8 +254,18 @@ const LastPayComputationEditModal = ({
             ?? (baseBasicSalary ? baseBasicSalary / 26 : 0)
         );
 
+        const additionalFields : any = [];
+        if (details.additional_fields && details.additional_fields.length > 0) {
+            details.additional_fields.map((field: any) => {
+                additionalFields.push({
+                    id: field.id,
+                    amount: field.amount,
+                    label: field.description
+                });
+            });
+        }
+        setCustomAmounts(additionalFields);
         setDeductionSummary(computeDeductionSummary(baseData?.deductions ?? []));
-        setCustomAmounts([]);
         setCustomDeductions([]);
         setDraft({
             payroll_hold: toNumber(baseData?.payroll_hold),

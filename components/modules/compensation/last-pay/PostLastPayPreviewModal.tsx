@@ -22,6 +22,7 @@ const PostLastPayPreviewModal = ({
     data,
     onPosted,
 }: ModalInterface) => {
+    const [additionalFields, setAdditionalFields] = useState<any[]>([]);
     const [preview, setPreview] = useState<any>(null);
     const [loading, setLoading] = useState(false);
     const [posting, setPosting] = useState(false);
@@ -46,6 +47,7 @@ const PostLastPayPreviewModal = ({
             .then((resp) => {
                 if (!resp?.error) {
                     setPreview(resp.data);
+                    setAdditionalFields(resp.data.additional_fields)
                 } else {
                     setError(true);
                     toast.error(resp?.data?.message ?? "Error fetching last pay preview");
@@ -77,6 +79,20 @@ const PostLastPayPreviewModal = ({
         {
             columnHead: "Description",
             path: "label",
+            columnType: COLUMNTYPES.string,
+        },
+        {
+            columnHead: "Amount",
+            path: "amount",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => formatNumber(row?.amount ?? 0),
+        },
+    ];
+
+    const additionalFieldColumnSettings = [
+        {
+            columnHead: "Description",
+            path: "description",
             columnType: COLUMNTYPES.string,
         },
         {
@@ -186,6 +202,13 @@ const PostLastPayPreviewModal = ({
             <Table
                 dataSet={earnings}
                 columnSettings={amountColumnSettings}
+                smallText
+            />
+
+            <p className="mt-4 font-semibold">Additional Fields</p>
+            <Table
+                dataSet={additionalFields}
+                columnSettings={additionalFieldColumnSettings}
                 smallText
             />
 

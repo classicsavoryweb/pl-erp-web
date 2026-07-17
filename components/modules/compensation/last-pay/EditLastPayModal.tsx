@@ -1,3 +1,4 @@
+"use client";
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import Grid from "@/components/common/Grid";
@@ -10,6 +11,7 @@ import * as Yup from "yup";
 import confirm from "@/components/common/Confirm";
 import LastPayDetails from "./LastPayDetails";
 import { previewLastPayComputation } from "@/api/compensation/last-pay";
+import { useEffect, useState } from "react";
 
 interface ModalInterface {
     modal: any;
@@ -40,6 +42,7 @@ const EditLastPayModal = ({
             sss_loans_details: [],
             company_deductions: [],
             government_deductions: [],
+            additional_fields: [],
             reload_deductions: false,
             save_changes: false
         },
@@ -89,6 +92,24 @@ const EditLastPayModal = ({
             }
         }
     });
+
+    useEffect(() => {
+        if (modal.isShowing) {
+            const handleKeyDown = (e: any) => {
+                if (e.key === "Tab") {
+                    console.log("EDIT");
+                    formHandler.setFieldValue("save_changes", false);
+                    formHandler.submitForm();
+                }
+            };
+    
+            window.addEventListener("keydown", handleKeyDown);
+    
+            return () => {
+                window.removeEventListener("keydown", handleKeyDown);
+            };
+        }
+    }, [modal.isShowing]);
 
     return (
         <Modal

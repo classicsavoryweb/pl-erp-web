@@ -114,6 +114,22 @@ const ViewLastPayModal = ({
                 />
             </Grid>
 
+            { data.additional_fields &&
+                <p className="mt-3">Additional Fields</p>
+            }
+            <Grid cols={2}>
+                { data.additional_fields && data.additional_fields.map((item: any, key: number) => {
+                    return (
+                        <Textfield
+                            key={key}
+                            label={item.transaction_type.description}
+                            value={formatNumber(item.amount)}
+                            disabled
+                        />
+                    );
+                })
+                }
+            </Grid>
             <p className="mt-3">Company Deductions</p>
             <Table
                 dataSet={data.deductions}
