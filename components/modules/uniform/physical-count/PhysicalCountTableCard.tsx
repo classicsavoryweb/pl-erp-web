@@ -309,7 +309,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
     const handleDownloadTemplate = () => {
         if (!physicalForm.items || physicalForm.items.length === 0) {
-            toast.warning("Please generate the data first before downloading the template.");
+            toast.error("Please generate the data first before downloading the template.");
             return;
         }
 
@@ -320,7 +320,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         if (!file) return;
 
         if (!hasGeneratedData || physicalForm.items.length === 0) {
-            toast.warning("Please generate the data first before importing.");
+            toast.error("Please generate the data first before importing.");
             return;
         }
 
@@ -636,7 +636,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                             <Textfield label="Date & Time" value={formatAuditDate(selected.created_at)} disabled />
                             <Textfield label="Reviewed By:" value={selected.reviewed_by ?? ""} disabled />
                             <Textfield label="Date & Time" value={formatAuditDate(selected.reviewed_at)} disabled />
-                            <Textfield label="Posted By:" value={selected.posted_by ?? ""} disabled />
+                            <Textfield label="Posted By:" value={selected.posted_by ?? ""} disabled />                                                                                          
                             <Textfield label="Date & Time" value={formatAuditDate(selected.posted_at)} disabled />
                             <Textfield label="Cancelled By:" value={selected.cancelled_by ?? ""} disabled />
                             <Textfield label="Date & Time" value={formatAuditDate(selected.cancelled_at)} disabled />
