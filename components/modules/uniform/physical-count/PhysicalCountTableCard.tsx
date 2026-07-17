@@ -176,6 +176,11 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
             return;
         }
 
+        if(!physicalForm.counted_by){
+            toast.error("Counted By required!")
+            return;
+        }
+
         formModal.setLoading(true);
 
         try {
@@ -275,7 +280,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
     const downloadTemplate = () => {
         const data = physicalForm.items.map((item) => ({
-            "ID" : item.uniform_item_id,
+            "ID": item.uniform_item_id,
             "Item Code": item.item_no,
             "Item Description": item.description,
             "Standard UOM": item.uom,
@@ -283,7 +288,6 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
             "Total Purchases": item.total_purchases,
             "Total Outgoing": item.total_outgoing,
             "Should be Inventory": item.should_be_inventory,
-            "Total Amount Each Item": item.total_amount,
             "Physical Count": "",
             "Item Remarks": "",
         }));
@@ -303,8 +307,22 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         );
     };
 
+    const handleDownloadTemplate = () => {
+        if (!physicalForm.items || physicalForm.items.length === 0) {
+            toast.warning("Please generate the data first before downloading the template.");
+            return;
+        }
+
+        downloadTemplate();
+    };
+
    const handleImportItems = async (file?: File) => {
         if (!file) return;
+
+        if (!hasGeneratedData || physicalForm.items.length === 0) {
+            toast.warning("Please generate the data first before importing.");
+            return;
+        }
 
         try {
             const buffer = await file.arrayBuffer();
@@ -315,19 +333,45 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
             const data = XLSX.utils.sheet_to_json<any>(worksheet);
 
-            const importedItems = data.map((row) => ({
-                uniform_item_id: row["ID"] ?? "",
-                item_no: row["Item Code"] ?? "",
-                description: row["Item Description"] ?? "",
-                uom: row["Standard UOM"] ?? "",
-                beginning_inventory: Number(row["Beginning Inventory"] ?? 0),
-                total_purchases: Number(row["Total Purchases"] ?? 0),
-                total_outgoing: Number(row["Total Outgoing"] ?? 0),
-                should_be_inventory: Number(row["Should be Inventory"] ?? 0),
-                total_amount:Number(row["Total Amount Each Item"] ?? 0),
-                physical_count: Number(row["Physical Count"] ?? 0),
-                item_remarks: row["Item Remarks"] ?? "",
-            }));
+            for (const row of data) {
+                const originalItem = physicalForm.items.find(
+                    (item) => item.uniform_item_id === row["ID"]
+                );
+
+                if (!originalItem) {
+                    toast.error(`Invalid Item ID: ${row["ID"]}`);
+                    return;
+                }
+
+                if (
+                    row["Item Code"] !== originalItem.item_no ||
+                    row["Item Description"] !== originalItem.description ||
+                    row["Standard UOM"] !== originalItem.uom ||
+                    Number(row["Beginning Inventory"] ?? 0) !== Number(originalItem.beginning_inventory) ||
+                    Number(row["Total Purchases"] ?? 0) !== Number(originalItem.total_purchases) ||
+                    Number(row["Total Outgoing"] ?? 0) !== Number(originalItem.total_outgoing) ||
+                    Number(row["Should be Inventory"] ?? 0) !== Number(originalItem.should_be_inventory)
+                ) {
+                    toast.error(
+                        `Generated data was modified for Item ID ${row["ID"]}. Only Physical Count and Item Remarks can be edited.`
+                    );
+                    return;
+                }
+            }
+
+
+            const importedItems = data.map((row) => {
+                const originalItem = physicalForm.items.find(
+                    (item) => item.uniform_item_id === row["ID"]
+                );
+                return {
+                    ...originalItem,
+
+                    physical_count: Number(row["Physical Count"] ?? 0),
+                    item_remarks: row["Item Remarks"] ?? "",
+                };
+            });
+
 
             setPhysicalForm(prev => ({
                 ...prev,
@@ -433,10 +477,41 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         { columnHead: "Purchases", path: "total_purchases", columnType: COLUMNTYPES.amount },
         { columnHead: "Outgoing", path: "total_outgoing", columnType: COLUMNTYPES.amount },
         { columnHead: "Should Be", path: "should_be_inventory", columnType: COLUMNTYPES.amount },
-        { columnHead: "Physical Count", path: "physical_count", columnType: COLUMNTYPES.amount },
+        { columnHead: "Physical Count", path: "physical_count", columnType: COLUMNTYPES.function,
+            function:(item : any) => {
+                const physical_count = Number(item.physical_count || 0);
+                const should_be = Number(item.should_be_inventory || 0);
+                return(
+                    <span className = {physical_count < should_be ? "text-red-500" : ""}>
+                        {item.physical_count}
+                    </span>
+                )
+            }
+         },
         { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount},
         { columnHead: "Remarks", path: "item_remarks", columnType: COLUMNTYPES.string },
     ];
+
+    
+
+    const actionbutton = [
+        {
+            label : "Generate Data",
+            onClick : async () => {
+                await loadPreview();
+                setHasGeneratedData(true);
+            }
+        },
+        {
+            label: "Download Template",
+            onClick : handleDownloadTemplate,
+        },
+        {
+            label: "Import Data",
+            onClick: () => importInputRef.current?.click()
+        }
+    ]
+
 
     return (
         <>
@@ -481,6 +556,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                         name="counted_by_employee"
                         value={physicalForm.counted_by_employee}
                         status="active"
+                        required
                         onChange={(event: any) => {
                             const employee = event.target.value;
                             const employeeName = employee?.proper_full_name
@@ -518,28 +594,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                             accept=".xlsx,.xls"
                             onChange={(event) => handleImportItems(event.target.files?.[0])}
                         />
-                        {hasGeneratedData && (
-                            <Button
-                                type="button"
-                                label="Download Template"
-                                onClick={downloadTemplate}
-                            />
-                        )}
-
-                        <Button
-                            type="button"
-                            label="Import Data"
-                            onClick={() => importInputRef.current?.click()}
-                        />
-
-                        <Button
-                            type="button"
-                            label="Generate Data"
-                            onClick={async () => {
-                                await loadPreview();
-                                setHasGeneratedData(true);
-                            }}
-                        />
+                        <DropDownButtons actions={actionbutton} />
 
                     </div>
                 </div>
@@ -626,7 +681,7 @@ const PhysicalCountItemsTable = ({
         <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
             <thead className="sticky top-0 z-20">
                 <tr>
-                    {["Item Code", "Description", "UOM", "Beginning", "Purchases", "Outgoing", "Should Be","Total Amount", "Physical Count", "Remarks"].map(header => (
+                    {["Item Code", "Description", "UOM", "Beginning", "Purchases", "Outgoing", "Should Be", "Physical Count", "Remarks"].map(header => (
                         <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
                     ))}
                 </tr>
@@ -650,7 +705,6 @@ const PhysicalCountItemsTable = ({
                         <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_purchases)}</td>
                         <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_outgoing)}</td>
                         <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.should_be_inventory)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_amount)}</td>
                         <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             {editable ? (
                                 <input className={inputClassName} type="number" min="0" value={item.physical_count ?? 0} onChange={(e) => onChange?.(index, "physical_count", e.target.value)} />

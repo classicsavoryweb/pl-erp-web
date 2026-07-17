@@ -355,7 +355,7 @@ const WeightedAverageForm = ({
 
             setChangeUnitPrice({
                 index,
-                change_unit_price: String(requestItem.current_price ?? ""),
+                change_unit_price: String(requestItem.new_standard_price ?? ""),
             });
         };
 
@@ -613,7 +613,7 @@ const WeightedAverageForm = ({
                 >
                     <div className="grid grid-cols-1 gap-3">
                         <Textfield
-                            label="Additional Charge"
+                            label="Change Unit Price"
                             name="change_unit_price"
                             type="number"
                             value={changeUnitPrice.change_unit_price}

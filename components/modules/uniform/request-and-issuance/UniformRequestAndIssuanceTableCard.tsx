@@ -120,7 +120,7 @@ const UniformSizesTableCard = () => {
         { columnHead: "Request Number", path: "request_number", columnType: COLUMNTYPES.string },
         { columnHead: "Date Requested", path: "date_requested", columnType: COLUMNTYPES.function,
             function: (data: any) =>
-                data.date_requested ? moment(data.date_requested).format("MM/DD/YY") : "-",
+                data.date_requested ? moment(data.date_requested).format("MM/DD/YYYY") : "-",
         },
         { columnHead: "Item Name", path: "",columnType: COLUMNTYPES.function,
             function:(row : any) => row.items?.[0]?.description ?? "-"
@@ -134,7 +134,7 @@ const UniformSizesTableCard = () => {
         },
         { columnHead: "Date Posted", path: "date_posted", columnType: COLUMNTYPES.function ,
             function: (data : any) =>
-                data.date_posted ? moment(data.date_posted).format("MM/DD/YY") : "-", 
+                data.date_posted ? moment(data.date_posted).format("MM/DD/YYYY") : "-", 
          },
         { columnHead: "Full Name", path: "employee_name", columnType: COLUMNTYPES.string },
         { columnHead: "Issuance Type", path: "issuance_type", columnType: COLUMNTYPES.function,

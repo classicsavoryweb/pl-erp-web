@@ -67,6 +67,13 @@ const createEmptyReceiving = () => ({
     transmitted_by: "",
     remarks: "",
     items: [] as any[],
+
+   errors: {
+        replenishment_id: "",
+        checker_employee: "",
+        crf_no: "",
+        document_no: "",
+    },
 });
 
 const lineInputClassName = [
@@ -493,8 +500,31 @@ const StockReplenishmentWorkspace = ({
             ...receivingForm,
             items: receivingForm.items.filter((item) => Number(item.quantity) > 0),
         };
-        if (!payload.replenishment_id || !payload.crf_no || !payload.document_no ||
-            !payload.checker_name || payload.items.length === 0) {
+            if (
+            !payload.replenishment_id ||
+            !payload.crf_no ||
+            !payload.document_no ||
+            !payload.checker_name ||
+            payload.items.length === 0
+        ) {
+            setReceivingForm((prev) => ({
+                ...prev,
+                errors: {
+                    replenishment_id: !payload.replenishment_id
+                        ? "Replenishment request is required."
+                        : "",
+                    checker_employee: !payload.checker_name
+                        ? "Checker is required."
+                        : "",
+                    crf_no: !payload.crf_no
+                        ? "CRF Number is required."
+                        : "",
+                    document_no: !payload.document_no
+                        ? "Document Number is required."
+                        : "",
+                },
+            }));
+
             toast.error("Complete the receiving details and enter at least one received quantity.");
             return;
         }
@@ -545,7 +575,6 @@ const StockReplenishmentWorkspace = ({
                 break;
             case "Reviewed":
             case "Partially Received":
-            case "Closed":
                 status = "warning";
                 break;
         }
@@ -1088,6 +1117,7 @@ const StockReplenishmentWorkspace = ({
                         placeholder="select posted request"
                         name="replenishment_id"
                         value={receivingForm.replenishment_id}
+                        error = {receivingForm.errors.replenishment_id}
                         required
                         onChange={(event) => selectReceivingRequest(event.target.value)}
                         options={receivable.map((record) => ({
@@ -1112,6 +1142,7 @@ const StockReplenishmentWorkspace = ({
                             placeholder="select employee"
                             name="checker_employee"
                             value={receivingForm.checker_employee}
+                            error={receivingForm.errors.checker_employee}
                             required
                             status="active"
                             onChange={(event: any) => {
@@ -1132,6 +1163,7 @@ const StockReplenishmentWorkspace = ({
                             label="CRF Number"
                             name="crf_no"
                             value={receivingForm.crf_no}
+                            error={receivingForm.errors.crf_no}
                             required
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
@@ -1142,6 +1174,7 @@ const StockReplenishmentWorkspace = ({
                             label="Document Number"
                             name="document_no"
                             value={receivingForm.document_no}
+                            error={receivingForm.errors.document_no}
                             required
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,

@@ -463,6 +463,9 @@ const UniformRequestAndIssuanceForm = ({
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
+                setitemdraft({item_no:"",description:"",size:"",gender:"",stock_on_hand:"",requested_quantity:0,remaining_quantity:0,
+                    standard_unit:"",standard_unit_price:"",total_amount:0,item_remarks:"",uniform_item_no:"",
+                });
             }}
             loading={modal.loading}
             size={mode === "create" || isReview || isPost ? "xxl" : "lg"}
