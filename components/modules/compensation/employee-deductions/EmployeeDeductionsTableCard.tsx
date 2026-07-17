@@ -212,17 +212,13 @@ const EmployeeDeductionsTableCard = ({
                     });
                 }
 
-                if (balance == 0  || status == "Yes") {
-                    actions = [
-                        {
-                            label: "View",
-                            onClick: () => {
-                                viewModal.onOpen();
-                                setData(data);
-                            }
-                        }
-                    ];
-                }
+                actions.push({
+                    label: "View",
+                    onClick: () => {
+                        viewModal.onOpen();
+                        setData(data);
+                    }
+                });
                 
                 actions.push({
                     label: "View Logs",
