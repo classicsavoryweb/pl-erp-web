@@ -114,7 +114,7 @@ const ViewLastPayModal = ({
                 />
             </Grid>
 
-            { data.additional_fields &&
+            { (data.additional_fields && data.additional_fields.lenght > 0) &&
                 <p className="mt-3">Additional Fields</p>
             }
             <Grid cols={2}>
