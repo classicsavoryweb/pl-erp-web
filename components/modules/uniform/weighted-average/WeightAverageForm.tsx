@@ -422,7 +422,6 @@ const WeightedAverageForm = ({
                     onClick: async (requestItem: any) => {
                         try {
                             const resp = await getWeightAverageById(requestItem.id);
-
                             if (!resp?.error) {
                                 setSelectedItem(resp.data);
                                 viewItemModal.onOpen();
@@ -435,23 +434,20 @@ const WeightedAverageForm = ({
                     },
                 }]
                 : []),
-        ...(mode !== "view" && mode !== "post"
-            ?[{
+            {
                 label: "Charge",
                 onClick: async (requestItem : any) => {
-                    openAdditionalCharge(requestItem)}
-                
-            }]
-            :[]),
-        ...(mode !== "view" && mode !== "post"
-            ?[{
+                    openAdditionalCharge(requestItem)
+                }
+            },
+            {
                 label: "Change Unit Price",
                 onClick: async (requestItem : any ) => {
                     openchangeUnitPrice(requestItem);
                     passwordModal.onOpen(); 
                 }
-            }]
-            :[]),
+            },
+       
             
         ]
 
@@ -642,7 +638,10 @@ const WeightedAverageForm = ({
                 <Modal
                     isShowing={passwordModal.isShowing}
                     title="Enter Password"
-                    onClose={passwordModal.onClose}
+                    onClose={ () => {
+                        passwordModal.onClose();
+                        setPassword("");
+                    }}
                     size="sm"
                 >
                     <Textfield
@@ -657,15 +656,18 @@ const WeightedAverageForm = ({
                         <Button
                             type="button"
                             label="Cancel"
-                            variant="secondary"
-                            onClick={passwordModal.onClose}
+                            variant="secondary"     
+                            onClick={() => {   
+                                passwordModal.onClose();   
+                                setPassword("");
+                            }}
                         />
 
                         <Button
                             label="Confirm"
                             type="button"
                             onClick={() => {
-                                if (password !== "admin123") {
+                                if (password !== process.env.NEXT_PUBLIC_WEIGHTED_AVERAGE_PASSWORD ) {
                                     toast.error("Invalid password");
                                     return;
                                 }

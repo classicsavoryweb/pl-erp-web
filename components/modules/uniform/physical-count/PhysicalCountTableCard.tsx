@@ -24,13 +24,14 @@ import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import SearchEmployeeDropDown from "@/components/modules/generic/SearchEmployeeDropDown";
 import { COLUMNTYPES } from "@/constants/column";
+import * as XLSX from "xlsx";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useFilter } from "@/hooks/use-filter";
 import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import moment from "moment";
-import { useState } from "react";
+import { useState, useRef } from "react";
 import { toast } from "react-toastify";
 
 interface TableCardProps {
@@ -75,7 +76,9 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
     const formModal = useModal();
     const viewModal = useModal();
     const cancelModal = useModal();
+    const importInputRef = useRef<HTMLInputElement | null>(null);
     const [selected, setSelected] = useState<any>(null);
+    const [hasGeneratedData, setHasGeneratedData] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
     const [physicalForm, setPhysicalForm] = useState({
         begin_date: today(),
@@ -83,6 +86,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         counted_by: "",
         counted_by_employee: null as any,
         remarks: "",
+        total_sales: 0,
         items: [] as any[],
     });
 
@@ -107,19 +111,32 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
     useAsyncEffect(fetchRecords, [paginator.reload, api.reload, filter.reload]);
 
     const openCreate = () => {
+        const lastRecord = api.dataSet?.[0];
+
         setPhysicalForm({
-            begin_date: today(),
-            ending_date: today(),
+            begin_date: lastRecord?.ending_date ?? today(),
+            ending_date:  today(),
             counted_by: "",
             counted_by_employee: null,
             remarks: "",
+            total_sales: 0,
             items: [],
         });
+
         formModal.onOpen();
     };
 
     const loadPreview = async () => {
-        formModal.setLoading(true);
+        if (physicalForm.begin_date > physicalForm.ending_date) {
+            toast.error("Begin date cannot be later than ending date");
+            return;
+        }
+
+        setPhysicalForm(prev => ({
+            ...prev,
+            items: [],
+            total_sales: 0,
+        }));
 
         try {
             const resp = await previewPhysicalCount({
@@ -133,11 +150,23 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 return;
             }
 
-            setPhysicalForm(prev => ({ ...prev, items: resp.items ?? [] }));
+            const previewItems = resp?.items?.items ?? [];
+
+            setPhysicalForm(prev => ({
+                ...prev,
+                items: previewItems,
+                total_sales: resp?.items?.total_sales ?? 0,
+            }));
+
+            if (previewItems.length === 0) {
+                toast.info("No data found");
+                return;
+            }
+
+            toast.success("Physical count preview loaded successfully");
+
         } catch {
             toast.error("Error encountered");
-        } finally {
-            formModal.setLoading(false);
         }
     };
 
@@ -193,6 +222,11 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         api.triggerReload();
     };
 
+    const loadPreviewData = async () => {
+        await loadPreview();
+        setHasGeneratedData(true);
+    };
+
     const submitCancel = async () => {
         if (!cancelReason.trim() || !selected) {
             toast.error("Cancel reason is required.");
@@ -237,6 +271,79 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         anchor.click();
         anchor.remove();
         window.URL.revokeObjectURL(downloadUrl);
+    };
+
+    const downloadTemplate = () => {
+        const data = physicalForm.items.map((item) => ({
+            "ID" : item.uniform_item_id,
+            "Item Code": item.item_no,
+            "Item Description": item.description,
+            "Standard UOM": item.uom,
+            "Beginning Inventory": item.beginning_inventory,
+            "Total Purchases": item.total_purchases,
+            "Total Outgoing": item.total_outgoing,
+            "Should be Inventory": item.should_be_inventory,
+            "Total Amount Each Item": item.total_amount,
+            "Physical Count": "",
+            "Item Remarks": "",
+        }));
+
+        const worksheet = XLSX.utils.json_to_sheet(data);
+        const workbook = XLSX.utils.book_new();
+
+        XLSX.utils.book_append_sheet(
+            workbook,
+            worksheet,
+            "Physical Count"
+        );
+
+        XLSX.writeFile(
+            workbook,
+            "physical-count-template.xlsx"
+        );
+    };
+
+   const handleImportItems = async (file?: File) => {
+        if (!file) return;
+
+        try {
+            const buffer = await file.arrayBuffer();
+
+            const workbook = XLSX.read(buffer);
+            const sheetName = workbook.SheetNames[0];
+            const worksheet = workbook.Sheets[sheetName];
+
+            const data = XLSX.utils.sheet_to_json<any>(worksheet);
+
+            const importedItems = data.map((row) => ({
+                uniform_item_id: row["ID"] ?? "",
+                item_no: row["Item Code"] ?? "",
+                description: row["Item Description"] ?? "",
+                uom: row["Standard UOM"] ?? "",
+                beginning_inventory: Number(row["Beginning Inventory"] ?? 0),
+                total_purchases: Number(row["Total Purchases"] ?? 0),
+                total_outgoing: Number(row["Total Outgoing"] ?? 0),
+                should_be_inventory: Number(row["Should be Inventory"] ?? 0),
+                total_amount:Number(row["Total Amount Each Item"] ?? 0),
+                physical_count: Number(row["Physical Count"] ?? 0),
+                item_remarks: row["Item Remarks"] ?? "",
+            }));
+
+            setPhysicalForm(prev => ({
+                ...prev,
+                items: importedItems,
+            }));
+
+            toast.success("Items imported successfully");
+
+        } catch (error) {
+            console.error(error);
+            toast.error("Failed to import Excel file");
+        } finally {
+            if (importInputRef.current) {
+                importInputRef.current.value = "";
+            }
+        }
     };
 
     const actionsFor = (record: any) => [
@@ -327,6 +434,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         { columnHead: "Outgoing", path: "total_outgoing", columnType: COLUMNTYPES.amount },
         { columnHead: "Should Be", path: "should_be_inventory", columnType: COLUMNTYPES.amount },
         { columnHead: "Physical Count", path: "physical_count", columnType: COLUMNTYPES.amount },
+        { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount},
         { columnHead: "Remarks", path: "item_remarks", columnType: COLUMNTYPES.string },
     ];
 
@@ -362,7 +470,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 title={`Generate ${title}`}
                 isShowing={formModal.isShowing}
                 loading={formModal.loading}
-                onClose={formModal.onClose}
+                onClose={() => {formModal.onClose(); setHasGeneratedData(false);  }}
             >
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
                     <Textfield label="Begin Date" type="date" value={physicalForm.begin_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, begin_date: e.target.value }))} required />
@@ -388,20 +496,52 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                             }));
                         }}
                     />
+                    
+                    
                 </div>
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
                     <TextArea label="Remarks" value={physicalForm.remarks} onChange={(e: any) => setPhysicalForm(prev => ({ ...prev, remarks: e.target.value }))} />
+                    <Textfield 
+                        label="Total Amount of all items"
+                        value={money(physicalForm.total_sales)}
+                        disabled    
+                    />
                 </div>
 
-                <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
+                <div className="flex mt-4 font-semibold pb-1 mb-1 items-center justify-between">
                     <span>Request Data</span>
-                    <button
-                        type="button"
-                        className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
-                        onClick={loadPreview}
-                    >
-                        Generate Data
-                    </button>
+                    <div className="flex items-center gap-2">
+                       <input
+                            ref={importInputRef}
+                            type="file"
+                            className="hidden"
+                            accept=".xlsx,.xls"
+                            onChange={(event) => handleImportItems(event.target.files?.[0])}
+                        />
+                        {hasGeneratedData && (
+                            <Button
+                                type="button"
+                                label="Download Template"
+                                onClick={downloadTemplate}
+                            />
+                        )}
+
+                        <Button
+                            type="button"
+                            label="Import Data"
+                            onClick={() => importInputRef.current?.click()}
+                        />
+
+                        <Button
+                            type="button"
+                            label="Generate Data"
+                            onClick={async () => {
+                                await loadPreview();
+                                setHasGeneratedData(true);
+                            }}
+                        />
+
+                    </div>
                 </div>
 
                 <PhysicalCountItemsTable items={physicalForm.items} editable onChange={updatePhysicalItem} />
@@ -412,7 +552,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
             </Modal>
 
             <Modal
-                size="lg"
+                size="xl"
                 title={`View ${title}`}
                 isShowing={viewModal.isShowing}
                 onClose={viewModal.onClose}
@@ -425,11 +565,12 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                             <Textfield label="Counted By" value={selected.counted_by ?? ""} disabled />
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
+                            <Textfield label ="Total Amount of all items" value={money(selected.items_sum_total_amount)} disabled />
                         </div>
 
                         <TextArea label="Remarks" value={selected.remarks ?? ""} disabled />
 
-                        <div className="mt-3">
+                        <div className="max-h-[500px] overflow-y-auto overflow-x-auto rounded-md">
                             <Table
                                 dataSet={viewItems}
                                 columnSettings={physicalViewColumns}
@@ -481,19 +622,20 @@ const PhysicalCountItemsTable = ({
     editable?: boolean;
     onChange?: (index: number, key: string, value: any) => void;
 }) => (
-    <div className="overflow-auto max-h-[55vh]">
-        <table className="table-auto w-full text-[12px] dark:text-slate-200">
-            <thead className="bg-red-800 text-white">
+    <div className="overflow-auto max-h-[60vh] relative">
+        <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
+            <thead className="sticky top-0 z-20">
                 <tr>
-                    {["Item Code", "Description", "UOM", "Beginning", "Purchases", "Outgoing", "Should Be", "Physical Count", "Remarks"].map(header => (
-                        <th key={header} className="p-2 border border-slate-300 text-left whitespace-nowrap">{header}</th>
+                    {["Item Code", "Description", "UOM", "Beginning", "Purchases", "Outgoing", "Should Be","Total Amount", "Physical Count", "Remarks"].map(header => (
+                        <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
                     ))}
                 </tr>
             </thead>
+            
             <tbody>
                 {items.length === 0 && (
                     <tr>
-                        <td colSpan={9} className="w-full p-2 text-center">
+                        <td colSpan={10} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
                             <EmptyState />
                             <p>No data available...</p>
                         </td>
@@ -501,19 +643,20 @@ const PhysicalCountItemsTable = ({
                 )}
                 {items.map((item, index) => (
                     <tr key={item.uniform_item_id ?? index}>
-                        <td className="p-2 border border-slate-300">{item.item_no}</td>
-                        <td className="p-2 border border-slate-300 min-w-[220px]">{item.description}</td>
-                        <td className="p-2 border border-slate-300">{item.uom ?? "-"}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.beginning_inventory)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.total_purchases)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.total_outgoing)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.should_be_inventory)}</td>
-                        <td className="p-2 border border-slate-300 min-w-[130px]">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{item.description}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{item.uom ?? "-"}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.beginning_inventory)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_purchases)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_outgoing)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.should_be_inventory)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_amount)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             {editable ? (
                                 <input className={inputClassName} type="number" min="0" value={item.physical_count ?? 0} onChange={(e) => onChange?.(index, "physical_count", e.target.value)} />
                             ) : money(item.physical_count)}
                         </td>
-                        <td className="p-2 border border-slate-300 min-w-[180px]">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             {editable ? (
                                 <input className={textInputClassName} value={item.item_remarks ?? ""} onChange={(e) => onChange?.(index, "item_remarks", e.target.value)} />
                             ) : item.item_remarks ?? "-"}

@@ -117,6 +117,10 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         formModal.onOpen();
     };
 
+    const selectedPhysicalCount = postedPhysicalCounts.find(
+        (record) => record.id == varianceForm.physical_count_id
+    )
+
     const loadPreview = async () => {
         formModal.setLoading(true);
 
@@ -269,6 +273,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         { columnHead: "Physical Count No.", path: "physical_count.physical_count_no", columnType: COLUMNTYPES.string },
         { columnHead: "Begin Date", path: "begin_date", columnType: COLUMNTYPES.date },
         { columnHead: "Ending Date", path: "ending_date", columnType: COLUMNTYPES.date },
+        { columnHead: "Posted Date", path: "posted_at", columnType:COLUMNTYPES.date},
         {
             columnHead: "Status",
             path: "status",
@@ -358,6 +363,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons actions={[{ label: `Generate ${title}`, onClick: openCreate }]} />
                 </div>
+
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columns}
@@ -373,36 +379,75 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 loading={formModal.loading}
                 onClose={formModal.onClose}
             >
-                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
-                    <div className="relative py-1">
-                        <p className="mb-[-2px]">Physical Count<span className="text-red-400">*</span></p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div className="relative">
+                        <p className="mb-[-2px]">
+                            Physical Count<span className="text-red-400">*</span>
+                        </p>
                         <select
                             className="w-full h-[40px] rounded-md border-2 border-slate-300 bg-transparent p-2 focus:border-slate-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800"
                             value={varianceForm.physical_count_id}
-                            onChange={(e) => setVarianceForm(prev => ({ ...prev, physical_count_id: e.target.value, items: [] }))}
+                            onChange={(e) =>
+                                setVarianceForm((prev) => ({
+                                    ...prev,
+                                    physical_count_id: e.target.value,
+                                    items: [],
+                                }))
+                            }
                         >
                             <option value="">Select posted physical count</option>
                             {postedPhysicalCounts.map((record) => (
                                 <option key={record.id} value={record.id}>
-                                    {record.physical_count_no} | {moment(record.begin_date).format("YYYY-MM-DD")} - {moment(record.ending_date).format("YYYY-MM-DD")}
+                                    {record.physical_count_no}
                                 </option>
                             ))}
                         </select>
                     </div>
-                </div>
-                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
-                    <TextArea label="Remarks" value={varianceForm.remarks} onChange={(e: any) => setVarianceForm(prev => ({ ...prev, remarks: e.target.value }))} />
+                    <div className="grid grid-cols-2 gap-3">
+                        <Textfield
+                            label="Begin Date"
+                            type="date"
+                            disabled
+                            value={
+                                selectedPhysicalCount
+                                    ? moment(selectedPhysicalCount.begin_date).format("YYYY-MM-DD")
+                                    : ""
+                            }
+                        />
+                        <Textfield
+                            label="End Date"
+                            type="date"
+                            disabled
+                            value={
+                                selectedPhysicalCount
+                                    ? moment(selectedPhysicalCount.ending_date).format("YYYY-MM-DD")
+                                    : ""
+                            }
+                        />
+                    </div>
+                    <div className="sm:col-span-2">
+                        <TextArea
+                            label="Remarks"
+                            value={varianceForm.remarks}
+                            onChange={(e: any) =>
+                                setVarianceForm((prev) => ({
+                                    ...prev,
+                                    remarks: e.target.value,
+                                }))
+                            }
+                        />
+                    </div>
                 </div>
 
-                <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
+                <div className="flex mt-4 font-semibold pb-1 mb-1 items-center justify-between">
                     <span>Request Data</span>
-                    <button
-                        type="button"
-                        className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
-                        onClick={loadPreview}
-                    >
-                        Generate Data
-                    </button>
+                    <div>
+                        <Button 
+                            type="button"
+                            label="Generate Data"
+                            onClick={loadPreview}
+                        />
+                    </div>
                 </div>
 
                 <VarianceItemsTable items={varianceForm.items} editable onChange={updateVarianceItem} />
@@ -413,7 +458,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             </Modal>
 
             <Modal
-                size="lg"
+                size="xxl"
                 title={`View ${title}`}
                 isShowing={viewModal.isShowing}
                 onClose={viewModal.onClose}
@@ -430,7 +475,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
                         <TextArea label="Remarks" value={selected.remarks ?? ""} disabled />
 
-                        <div className="mt-3">
+                        <div className="max-h-[500px] overflow-y-auto overflox-x-auto rounded-md">
                             <Table
                                 dataSet={viewItems}
                                 columnSettings={varianceViewColumns}
@@ -482,19 +527,19 @@ const VarianceItemsTable = ({
     editable?: boolean;
     onChange?: (index: number, key: string, value: any) => void;
 }) => (
-    <div className="overflow-auto max-h-[55vh]">
-        <table className="table-auto w-full text-[12px] dark:text-slate-200">
-            <thead className="bg-red-800 text-white">
+    <div className="overflow-auto max-h-[60vh] relative">
+        <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
+            <thead className="sticky top-0 z-20">
                 <tr>
                     {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason"].map(header => (
-                        <th key={header} className="p-2 border border-slate-300 text-left whitespace-nowrap">{header}</th>
+                        <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
                     ))}
                 </tr>
             </thead>
             <tbody>
                 {items.length === 0 && (
                     <tr>
-                        <td colSpan={15} className="w-full p-2 text-center">
+                        <td colSpan={15} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
                             <EmptyState />
                             <p>No data available...</p>
                         </td>
@@ -502,25 +547,25 @@ const VarianceItemsTable = ({
                 )}
                 {items.map((item, index) => (
                     <tr key={item.uniform_item_id ?? index}>
-                        <td className="p-2 border border-slate-300">{item.item_no}</td>
-                        <td className="p-2 border border-slate-300 min-w-[220px]">{item.description}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.beginning_inventory)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.purchasing_department)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.made_to_order)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.atd)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.free_uniform)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.should_be_inventory)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.physical_count)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.variance)}</td>
-                        <td className="p-2 border border-slate-300 min-w-[130px]">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.description}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.beginning_inventory)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.purchasing_department)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.made_to_order)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.atd)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.free_uniform)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.should_be_inventory)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.physical_count)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.variance)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
                             {editable ? (
                                 <input className={inputClassName} type="number" value={item.adjustment ?? 0} onChange={(e) => onChange?.(index, "adjustment", e.target.value)} />
                             ) : money(item.adjustment)}
                         </td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.final_variance)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.standard_cost)}</td>
-                        <td className="p-2 border border-slate-300 text-right">{money(item.total_variance_cost)}</td>
-                        <td className="p-2 border border-slate-300 min-w-[180px]">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.final_variance)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.standard_cost)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.total_variance_cost)}</td>
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
                             {editable ? (
                                 <input className={textInputClassName} value={item.reason_of_adjustment ?? ""} onChange={(e) => onChange?.(index, "reason_of_adjustment", e.target.value)} />
                             ) : item.reason_of_adjustment ?? "-"}

@@ -122,6 +122,10 @@ const StockReplenishmentWorkspace = ({
     const [replaceSubmitting, setReplaceSubmitting] = useState(false);
     const [detail, setDetail] = useState<any>(null);
     const [detailType, setDetailType] = useState<StockModule>(module);
+    const [isReview, setIsReview] = useState(false);
+    const [isPost, setIsPost] = useState(false);
+    const [isReviewReceive , setIsReviewReceive] = useState(false);
+    const [isPostReceive , setIsPostReceive] = useState(false);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -180,6 +184,11 @@ const StockReplenishmentWorkspace = ({
             return;
         }
         toast.success(response.data.message);
+
+        setDetail(null);
+        setIsReview(false);
+        setIsPost(false);
+        setIsReviewReceive(false);
         api.triggerReload();
     };
 
@@ -595,6 +604,8 @@ const StockReplenishmentWorkspace = ({
                     onClick: () => {
                         setDetail(record);
                         setDetailType("requests");
+                        setIsReview(false);
+                        setIsPost(false);               
                     },
                 }, {
                     label: "Detailed Export",
@@ -605,10 +616,14 @@ const StockReplenishmentWorkspace = ({
                     actions.push({
                         label: "Review",
                         permission: performPermission,
-                        onClick: () => runAction(
-                            "Review request",
-                            () => reviewReplenishment(record.id)
-                        ),
+                        onClick: () => {
+                            setDetail(record);
+                            setDetailType("requests");
+                            setIsReview(true);
+                            setIsPost(false);
+                            setIsReviewReceive(false);
+                            setIsPostReceive(false);
+                        }
                     });
                 }
 
@@ -616,10 +631,15 @@ const StockReplenishmentWorkspace = ({
                     actions.push({
                         label: "Post",
                         permission: performPermission,
-                        onClick: () => runAction(
-                            "Post request",
-                            () => postReplenishment(record.id)
-                        ),
+                         onClick: () => {
+                            setDetail(record);
+                            setDetailType("requests");
+                            setIsReview(false);
+                            setIsPost(true);
+                            setIsReviewReceive(false);
+                            setIsPostReceive(false);
+                            
+                        }
                     });
                 }
 
@@ -685,10 +705,12 @@ const StockReplenishmentWorkspace = ({
                     actions.push({
                         label: "Review",
                         permission: performPermission,
-                        onClick: () => runAction(
-                            "Review receiving",
-                            () => reviewReceiving(record.id)
-                        ),
+                        onClick: () => {
+                            setDetail(record);
+                            setDetailType("receiving");
+                            setIsReviewReceive(true);
+                            setIsPostReceive(false);
+                        }
                     });
                 }
 
@@ -696,10 +718,14 @@ const StockReplenishmentWorkspace = ({
                     actions.push({
                         label: "Post",
                         permission: performPermission,
-                        onClick: () => runAction(
-                            "Post receiving",
-                            () => postReceiving(record.id)
-                        ),
+                        onClick: () => {
+                            setDetail(record);
+                            setDetailType("receiving");
+                            setIsReviewReceive(false);
+                            setIsPostReceive(true);
+                            setIsPost(false);
+                            setIsReview(false);
+                        }
                     });
                 }
 
@@ -1159,9 +1185,30 @@ const StockReplenishmentWorkspace = ({
                 </form>
             </Modal>
 
-            <Modal isShowing={Boolean(detail)}
-                title={detailType === "requests" ? "View Request" : "View Receiving"}
-                onClose={() => setDetail(null)} size="lg">
+            <Modal  isShowing={Boolean(detail)}
+                title={
+                    detailType === "requests"
+                        ? isReview
+                            ? "Review Request"
+                            : isPost
+                                ? "Post Request"
+                                : "View Request"
+                        : detailType === "receiving"
+                            ? isReviewReceive
+                                ? "Review Receiving"
+                                : isPostReceive
+                                    ? "Post Receiving"
+                                    : "View Receiving"
+                            : "View"
+                }
+                onClose={() => {
+                    setDetail(null);
+                    setIsReview(false);
+                    setIsPost(false);
+                    setIsReviewReceive(false);
+                }}
+                size="lg"
+            >
                 {detailType === "requests" ? (
                     <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
                         <Textfield
@@ -1323,20 +1370,52 @@ const StockReplenishmentWorkspace = ({
                                 disabled
                             />
                         </>
+                        
                     )}
+                   
                 </div>
-                <TextArea
-                    label="Cancel Reason"
-                    value={detail?.cancelled_reason ?? ""}
-                    disabled
-                />
-                {detailType === "requests" && (
+                  <TextArea
+                        label="Close Reason"
+                        value={detail?.closed_reason ?? ""}
+                        disabled
+                    />
+                {(detailType === "requests") || isReview  && (
                     <TextArea
                         label="Close Reason"
                         value={detail?.closed_reason ?? ""}
                         disabled
                     />
                 )}
+                <div className="grid grid-cols-4">
+                    <div className="col-span-2"></div>
+
+                    <div className="col-span-2 mt-auto flex justify-end gap-2 pt-4">
+                        <Button
+                            label="Close"
+                            onClick={() => {
+                                setDetail(null);
+                                setIsReview(false);
+                            }}
+                        />
+
+                        {(isReview || isPost || isReviewReceive || isPostReceive) && (
+                            <Button
+                                label={(isPost || isPostReceive) ? "Post" : "Review"}
+                                onClick={() => {
+                                    if (isPost) {
+                                        runAction("Post Request", () => postReplenishment(detail.id));
+                                    } else if (isPostReceive) {
+                                        runAction("Post Receiving", () => postReceiving(detail.id));
+                                    } else if (isReview) {
+                                        runAction("Review Request", () => reviewReplenishment(detail.id));
+                                    } else if (isReviewReceive) {
+                                        runAction("Review Receiving", () => reviewReceiving(detail.id));
+                                    }
+                                }}
+                            />
+                        )}
+                    </div>
+                </div>
             </Modal>
 
         </>
@@ -1365,7 +1444,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
             <thead className="bg-red-800 text-white">
                 <tr>
                     <th className="p-2 text-left">Item</th>
-                    <th className="p-2 text-right">Stock</th>
+                    <th className="p-2 text-right">Stock on hand</th>
                     {mode === "request" && <th className="p-2 text-right">Requested</th>}
                     {mode === "request" && <th className="p-2 text-right">Approved</th>}
                     {mode === "receiving" && <th className="p-2 text-right">Remaining</th>}
