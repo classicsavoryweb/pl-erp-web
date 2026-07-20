@@ -58,7 +58,7 @@ const RolesAndPermissionTableCard = () => {
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 return (
-                    <div className="max-h-[200px] overflow-y-auto">
+                    <div className="max-h-[200px] overflow-y-auto flex gap-1">
                         {
                         data.permissions.map((permission: any, idx: number) => {
                             return (

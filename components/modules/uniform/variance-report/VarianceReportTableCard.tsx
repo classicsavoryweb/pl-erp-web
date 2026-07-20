@@ -1,6 +1,5 @@
 "use client";
 
-import { getPhysicalCounts } from "@/api/uniform/physical-count";
 import {
     cancelVariance,
     createVariance,
@@ -76,9 +75,9 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const cancelModal = useModal();
     const [selected, setSelected] = useState<any>(null);
     const [cancelReason, setCancelReason] = useState("");
-    const [postedPhysicalCounts, setPostedPhysicalCounts] = useState<any[]>([]);
     const [varianceForm, setVarianceForm] = useState({
-        physical_count_id: "",
+        begin_date: "",
+        ending_date: "",
         remarks: "",
         items: [] as any[],
     });
@@ -105,28 +104,32 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
     const openCreate = () => {
         setVarianceForm({
-            physical_count_id: "",
+            begin_date: "",
+            ending_date: "",
             remarks: "",
             items: [],
         });
 
-        getPhysicalCounts({ status: "Posted", per_page: 1000 })
-            .then((resp: any) => setPostedPhysicalCounts(resp?.data ?? []))
-            .catch(() => toast.error("Unable to load posted physical counts."));
-
         formModal.onOpen();
     };
 
-    const selectedPhysicalCount = postedPhysicalCounts.find(
-        (record) => record.id == varianceForm.physical_count_id
-    )
-
     const loadPreview = async () => {
+        if (!varianceForm.begin_date || !varianceForm.ending_date) {
+            toast.error("Please select Begin Date and Ending Date.");
+            return;
+        }
+
+        if (!moment(varianceForm.ending_date).isAfter(moment(varianceForm.begin_date))) {
+            toast.error("Ending date should be greater than Beginning date");
+            return;
+        }
+
         formModal.setLoading(true);
 
         try {
             const resp = await previewVariance({
-                physical_count_id: varianceForm.physical_count_id,
+                begin_date: varianceForm.begin_date,
+                ending_date: varianceForm.ending_date,
                 items: varianceForm.items,
             });
 
@@ -146,6 +149,11 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const saveRecord = async () => {
         if (!varianceForm.items.length) {
             toast.error("Load items first.");
+            return;
+        }
+
+        if (!varianceForm.remarks.trim()) {
+            toast.error("Please fill up Overall Remarks.");
             return;
         }
 
@@ -380,54 +388,38 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 onClose={formModal.onClose}
             >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                    <div className="relative">
-                        <p className="mb-[-2px]">
-                            Physical Count<span className="text-red-400">*</span>
-                        </p>
-                        <select
-                            className="w-full h-[40px] rounded-md border-2 border-slate-300 bg-transparent p-2 focus:border-slate-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800"
-                            value={varianceForm.physical_count_id}
-                            onChange={(e) =>
+                    <div className="grid grid-cols-2 gap-3">
+                        <Textfield
+                            label="Beginning Inventory"
+                            type="date"
+                            required
+                            value={varianceForm.begin_date}
+                            onChange={(e: any) =>
                                 setVarianceForm((prev) => ({
                                     ...prev,
-                                    physical_count_id: e.target.value,
+                                    begin_date: e.target.value,
                                     items: [],
                                 }))
                             }
-                        >
-                            <option value="">Select posted physical count</option>
-                            {postedPhysicalCounts.map((record) => (
-                                <option key={record.id} value={record.id}>
-                                    {record.physical_count_no}
-                                </option>
-                            ))}
-                        </select>
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                        <Textfield
-                            label="Begin Date"
-                            type="date"
-                            disabled
-                            value={
-                                selectedPhysicalCount
-                                    ? moment(selectedPhysicalCount.begin_date).format("YYYY-MM-DD")
-                                    : ""
-                            }
                         />
                         <Textfield
-                            label="End Date"
+                            label="Ending Inventory"
                             type="date"
-                            disabled
-                            value={
-                                selectedPhysicalCount
-                                    ? moment(selectedPhysicalCount.ending_date).format("YYYY-MM-DD")
-                                    : ""
+                            required
+                            value={varianceForm.ending_date}
+                            onChange={(e: any) =>
+                                setVarianceForm((prev) => ({
+                                    ...prev,
+                                    ending_date: e.target.value,
+                                    items: [],
+                                }))
                             }
                         />
                     </div>
                     <div className="sm:col-span-2">
                         <TextArea
-                            label="Remarks"
+                            label="Overall Remarks"
+                            required
                             value={varianceForm.remarks}
                             onChange={(e: any) =>
                                 setVarianceForm((prev) => ({

@@ -118,6 +118,7 @@ const UsersTableCard = () => {
                 hasExport
                 api={exportAllUsers}
                 exportFileName={`ADMINISTRATORS-USERS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="full_name"
                 withStatus
                 callBack={() => {
                     paginator.setPage(1);

@@ -577,6 +577,11 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 </div>
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
                     <TextArea label="Remarks" value={physicalForm.remarks} onChange={(e: any) => setPhysicalForm(prev => ({ ...prev, remarks: e.target.value }))} />
+                    <Textfield 
+                        label="Total Amount of all items"
+                        value={money(physicalForm.total_sales)}
+                        disabled    
+                    />
                 </div>
 
                 <div className="flex mt-4 font-semibold pb-1 mb-1 items-center justify-between">

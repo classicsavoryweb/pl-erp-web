@@ -40,6 +40,7 @@ const CreateLastPayModal = ({
             sss_loans_details: [],
             company_deductions: [],
             government_deductions: [],
+            additional_fields: [],
             save_changes: false
         },
         validationSchema: Yup.object().shape({
@@ -89,19 +90,22 @@ const CreateLastPayModal = ({
     });
 
     useEffect(() => {
-        const handleKeyDown = (e: any) => {
-            if (e.key === "Tab") {
-                formHandler.setFieldValue("save_changes", false);
-                formHandler.submitForm();
-            }
-        };
-
-        window.addEventListener("keydown", handleKeyDown);
-
-        return () => {
-            window.removeEventListener("keydown", handleKeyDown);
-        };
-    }, []);
+        if (modal.isShowing) {
+            const handleKeyDown = (e: any) => {
+                if (e.key === "Tab") {
+                    console.log("CREATE");
+                    formHandler.setFieldValue("save_changes", false);
+                    formHandler.submitForm();
+                }
+            };
+    
+            window.addEventListener("keydown", handleKeyDown);
+    
+            return () => {
+                window.removeEventListener("keydown", handleKeyDown);
+            };
+        }
+    }, [modal.isShowing]);
 
     return (
         <Modal

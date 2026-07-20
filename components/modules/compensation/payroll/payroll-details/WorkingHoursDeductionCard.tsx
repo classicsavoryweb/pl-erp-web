@@ -7,14 +7,32 @@ import Textfield from "@/components/common/Textfield";
 import { PayrollContext } from "@/context/PayrollProvider";
 import { formatNumber } from "@/helper/amount";
 import moment from "moment";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import AddDateDeductionHoursModal from "./AddDateDeductionHoursModal";
 import { useModal } from "@/hooks/modal";
 
 const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
     const { loading, payrollDetails } = useContext(PayrollContext);
     const modal = useModal();
+    const [toggle, setToggle] = useState<boolean>(false);
     const [type, setType] = useState<"tardiness" | "undertime">("tardiness");
+
+    useEffect(() => {
+        if (toggle) {
+            const delayDebounce = setTimeout(() => {
+                formHandler.setFieldValue("save_changes", false);
+                formHandler.setFieldValue("reload_deductions", false);
+                formHandler.submitForm();
+            }, 750);
+    
+            return () => clearTimeout(delayDebounce);
+        }
+    }, [
+        toggle,
+        formHandler.values.tardiness_minutes.length,
+        formHandler.values.undertime_minutes.length,
+    ]);
+
     return (
         <>
         <Card
@@ -71,9 +89,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                                         const minutes = [...formHandler.values.tardiness_minutes];
                                                         minutes.splice(idx, 1)
                                                         formHandler.setFieldValue("tardiness_minutes", minutes);
-                                                        formHandler.setFieldValue("save_changes", false);
-                                                        formHandler.setFieldValue("reload_deductions", false);
-                                                        formHandler.submitForm();
+                                                        setToggle(true);
                                                     }}
                                                 >
                                                     Remove
@@ -153,9 +169,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                                         const minutes = [...formHandler.values.undertime_minutes];
                                                         minutes.splice(idx, 1)
                                                         formHandler.setFieldValue("undertime_minutes", minutes);
-                                                        formHandler.setFieldValue("save_changes", false);
-                                                        formHandler.setFieldValue("reload_deductions", false);
-                                                        formHandler.submitForm();
+                                                        setToggle(true);
                                                     }}
                                                 >
                                                     Remove
