@@ -7,6 +7,7 @@ import { generateBir1601C } from "@/api/reports/reports-bir-1601c";
 import Dropdown from "@/components/common/Dropdown";
 import Grid from "@/components/common/Grid";
 import Button from "@/components/common/Button";
+import { useRef } from "react";
 
 interface ModalInterface {
     modal: any;
@@ -25,6 +26,7 @@ const GenerateBir1601CModal = ({
 ) => {
     const currentYear = new Date().getFullYear();
     const currentMonth = new Date().getMonth() + 1;
+    const isGeneratingRef = useRef(false);
 
     const yearOptions = Array.from({ length: 10 }, (_, i) => {
         const year = currentYear - i;
@@ -42,30 +44,34 @@ const GenerateBir1601CModal = ({
             month: Yup.string().required("Month is required."),
         }),
         onSubmit: async (values, { resetForm, setSubmitting }) => {
+            if (isGeneratingRef.current) {
+                return;
+            }
+
             const isConfirmed = await confirm({
                 title: "Generate BIR 1601-C",
                 message: "Are you sure you want to generate the 1601-C for this period? This recomputes Section A from payroll data."
             });
 
-            if (isConfirmed) {
+            if (isConfirmed && !isGeneratingRef.current) {
+                isGeneratingRef.current = true;
                 setSubmitting(true);
-                generateBir1601C(values)
-                    .then((resp) => {
-                        if (!resp.error) {
-                            toast.success("1601-C generated.");
-                            onSubmitCallback();
-                            modal.onClose();
-                            resetForm();
-                        } else {
-                            toast.error(resp.data?.message ?? "Error encountered");
-                        }
-                    })
-                    .catch(() => {
-                        toast.error("Error encountered");
-                    })
-                    .finally(() => {
-                        setSubmitting(false);
-                    });
+                try {
+                    const resp = await generateBir1601C(values);
+                    if (!resp.error) {
+                        toast.success("1601-C generated.");
+                        onSubmitCallback();
+                        modal.onClose();
+                        resetForm();
+                    } else {
+                        toast.error(resp.data?.message ?? "Error encountered");
+                    }
+                } catch {
+                    toast.error("Error encountered");
+                } finally {
+                    isGeneratingRef.current = false;
+                    setSubmitting(false);
+                }
             }
         }
     });
