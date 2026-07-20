@@ -15,6 +15,7 @@ import Button from "@/components/common/Button";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import GenerateBir1601CModal from "./GenerateBir1601CModal";
 import ViewBir1601CModal from "./ViewBir1601CModal";
+import ActivityLogsModal from "../../generic/ActivityLogsModal";
 
 const monthNames = [
     "January", "February", "March", "April", "May", "June",
@@ -26,7 +27,9 @@ const Bir1601CTableCard = () => {
     const paginator = usePagination(10);
     const generateModal = useModal();
     const viewModal = useModal();
+    const activityLogsModal = useModal();
     const [selectedId, setSelectedId] = useState<string | null>(null);
+    const [selectedRow, setSelectedRow] = useState<any>({});
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -91,14 +94,19 @@ const Bir1601CTableCard = () => {
             function: (data: any) => (
                 <ActionDropDown
                     data={data}
-                    direct
-                    label="View"
                     actions={[
                         {
                             label: "View",
                             onClick: (row: any) => {
                                 setSelectedId(row.id);
                                 viewModal.onOpen();
+                            }
+                        },
+                        {
+                            label: "Logs",
+                            onClick: (row: any) => {
+                                setSelectedRow(row);
+                                activityLogsModal.onOpen();
                             }
                         }
                     ]}
@@ -135,6 +143,13 @@ const Bir1601CTableCard = () => {
                 modal={viewModal}
                 id={selectedId}
                 onSubmitCallback={api.triggerReload}
+            />
+
+            <ActivityLogsModal
+                modal={activityLogsModal}
+                title="Activity Logs"
+                logName="BIR 1601-C"
+                data={selectedRow}
             />
         </>
     );

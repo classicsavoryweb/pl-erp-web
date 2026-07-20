@@ -165,36 +165,38 @@ const EmployeeDeductionsTableCard = ({
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let actions = [];
-
-                actions.push({
-                    label: "Edit",
-                    onClick: () => {
-                        editModal.onOpen();
-                        setData({
-                            employee: data.employee,
-                            id: data.id,
-                            employee_id: data.employee_id,
-                            employee_number: data.employee.employee_number,
-                            deduction_id: data.deduction_id,
-                            months: data.months,
-                            amount: data.amount,
-                            start_date: data.start_date,
-                            end_date: data.end_date,
-                            monthly_amortization: data.monthly_amortization,
-                            balance: data.balance,
-                            remarks: data.remarks,
-                            branch_id: data.branch_id,
-                            block_payment: data.block_payment,
-                            created_by: data.created_by,
-                            deduction_type: data.deduction.description,
-                        });
-                    }
-                });
+                
+                if (permissions.includes("edit_compensation_deductions")) {
+                    actions.push({
+                        label: "Edit",
+                        onClick: () => {
+                            editModal.onOpen();
+                            setData({
+                                employee: data.employee,
+                                id: data.id,
+                                employee_id: data.employee_id,
+                                employee_number: data.employee.employee_number,
+                                deduction_id: data.deduction_id,
+                                months: data.months,
+                                amount: data.amount,
+                                start_date: data.start_date,
+                                end_date: data.end_date,
+                                monthly_amortization: data.monthly_amortization,
+                                balance: data.balance,
+                                remarks: data.remarks,
+                                branch_id: data.branch_id,
+                                block_payment: data.block_payment,
+                                created_by: data.created_by,
+                                deduction_type: data.deduction.description,
+                            });
+                        }
+                    });
+                }
 
                 const balance = parseFloat(data.balance);
                 const status = data.end_loan_status;
 
-                if (balance > 0  && status !== "Yes") {
+                if (balance > 0  && status !== "Yes" && permissions.includes("end_loan_compensation_deductions")) {
                     actions.push({
                             label: "End Loan Transaction",
                             onClick: () => {
@@ -210,17 +212,13 @@ const EmployeeDeductionsTableCard = ({
                     });
                 }
 
-                if (balance == 0  || status == "Yes") {
-                    actions = [
-                        {
-                            label: "View",
-                            onClick: () => {
-                                viewModal.onOpen();
-                                setData(data);
-                            }
-                        }
-                    ];
-                }
+                actions.push({
+                    label: "View",
+                    onClick: () => {
+                        viewModal.onOpen();
+                        setData(data);
+                    }
+                });
                 
                 actions.push({
                     label: "View Logs",

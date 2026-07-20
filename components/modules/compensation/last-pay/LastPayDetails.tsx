@@ -16,6 +16,7 @@ import EditLastPayDeductionDetails from "./EditLastPayDeductionDetails";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import Checkbox from "@/components/common/Checkbox";
 import { useAsyncEffect } from "@/hooks/async-effect";
+import CSHubTransactionTypeDropDown from "../../generic/CSHubTransactionTypeDropDown";
 
 interface LastPayInterface {
     lastPayId?: string;
@@ -231,6 +232,72 @@ const LastPayDetails = ({
                         disabled={disabled}
                     />
                 </Grid>
+
+                <div className="mt-3 flex items-center justify-between">
+                    <p>Additional Fields</p>
+                    <p
+                        className="hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                        onClick={() => {
+                            const additionalFields = formHandler.values.additional_fields ?? [];
+                            
+                            additionalFields.push({
+                                transaction_type_id: 0,
+                                amount: 0
+                            });
+
+                            formHandler.setFieldValue("additional_fields", additionalFields);
+                        }}
+                    >
+                        Add Field
+                    </p>
+                </div>
+
+                { formHandler.values.additional_fields &&
+                    formHandler.values.additional_fields.map((additional_field: any, idx: number) => {
+                        return (
+                            <div className="mt-2" key={idx}>
+                                <div className="flex justify-end mb-[-10px]">
+                                    <p
+                                        className="hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                        onClick={() => {
+                                            const additionalFields = [...formHandler.values.additional_fields];
+                                            additionalFields.splice(idx, 1);
+                                            formHandler.setFieldValue("additional_fields", additionalFields);
+                                        }}
+                                    >
+                                        Remove
+                                    </p>
+                                </div>
+                                <Grid
+                                    cols={2}
+                                >
+                                    <CSHubTransactionTypeDropDown
+                                        label="Transaction Type"
+                                        value={Number(additional_field.transaction_type_id)}
+                                        name={`transaction[${idx}]`}
+                                        placeholder="select transaction"
+                                        onChange={(e) => {
+                                            const updatedField = [...formHandler.values.additional_fields];
+                                            updatedField[idx].transaction_type_id = e.target.value;
+                                            formHandler.setFieldValue("additional_fields", updatedField);
+                                        }}                                    
+                                    />
+                                    <Textfield
+                                        type="number"
+                                        label="Amount"
+                                        name={`amount[${idx}]`}
+                                        value={additional_field.amount}
+                                        onChange={(e) => {
+                                            const updatedField = [...formHandler.values.additional_fields];
+                                            updatedField[idx].amount = e.target.value;
+                                            formHandler.setFieldValue("additional_fields", updatedField);
+                                        }}  
+                                    />
+                                </Grid>
+                            </div>
+                        )
+                    })
+                }
 
                 <div className="mt-3 flex items-center justify-between gap-3">
                     <p>Company Deductions</p>
