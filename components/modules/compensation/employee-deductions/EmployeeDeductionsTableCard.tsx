@@ -450,7 +450,7 @@ const EmployeeDeductionsTableCard = ({
                                 count={summary.deduction_count}
                             />
                             <CountLabel
-                                label="Remaing Balance"
+                                label="Remaining Balance"
                                 count={summary.total_balance}
                             />
                             {formHandler.values.status && (
