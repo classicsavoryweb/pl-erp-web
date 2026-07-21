@@ -10,7 +10,15 @@ import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import moment from "moment";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { exportConverterBatchTransactions, exportConverterDetails, generateConverter, getAllConverterMain, postBatchConverter, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
+import {
+    exportConverterBatchTransactions,
+    exportConverterDetails,
+    generateConverter,
+    getAllConverterMain,
+    postBatchConverter,
+    sendTransactionEmail,
+    voidBatchConverter
+} from "@/api/compensation/converter";
 import CreateBatchModal from "./CreateBatchModal";
 import ViewBatchModal from "./ViewBatchModal";
 import Badge from "@/components/common/Badge";
@@ -22,6 +30,7 @@ import ResendBatchModalForm from "./ResendBatchModalForm";
 import ViewLogsModal from "./ViewLogsModal";
 import ViewExcludedTransactions from "./ViewExcludedTransactions";
 import CountLabel from "@/components/common/CountLabel";
+import SendConverterModal from "./SendConverterModal";
 
 const ConverterMainTableCard = () => {
     const api = useApiCall();
@@ -29,9 +38,11 @@ const ConverterMainTableCard = () => {
     const createModal = useModal();
     const resendModal = useModal();
     const viewModal = useModal();
+    const sendModal = useModal();
     const excludedTransactionModal = useModal();
     const exportModal = useModal();
     const logsModal = useModal();
+    const [data, setData] = useState<any>({});
     const [dataSet, setDataSet] = useState<any[]>([]);
     const filterHandler = useFilter();
     const [excludedTransactions, setExcludedTransactions] = useState<any[]>([]);
@@ -296,25 +307,9 @@ const ConverterMainTableCard = () => {
         },
         {
             label: "Send Email",
-            onClick: async (data: any) => {
-                const isConfirmed = await confirm({
-                    title: "Send Email",
-                    message: "Are you sure you want to send email?"
-                });
-
-                if (isConfirmed) {
-                    sendTransactionEmail(data.id)
-                    .then((resp) => {
-                        if (!resp.error) {
-                            toast.success("Emails sent successfully");
-                            api.triggerReload();
-                        } else {
-                            toast.error(resp.data.message);
-                        }
-                    }).catch(() => {
-                        toast.error("Error encountered");
-                    });
-                }
+            onClick: (data: any) => {
+                sendModal.onOpen();
+                setData(data);
             }
         },
         {
@@ -464,6 +459,11 @@ const ConverterMainTableCard = () => {
                 onCloseCallBack={() => {
                     setExcludedTransactions([]);
                 }}
+            />
+            <SendConverterModal
+                data={data}
+                modal={sendModal}
+                onSubmitCallBack={api.triggerReload}
             />
         </>
     );
