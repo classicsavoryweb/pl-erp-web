@@ -64,14 +64,14 @@ const WeightedAverageTable = () => {
                 onClick: () => downloadDetailedExport(item),
             },
             item.status === "Unposted" && {
-                label: "Reviewed",
+                label: "Review",
                 onClick:  () => {
                    setData(item)
                     reviewModal.onOpen();
                 },
             },
             ["Reviewed", "Reviewing"].includes(item.status) && {
-                label: "Posted",
+                label: "Post",
                 onClick: async () => {
                    setData(item);
                    postModal.onOpen();  
@@ -87,7 +87,7 @@ const WeightedAverageTable = () => {
 
                     if (!isConfirmed) return;
 
-                    await updateWeightStatus(item.id, "Cancelled");
+                    await updateWeightStatus(item.id, "Cancelled", {});
                     toast.success("Weighted average cancelled");
                     api.triggerReload();
                 },

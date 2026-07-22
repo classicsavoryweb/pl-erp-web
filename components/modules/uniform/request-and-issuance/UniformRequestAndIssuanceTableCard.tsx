@@ -124,27 +124,33 @@ const UniformSizesTableCard = () => {
         },
         { columnHead: "Item Name", path: "",columnType: COLUMNTYPES.function,
             function:(row : any) => row.items?.[0]?.description ?? "-"
-        //     function: (row: any) =>
-        // row.items?.map((item: any) => item.description).join(", ") ?? "-"
         },
         { columnHead: "Quantity", path:"", columnType: COLUMNTYPES.function,
             function:(row : any) => row.items?.[0]?.requested_quantity ?? "-"
-        //  function:(row : any) =>
-        //      row.items?.map((item: any) => item.description).join(", ") ?? "-"
         },
         { columnHead: "Date Posted", path: "date_posted", columnType: COLUMNTYPES.function ,
             function: (data : any) =>
                 data.date_posted ? moment(data.date_posted).format("MM/DD/YYYY") : "-", 
          },
         { columnHead: "Full Name", path: "employee_name", columnType: COLUMNTYPES.string },
-        { columnHead: "Issuance Type", path: "issuance_type", columnType: COLUMNTYPES.function,
-            function: (row : any ) =>{
-            const value = row.issuance_type;
-                if(value == "Authority To Deduct"){
-                    return ("ATD");
-                }else{
-                    return ("FREE")
-                }
+       {
+            columnHead: "Issuance Type",
+            path: "issuance_type",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => {
+                const value = row.issuance_type;
+
+                return (
+                    <span
+                        className={`px-2 py-1 text-m font-semibold ${
+                            value === "Authority To Deduct"
+                                ? "text-red-600"
+                                : "text-green-600"
+                        }`}
+                    >
+                        {value === "Authority To Deduct" ? "ATD" : "FREE"}
+                    </span>
+                );
             },
         },
         { columnHead: "Branch", path: "branches.short_name", columnType: COLUMNTYPES.string },
@@ -155,8 +161,6 @@ const UniformSizesTableCard = () => {
         },
         
         { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
-        
-        // { columnHead: "Sent Email", path: "sent_email", columnType: COLUMNTYPES.string },
         { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" = "default";
@@ -208,6 +212,7 @@ const UniformSizesTableCard = () => {
     return (
         <>
             <FilterCard
+                filterHandler={filter}
                 columnSettings={[
                     {
                         columnHead: "Employee Name",
@@ -215,25 +220,45 @@ const UniformSizesTableCard = () => {
                         columnType: COLUMNTYPES.string
                     },
                     {
-                        columnHead: "Status",
-                        path: "status",
-                        columnType: COLUMNTYPES.status
-                    },
-                    {
                         columnHead: "Issuance Type",
                         path: "issuance_type",
                         columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Item Name",
+                        path: "item_name",
+                        columnType:COLUMNTYPES.string
                     }
                     
                 ]}
-                filterHandler={filter}
-                exportFileName={`Request-and-Issuance-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="employee_name"
-                 hasExport
+                hasExport
                 api={exportAllRequestAndIssuance}
+                exportFileName={`Request-and-Issuance-${moment().format("YYYY-MM-DD")}.xls`}
+                withBranch
+                withStatus
+                statusOption={[
+                    {
+                        label: "Unposted",
+                        value: "Unposted"
+                    },
+                    {
+                        label: "Posted",
+                        value: "Posted"
+                    },
+                    {
+                        label: "Reviewed",
+                        value: "Reviewed"
+                    },
+                    {
+                        label: "Cancelled",
+                        value: "Cancelled"
+                    },
+                ]}
                 callBack={() => {
                 paginator.setPage(1);
                 }}
+              
             />
             <Card>
                 <div className="flex justify-end gap-x-3">

@@ -74,11 +74,11 @@ export const getWeightAverageById = async (id: number) => {
     return resData;
 };
 
-export const updateWeightStatus = async (id: number, status: string) => {
+export const updateWeightStatus = async (id: number, status: string , payload: any) => {
     const resData = await axiosHelper({
         func_path: `/weighted/${id}/status`,
         method: "POST",
-        payload: { status },
+        payload: { status , items:payload },
     });
 
     return resData;

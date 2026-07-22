@@ -33,6 +33,7 @@ import usePagination from "@/hooks/pagination";
 import moment from "moment";
 import { useState, useRef } from "react";
 import { toast } from "react-toastify";
+import ActivityLogsModal from "../../generic/ActivityLogsModal";
 
 interface TableCardProps {
     performPermission: string;
@@ -76,9 +77,11 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
     const formModal = useModal();
     const viewModal = useModal();
     const cancelModal = useModal();
+    const activityLog = useModal();
     const importInputRef = useRef<HTMLInputElement | null>(null);
     const [selected, setSelected] = useState<any>(null);
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
+
     const [cancelReason, setCancelReason] = useState("");
     const [physicalForm, setPhysicalForm] = useState({
         begin_date: today(),
@@ -425,8 +428,14 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
     const columns = [
         { columnHead: "Physical Count No.", path: "physical_count_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Begin Date", path: "begin_date", columnType: COLUMNTYPES.date },
-        { columnHead: "Ending Date", path: "ending_date", columnType: COLUMNTYPES.date },
+        { columnHead: "Begin Date", path: "begin_date", columnType: COLUMNTYPES.function,
+            function:(data: any) =>
+                data.begin_date ? moment(data.begin_date).format("MM/DD/YYYY") : "-",
+         },
+        { columnHead: "Ending Date", path: "ending_date", columnType: COLUMNTYPES.function,
+            function:(data : any) =>
+                data.ending_date ? moment(data.ending_date).format("MM/DD/YYYY") : "-"
+         },
         { columnHead: "Counted By", path: "counted_by", columnType: COLUMNTYPES.string },
         {
             columnHead: "Status",
@@ -547,7 +556,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 loading={formModal.loading}
                 onClose={() => {formModal.onClose(); setHasGeneratedData(false);  }}
             >
-                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-3">
                     <Textfield label="Begin Date" type="date" value={physicalForm.begin_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, begin_date: e.target.value }))} required />
                     <Textfield label="Ending Date" type="date" value={physicalForm.ending_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, ending_date: e.target.value }))} required />
                     <SearchEmployeeDropDown
@@ -575,13 +584,8 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                     
                     
                 </div>
-                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
-                    <TextArea label="Remarks" value={physicalForm.remarks} onChange={(e: any) => setPhysicalForm(prev => ({ ...prev, remarks: e.target.value }))} />
-                    <Textfield 
-                        label="Total Amount of all items"
-                        value={money(physicalForm.total_sales)}
-                        disabled    
-                    />
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-1">
+                    <Textfield label="Remarks" value={physicalForm.remarks} onChange={(e: any) => setPhysicalForm(prev => ({ ...prev, remarks: e.target.value }))} />
                 </div>
 
                 <div className="flex mt-4 font-semibold pb-1 mb-1 items-center justify-between">
@@ -607,7 +611,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
             </Modal>
 
             <Modal
-                size="xl"
+                size="xxl"
                 title={`View ${title}`}
                 isShowing={viewModal.isShowing}
                 onClose={viewModal.onClose}
@@ -616,22 +620,34 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                     <>
                         <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
                             <Textfield label="Physical Count No." value={selected.physical_count_no ?? ""} disabled />
-                            <Textfield label="Status" value={selected.status ?? ""} disabled />
-                            <Textfield label="Counted By" value={selected.counted_by ?? ""} disabled />
+                            <Textfield label="Status" value={selected.status ?? ""} disabled />                        
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
-                            <Textfield label ="Total Amount of all items" value={money(selected.items_sum_total_amount)} disabled />
+                            <Textfield label="Counted By" value={selected.counted_by ?? ""} disabled /> 
                         </div>
 
                         <TextArea label="Remarks" value={selected.remarks ?? ""} disabled />
 
-                        <div className="max-h-[500px] overflow-y-auto overflow-x-auto rounded-md">
+                        <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
                             <Table
                                 dataSet={viewItems}
                                 columnSettings={physicalViewColumns}
                                 smallText
                                 dataKey="uniform_item_id"
+                                fixed
                             />
+                        </div>
+                        <div className="flex justify-between items-center text-sm mt-1">  
+                            <div className="text-xs text-gray-400">          
+                                Showing {(viewItems.length ?? 0)}{" "}
+                                {(viewItems?.length ?? 0) === 1 ? "item" : "items"}
+                            </div>
+                            <div className="flex items-center gap-2 pr-2 mr-2">
+                                <span className="text-gray-400 text-xs">Total Amount:</span>
+                                <span className="font-semibold text-sm">
+                                {money(selected.items_sum_total_amount)}
+                                </span>
+                            </div>
                         </div>
 
                         <hr className="mt-6 pb-2 text-slate-300" />
@@ -677,49 +693,72 @@ const PhysicalCountItemsTable = ({
     editable?: boolean;
     onChange?: (index: number, key: string, value: any) => void;
 }) => (
-    <div className="overflow-auto max-h-[60vh] relative">
-        <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
-            <thead className="sticky top-0 z-20">
-                <tr>
-                    {["Item Code", "Description", "UOM", "Beginning", "Purchases", "Outgoing", "Should Be", "Physical Count", "Remarks"].map(header => (
-                        <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
-                    ))}
-                </tr>
-            </thead>
-            
-            <tbody>
-                {items.length === 0 && (
+    <div>
+        <div className="overflow-auto max-h-[60vh] relative">
+            <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
+                <thead className="sticky top-0 z-20">
                     <tr>
-                        <td colSpan={10} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
-                            <EmptyState />
-                            <p>No data available...</p>
-                        </td>
+                        {["Item Code", "Description", "UOM", "Beginning", "Purchases", "Outgoing", "Should Be", "Physical Count", "Remarks"].map(header => (
+                            <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
+                        ))}
                     </tr>
-                )}
-                {items.map((item, index) => (
-                    <tr key={item.uniform_item_id ?? index}>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{item.description}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{item.uom ?? "-"}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.beginning_inventory)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_purchases)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_outgoing)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.should_be_inventory)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
-                            {editable ? (
-                                <input className={inputClassName} type="number" min="0" value={item.physical_count ?? 0} onChange={(e) => onChange?.(index, "physical_count", e.target.value)} />
-                            ) : money(item.physical_count)}
-                        </td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
-                            {editable ? (
-                                <input className={textInputClassName} value={item.item_remarks ?? ""} onChange={(e) => onChange?.(index, "item_remarks", e.target.value)} />
-                            ) : item.item_remarks ?? "-"}
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                
+                <tbody>
+                    {items.length === 0 && (
+                        <tr>
+                            <td colSpan={10} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
+                                <EmptyState />
+                                <p>No data available...</p>
+                            </td>
+                        </tr>
+                    )}
+                    {items.map((item, index) => (
+                        <tr key={item.uniform_item_id ?? index}>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{item.description}</td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{item.uom ?? "-"}</td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.beginning_inventory)}</td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_purchases)}</td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_outgoing)}</td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.should_be_inventory)}</td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
+                                {editable ? (
+                                    <input className={inputClassName} type="number" min="0" value={item.physical_count ?? 0} onChange={(e) => onChange?.(index, "physical_count", e.target.value)} />
+                                ) : money(item.physical_count)}
+                            </td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
+                                {editable ? (
+                                    <input className={textInputClassName} value={item.item_remarks ?? ""} onChange={(e) => onChange?.(index, "item_remarks", e.target.value)} />
+                                ) : item.item_remarks ?? "-"}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+        <div className="mt-1 text-xs text-gray-400">
+            Showing {items.length} {items.length === 1 ? "item" : "items"}
+        </div>
+        <div className="flex justify-end mt-1 text-sm">
+            <span className="text-gray-500 font-normal">
+                Total Amount:
+            </span>
+            <span className="ml-2 font-semibold">
+                {items
+                    .reduce(
+                        (total: number, item: any) =>
+                            total + Number(item.physical_count || 0) * Number(item.unit_price || 0),
+                        0
+                    )
+                    .toLocaleString(undefined, {
+                        minimumFractionDigits: 2,
+                        maximumFractionDigits: 2,
+                    })}
+            </span>
+        </div>
     </div>
+    
 );
 
 export default PhysicalCountTableCard;

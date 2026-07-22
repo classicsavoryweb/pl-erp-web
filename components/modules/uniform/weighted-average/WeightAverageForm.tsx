@@ -91,6 +91,7 @@ const WeightedAverageForm = ({
             new_standard_price : "",
             other_charges : "",
             standard_difference : "",
+            final_standard_price: "",
             reason : "",
         });
         useAsyncEffect(() => {
@@ -184,7 +185,12 @@ const WeightedAverageForm = ({
                 setSubmitting(true);
                 const payload = {
                     ...values,
-                    items: values.items,
+                    items: values.items.map((item: any) => ({
+                        ...item,
+                        final_standard_price:
+                            Number(item.new_standard_price || 0) +
+                            Number(item.other_charges || 0),
+                    })),
                 };
 
                 const submitRequest = async (requestPayload: any) => {
@@ -193,9 +199,9 @@ const WeightedAverageForm = ({
                         case "create":
                             return createWeightAverage(requestPayload);
                         case "review":
-                            return updateWeightStatus(formValue.id,"Reviewed");
+                            return updateWeightStatus(formValue.id,"Reviewed", createFormHandler.values.items);
                         case "post": 
-                            return updateWeightStatus(formValue.id,"Posted");
+                            return updateWeightStatus(formValue.id,"Posted", createFormHandler.values.items);
                         default:
                             throw new Error("Invalid Mode");
                     }
@@ -331,65 +337,59 @@ const WeightedAverageForm = ({
         };
 
         const openAdditionalCharge = (requestItem: any) => {
-            const index = createFormHandler.values.items.findIndex((item: any) =>
-                item.item_no === requestItem.item_no
+            const index = createFormHandler.values.items.findIndex(
+                (item: any) => item.uniform_item_no === requestItem.uniform_item_no
             );
-
-            if (index < 0) return;
 
             setChargeDraft({
                 index,
-                additional_charge: String(requestItem.other_charges ?? ""),
+                additional_charge: requestItem.other_charges ?? "",
                 reason: requestItem.reason ?? "",
             });
+
             additionalChargeModal.onOpen();
         };
 
-        const openchangeUnitPrice = (requestItem: any) => {
-            const index = createFormHandler.values.items.findIndex((item: any) =>
-                (item.item_no ?? item.uniform_item_no) === 
-                (requestItem.item_no ?? requestItem.uniform_item_no)
-            );
-
-            if (index < 0) return;
+        const openchangeUnitPrice = () => {
+            const firstItem = createFormHandler.values.items[0];
 
             setChangeUnitPrice({
-                index,
-                change_unit_price: String(requestItem.new_standard_price ?? ""),
+                index: -1,
+                change_unit_price: String(firstItem?.new_standard_price ?? ""),
             });
         };
 
         const saveChangeUnitPrice = async () => {
-            const unitPrice = Number(changeUnitPrice.change_unit_price || 0);
-            const row = createFormHandler.values.items[changeUnitPrice.index];
-
-            if (!row) return;
+            const items = createFormHandler.values.items;
+            if (!items || items.length === 0) return;
 
             try {
                 await updateUnitPrice({
-                    item_no: row.item_no ?? row.uniform_item_no,
-                    standard_unit_price: unitPrice,
-                });
+                items: items.map((item: any) => {
+                    const finalStandardPrice =
+                        Number(item.new_standard_price) +
+                        Number(item.other_charges);
 
-                toast.success("Price Updated Successfully.");
+                    const payloadItem = {
+                        item_no: item.item_no ?? item.uniform_item_no,
+                        standard_unit_price: finalStandardPrice,
+                    };
+
+                    return payloadItem;
+                }),
+            });
+
+                toast.success("All item masterlist unit prices changed successfully.");
+
                 changeUnitPriceModal.onClose();
+
             } catch (error) {
-                toast.error("Error Updating Price");
+                toast.error("Error updating item masterlist unit prices.");
             }
         };
 
         const saveAdditionalCharge = () => {
             const additionalCharge = Number(chargeDraft.additional_charge || 0);
-
-            if (Number.isNaN(additionalCharge) || additionalCharge < 0) {
-                toast.error("Additional charge must be zero or greater");
-                return;
-            }
-
-            if (additionalCharge > 0 && !chargeDraft.reason.trim()) {
-                toast.error("Reason is required when additional charge is not zero");
-                return;
-            }
 
             const rows = [...createFormHandler.values.items];
             const row = rows[chargeDraft.index];
@@ -398,15 +398,20 @@ const WeightedAverageForm = ({
 
             const totalAmount = Number(row.total_amount || 0);
             const totalQuantity = Number(row.total_quantity || 0);
-            const currentPrice = Number(row.current_price || 0);
-            const baseStandardPrice = totalQuantity > 0 ? totalAmount / totalQuantity : 0;
-            const newStandardPrice = baseStandardPrice + additionalCharge;
+            const standardDiff = Number(row.standard_difference || 0);
+       
 
             rows[chargeDraft.index] = {
                 ...row,
                 other_charges: additionalCharge.toFixed(2),
-                new_standard_price: newStandardPrice.toFixed(2),
-                standard_difference: (newStandardPrice - currentPrice).toFixed(2),
+                final_standard_price: (
+                    Number(row.new_standard_price || 0) + additionalCharge
+                ).toFixed(2),
+                standard_difference: (
+                    Number(row.new_standard_price || 0) +
+                    additionalCharge -
+                    Number(row.current_price || 0)
+                ).toFixed(2),
                 reason: chargeDraft.reason,
                 item_remarks: chargeDraft.reason,
             };
@@ -433,34 +438,29 @@ const WeightedAverageForm = ({
                         }
                     },
                 }]
-                : []),
-            {
-                label: "Charge",
+            :[]),
+            
+            ...(mode !== "view"
+                ? [{
+                label: "Additional Charge",
                 onClick: async (requestItem : any) => {
                     openAdditionalCharge(requestItem)
                 }
-            },
-            {
-                label: "Change Unit Price",
-                onClick: async (requestItem : any ) => {
-                    openchangeUnitPrice(requestItem);
-                    passwordModal.onOpen(); 
-                }
-            },
-       
-            
+                   }]
+
+            :[]),     
         ]
 
         const weightAverageColumn =[
             {columnHead: "Item Code" , path: "uniform_item_no" , columnType:COLUMNTYPES.string },
             {columnHead: "Item Description" , path: "description" , columnType:COLUMNTYPES.string },
             {columnHead: "Standard UOM" , path: "standard_uom" , columnType:COLUMNTYPES.string },
-            {columnHead: "Current Standard Price" , path: "current_price" , columnType:COLUMNTYPES.string },
-            {columnHead: "Total Quantity" , path: "total_quantity" , columnType:COLUMNTYPES.string },
+            {columnHead: "Current Standard Price" , path: "current_price" , columnType:COLUMNTYPES.amount },
+            {columnHead: "Total Purchases" , path: "total_quantity" , columnType:COLUMNTYPES.string },
             {columnHead: "Standard UOM" , path: "standard_uom" , columnType:COLUMNTYPES.string },
-            {columnHead: "Total Amount" , path: "total_amount" , columnType:COLUMNTYPES.string },
-            {columnHead: "New Standard Price" , path: "new_standard_price" , columnType:COLUMNTYPES.string },
-            {columnHead: "Additional Charges" , path: "other_charges" , columnType:COLUMNTYPES.string },
+            {columnHead: "Total Amount" , path: "total_amount" , columnType:COLUMNTYPES.amount },
+            {columnHead: "New Standard Price" , path: "new_standard_price" , columnType:COLUMNTYPES.amount },
+            {columnHead: "Additional Charges" , path: "other_charges" , columnType:COLUMNTYPES.amount }, 
             {columnHead: "Standard Price Differences" , path: "standard_difference" , columnType:COLUMNTYPES.function,
                 function:(item : any) => {
                     const difference = Number(item.standard_difference || 0);
@@ -471,7 +471,19 @@ const WeightedAverageForm = ({
                     )
                 }
             },
+            {columnHead: "Final Standard Price" , path: "" , columnType:COLUMNTYPES.function,
+                function:(item : any) => {
+                    const finalstandardprice = Number(item.new_standard_price) + Number(item.other_charges);
+                    return(
+                        <span>
+                            {finalstandardprice}
+                        </span>
+                    )
+                }
+            },
         ];
+
+        
     
     return (
         <Modal 
@@ -532,7 +544,7 @@ const WeightedAverageForm = ({
                         disabled={isView || isPost || isReview}
                     />     
                 </div> 
-                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-1">
                     <Textfield
                         label="Overall Remarks"
                         name="overall_remarks"
@@ -541,22 +553,32 @@ const WeightedAverageForm = ({
                         error={createFormHandler.errors.overall_remarks}
                         disabled={isView || isPost || isReview}
                     />
+                   
                 </div>
-            {mode !== "create" ? null : (
+            
                 <div className="flex font-semibold border-b border-slate-300 items-center gap-4">
                     <div className = "flex-[5]">
                         <span>Request Data</span>
                     </div>
-                    <div className = "flex-[1]">
-                        <Button
-                            type="button"
-                            label="Generate Data"
-                            onClick={generateItems}
-                        />
-                    </div>
+                    {mode !== "view" && mode !== "review" && (
+                        <div className="flex-[1]">
+                            <Button
+                                type="button"
+                                label={mode === "create" ? "Generate Data" : "Change Unit Price"}
+                                onClick={() => {
+                                    if (mode === "create") {
+                                        generateItems();
+                                    } else {
+                                        openchangeUnitPrice();
+                                        passwordModal.onOpen();
+                                    }
+                                }}
+                            />
+                        </div>
+                    )}
                 </div>
-            )}           
-                <div className="max-h-[500px] overflow-y-auto overflow-x-auto rounded-md">
+                       
+                <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
                     <Table
                         dataSet={createFormHandler.values.items || []}
                         columnSettings={weightAverageColumn}
@@ -564,7 +586,33 @@ const WeightedAverageForm = ({
                         dataKey="item_no"
                         withActions
                         actions={tableActions}
+                        fixed
                     />
+                     
+                </div>
+               <div className="flex justify-between items-center mt-1 text-sm">
+                    <div className="text-xs text-gray-400">
+                        Showing {(createFormHandler.values.items?.length ?? 0)}{" "}
+                        {(createFormHandler.values.items?.length ?? 0) === 1 ? "item" : "items"}
+                    </div>
+
+                    <div className="flex justify-end text-sm text-gray-400">
+                        <span className="font-normal">
+                            Total Amount:
+                        </span>
+                        <span className="ml-2 mr-2 font-semibold text-sm ">
+                            {createFormHandler.values.items
+                                ?.reduce(
+                                    (total: number, item: any) =>
+                                        total + Number(item.total_amount || 0),
+                                    0
+                                )
+                                .toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
+                        </span>
+                    </div>
                 </div>
                 <Modal
                     isShowing={additionalChargeModal.isShowing}
@@ -666,15 +714,16 @@ const WeightedAverageForm = ({
                         <Button
                             label="Confirm"
                             type="button"
-                            onClick={() => {
-                                if (password !== process.env.NEXT_PUBLIC_WEIGHTED_AVERAGE_PASSWORD ) {
+                            onClick={async () => {
+                                if (password !== process.env.NEXT_PUBLIC_WEIGHTED_AVERAGE_PASSWORD) {
                                     toast.error("Invalid password");
                                     return;
                                 }
 
                                 passwordModal.onClose();
                                 setPassword("");
-                                changeUnitPriceModal.onOpen();
+
+                                await saveChangeUnitPrice();
                             }}
                         />
                     </div>
@@ -778,7 +827,7 @@ const WeightedAverageForm = ({
                             modal.onClose();
                             createFormHandler.resetForm();
                         setitemdraft({weighted_id_number:"",uniform_item_no:"",description:"",standard_uom:"",standard_uom_two:"",current_price:"",total_quantity:"",new_standard_price:"",
-                                other_charges:"",total_amount:"",standard_difference:"",reason:""
+                                other_charges:"",total_amount:"",standard_difference:"",reason:"",final_standard_price:""
                             });
                     
                         }}

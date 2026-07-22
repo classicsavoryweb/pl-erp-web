@@ -40,6 +40,8 @@ const title = "Variance Report";
 
 const numberValue = (value: any) => Number(value || 0);
 
+const today = () => new Date().toISOString().slice(0, 10);
+
 const money = (value: any) => numberValue(value).toLocaleString("en-US", {
     minimumFractionDigits: 2,
     maximumFractionDigits: 2,
@@ -55,7 +57,7 @@ const formatAuditDate = (value?: string | null) =>
     value ? moment(value).format("MMMM DD, YYYY h:mm A") : "-";
 
 const formatDate = (value?: string | null) =>
-    value ? moment(value).format("YYYY-MM-DD") : "";
+    value ? moment(value).format("MM/DD/YYYY") : "";
 
 const statusBadge = (status: string) => {
     let badgeStatus: "default" | "success" | "warning" | "danger" = "default";
@@ -76,8 +78,8 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const [selected, setSelected] = useState<any>(null);
     const [cancelReason, setCancelReason] = useState("");
     const [varianceForm, setVarianceForm] = useState({
-        begin_date: "",
-        ending_date: "",
+        begin_date: today(),
+        ending_date: today(),
         remarks: "",
         items: [] as any[],
     });
@@ -103,9 +105,10 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     useAsyncEffect(fetchRecords, [paginator.reload, api.reload, filter.reload]);
 
     const openCreate = () => {
+        const lastRecord = api.dataSet?.[0];
         setVarianceForm({
-            begin_date: "",
-            ending_date: "",
+            begin_date: lastRecord?.ending_date ?? today(),
+            ending_date: today(),
             remarks: "",
             items: [],
         });
@@ -278,10 +281,20 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
     const columns = [
         { columnHead: "Variance No.", path: "variance_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Physical Count No.", path: "physical_count.physical_count_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Begin Date", path: "begin_date", columnType: COLUMNTYPES.date },
-        { columnHead: "Ending Date", path: "ending_date", columnType: COLUMNTYPES.date },
-        { columnHead: "Posted Date", path: "posted_at", columnType:COLUMNTYPES.date},
+        { columnHead: "Begin Date", path: "begin_date", columnType: COLUMNTYPES.function,
+            function: (data: any)=> 
+                data.begin_date ? moment(data.begin_date).format("MM/DD/YYYY") : "-"
+            
+         },
+        { columnHead: "Ending Date", path: "ending_date", columnType: COLUMNTYPES.function,
+            function:(data: any) => 
+                data.ending_date ? moment(data.ending_date).format("MM/DD/YYYY") : "-"
+            
+         },
+        { columnHead: "Posted Date", path: "posted_at", columnType:COLUMNTYPES.function,
+            function:(data : any) => 
+                data.posted_at ? moment(data.posted_at).format("MM/DD/YYYY") : "-",
+        },
         {
             columnHead: "Status",
             path: "status",
@@ -333,6 +346,8 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         }));
     };
 
+
+
     const viewItems = selected?.items ?? [];
     const varianceViewColumns = [
         { columnHead: "Item Code", path: "item_no", columnType: COLUMNTYPES.string },
@@ -351,6 +366,10 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         { columnHead: "Variance Cost", path: "total_variance_cost", columnType: COLUMNTYPES.amount },
         { columnHead: "Reason", path: "reason_of_adjustment", columnType: COLUMNTYPES.string },
     ];
+
+    const totalVarianceCost = viewItems.reduce(
+        (sum:number,item : any) => sum + (Number(item.total_variance_cost) || 0), 0
+    );
 
     return (
         <>
@@ -381,7 +400,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             </Card>
 
             <Modal
-                size="xxl"
+                size="entireScreen"
                 title={`Generate ${title}`}
                 isShowing={formModal.isShowing}
                 loading={formModal.loading}
@@ -416,8 +435,8 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                             }
                         />
                     </div>
-                    <div className="sm:col-span-2">
-                        <TextArea
+                    <div className="grid grid-cols-1 gap-3">
+                        <Textfield
                             label="Overall Remarks"
                             required
                             value={varianceForm.remarks}
@@ -431,9 +450,9 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                     </div>
                 </div>
 
-                <div className="flex mt-4 font-semibold pb-1 mb-1 items-center justify-between">
+                <div className="flex font-semibold items-center justify-between">
                     <span>Request Data</span>
-                    <div>
+                    <div className="mb-2">
                         <Button 
                             type="button"
                             label="Generate Data"
@@ -450,7 +469,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             </Modal>
 
             <Modal
-                size="xxl"
+                size="entireScreen"
                 title={`View ${title}`}
                 isShowing={viewModal.isShowing}
                 onClose={viewModal.onClose}
@@ -459,21 +478,38 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                     <>
                         <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
                             <Textfield label="Variance No." value={selected.variance_no ?? ""} disabled />
-                            <Textfield label="Physical Count No." value={selected.physical_count?.physical_count_no ?? ""} disabled />
-                            <Textfield label="Status" value={selected.status ?? ""} disabled />
+                            <Textfield label="Physical Count No." value={selected.physical_count?.physical_count_no ?? ""} disabled />       
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
+                            <Textfield label="Status" value={selected.status ?? ""} disabled />
+                            <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
                         </div>
 
-                        <TextArea label="Remarks" value={selected.remarks ?? ""} disabled />
-
-                        <div className="max-h-[500px] overflow-y-auto overflox-x-auto rounded-md">
+                       
+               
+                        <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
                             <Table
                                 dataSet={viewItems}
                                 columnSettings={varianceViewColumns}
                                 smallText
                                 dataKey="uniform_item_id"
+                                fixed
                             />
+                        </div>
+                        <div className="flex justify-between items-center text-sm mt-1">
+                            <div className="text-xs text-gray-400">
+                                Showing {viewItems.length}{" "}
+                                {viewItems.length === 1 ? "item" : "items"}
+                            </div>
+
+                            <div className="flex items-center gap-2 pr-2 mr-2">
+                                <span className="text-gray-400 text-xs">Total Variance Cost:</span>
+                                <span className= "font-semibold text-sm">
+                                {totalVarianceCost.toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}</span>
+                            </div>
                         </div>
 
                         <hr className="mt-6 pb-2 text-slate-300" />
@@ -519,53 +555,58 @@ const VarianceItemsTable = ({
     editable?: boolean;
     onChange?: (index: number, key: string, value: any) => void;
 }) => (
-    <div className="overflow-auto max-h-[60vh] relative">
-        <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
-            <thead className="sticky top-0 z-20">
-                <tr>
-                    {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason"].map(header => (
-                        <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
-                    ))}
-                </tr>
-            </thead>
-            <tbody>
-                {items.length === 0 && (
+    <div>
+        <div className="overflow-auto max-h-[60vh] relative">
+            <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
+                <thead className="sticky top-0 z-20 text-xs">
                     <tr>
-                        <td colSpan={15} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
-                            <EmptyState />
-                            <p>No data available...</p>
-                        </td>
+                        {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason"].map(header => (
+                            <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
+                        ))}
                     </tr>
-                )}
-                {items.map((item, index) => (
-                    <tr key={item.uniform_item_id ?? index}>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.description}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.beginning_inventory)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.purchasing_department)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.made_to_order)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.atd)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.free_uniform)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.should_be_inventory)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.physical_count)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.variance)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
-                            {editable ? (
-                                <input className={inputClassName} type="number" value={item.adjustment ?? 0} onChange={(e) => onChange?.(index, "adjustment", e.target.value)} />
-                            ) : money(item.adjustment)}
-                        </td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.final_variance)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.standard_cost)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.total_variance_cost)}</td>
-                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
-                            {editable ? (
-                                <input className={textInputClassName} value={item.reason_of_adjustment ?? ""} onChange={(e) => onChange?.(index, "reason_of_adjustment", e.target.value)} />
-                            ) : item.reason_of_adjustment ?? "-"}
-                        </td>
-                    </tr>
-                ))}
-            </tbody>
-        </table>
+                </thead>
+                <tbody className= "text-xs">
+                    {items.length === 0 && (
+                        <tr>
+                            <td colSpan={15} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
+                                <EmptyState />
+                                <p>No data available...</p>
+                            </td>
+                        </tr>
+                    )}
+                    {items.map((item, index) => (
+                        <tr key={item.uniform_item_id ?? index}>
+                            <td className="w-10 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
+                            <td className="w max-w py-[10px] px-2 border border-slate-300 dark:border-neutral-700 truncate">{item.description}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.beginning_inventory)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.purchasing_department)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.made_to_order)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.atd)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.free_uniform)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.should_be_inventory)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.physical_count)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.variance)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
+                                {editable ? (
+                                    <input className={inputClassName} type="number" value={item.adjustment ?? 0} onChange={(e) => onChange?.(index, "adjustment", e.target.value)} />
+                                ) : money(item.adjustment)}
+                            </td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.final_variance)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.standard_cost)}</td>
+                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.total_variance_cost)}</td>
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
+                                {editable ? (
+                                    <input className={textInputClassName} value={item.reason_of_adjustment ?? ""} onChange={(e) => onChange?.(index, "reason_of_adjustment", e.target.value)} />
+                                ) : item.reason_of_adjustment ?? "-"}
+                            </td>
+                        </tr>
+                    ))}
+                </tbody>
+            </table>
+        </div>
+        <div className="mt-1 text-xs text-gray-400">
+            Showing {items.length} {items.length === 1 ? "item" : "items"}
+        </div>
     </div>
 );
 

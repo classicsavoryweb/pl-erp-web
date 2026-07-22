@@ -4,7 +4,7 @@ export const getAllRequestAndIssuance = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: "/get-uniform-request-and-issuance",
         method: "GET",
-        payload,
+        payload: payload
     });
 
     return resData;

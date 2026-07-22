@@ -613,7 +613,10 @@ const StockReplenishmentWorkspace = ({
 
     const requestColumns = [
         { columnHead: "Request No.", path: "request_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Date", path: "requested_date", columnType: COLUMNTYPES.date },
+        { columnHead: "Date", path: "requested_date", columnType: COLUMNTYPES.function,
+            function: (data: any) =>
+                data.requested_date ? moment(data.requested_date).format("MM/DD/YYYY") : "-",
+         },
         { columnHead: "Supplier", path: "supplier.vendor_name", columnType: COLUMNTYPES.string },
         { columnHead: "Type", path: "replenishment_type", columnType: COLUMNTYPES.string },
         { columnHead: "Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
@@ -704,7 +707,10 @@ const StockReplenishmentWorkspace = ({
     const receivingColumns = [
         { columnHead: "Receiving No.", path: "receiving_no", columnType: COLUMNTYPES.string },
         { columnHead: "Request No.", path: "replenishment.request_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Date Received", path: "date_received", columnType: COLUMNTYPES.date },
+        { columnHead: "Date Received", path: "date_received", columnType: COLUMNTYPES.function,
+            function:(data:any) =>
+                data.date_received ? moment(data.date_received).format("MM/DD/YYYY") : "-",
+         },
         { columnHead: "CRF No.", path: "crf_no", columnType: COLUMNTYPES.string },
         { columnHead: "Document No.", path: "document_no", columnType: COLUMNTYPES.string },
         { columnHead: "Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
@@ -773,11 +779,14 @@ const StockReplenishmentWorkspace = ({
 
     const detailItems = detail?.items ?? [];
     const requestTotal = requestForm.items.reduce(
-        (total, item) => total + Number(item.approved_qty || 0) * Number(item.unit_price || 0),
+        (total: number, item: any) =>
+            total + Number(item.approved_qty || 0) * Number(item.unit_price || 0),
         0
     );
+
     const receivingTotal = receivingForm.items.reduce(
-        (total, item) => total + Number(item.quantity || 0) * Number(item.unit_price || 0),
+        (total: number, item: any) =>
+            total + Number(item.quantity || 0) * Number(item.unit_price || 0),
         0
     );
     
@@ -1044,12 +1053,12 @@ const StockReplenishmentWorkspace = ({
                             value="Unposted"
                             disabled
                         />
-                        <Textfield
+                        {/* <Textfield
                             label="Total"
                             name="total_amount"
                             value={requestTotal.toFixed(2)}
                             disabled
-                        />
+                        /> */}
                     </div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Request Items</span>
@@ -1119,7 +1128,9 @@ const StockReplenishmentWorkspace = ({
                         error = {receivingForm.errors.replenishment_id}
                         required
                         onChange={(event) => selectReceivingRequest(event.target.value)}
-                        options={receivable.map((record) => ({
+                        options={receivable
+                            .filter((record) => record.status === "Posted")
+                            .map((record) => ({
                             label: `${record.request_no} - ${record.supplier?.vendor_name ?? ""}`,
                             value: String(record.id),
                         }))}
@@ -1189,12 +1200,12 @@ const StockReplenishmentWorkspace = ({
                                 transmitted_by: event.target.value,
                             })}
                         />
-                        <Textfield
+                        {/* <Textfield
                             label="Total"
                             name="total_amount"
                             value={receivingTotal.toFixed(2)}
                             disabled
-                        />
+                        /> */}
                     </div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Receiving Items</span>
@@ -1268,11 +1279,11 @@ const StockReplenishmentWorkspace = ({
                             value={formatDate(detail?.requested_date)}
                             disabled
                         />
-                        <Textfield
+                        {/* <Textfield
                             label="Total"
                             value={Number(detail?.total_amount ?? 0).toFixed(2)}
                             disabled
-                        />
+                        /> */}
                     </div>
                 ) : (
                     <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
@@ -1321,11 +1332,11 @@ const StockReplenishmentWorkspace = ({
                             value={detail?.transmitted_by ?? ""}
                             disabled
                         />
-                        <Textfield
+                        {/* <Textfield
                             label="Total"
                             value={Number(detail?.total_amount ?? 0).toFixed(2)}
                             disabled
-                        />
+                        /> */}
                     </div>
                 )}
                 <TextArea
@@ -1346,6 +1357,35 @@ const StockReplenishmentWorkspace = ({
                     { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.amount },
                     { columnHead: "Remarks", path: "remarks", columnType: COLUMNTYPES.string },
                 ]} />
+                <div className="flex justify-between items-center mt-2">
+                    <div className="text-xs text-gray-400">
+                        {detailItems.length} {detailItems.length === 1 ? "item" : "items"}
+                    </div>
+
+                    <div className="text-right whitespace-nowrap">
+                        <span className="font-normal text-xs text-gray-400">
+                            Total Amount:
+                        </span>
+                        <span className="ml-2 font-semibold text-sm text-gray-400">
+                            {detailItems
+                                .reduce(
+                                    (sum: number, item: any) =>
+                                        sum +
+                                        Number(
+                                            detailType === "requests"
+                                                ? item.approved_qty
+                                                : item.quantity
+                                        ) *
+                                        Number(item.unit_price || 0),
+                                    0
+                                )
+                                .toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
+                        </span>
+                    </div>
+                </div>
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <p>Report Log:</p>
                 <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
@@ -1472,12 +1512,12 @@ const ModalFooter = ({ loading }: any) => (
 
 const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
     <div className="my-3 overflow-x-auto">
-        <table className="w-full min-w-[1000px] border-collapse text-sm">
+        <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
             <thead className="bg-red-800 text-white">
                 <tr>
                     <th className="p-2 text-left">Item</th>
                     <th className="p-2 text-right">Stock on hand</th>
-                    {mode === "request" && <th className="p-2 text-right">Requested</th>}
+                    {mode === "request" && <th className="p-2 text-right">Requested Quantity</th>}
                     {mode === "request" && <th className="p-2 text-right">Approved</th>}
                     {mode === "receiving" && <th className="p-2 text-right">Remaining</th>}
                     {mode === "receiving" && <th className="p-2 text-right">Receiving Now</th>}
@@ -1487,12 +1527,12 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                     {mode === "request" && <th className="w-20 p-2 text-left">Action</th>}
                 </tr>
             </thead>
-            <tbody>
+            <tbody className="text-xs">
                 {items.length === 0 && (
                     <tr>
                         <td
                             colSpan={mode === "request" ? 8 : 7}
-                            className="border p-4 text-center"
+                            className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center"
                         >
                             <EmptyState />
                             <p>No data available...</p>
@@ -1500,57 +1540,57 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                     </tr>
                 )}
                 {items.map((line: any, index: number) => (
-                    <tr className="align-middle" key={line.uniform_item_id ?? line.replenishment_item_id}>
-                        <td className="border border-slate-300 p-2">
+                    <tr className="align-middle py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700" key={line.uniform_item_id ?? line.replenishment_item_id}>
+                        <td className=" p-2">
                             {line.item?.item_no} - {line.item?.description}
                         </td>
-                        <td className="border border-slate-300 p-2 text-right">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             {Number(line.item?.stock_on_hand ?? 0).toLocaleString()}
                         </td>
                         {mode === "request" && (
-                            <td className="border border-slate-300 p-1">
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 <input type="number" min="0.01" step="0.01" className={numericLineInputClassName}
                                     value={line.requested_qty}
                                     onChange={(event) => onChange(index, "requested_qty", event.target.value)} />
                             </td>
                         )}
                         {mode === "request" && (
-                            <td className="border border-slate-300 p-1">
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
                                 <input type="number" min="0.01" step="0.01" className={readOnlyNumericLineInputClassName}
                                     value={line.approved_qty}
                                     readOnly />
                             </td>
                         )}
                         {mode === "receiving" && (
-                            <td className="border border-slate-300 p-2 text-right">
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 {Number(line.remaining_qty).toLocaleString()}
                             </td>
                         )}
                         {mode === "receiving" && (
-                            <td className="border border-slate-300 p-1">
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 <input type="number" min="0" max={line.remaining_qty} step="0.01" className={numericLineInputClassName}
                                     value={line.quantity}
                                     onChange={(event) => onChange(index, "quantity", event.target.value)} />
                             </td>
                         )}
-                        <td className="border border-slate-300 p-1">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             <input type="number" min="0" step="0.01" className={mode === "request" ? readOnlyNumericLineInputClassName : numericLineInputClassName}
                                 value={line.unit_price}
                                 readOnly={mode === "request"}
                                 onChange={(event) => onChange(index, "unit_price", event.target.value)} />
                         </td>
-                        <td className="border border-slate-300 p-2 text-right">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             {(Number((mode === "request" ? line.approved_qty : line.quantity) || 0) * Number(line.unit_price || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
-                        <td className="border border-slate-300 p-1">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             <input className={lineInputClassName} value={line.remarks}
                                 onChange={(event) => onChange(index, "remarks", event.target.value)} />
                         </td>
                         {mode === "request" && (
-                            <td className="border border-slate-300 p-2">
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 <button
                                     type="button"
-                                    className="font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
+                                    className="font-large text-red-600 hover:text-red-200 hover:underline cursor-pointer"
                                     onClick={() => onRemove(index)}
                                 >
                                     Remove
@@ -1561,6 +1601,34 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                 ))}
             </tbody>
         </table>
+        <div className="flex justify-between items-center mt-1 text-xs text-gray-400">
+            <div>
+                Showing {items.length} {items.length === 1 ? "item" : "items"}
+            </div>
+            <div className="text-right whitespace-nowrap">
+                <span className="font-normal text-xs">
+                    Total Amount:
+                </span>
+                <span className="ml-2 font-semibold text-sm">
+                    {items
+                        .reduce(
+                            (sum: number, line: any) =>
+                                sum +
+                                (Number(
+                                    mode === "request"
+                                        ? line.approved_qty
+                                        : line.quantity
+                                ) || 0) *
+                                Number(line.unit_price || 0),
+                            0
+                        )
+                        .toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })}
+                </span>
+            </div>
+        </div>
     </div>
 );
 
