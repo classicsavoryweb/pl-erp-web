@@ -858,7 +858,7 @@ const UniformRequestAndIssuanceForm = ({
                         label="Total Amount"
                         placeholder="Total Amount"
                         name="item_total_amount"
-                        value={Number(itemdraft.total_amount || 0).toFixed(2)}
+                        value={new Intl.NumberFormat("en-US" ,{minimumFractionDigits: 2 , maximumFractionDigits: 2,}).format(Number(itemdraft.total_amount || 0))}
                         disabled
                     />
                 </div>

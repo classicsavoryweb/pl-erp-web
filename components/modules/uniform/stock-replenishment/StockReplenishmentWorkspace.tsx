@@ -1519,7 +1519,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                     <th className="p-2 text-right">Stock on hand</th>
                     {mode === "request" && <th className="p-2 text-right">Requested Quantity</th>}
                     {mode === "request" && <th className="p-2 text-right">Approved</th>}
-                    {mode === "receiving" && <th className="p-2 text-right">Remaining</th>}
+                    {mode === "receiving" && <th className="p-2 text-right">Requested Quantity</th>}
                     {mode === "receiving" && <th className="p-2 text-right">Receiving Now</th>}
                     <th className="p-2 text-right">Unit Price</th>
                     <th className="p-2 text-right">Total Amount</th>
