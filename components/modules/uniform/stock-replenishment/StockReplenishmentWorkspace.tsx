@@ -1129,7 +1129,7 @@ const StockReplenishmentWorkspace = ({
                         required
                         onChange={(event) => selectReceivingRequest(event.target.value)}
                         options={receivable
-                            .filter((record) => record.status === "Posted")
+                            .filter((record) => record.status === "Posted" || record.status === "Partially Received")
                             .map((record) => ({
                             label: `${record.request_no} - ${record.supplier?.vendor_name ?? ""}`,
                             value: String(record.id),
@@ -1344,19 +1344,21 @@ const StockReplenishmentWorkspace = ({
                     value={detail?.remarks ?? ""}
                     disabled
                 />
-                <Table dataSet={detailItems} columnSettings={[
-                    { columnHead: "Item", path: "item.description", columnType: COLUMNTYPES.string },
-                    {
-                        columnHead: detailType === "requests" ? "Approved" : "Received",
-                        path: detailType === "requests" ? "approved_qty" : "quantity",
-                        columnType: COLUMNTYPES.amount,
-                    },
-                    ...(detailType === "requests" ? [{
-                        columnHead: "Remaining", path: "remaining_qty", columnType: COLUMNTYPES.amount,
-                    }] : []),
-                    { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.amount },
-                    { columnHead: "Remarks", path: "remarks", columnType: COLUMNTYPES.string },
-                ]} />
+                <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
+                    <Table dataSet={detailItems} columnSettings={[
+                        { columnHead: "Item", path: "item.description", columnType: COLUMNTYPES.string },
+                        {
+                            columnHead: detailType === "requests" ? "Approved" : "Received",
+                            path: detailType === "requests" ? "approved_qty" : "quantity",
+                            columnType: COLUMNTYPES.amount,
+                        },
+                        ...(detailType === "requests" ? [{
+                            columnHead: "Remaining", path: "remaining_qty", columnType: COLUMNTYPES.amount,
+                        }] : []),
+                        { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.amount },
+                        { columnHead: "Remarks", path: "remarks", columnType: COLUMNTYPES.string },
+                    ]} fixed/>
+                </div>
                 <div className="flex justify-between items-center mt-2">
                     <div className="text-xs text-gray-400">
                         {detailItems.length} {detailItems.length === 1 ? "item" : "items"}
@@ -1511,20 +1513,21 @@ const ModalFooter = ({ loading }: any) => (
 );
 
 const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
-    <div className="my-3 overflow-x-auto">
+    <div>
+    <div className="overflow-auto max-h-[60vh] relative">
         <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
-            <thead className="bg-red-800 text-white">
+            <thead className="sticky top-0 z-20">
                 <tr>
-                    <th className="p-2 text-left">Item</th>
-                    <th className="p-2 text-right">Stock on hand</th>
-                    {mode === "request" && <th className="p-2 text-right">Requested Quantity</th>}
-                    {mode === "request" && <th className="p-2 text-right">Approved</th>}
-                    {mode === "receiving" && <th className="p-2 text-right">Requested Quantity</th>}
-                    {mode === "receiving" && <th className="p-2 text-right">Receiving Now</th>}
-                    <th className="p-2 text-right">Unit Price</th>
-                    <th className="p-2 text-right">Total Amount</th>
-                    <th className="p-2 text-left">Remarks</th>
-                    {mode === "request" && <th className="w-20 p-2 text-left">Action</th>}
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Item</th>
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Stock on hand</th>
+                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
+                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Approved</th>}
+                    {mode === "receiving" && <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
+                    {mode === "receiving" && <th className="p-3 bg-red-800 text-left text-zinc-100">Receiving Now</th>}
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Unit Price</th>
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Total Amount</th>
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Remarks</th>
+                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Action</th>}
                 </tr>
             </thead>
             <tbody className="text-xs">
@@ -1601,6 +1604,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                 ))}
             </tbody>
         </table>
+     </div>
         <div className="flex justify-between items-center mt-1 text-xs text-gray-400">
             <div>
                 Showing {items.length} {items.length === 1 ? "item" : "items"}
@@ -1629,7 +1633,9 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                 </span>
             </div>
         </div>
+   
     </div>
+    
 );
 
 export default StockReplenishmentWorkspace;

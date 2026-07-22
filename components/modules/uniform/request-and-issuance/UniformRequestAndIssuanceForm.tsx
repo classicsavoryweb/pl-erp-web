@@ -205,7 +205,7 @@ const UniformRequestAndIssuanceForm = ({
             };
             try {
                 let resp = await submitRequest(payload);   
-                if (resp.errors) {
+                if (resp.errors) { 
                     const firstError = Object.values(resp.errors).flat()?.[0];
                     toast.error(firstError || resp.message || "Request failed");
                     return;
