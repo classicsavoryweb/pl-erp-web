@@ -61,13 +61,17 @@ const formatAuditDate = (value?: string | null) =>
 const formatDate = (value?: string | null) =>
     value ? moment(value).format("YYYY-MM-DD") : "";
 
-const statusBadge = (status: string) => {
-    let badgeStatus: "default" | "success" | "warning" | "danger" = "default";
-    if (status === "Posted") badgeStatus = "success";
-    if (status === "Reviewed") badgeStatus = "warning";
-    if (status === "Cancelled") badgeStatus = "danger";
-
-    return <Badge label={status} status={badgeStatus} />;
+const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+    switch (status) {
+        case "Posted":
+            return "success";
+        case "Reviewed":
+            return "warning";
+        case "Cancelled":
+            return "danger";
+        default:
+            return "default";
+    }
 };
 
 const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
@@ -81,7 +85,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
     const importInputRef = useRef<HTMLInputElement | null>(null);
     const [selected, setSelected] = useState<any>(null);
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
-
+    const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
     const [cancelReason, setCancelReason] = useState("");
     const [physicalForm, setPhysicalForm] = useState({
         begin_date: today(),
@@ -228,6 +232,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
         toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
         api.triggerReload();
+        viewModal.onClose();
     };
 
     const loadPreviewData = async () => {
@@ -319,7 +324,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         downloadTemplate();
     };
 
-   const handleImportItems = async (file?: File) => {
+    const handleImportItems = async (file?: File) => {
         if (!file) return;
 
         if (!hasGeneratedData || physicalForm.items.length === 0) {
@@ -364,13 +369,14 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
 
             const importedItems = data.map((row) => {
+                const physical_count = Number(row["Physical Count"]);
                 const originalItem = physicalForm.items.find(
                     (item) => item.uniform_item_id === row["ID"]
                 );
                 return {
                     ...originalItem,
 
-                    physical_count: Number(row["Physical Count"] ?? 0),
+                    physical_count: Math.max(0,Number.isNaN(physical_count) ? 0 : physical_count),
                     item_remarks: row["Item Remarks"] ?? "",
                 };
             });
@@ -397,6 +403,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         {
             label: "View",
             onClick: () => {
+                setModalType("View");
                 setSelected(record);
                 viewModal.onOpen();
             },
@@ -408,12 +415,20 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         record.status === "Unposted" && {
             label: "Review",
             permission: performPermission,
-            onClick: () => runAction(record, "review"),
+            onClick: () =>{
+                setModalType("Review");
+                setSelected(record);
+                viewModal.onOpen();
+            },
         },
         record.status === "Reviewed" && {
             label: "Post",
             permission: performPermission,
-            onClick: () => runAction(record, "post"),
+             onClick: () =>{
+                setModalType("Post");
+                setSelected(record);
+                viewModal.onOpen();
+            },
         },
         ["Unposted", "Reviewed"].includes(record.status) && {
             label: "Cancel",
@@ -437,11 +452,16 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 data.ending_date ? moment(data.ending_date).format("MM/DD/YYYY") : "-"
          },
         { columnHead: "Counted By", path: "counted_by", columnType: COLUMNTYPES.string },
-        {
+       {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.function,
-            function: (record: any) => statusBadge(record.status),
+            function: (record: any) => (
+                <Badge
+                    status={getStatusBadge(record.status)}
+                    label={record.status}
+                />
+            ),
         },
         {
             columnHead: "Action",
@@ -580,9 +600,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                                 counted_by: employeeName,
                             }));
                         }}
-                    />
-                    
-                    
+                    />    
                 </div>
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-1">
                     <Textfield label="Remarks" value={physicalForm.remarks} onChange={(e: any) => setPhysicalForm(prev => ({ ...prev, remarks: e.target.value }))} />
@@ -612,15 +630,26 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
             <Modal
                 size="xxl"
-                title={`View ${title}`}
+                title={`${modalType} ${title}`}
                 isShowing={viewModal.isShowing}
                 onClose={viewModal.onClose}
             >
                 {selected && (
                     <>
-                        <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
-                            <Textfield label="Physical Count No." value={selected.physical_count_no ?? ""} disabled />
-                            <Textfield label="Status" value={selected.status ?? ""} disabled />                        
+                        <div className="grid grid-cols-4 gap-1 items-end">
+                            <div className="col-span-3">
+                                <Textfield label="Physical Count No." value={selected.physical_count_no ?? ""} disabled />
+                            </div>
+                            <div className="col-span-1 w-full flex justify-center">
+                                <div className="scale-170 -translate-y-3">
+                                    <Badge
+                                        status={getStatusBadge(selected.status)}
+                                        label={selected.status}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                        <div className="grid grid-cols-3 gap-1 items-end">                       
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
                             <Textfield label="Counted By" value={selected.counted_by ?? ""} disabled /> 
@@ -663,6 +692,30 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                             <Textfield label="Date & Time" value={formatAuditDate(selected.cancelled_at)} disabled />
                         </div>
                         <TextArea label="Cancel Reason" value={selected.cancelled_reason ?? ""} disabled />
+                        {(modalType === "Review" || modalType === "Post") && (
+                        <div className="grid grid-cols-4 mt-4">
+                            <div className="col-span-3"></div>
+
+                            <div className="col-span-1 flex justify-end gap-2">
+                                <Button
+                                    label="Close"
+                                    variant="secondary"
+                                    onClick={viewModal.onClose}
+                                />
+                                <Button
+                                    label={modalType === "Post" ? "Post" : "Review"}
+                                    onClick={() => {
+                                        if (modalType === "Review") {
+                                            runAction(selected, "review");
+                                        }
+                                        if (modalType === "Post") {
+                                            runAction(selected, "post");
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        )}
                     </>
                 )}
             </Modal>
@@ -723,9 +776,20 @@ const PhysicalCountItemsTable = ({
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.total_outgoing)}</td>
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{money(item.should_be_inventory)}</td>
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
-                                {editable ? (
-                                    <input className={inputClassName} type="number" min="0" value={item.physical_count ?? 0} onChange={(e) => onChange?.(index, "physical_count", e.target.value)} />
-                                ) : money(item.physical_count)}
+                            {editable ? (
+                                <input
+                                className={inputClassName}
+                                type="number"
+                                min={0}
+                                value={item.physical_count ?? 0}
+                                onChange={(e) => {
+                                    const value = Math.max(0, Number(e.target.value));
+                                    onChange?.(index, "physical_count", value);
+                                }}
+                                />
+                                ) : (
+                                    money(item.physical_count)
+                                )}
                             </td>
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 {editable ? (

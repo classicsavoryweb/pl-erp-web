@@ -17,6 +17,7 @@ import * as Yup from "yup";
 import { getDropDownMasterlist } from "@/api/uniform/request-and-issuance"
 import { createWeightAverage , getWeightAverageItems , getWeightAverageById , updateWeightStatus , updateUnitPrice } from "@/api/uniform/weighted-average";
 import moment from "moment";
+import Badge from "@/components/common/Badge";
 import  WeightedAverageItem  from "./WeightAverageItemView";
 import { create } from "lodash";
 import ActionDropDown from "@/components/common/ActionDropDown";
@@ -35,6 +36,7 @@ const tagSelectionDropDown = [
 ]
 
 const defaultValues = {
+    weighted_id:"",
     tag : "",
     date_posted: moment().format("YYYY-MM-DD"),
     date_from: moment().format("YYYY-MM-DD"),
@@ -61,19 +63,19 @@ const WeightedAverageForm = ({
     }: WeightAverageFormProps) => {
         const [ item, setitem ] = useState<any[]>([]);
         const api = useApiCall();
-        const isView = mode == "view";
-        const isReview = mode == "review";
-        const isPost = mode == "post";
         const [selectedItem, setSelectedItem] = useState<any>(null);
         const [password , setPassword] = useState("");
         const viewItemModal = useModal();
         const additionalChargeModal = useModal();
         const changeUnitPriceModal = useModal();
         const passwordModal = useModal();
+        const [changePriceItems , setChangePriceItems] = useState<any[]>([]);
+        
         const [chargeDraft, setChargeDraft] = useState({
             index: -1,
             additional_charge: "",
             reason: "",
+            description: ""
         });
         const [changeUnitPrice, setChangeUnitPrice] = useState({
             index: -1,
@@ -235,6 +237,9 @@ const WeightedAverageForm = ({
                 }
             }     
         });
+        const isView = mode == "view";
+        const isReview = mode == "review";
+        const isPost = createFormHandler.values.status?.toLowerCase() === "posted";
         const items = createFormHandler.values.items || [];
     
         useEffect(() => {
@@ -242,6 +247,7 @@ const WeightedAverageForm = ({
 
             if((mode === "view" || mode === "review" || mode === "post")&& formValue){
                 createFormHandler.setValues({
+                    weighted_id: formValue.weighted_id ?? "",
                     tag : formValue.tag ?? "",
                     date_posted: formValue.date_posted ?? "",
                     date_from : formValue.date_from ?? "",
@@ -339,12 +345,14 @@ const WeightedAverageForm = ({
         const openAdditionalCharge = (requestItem: any) => {
             const index = createFormHandler.values.items.findIndex(
                 (item: any) => item.uniform_item_no === requestItem.uniform_item_no
+                
             );
 
             setChargeDraft({
                 index,
                 additional_charge: requestItem.other_charges ?? "",
                 reason: requestItem.reason ?? "",
+                description: requestItem.description ?? "",
             });
 
             additionalChargeModal.onOpen();
@@ -361,32 +369,46 @@ const WeightedAverageForm = ({
 
         const saveChangeUnitPrice = async () => {
             const items = createFormHandler.values.items;
+
             if (!items || items.length === 0) return;
-
-            try {
+            try{
                 await updateUnitPrice({
-                items: items.map((item: any) => {
-                    const finalStandardPrice =
-                        Number(item.new_standard_price) +
-                        Number(item.other_charges);
-
-                    const payloadItem = {
+                    weighted_average_id: createFormHandler.values.weighted_id,
+                    items: items.map((item: any) => ({
                         item_no: item.item_no ?? item.uniform_item_no,
-                        standard_unit_price: finalStandardPrice,
-                    };
-
-                    return payloadItem;
-                }),
-            });
-
-                toast.success("All item masterlist unit prices changed successfully.");
-
+                        standard_unit_price:
+                            Number(item.new_standard_price) +
+                            Number(item.other_charges || 0),
+                    })),
+                    
+                });
+                toast.success("All selected item prices have been updated in the masterlist.");
                 changeUnitPriceModal.onClose();
-
-            } catch (error) {
-                toast.error("Error updating item masterlist unit prices.");
+                onSubmitCallback();
+                modal.onClose();
+                   
+            }
+            catch(error){
+                toast.error("Failed to update item prices.");
+                console.error(error);
             }
         };
+
+        const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+            switch (status) {
+                case "Posted":
+                    return "success";
+                case "Updated":
+                    return "success";
+                case "Reviewed":
+                    return "warning";
+                case "Cancelled":
+                    return "danger";
+                default:
+                    return "default";
+            }
+        };
+
 
         const saveAdditionalCharge = () => {
             const additionalCharge = Number(chargeDraft.additional_charge || 0);
@@ -451,6 +473,13 @@ const WeightedAverageForm = ({
             :[]),     
         ]
 
+        const changePriceTableColumn = [
+            {columnHead : "Item Name" , path: "description" , columnType:COLUMNTYPES.string},
+            {columnHead : "Old Standard Price" , path: "old_price" , columnType:COLUMNTYPES.amount},
+            {columnHead : "New Standard Price" , path: "new_price" , columnType:COLUMNTYPES.amount},
+
+        ]
+
         const weightAverageColumn =[
             {columnHead: "Item Code" , path: "uniform_item_no" , columnType:COLUMNTYPES.string },
             {columnHead: "Item Description" , path: "description" , columnType:COLUMNTYPES.string },
@@ -461,22 +490,22 @@ const WeightedAverageForm = ({
             {columnHead: "Total Amount" , path: "total_amount" , columnType:COLUMNTYPES.amount },
             {columnHead: "New Standard Price" , path: "new_standard_price" , columnType:COLUMNTYPES.amount },
             {columnHead: "Additional Charges" , path: "other_charges" , columnType:COLUMNTYPES.amount }, 
-            {columnHead: "Standard Price Differences" , path: "standard_difference" , columnType:COLUMNTYPES.function,
-                function:(item : any) => {
-                    const difference = Number(item.standard_difference || 0);
-                    return (
-                        <span className={difference < 0 ? "text-red-500" : ""}>
-                            {item.standard_difference}
-                        </span>
-                    )
-                }
-            },
             {columnHead: "Final Standard Price" , path: "" , columnType:COLUMNTYPES.function,
                 function:(item : any) => {
                     const finalstandardprice = Number(item.new_standard_price) + Number(item.other_charges);
                     return(
                         <span>
                             {finalstandardprice}
+                        </span>
+                    )
+                }
+            },
+            {columnHead: "Standard Price Differences" , path: "standard_difference" , columnType:COLUMNTYPES.function,
+                function:(item : any) => {
+                    const difference = Number(item.standard_difference || 0);
+                    return (
+                        <span className={difference < 0 ? "text-red-500" : ""}>
+                            {item.standard_difference}
                         </span>
                     )
                 }
@@ -501,28 +530,44 @@ const WeightedAverageForm = ({
             size = {mode === "create" || isReview || isView || isPost ? "xxl" : "xxl"}
         >
             <form onSubmit={createFormHandler.handleSubmit}>
+                <div className="grid grid-cols-5 gap-1 items-end">
+                    <div className="col-span-2">
+                        <Textfield
+                            label="Posting Date"
+                            placeholder="posting_date"
+                            name="date_posted"
+                            value={createFormHandler.values.date_posted ?? ""}
+                            onChange={createFormHandler.handleChange}
+                            error={createFormHandler.errors.date_posted}
+                            type="date"
+                            disabled
+                        />
+                    </div>
+                    <div className="col-span-2">
+                        <Dropdown
+                            label="Tag Selection"
+                            placeholder="select option"
+                            name="tag"
+                            value={createFormHandler.values.tag}
+                            required
+                            onChange={createFormHandler.handleChange}
+                            error={createFormHandler.errors.tag}
+                            options={tagSelectionDropDown}
+                            disabled = {isView || isPost || isReview}
+                        />
+                    </div>
+                    {mode !== "create"  &&  ( 
+                     <div className="col-span-1 w-full flex justify-center">
+                        <div className="scale-170 -translate-y-3">
+                            <Badge
+                                status={getStatusBadge(createFormHandler.values.status)}
+                                label={createFormHandler.values.status}
+                            />
+                        </div>
+                    </div>
+                    )}
+                </div>
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-2">
-                    <Textfield
-                        label="Posting Date"
-                        placeholder="posting_date"
-                        name="date_posted"
-                        value={createFormHandler.values.date_posted ?? ""}
-                        onChange={createFormHandler.handleChange}
-                        error={createFormHandler.errors.date_posted}
-                        type="date"
-                        disabled
-                    />
-                    <Dropdown
-                        label="Tag Selection"
-                        placeholder="select option"
-                        name="tag"
-                        value={createFormHandler.values.tag}
-                        required
-                        onChange={createFormHandler.handleChange}
-                        error={createFormHandler.errors.tag}
-                        options={tagSelectionDropDown}
-                        disabled = {isView || isPost || isReview}
-                    />
                     <Textfield
                         label="Date From"
                         placeholder="date_from"
@@ -560,7 +605,7 @@ const WeightedAverageForm = ({
                     <div className = "flex-[5]">
                         <span>Request Data</span>
                     </div>
-                    {mode !== "view" && mode !== "review" && (
+                    {isPost && (!isView || isPost) && !isReview  && (
                         <div className="flex-[1]">
                             <Button
                                 type="button"
@@ -621,6 +666,12 @@ const WeightedAverageForm = ({
                     size="md"
                 >
                     <div className="grid grid-cols-1 gap-3">
+                        <Textfield 
+                            label = "Item Description"
+                            name = "description"
+                            value = {chargeDraft.description}
+                            disabled
+                        />
                         <Textfield
                             label="Additional Charge"
                             name="additional_charge"
@@ -655,31 +706,36 @@ const WeightedAverageForm = ({
                 </Modal>
                 <Modal
                     isShowing={changeUnitPriceModal.isShowing}
-                    title="Change Unit Price"
+                    title="Update Price"
                     onClose={changeUnitPriceModal.onClose}
                     size="md"
                 >
-                    <div className="grid grid-cols-1 gap-3">
-                        <Textfield
-                            label="Change Unit Price"
-                            name="change_unit_price"
-                            type="number"
-                            value={changeUnitPrice.change_unit_price}
-                            onChange={(event: any) => setChangeUnitPrice({
-                                ...changeUnitPrice,
-                                change_unit_price: event.target.value,
-                            })}
-                        />
-                        <div className="flex justify-end gap-x-2">
-                            <Button
-                                label="Cancel"
-                                variant="secondary"
-                                onClick={changeUnitPriceModal.onClose}
+                    <div >
+                        <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
+                            <Table 
+                                dataSet={changePriceItems}
+                                columnSettings = {changePriceTableColumn}
+                                smallText
+                                dataKey="description"
+                                fixed
                             />
-                            <Button
-                                label="Save"
-                                onClick={saveChangeUnitPrice}
-                            />
+                        </div>
+                        <div className="flex justify-between items-center text-sm mt-0">  
+                             <div className="text-xs text-gray-400">          
+                                Showing {(changePriceItems.length ?? 0)}{" "}
+                                {(changePriceItems?.length ?? 0) === 1 ? "item" : "items"}
+                            </div>
+                        </div>
+                        
+                      
+                        <div className="flex justify-end">
+                            <div className="flex justify-end">
+                                <Button
+                                    type="button"
+                                    label="Update"
+                                    onClick={saveChangeUnitPrice}
+                                />
+                            </div>
                         </div>
                     </div>
                 </Modal>
@@ -719,20 +775,26 @@ const WeightedAverageForm = ({
                                     toast.error("Invalid password");
                                     return;
                                 }
-
+                                const items = createFormHandler.values.items.map((item: any) => ({
+                                        description: item.description,
+                                        old_price: item.current_price,
+                                        new_price:
+                                            Number(item.new_standard_price) +
+                                            Number(item.other_charges || 0),
+                                    }));
+                                setChangePriceItems(items);
                                 passwordModal.onClose();
                                 setPassword("");
 
-                                await saveChangeUnitPrice();
+                                
+                                changeUnitPriceModal.onOpen();
                             }}
                         />
                     </div>
                 </Modal>
                 <WeightedAverageItem
                     modal={viewItemModal}
-                    mode="view"
                     formValue={selectedItem}
-                    onSubmitCallback={api.triggerReload}
                 />
             {mode === "create" ? null : (  
                 <div>

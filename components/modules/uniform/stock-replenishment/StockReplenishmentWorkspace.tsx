@@ -92,7 +92,7 @@ const formatAuditDate = (value?: string | null) =>
     value ? moment(value).format("MMMM DD, YYYY h:mm A") : "-";
 
 const formatDate = (value?: string | null) =>
-    value ? moment(value).format("YYYY-MM-DD") : "";
+    value ? moment(value).format("MM/DD/YYYY") : "";
 
 interface StockReplenishmentWorkspaceProps {
     module: StockModule;
@@ -256,6 +256,23 @@ const StockReplenishmentWorkspace = ({
             toast.error("Error encountered");
         } finally {
             setCancelSubmitting(false);
+        }
+    };
+
+     const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+        switch (status) {
+            case "Posted":
+                return "success";
+            case "Partially Received":
+                return "warning";
+             case "Fully Received":
+                return "success";
+            case "Reviewed":
+                return "warning";
+            case "Cancelled":
+                return "danger";
+            default:
+                return "default";
         }
     };
 
@@ -470,19 +487,28 @@ const StockReplenishmentWorkspace = ({
     };
 
     const selectReceivingRequest = (requestId: string) => {
-        const request = receivable.find((record) => String(record.id) === String(requestId));
+        const request = receivable.find(
+            (record) => String(record.id) === String(requestId)
+        );
+
         setReceivingForm((form) => ({
             ...form,
             replenishment_id: requestId,
             transmitted_by: request?.supplier?.vendor_name ?? "",
-            items: (request?.items ?? []).map((item: any) => ({
-                replenishment_item_id: item.id,
-                item: item.item,
-                remaining_qty: Number(item.remaining_qty),
-                quantity: Number(item.remaining_qty),
-                unit_price: Number(item.unit_price),
-                remarks: "",
-            })),
+            items: (request?.items ?? []).map((item: any) => {
+                const remainingQty =
+                    Number(item.remaining_qty) -
+                    Number(item.pending_received_qty ?? 0);
+
+                return {
+                    replenishment_item_id: item.id,
+                    item: item.item,
+                    remaining_qty: Math.max(0, remainingQty),
+                    quantity: Math.max(0, remainingQty),
+                    unit_price: Number(item.unit_price),
+                    remarks: "",
+                };
+            }),
         }));
     };
 
@@ -1047,18 +1073,6 @@ const StockReplenishmentWorkspace = ({
                                 requested_date: event.target.value,
                             })}
                         />
-                        <Textfield
-                            label="Status"
-                            name="status"
-                            value="Unposted"
-                            disabled
-                        />
-                        {/* <Textfield
-                            label="Total"
-                            name="total_amount"
-                            value={requestTotal.toFixed(2)}
-                            disabled
-                        /> */}
                     </div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Request Items</span>
@@ -1127,9 +1141,18 @@ const StockReplenishmentWorkspace = ({
                         value={receivingForm.replenishment_id}
                         error = {receivingForm.errors.replenishment_id}
                         required
-                        onChange={(event) => selectReceivingRequest(event.target.value)}
+                        onChange={(event) => {selectReceivingRequest(event.target.value)}}
                         options={receivable
-                            .filter((record) => record.status === "Posted" || record.status === "Partially Received")
+                            .filter((record) =>
+                                (record.status === "Posted" || record.status === "Partially Received") &&
+                                record.items?.some((item: any) => {
+                                    const remaining =
+                                        Number(item.remaining_qty) -
+                                        Number(item.pending_received_qty ?? 0);
+
+                                    return remaining > 0;
+                                })
+                            )
                             .map((record) => ({
                             label: `${record.request_no} - ${record.supplier?.vendor_name ?? ""}`,
                             value: String(record.id),
@@ -1253,20 +1276,28 @@ const StockReplenishmentWorkspace = ({
                 size="lg"
             >
                 {detailType === "requests" ? (
-                    <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
+                <div>
+                    <div className="grid grid-cols-4 gap-1 items-end">
+                        <div className = "col-span-3">
+                             <Textfield
+                            label="Supplier"
+                            value={detail?.supplier?.vendor_name ?? ""}
+                            disabled
+                            />
+                        </div>
+                        <div className="col-span-1 w-full flex justify-center">
+                            <div className="scale-160 -translate-y-3">
+                                <Badge
+                                status={getStatusBadge(detail?.status)}
+                                label={detail?.status ?? ""}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1 items-end">
                         <Textfield
                             label="Request Number"
                             value={detail?.request_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Status"
-                            value={detail?.status ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Supplier"
-                            value={detail?.supplier?.vendor_name ?? ""}
                             disabled
                         />
                         <Textfield
@@ -1279,67 +1310,65 @@ const StockReplenishmentWorkspace = ({
                             value={formatDate(detail?.requested_date)}
                             disabled
                         />
-                        {/* <Textfield
-                            label="Total"
-                            value={Number(detail?.total_amount ?? 0).toFixed(2)}
-                            disabled
-                        /> */}
                     </div>
+                </div>
                 ) : (
-                    <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
-                        <Textfield
-                            label="Receiving Number"
-                            value={detail?.receiving_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Request Number"
-                            value={detail?.replenishment?.request_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Supplier"
-                            value={detail?.supplier?.vendor_name ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Status"
-                            value={detail?.status ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Date Received"
-                            value={formatDate(detail?.date_received)}
-                            disabled
-                        />
-                        <Textfield
-                            label="Checker"
-                            value={detail?.checker_name ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="CRF Number"
-                            value={detail?.crf_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Document Number"
-                            value={detail?.document_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Transmitted By"
-                            value={detail?.transmitted_by ?? ""}
-                            disabled
-                        />
-                        {/* <Textfield
-                            label="Total"
-                            value={Number(detail?.total_amount ?? 0).toFixed(2)}
-                            disabled
-                        /> */}
-                    </div>
+                    <div>
+                        <div className="grid grid-cols-4 gap-1 items-end">
+                            <div className ="col-span-3">
+                                <Textfield
+                                    label="Supplier"
+                                    value={detail?.supplier?.vendor_name ?? ""}
+                                    disabled
+                                />
+                            </div>
+                            <div className="col-span-1 w-full flex justify-center">
+                                <div className="scale-170 -translate-y-3">
+                                    <Badge
+                                    status={getStatusBadge(detail?.status)}
+                                    label={detail?.status ?? ""}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                            <div className = "grid grid-cols-3 gap-1 items-end">
+                                <Textfield
+                                    label="Receiving Number"
+                                    value={detail?.receiving_no ?? ""}
+                                    disabled
+                                />
+                                
+                                <Textfield
+                                    label="Request Number"
+                                    value={detail?.replenishment?.request_no ?? ""}
+                                    disabled
+                                />
+                                <Textfield
+                                    label="Date Received"
+                                    value={formatDate(detail?.date_received)}
+                                    disabled
+                                />
+                                <Textfield
+                                    label="Checker"
+                                    value={detail?.checker_name ?? ""}
+                                    disabled
+                                />
+                                <Textfield
+                                    label="CRF Number"
+                                    value={detail?.crf_no ?? ""}
+                                    disabled
+                                />
+                                <Textfield
+                                    label="Document Number"
+                                    value={detail?.document_no ?? ""}
+                                    disabled
+                                />
+                               
+                            </div>
+                        </div>
+                    
                 )}
-                <TextArea
+                <Textfield
                     label="Remarks"
                     value={detail?.remarks ?? ""}
                     disabled
@@ -1428,31 +1457,31 @@ const StockReplenishmentWorkspace = ({
                     />
                     <Textfield
                         label="Date & Time"
+                        name="cancelled_at"
                         value={formatAuditDate(detail?.cancelled_at)}
                         disabled
                     />
-                    {detailType === "requests" && (
-                        <>
-                            <Textfield
-                                label="Closed By:"
-                                value={detail?.closed_by ?? ""}
-                                disabled
-                            />
-                            <Textfield
-                                label="Date & Time"
-                                value={formatAuditDate(detail?.closed_at)}
-                                disabled
-                            />
-                        </>
-                        
-                    )}
-                   
-                </div>
-                  <TextArea
-                        label="Close Reason"
-                        value={detail?.closed_reason ?? ""}
+                    <Textfield
+                        label="Closed By:"
+                        name="closed_by"
+                        value={detail?.closed_by ?? ""}
                         disabled
                     />
+                    <Textfield
+                        label="Date & Time"
+                        value={formatAuditDate(detail?.closed_at)}
+                        disabled
+                    />   
+                </div>
+                <TextArea
+                    label="Close Reason"
+                    value={
+                        detailType === "receiving" && detail?.closed_by
+                            ? "Already Closed in Replenishment"
+                            : (detail?.closed_reason ?? "")
+                    }
+                    disabled
+                />
                 {(detailType === "requests") || isReview  && (
                     <TextArea
                         label="Close Reason"
@@ -1553,7 +1582,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                         {mode === "request" && (
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 <input type="number" min="0.01" step="0.01" className={numericLineInputClassName}
-                                    value={line.requested_qty}
+                                    value= {line.requested_qty ?? ""}
                                     onChange={(event) => onChange(index, "requested_qty", event.target.value)} />
                             </td>
                         )}

@@ -134,6 +134,9 @@ const WeightedAverageTable = () => {
                     case "Posted": 
                         status = "success";
                         break;
+                    case "Updated":
+                        status = "success";
+                        break;
                     case "Cancelled":
                         status = "danger";
                         break;

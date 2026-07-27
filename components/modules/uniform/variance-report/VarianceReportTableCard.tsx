@@ -59,14 +59,20 @@ const formatAuditDate = (value?: string | null) =>
 const formatDate = (value?: string | null) =>
     value ? moment(value).format("MM/DD/YYYY") : "";
 
-const statusBadge = (status: string) => {
-    let badgeStatus: "default" | "success" | "warning" | "danger" = "default";
-    if (status === "Posted") badgeStatus = "success";
-    if (status === "Reviewed") badgeStatus = "warning";
-    if (status === "Cancelled") badgeStatus = "danger";
 
-    return <Badge label={status} status={badgeStatus} />;
-};
+
+ const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+        switch (status) {
+            case "Posted":
+                return "success";
+            case "Reviewed":
+                return "warning";
+            case "Cancelled":
+                return "danger";
+            default:
+                return "default";
+        }
+    };
 
 const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const api = useApiCall();
@@ -77,6 +83,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const cancelModal = useModal();
     const [selected, setSelected] = useState<any>(null);
     const [cancelReason, setCancelReason] = useState("");
+    const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
     const [varianceForm, setVarianceForm] = useState({
         begin_date: today(),
         ending_date: today(),
@@ -197,6 +204,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         }
 
         toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
+        viewModal.onClose();
         api.triggerReload();
     };
 
@@ -250,6 +258,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         {
             label: "View",
             onClick: () => {
+                setModalType('View');
                 setSelected(record);
                 viewModal.onOpen();
             },
@@ -261,12 +270,21 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         record.status === "Unposted" && {
             label: "Review",
             permission: performPermission,
-            onClick: () => runAction(record, "review"),
+            
+            onClick: () => {
+                setModalType("Review");
+                setSelected(record);
+                viewModal.onOpen();
+            },
         },
         record.status === "Reviewed" && {
             label: "Post",
             permission: performPermission,
-            onClick: () => runAction(record, "post"),
+            onClick: () => {
+                setModalType("Post");
+                setSelected(record);
+                viewModal.onOpen();
+            },
         },
         ["Unposted", "Reviewed"].includes(record.status) && {
             label: "Cancel",
@@ -299,7 +317,12 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.function,
-            function: (record: any) => statusBadge(record.status),
+            function: (record: any) => (
+                <Badge
+                    status={getStatusBadge(record.status)}
+                    label={record.status}
+                />
+            ),
         },
         {
             columnHead: "Action",
@@ -470,18 +493,32 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
             <Modal
                 size="entireScreen"
-                title={`View ${title}`}
+                title={`${modalType} ${title}`}
                 isShowing={viewModal.isShowing}
                 onClose={viewModal.onClose}
             >
                 {selected && (
                     <>
-                        <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
+                        <div className="grid grid-cols-5 gap-1 items-end">
+                            <div className= "col-span-2">
                             <Textfield label="Variance No." value={selected.variance_no ?? ""} disabled />
-                            <Textfield label="Physical Count No." value={selected.physical_count?.physical_count_no ?? ""} disabled />       
+                            </div>
+                            <div className="col-span-2">
+                            <Textfield label="Physical Count No." value={selected.physical_count?.physical_count_no ?? ""} disabled /> 
+                            </div>
+                            <div className="col-span-1 w-full flex justify-center">
+                                <div className="scale-170 -translate-y-3">
+                                    <Badge
+                                        status={getStatusBadge(selected.status)}
+                                        label={selected.status}
+                                    />
+                                </div>
+                            </div>   
+                        </div>
+                        <div className="grid grid-cols-3 gap-1 items-end">   
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
-                            <Textfield label="Status" value={selected.status ?? ""} disabled />
+                            {/* <Textfield label="Status" value={selected.status ?? ""} disabled /> */}
                             <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
                         </div>
 
@@ -525,6 +562,31 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                             <Textfield label="Date & Time" value={formatAuditDate(selected.cancelled_at)} disabled />
                         </div>
                         <TextArea label="Cancel Reason" value={selected.cancelled_reason ?? ""} disabled />
+                        {(modalType === "Review" || modalType === "Post") && (
+                        <div className="grid grid-cols-4 mt-4">
+                            <div className="col-span-3"></div>
+
+                            <div className="col-span-1 flex justify-end gap-2">
+                                <Button
+                                    label="Close"
+                                    variant="secondary"
+                                    onClick={viewModal.onClose}
+                                />
+
+                                <Button
+                                    label={modalType === "Post" ? "Post" : "Review"}
+                                    onClick={() => {
+                                        if (modalType === "Review") {
+                                            runAction(selected, "review");
+                                        }
+                                        if (modalType === "Post") {
+                                            runAction(selected, "post");
+                                        }
+                                    }}
+                                />
+                            </div>
+                        </div>
+                        )}
                     </>
                 )}
             </Modal>
