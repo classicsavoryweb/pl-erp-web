@@ -20,6 +20,7 @@ import moment from "moment";
 import Badge from "@/components/common/Badge";
 import  WeightedAverageItem  from "./WeightAverageItemView";
 import { create } from "lodash";
+import * as XLSX from "xlsx";
 import ActionDropDown from "@/components/common/ActionDropDown";
 
 interface WeightAverageFormProps{
@@ -346,6 +347,18 @@ const WeightedAverageForm = ({
             }
         };
 
+        const exportChangePriceItems = () => {
+            const exportData = changePriceItems.map(item => ({
+                Description: item.description,
+                "Old Price": item.old_price,
+                "New Price": item.new_price,
+            }));
+            const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const workbook = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(workbook, worksheet, "Updated Prices");
+            XLSX.writeFile(workbook, "Updated_Prices.xlsx");
+        };
+
         const openAdditionalCharge = (requestItem: any) => {
             const index = createFormHandler.values.items.findIndex(
                 (item: any) => item.uniform_item_no === requestItem.uniform_item_no
@@ -630,7 +643,7 @@ const WeightedAverageForm = ({
                     <div className = "flex-[5]">
                         <span>Request Data</span>
                     </div>
-                    {isPost && (!isView || isPost) && !isReview  && (
+                    {(mode === "create" || (isPost && !isReview)) && (
                         <div className="flex-[1]">
                             <Button
                                 type="button"
@@ -735,32 +748,36 @@ const WeightedAverageForm = ({
                     onClose={changeUnitPriceModal.onClose}
                     size="md"
                 >
-                    <div >
+                    <div>
                         <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
-                            <Table 
+                            <Table
                                 dataSet={changePriceItems}
-                                columnSettings = {changePriceTableColumn}
+                                columnSettings={changePriceTableColumn}
                                 smallText
                                 dataKey="description"
                                 fixed
                             />
                         </div>
-                        <div className="flex justify-between items-center text-sm mt-0">  
-                             <div className="text-xs text-gray-400">          
-                                Showing {(changePriceItems.length ?? 0)}{" "}
-                                {(changePriceItems?.length ?? 0) === 1 ? "item" : "items"}
+
+                        <div className="flex justify-between items-center text-sm mt-2">
+                            <div className="text-xs text-gray-400">
+                                Showing {changePriceItems.length}{" "}
+                                {changePriceItems.length === 1 ? "item" : "items"}
                             </div>
                         </div>
-                        
-                      
-                        <div className="flex justify-end">
-                            <div className="flex justify-end">
-                                <Button
-                                    type="button"
-                                    label="Update"
-                                    onClick={saveChangeUnitPrice}
-                                />
-                            </div>
+
+                        <div className="flex justify-end gap-3 mt-4">
+                            <Button
+                                type="button"
+                                label="Export"
+                                onClick={exportChangePriceItems}
+                            />
+
+                            <Button
+                                type="button"
+                                label="Update"
+                                onClick={saveChangeUnitPrice}
+                            />
                         </div>
                     </div>
                 </Modal>
