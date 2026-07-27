@@ -49,6 +49,8 @@ const defaultValues = {
     reviewed_at : "",
     posted_by : "",
     posted_at : "",
+    price_updated_by : "",
+    price_updated_at : "",
     cancelled_by : "",
     cancelled_at : "",
     cancel_reason : "",
@@ -260,6 +262,8 @@ const WeightedAverageForm = ({
                     reviewed_at : formValue.reviewed_at ?? "",
                     posted_by : formValue.posted_by ?? "",
                     posted_at : formValue.posted_at ?? "",
+                    price_updated_by : formValue.price_updated_by ?? "",
+                    price_updated_at : formValue.price_updated_at ?? "",
                     cancelled_by : formValue.cancelled_by ?? "",
                     cancelled_at : formValue.cancelled_at ?? "",
                     cancel_reason : formValue.cancel_reason ?? "",
@@ -365,6 +369,27 @@ const WeightedAverageForm = ({
                 index: -1,
                 change_unit_price: String(firstItem?.new_standard_price ?? ""),
             });
+        };
+
+        const confirmPassword = () => {
+            if (password !== process.env.NEXT_PUBLIC_WEIGHTED_AVERAGE_PASSWORD) {
+                toast.error("Invalid password");
+                return;
+            }
+            const items = createFormHandler.values.items
+                .map((item: any) => ({
+                    description: item.description,
+                    old_price: item.current_price,
+                    new_price:
+                        Number(item.new_standard_price) +
+                        Number(item.other_charges || 0),
+                }))
+                .filter((item: any) => Number(item.old_price ?? 0).toFixed(2) !== Number(item.new_price ?? 0).toFixed(2));
+            setChangePriceItems(items);
+            passwordModal.onClose();
+            setPassword("");
+
+            changeUnitPriceModal.onOpen();
         };
 
         const saveChangeUnitPrice = async () => {
@@ -609,7 +634,7 @@ const WeightedAverageForm = ({
                         <div className="flex-[1]">
                             <Button
                                 type="button"
-                                label={mode === "create" ? "Generate Data" : "Change Unit Price"}
+                                label={mode === "create" ? "Generate Data" : "Update Unit Price"}
                                 onClick={() => {
                                     if (mode === "create") {
                                         generateItems();
@@ -748,48 +773,38 @@ const WeightedAverageForm = ({
                     }}
                     size="sm"
                 >
-                    <Textfield
-                        label="Password"
-                        type="password"
-                        value={password}
-                        onChange={(e: any) => setPassword(e.target.value)}
-                        
-                    />
-
-                    <div className="flex justify-end gap-2 mt-4">
-                        <Button
-                            type="button"
-                            label="Cancel"
-                            variant="secondary"     
-                            onClick={() => {   
-                                passwordModal.onClose();   
-                                setPassword("");
-                            }}
+                    <div
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter") {
+                                e.preventDefault();
+                                confirmPassword();
+                            }
+                        }}
+                    >
+                        <Textfield
+                            label="Password"
+                            type="password"
+                            value={password}
+                            onChange={(e: any) => setPassword(e.target.value)}
                         />
 
-                        <Button
-                            label="Confirm"
-                            type="button"
-                            onClick={async () => {
-                                if (password !== process.env.NEXT_PUBLIC_WEIGHTED_AVERAGE_PASSWORD) {
-                                    toast.error("Invalid password");
-                                    return;
-                                }
-                                const items = createFormHandler.values.items.map((item: any) => ({
-                                        description: item.description,
-                                        old_price: item.current_price,
-                                        new_price:
-                                            Number(item.new_standard_price) +
-                                            Number(item.other_charges || 0),
-                                    }));
-                                setChangePriceItems(items);
-                                passwordModal.onClose();
-                                setPassword("");
+                        <div className="flex justify-end gap-2 mt-4">
+                            <Button
+                                type="button"
+                                label="Cancel"
+                                variant="secondary"
+                                onClick={() => {
+                                    passwordModal.onClose();
+                                    setPassword("");
+                                }}
+                            />
 
-                                
-                                changeUnitPriceModal.onOpen();
-                            }}
-                        />
+                            <Button
+                                label="Confirm"
+                                type="button"
+                                onClick={confirmPassword}
+                            />
+                        </div>
                     </div>
                 </Modal>
                 <WeightedAverageItem
@@ -850,11 +865,27 @@ const WeightedAverageForm = ({
                         disabled
                     />               
                     <Textfield
+                        label="Price Updated By:"
+                        name="price_updated_by"
+                        value={createFormHandler.values.price_updated_by ?? ""}
+                        error={createFormHandler.errors.price_updated_by}
+                        disabled
+                    />
+                    <Textfield
+                        label="Date & Time"
+                        value={
+                            createFormHandler.values.price_updated_at
+                                ? moment(createFormHandler.values.price_updated_at).format("MMMM DD, YYYY h:mm A")
+                                : "-"
+                        }
+                        disabled
+                    />
+                    <Textfield
                         label="Cancelled By:"
                         name="created_by"
                         value={createFormHandler.values.cancelled_by ?? ""}
                         error={createFormHandler.errors.posted_by}
-                        disabled                       
+                        disabled
                     />
                     <Textfield
                         label="Date & Time"
