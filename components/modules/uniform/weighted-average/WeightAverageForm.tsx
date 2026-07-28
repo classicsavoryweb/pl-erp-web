@@ -356,7 +356,7 @@ const WeightedAverageForm = ({
             const worksheet = XLSX.utils.json_to_sheet(exportData);
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Updated Prices");
-            XLSX.writeFile(workbook, "Updated_Prices.xlsx");
+            XLSX.writeFile(workbook, `UPDATED_PRICES.xlsx-${moment().format("YYYY-MM-DD")}`);
         };
 
         const openAdditionalCharge = (requestItem: any) => {
@@ -375,7 +375,7 @@ const WeightedAverageForm = ({
             additionalChargeModal.onOpen();
         };
 
-        const openchangeUnitPrice = () => {
+        const openchangeUnitPrice = () => {2
             const firstItem = createFormHandler.values.items[0];
 
             setChangeUnitPrice({
