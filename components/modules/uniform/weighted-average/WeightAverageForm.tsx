@@ -21,6 +21,7 @@ import Badge from "@/components/common/Badge";
 import  WeightedAverageItem  from "./WeightAverageItemView";
 import { create } from "lodash";
 import * as XLSX from "xlsx";
+import * as XLSX from "xlsx";
 import ActionDropDown from "@/components/common/ActionDropDown";
 
 interface WeightAverageFormProps{
@@ -375,7 +376,7 @@ const WeightedAverageForm = ({
             additionalChargeModal.onOpen();
         };
 
-        const openchangeUnitPrice = () => {
+        const openchangeUnitPrice = () => {2
             const firstItem = createFormHandler.values.items[0];
 
             setChangeUnitPrice({
@@ -644,6 +645,7 @@ const WeightedAverageForm = ({
                         <span>Request Data</span>
                     </div>
                     {(mode === "create" || (isPost && !isReview)) && (
+                    {(mode === "create" || (isPost && !isReview)) && (
                         <div className="flex-[1]">
                             <Button
                                 type="button"
@@ -749,9 +751,12 @@ const WeightedAverageForm = ({
                     size="md"
                 >
                     <div>
+                    <div>
                         <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
                             <Table
+                            <Table
                                 dataSet={changePriceItems}
+                                columnSettings={changePriceTableColumn}
                                 columnSettings={changePriceTableColumn}
                                 smallText
                                 dataKey="description"
@@ -763,8 +768,26 @@ const WeightedAverageForm = ({
                             <div className="text-xs text-gray-400">
                                 Showing {changePriceItems.length}{" "}
                                 {changePriceItems.length === 1 ? "item" : "items"}
+
+                        <div className="flex justify-between items-center text-sm mt-2">
+                            <div className="text-xs text-gray-400">
+                                Showing {changePriceItems.length}{" "}
+                                {changePriceItems.length === 1 ? "item" : "items"}
                             </div>
                         </div>
+
+                        <div className="flex justify-end gap-3 mt-4">
+                            <Button
+                                type="button"
+                                label="Export"
+                                onClick={exportChangePriceItems}
+                            />
+
+                            <Button
+                                type="button"
+                                label="Update"
+                                onClick={saveChangeUnitPrice}
+                            />
 
                         <div className="flex justify-end gap-3 mt-4">
                             <Button
