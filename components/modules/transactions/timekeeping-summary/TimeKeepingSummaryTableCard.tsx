@@ -27,6 +27,7 @@ import GenerateTimeKeepingModal from "./GenerateTimekeepingModal";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import AddTaxableAdjustmentModal from "./AddTaxableAdjustmentModal";
 import Accordion from "@/components/common/Accordion";
+import EditTimeKeepingSummaryModal from "./EditTimeKeepingSummaryModal";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -45,6 +46,7 @@ const TimeKeepingSummaryTableCard = ({
     const [branch, setBranch] = useState<any>(null);
     const generateModal= useModal();
     const addAdjustmentModal = useModal();
+    const editModal = useModal();
     const [selectedSummary, setSelectedSummary] = useState<any>({});
     const canAddAdjustment = permissions.includes("perform_transactions_adjustments");
 
@@ -187,13 +189,20 @@ const TimeKeepingSummaryTableCard = ({
                         data={data}
                         actions={[
                             {
-                                label: "Add Taxable Adjustment",
-                                permission: "perform_transactions_adjustments",
-                                onClick: (row: any) => {
-                                    setSelectedSummary(row);
-                                    addAdjustmentModal.onOpen();
+                                label: "Edit",
+                                onClick: (data: any) => {
+                                    setSelectedSummary(data);
+                                    editModal.onOpen();
                                 }
-                            }
+                            },
+                            // {
+                            //     label: "Add Taxable Adjustment",
+                            //     permission: "perform_transactions_adjustments",
+                            //     onClick: (row: any) => {
+                            //         setSelectedSummary(row);
+                            //         addAdjustmentModal.onOpen();
+                            //     }
+                            // }
                         ]}
                     />
                 );
@@ -448,12 +457,10 @@ const TimeKeepingSummaryTableCard = ({
                 modal={generateModal}
             />
 
-            <AddTaxableAdjustmentModal
-                modal={addAdjustmentModal}
+            <EditTimeKeepingSummaryModal
+                modal={editModal}
                 data={selectedSummary}
-                onSubmitCallback={() => {
-                    api.triggerReload();
-                }}
+                onSubmitCallBack={api.triggerReload}
             />
         </>
     );
