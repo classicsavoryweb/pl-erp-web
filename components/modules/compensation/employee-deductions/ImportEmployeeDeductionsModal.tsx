@@ -53,34 +53,36 @@ const ImportEmployeeDeductionsModal = ({
                 title: "Import Employee Deductions"
             });
 
-            if (isConfirm) {
-                const payload = { ...values };
-                setSubmitting(true);
-                modal.onClose();
-                resetForm();
+            if (!isConfirm) {
+                return;
+            }
 
-                importEmployeeDeductions(payload)
-                    .then((resp) => {
-                        if (!resp.error) {
-                            toast.success(resp.data.message || "Imported successfully");
-                            if (onSubmitCallback) {
-                                onSubmitCallback();
-                            }
-                        } else {
-                            if (resp.data?.type === "duplicate_crf" && Array.isArray(resp.data?.duplicates)) {
-                                setDuplicateRows(resp.data.duplicates);
-                                setDuplicateMessage(resp.data.message || "");
-                                setShowDuplicateModal(true);
-                                return;
-                            }
+            const payload = { ...values };
+            setSubmitting(true);
 
-                            toast.error(resp.data.message);
-                        }
-                    }).catch(() => {
-                        toast.error("Error encountered");
-                    }).finally(() => {
-                        setSubmitting(false);
-                    });
+            try {
+                const resp = await importEmployeeDeductions(payload);
+
+                if (!resp.error) {
+                    toast.success(resp.data.message || "Imported successfully");
+                    modal.onClose();
+                    resetForm();
+                    if (onSubmitCallback) {
+                        onSubmitCallback();
+                    }
+                } else if (resp.data?.type === "duplicate_crf" && Array.isArray(resp.data?.duplicates)) {
+                    modal.onClose();
+                    resetForm();
+                    setDuplicateRows(resp.data.duplicates);
+                    setDuplicateMessage(resp.data.message || "");
+                    setShowDuplicateModal(true);
+                } else {
+                    toast.error(resp.data.message);
+                }
+            } catch {
+                toast.error("Error encountered");
+            } finally {
+                setSubmitting(false);
             }
         }
     });
