@@ -1,5 +1,5 @@
 interface BadgeStatus {
-    status?: "danger" | "default" | "warning" | "success";
+    status?: "danger" | "default" | "warning" | "success" | "purpose";
     label: string | number;
 };
 
@@ -15,6 +15,7 @@ const Badge = ({
                     ${status === "danger" && "bg-red-800"}
                     ${status === "warning" && "bg-orange-600"}
                     ${status === "success" && "bg-green-800"}
+                    ${status === "purpose" && "bg-blue-600"}
                     text-slate-50
                     text-[10px]
                     rounded-full

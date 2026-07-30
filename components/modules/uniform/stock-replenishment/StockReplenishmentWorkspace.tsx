@@ -67,8 +67,7 @@ const createEmptyReceiving = () => ({
     transmitted_by: "",
     remarks: "",
     items: [] as any[],
-
-   errors: {
+    errors: {
         replenishment_id: "",
         checker_employee: "",
         crf_no: "",
@@ -133,6 +132,8 @@ const StockReplenishmentWorkspace = ({
     const [isPost, setIsPost] = useState(false);
     const [isReviewReceive , setIsReviewReceive] = useState(false);
     const [isPostReceive , setIsPostReceive] = useState(false);
+    const [reviewId, setReviewId] = useState<number | null>(null);
+    const [receiveId , setReceiveId] = useState<number | null>(null);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -183,19 +184,31 @@ const StockReplenishmentWorkspace = ({
     }, [items, selectedSupplier]);
 
     const runAction = async (title: string, action: () => Promise<any>) => {
-        const accepted = await confirm({ title, message: `Are you sure you want to ${title.toLowerCase()}?` });
+        const accepted = await confirm({
+            title,
+            message: `Are you sure you want to ${title.toLowerCase()}?`
+        });
+
         if (!accepted) return;
+
         const response = await action();
+
         if (response.error) {
             toast.error(messageOf(response));
             return;
         }
+
         toast.success(response.data.message);
 
         setDetail(null);
+        setRequestOpen(false);
+        setReviewId(null);
         setIsReview(false);
         setIsPost(false);
         setIsReviewReceive(false);
+        setReceivingOpen(false); 
+    setReceiveId(null); 
+        
         api.triggerReload();
     };
 
@@ -675,12 +688,22 @@ const StockReplenishmentWorkspace = ({
                         label: "Review",
                         permission: performPermission,
                         onClick: () => {
-                            setDetail(record);
-                            setDetailType("requests");
                             setIsReview(true);
                             setIsPost(false);
                             setIsReviewReceive(false);
                             setIsPostReceive(false);
+
+                            setReviewId(record.id);
+
+                            setRequestForm({
+                                supplier_id: String(record.supplier_id ?? ""),
+                                replenishment_type: record.replenishment_type ?? "",
+                                requested_date: record.requested_date ?? "",
+                                remarks: record.remarks ?? "",
+                                items: record.items ?? [],
+                            });
+
+                            setRequestOpen(true);
                         }
                     });
                 }
@@ -767,10 +790,38 @@ const StockReplenishmentWorkspace = ({
                         label: "Review",
                         permission: performPermission,
                         onClick: () => {
-                            setDetail(record);
-                            setDetailType("receiving");
+                            setDetail(null);
+
+                            setIsReview(false);
+                            setIsPost(false);
+
                             setIsReviewReceive(true);
                             setIsPostReceive(false);
+
+                            setReceiveId(record.id);
+
+                            setReceivingForm({
+                                ...createEmptyReceiving(),
+                                replenishment_id: String(record.replenishment_id ?? ""),
+                                date_received: record.date_received ?? "",
+                                crf_no: record.crf_no ?? "",
+                                document_no: record.document_no ?? "",
+                                checker_name: record.checker_name ?? "",
+                                transmitted_by: record.transmitted_by ?? "",
+                                remarks: record.remarks ?? "",
+                                items: (record.items ?? []).map((item:any)=>({
+                                    ...item,
+                                    replenishment_item_id: item.id,
+                                    requested_qty: item.requested_qty 
+                                        ?? item.replenishment_item?.requested_qty 
+                                        ?? 0,
+                                    quantity: item.quantity ?? "",
+                                    unit_price: item.unit_price ?? 0,
+                                    remarks: item.remarks ?? "",
+                                }))
+                            });
+
+                            setReceivingOpen(true);
                         }
                     });
                 }
@@ -874,9 +925,19 @@ const StockReplenishmentWorkspace = ({
                             label: module === "requests"
                                 ? "Create replenishment request"
                                 : "Create receiving transaction",
-                            onClick: () => module === "requests"
-                                ? setRequestOpen(true)
-                                : setReceivingOpen(true),
+                            onClick: () => {
+                                if (module === "requests") {
+                                    setIsReview(false);
+                                    setIsPost(false);
+                                    setRequestForm(createEmptyRequest());
+                                    setRequestOpen(true);
+                                } else {
+                                    setIsReviewReceive(false);
+                                    setIsPostReceive(false);
+                                    setReceivingForm(createEmptyReceiving());
+                                    setReceivingOpen(true);
+                                }
+                            },
                         }]} />
                     </div>
                 )}
@@ -1021,18 +1082,34 @@ const StockReplenishmentWorkspace = ({
                 </form>
             </Modal>
 
-            <Modal isShowing={requestOpen} title="New Replenishment Request"
-                onClose={closeRequestModal} size="xxl">
-                <form onSubmit={(event) => {
-                    event.preventDefault();
-                    submitRequest();
-                }}>
+                <Modal
+                    isShowing={requestOpen}
+                    title={isReview ? "Review Replenishment Request" : "New Replenishment Request"}
+                    onClose={() => {
+                        setRequestOpen(false);
+                        setIsReview(false);
+                        setReviewId(null);
+                    }}
+                    size="xxl"
+                >
+                <form
+                    onSubmit={(event) => {
+                        event.preventDefault();
+
+                        if (isReview && reviewId !== null) {
+                            runAction("Review Request", () => reviewReplenishment(reviewId,requestForm));
+                        } else {
+                            submitRequest();
+                        }
+                    }}
+                >
                     <SearchableDropDown
                         label="Supplier"
                         placeholder="select supplier"
                         name="supplier_id"
-                        value={requestForm.supplier_id}
+                        value={requestForm.supplier_id ?? ""}
                         required
+                        disabled={isReview}
                         onChange={(event) => {
                             setRequestForm({
                                 ...requestForm,
@@ -1051,8 +1128,9 @@ const StockReplenishmentWorkspace = ({
                             label="Request Type"
                             placeholder="select request type"
                             name="replenishment_type"
-                            value={requestForm.replenishment_type}
+                            value={requestForm.replenishment_type ?? ""}
                             required
+                            disabled={isReview}
                             onChange={(event) => setRequestForm({
                                 ...requestForm,
                                 replenishment_type: event.target.value,
@@ -1066,8 +1144,9 @@ const StockReplenishmentWorkspace = ({
                             label="Requested Date"
                             name="requested_date"
                             type="date"
-                            value={requestForm.requested_date}
+                            value={requestForm.requested_date ?? ""}
                             required
+                            disabled={isReview}
                             onChange={(event) => setRequestForm({
                                 ...requestForm,
                                 requested_date: event.target.value,
@@ -1098,7 +1177,7 @@ const StockReplenishmentWorkspace = ({
                         label="Description"
                         placeholder="select description"
                         name="uniform_item_id"
-                        value={requestItemId}
+                        value={requestItemId ?? ""}
                         disabled={!requestForm.supplier_id}
                         onChange={(event) => setRequestItemId(event.target.value)}
                         options={availableItems.map((item) => ({
@@ -1107,7 +1186,7 @@ const StockReplenishmentWorkspace = ({
                         }))}
                     />
                     <LineEditor
-                        items={requestForm.items}
+                        items={requestForm.items ?? []}
                         mode="request"
                         onChange={updateRequestItem}
                         onRemove={(index: number) => setRequestForm((form) => ({
@@ -1118,29 +1197,39 @@ const StockReplenishmentWorkspace = ({
                     <TextArea
                         label="Overall Remarks"
                         name="remarks"
-                        value={requestForm.remarks}
+                        value={requestForm.remarks ?? ""}
                         onChange={(event) => setRequestForm({
                             ...requestForm,
                             remarks: event.target.value,
                         })}
                     />
-                    <ModalFooter loading={submitting} />
+                    <ModalFooter loading={submitting} label={isReview ? "Review" : "Submit"}/>
                 </form>
             </Modal>
 
-            <Modal isShowing={receivingOpen} title="Receive Stock"
-                onClose={closeReceivingModal} size="xxl">
+            <Modal isShowing={receivingOpen} title={isReviewReceive ? "Review Receive Stock" :"Receive Stock"}
+                onClose={ ()=>{
+                    setIsReviewReceive(false);
+                    setReceiveId(null);
+                    setReceivingOpen(false);
+                }} 
+                size="xxl">
                 <form onSubmit={(event) => {
                     event.preventDefault();
-                    submitReceiving();
+                    if (isReviewReceive && receiveId !== null) {
+                            runAction("Review Receiving", () => reviewReceiving(receiveId,receivingForm));
+                        } else {
+                            submitReceiving();
+                        }
                 }}>
                     <SearchableDropDown
                         label="Replenishment Request"
                         placeholder="select posted request"
                         name="replenishment_id"
-                        value={receivingForm.replenishment_id}
+                        value={receivingForm.replenishment_id ?? ""}
                         error = {receivingForm.errors.replenishment_id}
                         required
+                        disabled={isReviewReceive}
                         onChange={(event) => {selectReceivingRequest(event.target.value)}}
                         options={receivable
                             .filter((record) =>
@@ -1163,19 +1252,22 @@ const StockReplenishmentWorkspace = ({
                             label="Date Received"
                             name="date_received"
                             type="date"
-                            value={receivingForm.date_received}
+                            value={receivingForm.date_received ?? ""}
                             required
+                            disabled={isReviewReceive}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 date_received: event.target.value,
                             })}
                         />
+                        {!isReviewReceive && (
                         <SearchEmployeeDropDown
                             label="Checker"
                             placeholder="select employee"
                             name="checker_employee"
-                            value={receivingForm.checker_employee}
+                            value={isReviewReceive ? receivingForm.checker_name ?? "" : receivingForm.checker_employee ?? ""}
                             error={receivingForm.errors.checker_employee}
+                            disabled={isReviewReceive}
                             required
                             status="active"
                             onChange={(event: any) => {
@@ -1192,12 +1284,24 @@ const StockReplenishmentWorkspace = ({
                                 });
                             }}
                         />
+                        )}
+                        {isReviewReceive && (
+                        <Textfield
+                            label="Checker"
+                            name="checker"
+                            value={receivingForm.checker_name ?? ""}
+                            error={receivingForm.errors.checker_employee}
+                            required
+                            disabled
+                        />
+                        )}
                         <Textfield
                             label="CRF Number"
                             name="crf_no"
-                            value={receivingForm.crf_no}
+                            value={receivingForm.crf_no ?? ""}
                             error={receivingForm.errors.crf_no}
                             required
+                            disabled={isReviewReceive}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 crf_no: event.target.value,
@@ -1206,9 +1310,10 @@ const StockReplenishmentWorkspace = ({
                         <Textfield
                             label="Document Number"
                             name="document_no"
-                            value={receivingForm.document_no}
+                            value={receivingForm.document_no ?? ""}
                             error={receivingForm.errors.document_no}
                             required
+                            disabled={isReviewReceive}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 document_no: event.target.value,
@@ -1217,7 +1322,8 @@ const StockReplenishmentWorkspace = ({
                         <Textfield
                             label="Transmitted By"
                             name="transmitted_by"
-                            value={receivingForm.transmitted_by}
+                            disabled={isReviewReceive}
+                            value={receivingForm.transmitted_by ?? ""}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 transmitted_by: event.target.value,
@@ -1234,31 +1340,30 @@ const StockReplenishmentWorkspace = ({
                         <span>Receiving Items</span>
                     </div>
                     <LineEditor
-                        items={receivingForm.items}
+                        items={receivingForm.items ?? []}
                         mode="receiving"
+                        isReviewReceive={isReviewReceive}
                         onChange={updateReceivingItem}
                     />
                     <TextArea
                         label="Remarks"
                         name="remarks"
-                        value={receivingForm.remarks}
+                        value={receivingForm.remarks ?? ""}
                         onChange={(event) => setReceivingForm({
                             ...receivingForm,
                             remarks: event.target.value,
                         })}
                     />
-                    <ModalFooter loading={submitting} />
+                    <ModalFooter loading={submitting} label={isReviewReceive ? "Review" : "Submit"} />
                 </form>
             </Modal>
 
             <Modal  isShowing={Boolean(detail)}
                 title={
                     detailType === "requests"
-                        ? isReview
-                            ? "Review Request"
-                            : isPost
-                                ? "Post Request"
-                                : "View Request"
+                        ? isPost
+                            ? "Post Request"
+                            : "View Request"
                         : detailType === "receiving"
                             ? isReviewReceive
                                 ? "Review Receiving"
@@ -1269,7 +1374,7 @@ const StockReplenishmentWorkspace = ({
                 }
                 onClose={() => {
                     setDetail(null);
-                    setIsReview(false);
+                    // setIsReview(false);
                     setIsPost(false);
                     setIsReviewReceive(false);
                 }}
@@ -1509,11 +1614,13 @@ const StockReplenishmentWorkspace = ({
                                         runAction("Post Request", () => postReplenishment(detail.id));
                                     } else if (isPostReceive) {
                                         runAction("Post Receiving", () => postReceiving(detail.id));
-                                    } else if (isReview) {
-                                        runAction("Review Request", () => reviewReplenishment(detail.id));
-                                    } else if (isReviewReceive) {
-                                        runAction("Review Receiving", () => reviewReceiving(detail.id));
-                                    }
+                                    } 
+                                    // else if (isReview) {
+                                    //     runAction("Review Request", () => reviewReplenishment(detail.id));
+                                    // } 
+                                    // else if (isReviewReceive) {
+                                    //     runAction("Review Receiving", () => reviewReceiving(detail.id));
+                                    // }
                                 }}
                             />
                         )}
@@ -1525,14 +1632,20 @@ const StockReplenishmentWorkspace = ({
     );
 };
 
-const ModalFooter = ({ loading }: any) => (
+const ModalFooter = ({
+    loading,
+    label = "Submit",
+}: {
+    loading: boolean;
+    label?: string;
+}) => (
     <>
         <hr className="mt-6 pb-2 text-slate-300" />
         <div className="flex justify-end">
             <div className="w-[120px]">
                 <Button
                     type="submit"
-                    label="Submit"
+                    label={label}
                     loading={loading}
                     onClick={() => {}}
                 />
@@ -1541,7 +1654,7 @@ const ModalFooter = ({ loading }: any) => (
     </>
 );
 
-const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
+const LineEditor = ({ items, mode, isReviewReceive, onChange, onRemove }: any) => (
     <div>
     <div className="overflow-auto max-h-[60vh] relative">
         <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
@@ -1551,7 +1664,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                     <th className="p-3 bg-red-800 text-left text-zinc-100">Stock on hand</th>
                     {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
                     {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Approved</th>}
-                    {mode === "receiving" && <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
+                    {mode === "receiving" && !isReviewReceive &&  <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
                     {mode === "receiving" && <th className="p-3 bg-red-800 text-left text-zinc-100">Receiving Now</th>}
                     <th className="p-3 bg-red-800 text-left text-zinc-100">Unit Price</th>
                     <th className="p-3 bg-red-800 text-left text-zinc-100">Total Amount</th>
@@ -1593,7 +1706,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                                     readOnly />
                             </td>
                         )}
-                        {mode === "receiving" && (
+                        {mode === "receiving" &&  !isReviewReceive  && (
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 {Number(line.remaining_qty).toLocaleString()}
                             </td>
@@ -1601,13 +1714,13 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                         {mode === "receiving" && (
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 <input type="number" min="0" max={line.remaining_qty} step="0.01" className={numericLineInputClassName}
-                                    value={line.quantity}
+                                    value={line.quantity ?? ""}
                                     onChange={(event) => onChange(index, "quantity", event.target.value)} />
                             </td>
                         )}
                         <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             <input type="number" min="0" step="0.01" className={mode === "request" ? readOnlyNumericLineInputClassName : numericLineInputClassName}
-                                value={line.unit_price}
+                                value={line.unit_price ?? ""}
                                 readOnly={mode === "request"}
                                 onChange={(event) => onChange(index, "unit_price", event.target.value)} />
                         </td>
@@ -1615,7 +1728,7 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                             {(Number((mode === "request" ? line.approved_qty : line.quantity) || 0) * Number(line.unit_price || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
                         <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
-                            <input className={lineInputClassName} value={line.remarks}
+                            <input className={lineInputClassName} value={line.remarks ?? ""}
                                 onChange={(event) => onChange(index, "remarks", event.target.value)} />
                         </td>
                         {mode === "request" && (

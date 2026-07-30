@@ -128,14 +128,14 @@ const WeightedAverageTable = () => {
         { columnHead: "Posted By", path: "posted_by", columnType: COLUMNTYPES.string },
         { columnHead: "Remarks", path: "overall_remarks", columnType: COLUMNTYPES.string },
          { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function, function: (data: any) => {
-                let status: "default" | "success" | "warning" | "danger" = "default";
+                let status: "default" | "success" | "warning" | "danger" | "purpose" = "default";
 
                 switch(data.status) {
                     case "Posted": 
                         status = "success";
                         break;
                     case "Updated":
-                        status = "success";
+                        status = "purpose";
                         break;
                     case "Cancelled":
                         status = "danger";

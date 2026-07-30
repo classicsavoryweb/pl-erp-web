@@ -20,7 +20,7 @@ import moment from "moment";
 import Badge from "@/components/common/Badge";
 import  WeightedAverageItem  from "./WeightAverageItemView";
 import { create } from "lodash";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import ActionDropDown from "@/components/common/ActionDropDown";
 
 interface WeightAverageFormProps{
@@ -36,27 +36,37 @@ const tagSelectionDropDown = [
     {label:"Check All" , value:"Check All"}
 ]
 
-const defaultValues = {
-    weighted_id:"",
-    tag : "",
-    date_posted: moment().format("YYYY-MM-DD"),
-    date_from: moment().format("YYYY-MM-DD"),
-    date_to: moment().format("YYYY-MM-DD"),
-    status : "",
-    overall_remarks:"",
-    prepared_by : "",
-    prepared_at : "",
-    reviewed_by : "",
-    reviewed_at : "",
-    posted_by : "",
-    posted_at : "",
-    price_updated_by : "",
-    price_updated_at : "",
-    cancelled_by : "",
-    cancelled_at : "",
-    cancel_reason : "",
-    items:[] as any [],
-}
+const defaultValues = () => {
+    const datePosted = moment();
+
+    return {
+        weighted_id: "",
+        tag: "",
+        date_posted: datePosted.format("YYYY-MM-DD"),
+        date_from: datePosted.clone()
+            .subtract(1, "month")
+            .startOf("month")
+            .format("YYYY-MM-DD"),
+        date_to: datePosted.clone()
+            .subtract(1, "month")
+            .endOf("month")
+            .format("YYYY-MM-DD"),
+        status: "",
+        overall_remarks: "",
+        prepared_by: "",
+        prepared_at: "",
+        reviewed_by: "",
+        reviewed_at: "",
+        posted_by: "",
+        posted_at: "",
+        price_updated_by: "",
+        price_updated_at: "",
+        cancelled_by: "",
+        cancelled_at: "",
+        cancel_reason: "",
+        items: [] as any[],
+    };
+};
 
 const WeightedAverageForm = ({
     modal,
@@ -78,7 +88,10 @@ const WeightedAverageForm = ({
             index: -1,
             additional_charge: "",
             reason: "",
-            description: ""
+            description: "",
+            current_price: "",
+            new_standard_price: 0,
+            original_new_standard_price : "",
         });
         const [changeUnitPrice, setChangeUnitPrice] = useState({
             index: -1,
@@ -113,50 +126,60 @@ const WeightedAverageForm = ({
         },[modal.isShowing]);
 
         const createFormHandler = useFormik({  
-            initialValues  :defaultValues,
+            initialValues  :defaultValues(),
             validateOnChange: false,
             validationSchema: Yup.object().shape({
                 tag:Yup.string().required("Tag is Required."),
                 date_posted: Yup.string()
-                .required("Date Posted is Required")
-                .test(
+                    .required("Date Posted is Required")
+                    .test(
                         "not-future",
                         "Posting Date cannot be later than today",
                         function (value) {
                             if (!value) return false;
 
                             return moment(value).isSameOrBefore(
-                                moment().format("YYYY-MM-DD"),
+                                moment(),
                                 "day"
                             );
                         }
                     ),
-                date_from:Yup.string()
-                .required("Date From is Required")
-                .test(
-                        "not-future",
-                        "Date From cannot be later than today",
-                        function (value) {
-                            if (!value) return false;
 
-                            return moment(value).isSameOrBefore(
-                                moment().format("YYYY-MM-DD"),
-                                "day"
-                            );
+                date_from: Yup.string()
+                    .required("Date From is Required")
+                    .test(
+                        "previous-month-start",
+                        "Date From must be the first day of the previous month based on Date Posted",
+                        function (value) {
+                            const { date_posted } = this.parent;
+
+                            if (!value || !date_posted) return false;
+
+                            const expectedDateFrom = moment(date_posted)
+                                .subtract(1, "month")
+                                .startOf("month")
+                                .format("YYYY-MM-DD");
+
+                            return value === expectedDateFrom;
                         }
                     ),
-                date_to:Yup.string()
-                .required("Date From is Required")
-                .test(
-                        "not-future",
-                        "Date To cannot be later than today",
-                        function (value) {
-                            if (!value) return false;
 
-                            return moment(value).isSameOrBefore(
-                                moment().format("YYYY-MM-DD"),
-                                "day"
-                            );
+                date_to: Yup.string()
+                    .required("Date To is Required")
+                    .test(
+                        "previous-month-end",
+                        "Date To must be the last day of the previous month based on Date Posted",
+                        function (value) {
+                            const { date_posted } = this.parent;
+
+                            if (!value || !date_posted) return false;
+
+                            const expectedDateTo = moment(date_posted)
+                                .subtract(1, "month")
+                                .endOf("month")
+                                .format("YYYY-MM-DD");
+
+                            return value === expectedDateTo;
                         }
                     ),
                 overall_remarks:Yup.string().nullable(),
@@ -246,34 +269,34 @@ const WeightedAverageForm = ({
         const items = createFormHandler.values.items || [];
     
         useEffect(() => {
-            if(!modal.isShowing) return;
+            if (!modal.isShowing) return;
 
-            if((mode === "view" || mode === "review" || mode === "post")&& formValue){
+            if ((mode === "view" || mode === "review" || mode === "post") && formValue) {
                 createFormHandler.setValues({
                     weighted_id: formValue.weighted_id ?? "",
-                    tag : formValue.tag ?? "",
+                    tag: formValue.tag ?? "",
                     date_posted: formValue.date_posted ?? "",
-                    date_from : formValue.date_from ?? "",
-                    date_to : formValue.date_to ?? "",
-                    status : formValue.status ?? "",
-                    overall_remarks : formValue.overall_remarks ?? "",
-                    prepared_by : formValue.prepared_by ?? "",
-                    prepared_at : formValue.prepared_at ?? "",
-                    reviewed_by : formValue.reviewed_by ?? "",
-                    reviewed_at : formValue.reviewed_at ?? "",
-                    posted_by : formValue.posted_by ?? "",
-                    posted_at : formValue.posted_at ?? "",
-                    price_updated_by : formValue.price_updated_by ?? "",
-                    price_updated_at : formValue.price_updated_at ?? "",
-                    cancelled_by : formValue.cancelled_by ?? "",
-                    cancelled_at : formValue.cancelled_at ?? "",
-                    cancel_reason : formValue.cancel_reason ?? "",
+                    date_from: formValue.date_from ?? "",
+                    date_to: formValue.date_to ?? "",
+                    status: formValue.status ?? "",
+                    overall_remarks: formValue.overall_remarks ?? "",
+                    prepared_by: formValue.prepared_by ?? "",
+                    prepared_at: formValue.prepared_at ?? "",
+                    reviewed_by: formValue.reviewed_by ?? "",
+                    reviewed_at: formValue.reviewed_at ?? "",
+                    posted_by: formValue.posted_by ?? "",
+                    posted_at: formValue.posted_at ?? "",
+                    price_updated_by: formValue.price_updated_by ?? "",
+                    price_updated_at: formValue.price_updated_at ?? "",
+                    cancelled_by: formValue.cancelled_by ?? "",
+                    cancelled_at: formValue.cancelled_at ?? "",
+                    cancel_reason: formValue.cancel_reason ?? "",
                     items: formValue.items ?? [],
                 });
-            }else{
-                createFormHandler.setValues(defaultValues);
+            } else {
+                createFormHandler.setValues(defaultValues());
             }
-        },[modal.isShowing, formValue, mode]);
+        }, [modal.isShowing, formValue, mode]);
     
         const generateItems = async () => {
             const dateFrom = moment(createFormHandler.values.date_from);
@@ -346,17 +369,53 @@ const WeightedAverageForm = ({
                 toast.error("Failed to load items");
             }
         };
+        const filteredChangePriceItems = changePriceItems.filter(
+            (item) =>
+                Number(item.old_price ?? 0).toFixed(2) !==
+                Number(item.new_price ?? 0).toFixed(2)
+        );
 
         const exportChangePriceItems = () => {
             const exportData = changePriceItems.map(item => ({
-                Description: item.description,
+                "Uniform Number": item.uniform_item_no,
+                "Description": item.description,
+                "Other Charges": item.other_charges,
+                "UOM" : item.standard_uom_two,
                 "Old Price": item.old_price,
                 "New Price": item.new_price,
+                "Standard Difference": item.standard_difference,
             }));
             const worksheet = XLSX.utils.json_to_sheet(exportData);
+            const newPriceColumn = "F";
+            const oldPriceColumn = "E";
+
+            for (let row = 2; row <= exportData.length + 1; row++) {
+                const oldPrice = worksheet[`${oldPriceColumn}${row}`]?.v;
+                const newPrice = worksheet[`${newPriceColumn}${row}`]?.v;
+
+                if (Number(oldPrice).toFixed(2) !== Number(newPrice).toFixed(2)) {
+                    for (let col = 0; col < 7; col++) {
+                        const cellAddress = XLSX.utils.encode_cell({
+                            r: row - 1, 
+                            c: col
+                        });
+
+                        if (worksheet[cellAddress]) {
+                            worksheet[cellAddress].s = {
+                                fill: {
+                                    fgColor: { rgb: "FFF2CC" }
+                                },
+                                font: {
+                                    bold: true
+                                }
+                            };
+                        }
+                    }
+                }
+            }
             const workbook = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(workbook, worksheet, "Updated Prices");
-            XLSX.writeFile(workbook, `UPDATED_PRICES.xlsx-${moment().format("YYYY-MM-DD")}`);
+            XLSX.writeFile(workbook, `UPDATED_PRICES-${moment().format("YYYY-MM-DD")}.xlsx`);
         };
 
         const openAdditionalCharge = (requestItem: any) => {
@@ -370,18 +429,12 @@ const WeightedAverageForm = ({
                 additional_charge: requestItem.other_charges ?? "",
                 reason: requestItem.reason ?? "",
                 description: requestItem.description ?? "",
+                current_price:requestItem.current_price ?? "",
+                new_standard_price : requestItem.new_standard_price ?? "",
+                original_new_standard_price : requestItem.new_standard_price ?? ""
             });
 
             additionalChargeModal.onOpen();
-        };
-
-        const openchangeUnitPrice = () => {2
-            const firstItem = createFormHandler.values.items[0];
-
-            setChangeUnitPrice({
-                index: -1,
-                change_unit_price: String(firstItem?.new_standard_price ?? ""),
-            });
         };
 
         const confirmPassword = () => {
@@ -396,12 +449,16 @@ const WeightedAverageForm = ({
                     new_price:
                         Number(item.new_standard_price) +
                         Number(item.other_charges || 0),
+                    other_charges: item.other_charges,
+                    standard_difference: item.standard_difference,
+                    standard_uom_two: item.standard_uom_two,
+                    uniform_item_no : item.uniform_item_no,
+                    
                 }))
-                .filter((item: any) => Number(item.old_price ?? 0).toFixed(2) !== Number(item.new_price ?? 0).toFixed(2));
             setChangePriceItems(items);
+
             passwordModal.onClose();
             setPassword("");
-
             changeUnitPriceModal.onOpen();
         };
 
@@ -432,12 +489,12 @@ const WeightedAverageForm = ({
             }
         };
 
-        const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+        const getStatusBadge = (status: string): "success" | "warning" | "danger" | "purpose" |"default" => {
             switch (status) {
                 case "Posted":
                     return "success";
                 case "Updated":
-                    return "success";
+                    return "purpose";
                 case "Reviewed":
                     return "warning";
                 case "Cancelled":
@@ -480,6 +537,15 @@ const WeightedAverageForm = ({
             additionalChargeModal.onClose();
         };
 
+        const modalTitle =
+            mode === "create"
+                ? "Generate Weighted Average"
+                : isReview
+                ? "Review Weighted Average"
+                : isPost
+                ? "Post Weighted Average"
+                : "View Weighted Average";
+
         const tableActions = [
             ...(mode !== "create"
                 ? [{
@@ -515,6 +581,7 @@ const WeightedAverageForm = ({
             {columnHead : "Item Name" , path: "description" , columnType:COLUMNTYPES.string},
             {columnHead : "Old Standard Price" , path: "old_price" , columnType:COLUMNTYPES.amount},
             {columnHead : "New Standard Price" , path: "new_price" , columnType:COLUMNTYPES.amount},
+            {columnHead : "Price Difference" , path: "standard_difference", columnType:COLUMNTYPES.amount},
 
         ]
 
@@ -550,16 +617,25 @@ const WeightedAverageForm = ({
             },
         ];
 
-        
+        console.log({
+        mode,
+        isReview,
+        isPost,
+        isView,
+    });
     
     return (
         <Modal 
             isShowing={modal.isShowing}
-            title={mode === "create" ? "Generate Weighted Average" : 
-                isReview ? "Review Weighted Average" :
-                isPost ? "Post Weighted Average" :
-                "View Weighted Average"
-            }
+          title={
+                    mode === "create"
+                        ? "Generate Weighted Average"
+                        : mode === "review"
+                        ? "Review Weighted Average"
+                        : mode === "post"
+                        ? "Post Weighted Average"
+                        : "View Weighted Average"
+                }
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
@@ -652,7 +728,6 @@ const WeightedAverageForm = ({
                                     if (mode === "create") {
                                         generateItems();
                                     } else {
-                                        openchangeUnitPrice();
                                         passwordModal.onOpen();
                                     }
                                 }}
@@ -710,15 +785,37 @@ const WeightedAverageForm = ({
                             value = {chargeDraft.description}
                             disabled
                         />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                        <Textfield 
+                            label = "Standard Price"
+                            name = "description"
+                            value = {chargeDraft.current_price}
+                            disabled
+                        />
+                        <Textfield 
+                            label = "Final Standard Price"
+                            name = "description"
+                            value = {chargeDraft.new_standard_price}
+                            disabled
+                        />
+                    </div>
+                    <div className="grid grid-cols-1 gap-3">
                         <Textfield
                             label="Additional Charge"
                             name="additional_charge"
                             type="number"
                             value={chargeDraft.additional_charge}
-                            onChange={(event: any) => setChargeDraft({
-                                ...chargeDraft,
-                                additional_charge: event.target.value,
-                            })}
+                            onChange={(event: any) => {
+                                const additionalCharge = Number(event.target.value || 0);
+
+                                setChargeDraft({
+                                    ...chargeDraft,
+                                    additional_charge: event.target.value,
+                                    new_standard_price:
+                                        Number(chargeDraft.original_new_standard_price || 0) + additionalCharge,
+                                });
+                            }}
                         />
                         <TextArea
                             label="Reason"
@@ -729,6 +826,8 @@ const WeightedAverageForm = ({
                                 reason: event.target.value,
                             })}
                         />
+                    </div>
+                    <div>
                         <div className="flex justify-end gap-x-2">
                             <Button
                                 label="Cancel"
@@ -751,7 +850,7 @@ const WeightedAverageForm = ({
                     <div>
                         <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
                             <Table
-                                dataSet={changePriceItems}
+                                dataSet={filteredChangePriceItems}
                                 columnSettings={changePriceTableColumn}
                                 smallText
                                 dataKey="description"
@@ -761,8 +860,8 @@ const WeightedAverageForm = ({
 
                         <div className="flex justify-between items-center text-sm mt-2">
                             <div className="text-xs text-gray-400">
-                                Showing {changePriceItems.length}{" "}
-                                {changePriceItems.length === 1 ? "item" : "items"}
+                                Showing {filteredChangePriceItems.length}{" "}
+                                {filteredChangePriceItems.length === 1 ? "item" : "items"}
                             </div>
                         </div>
 
@@ -770,6 +869,7 @@ const WeightedAverageForm = ({
                             <Button
                                 type="button"
                                 label="Export"
+                                variant= "success"
                                 onClick={exportChangePriceItems}
                             />
 

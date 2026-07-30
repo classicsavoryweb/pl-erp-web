@@ -10,6 +10,8 @@ import {
     previewVariance,
     reviewVariance,
 } from "@/api/uniform/variance-report";
+import SearchableDropDown from "@/components/common/SearchableDropDown";
+import {physicalCountDropdown} from "@/api/uniform/physical-count";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import Badge from "@/components/common/Badge";
 import Button from "@/components/common/Button";
@@ -29,12 +31,14 @@ import { useFilter } from "@/hooks/use-filter";
 import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import moment from "moment";
-import { useState } from "react";
+import { useState , useEffect} from "react";
 import { toast } from "react-toastify";
+import Dropdown from "@/components/common/Dropdown";
 
 interface TableCardProps {
     performPermission: string;
 }
+
 
 const title = "Variance Report";
 
@@ -74,6 +78,8 @@ const formatDate = (value?: string | null) =>
         }
     };
 
+
+
 const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const api = useApiCall();
     const paginator = usePagination();
@@ -81,9 +87,12 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const formModal = useModal();
     const viewModal = useModal();
     const cancelModal = useModal();
+    const [physicalCounts, setPhysicalCounts] = useState<any[]>([]);
+    const [specialFilter, setSpecialFilter] = useState<string>("all");
     const [selected, setSelected] = useState<any>(null);
     const [cancelReason, setCancelReason] = useState("");
     const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
+    const [showFilter , setShowFilter] = useState<boolean>(false);
     const [varianceForm, setVarianceForm] = useState({
         begin_date: today(),
         ending_date: today(),
@@ -112,9 +121,8 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     useAsyncEffect(fetchRecords, [paginator.reload, api.reload, filter.reload]);
 
     const openCreate = () => {
-        const lastRecord = api.dataSet?.[0];
         setVarianceForm({
-            begin_date: lastRecord?.ending_date ?? today(),
+            begin_date:  physicalCounts[0].begin_date,
             ending_date: today(),
             remarks: "",
             items: [],
@@ -155,6 +163,26 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             formModal.setLoading(false);
         }
     };
+
+    useEffect(() => {
+        const loadPhysicalCounts = async () => {
+            const response = await physicalCountDropdown();
+
+            console.log("Physical Count API:", response);
+
+            setPhysicalCounts(response);
+
+             if (response.length > 0) {
+            setVarianceForm((prev) => ({
+                ...prev,
+                begin_date: response[0].begin_date,
+                items: [],
+            }));
+        }
+        };
+
+        loadPhysicalCounts();
+    }, []);
 
     const saveRecord = async () => {
         if (!varianceForm.items.length) {
@@ -299,20 +327,18 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
     const columns = [
         { columnHead: "Variance No.", path: "variance_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Begin Date", path: "begin_date", columnType: COLUMNTYPES.function,
-            function: (data: any)=> 
-                data.begin_date ? moment(data.begin_date).format("MM/DD/YYYY") : "-"
-            
-         },
-        { columnHead: "Ending Date", path: "ending_date", columnType: COLUMNTYPES.function,
-            function:(data: any) => 
-                data.ending_date ? moment(data.ending_date).format("MM/DD/YYYY") : "-"
-            
-         },
-        { columnHead: "Posted Date", path: "posted_at", columnType:COLUMNTYPES.function,
-            function:(data : any) => 
-                data.posted_at ? moment(data.posted_at).format("MM/DD/YYYY") : "-",
+        { columnHead : "Covered Date" , path : "" , columnType:COLUMNTYPES.function,
+            function:(data : any) => {
+                const begin_date = data.begin_date ? moment(data.begin_date).format("MM/DD/YYYY") : "-";
+                const ending_date = data.ending_date ? moment(data.ending_date).format("MM/DD/YYYY") : "-";
+                return `${begin_date} To ${ending_date}`;
+            }
+        
         },
+        // { columnHead: "Posted Date", path: "posted_at", columnType:COLUMNTYPES.function,
+        //     function:(data : any) => 
+        //         data.posted_at ? moment(data.posted_at).format("MM/DD/YYYY") : "-",
+        // },
         {
             columnHead: "Status",
             path: "status",
@@ -390,10 +416,70 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         { columnHead: "Reason", path: "reason_of_adjustment", columnType: COLUMNTYPES.string },
     ];
 
+   const specialFilters = [
+        {
+            label: "All Items",
+            value: "all",
+        },
+        {
+            label: "Items with Negative Variance",
+            value: "negative",
+        },
+        {
+            label: "Items with Positive Variance",
+            value: "positive",
+        },
+       
+    ];
+
+    const filteredVarianceItems = varianceForm.items
+        .map((item: any, index: number) => ({
+            ...item,
+            originalIndex: index,
+        }))
+        .filter((item: any) => {
+            switch (specialFilter) {
+                case "negative":
+                    return Number(item.variance) < 0;
+
+                case "positive":
+                    return Number(item.variance) > 0;
+
+                case "adjustment":
+                    return Number(item.adjustment ?? 0) !== 0;
+
+                default:
+                    return true;
+            }
+        });
+
+    const filteredItems = viewItems.filter((item: any) => {
+        if (specialFilter === "all") {
+            return true;
+        }
+
+        if (specialFilter === "negative") {
+            return Number(item.variance) < 0;
+        }
+
+        if (specialFilter === "positive") {
+            return Number(item.variance) > 0;
+        }
+
+        if (specialFilter === "adjustment") {
+            return Number(item.adjustment) !== 0;
+        }
+
+        return true;
+    });
+
     const totalVarianceCost = viewItems.reduce(
         (sum:number,item : any) => sum + (Number(item.total_variance_cost) || 0), 0
     );
 
+    console.log("Filter:", specialFilter);
+    console.log("Total:", viewItems.length);
+    console.log("Filtered:", filteredItems.length);
     return (
         <>
             <FilterCard
@@ -431,24 +517,27 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="grid grid-cols-2 gap-3">
-                        <Textfield
+                       <SearchableDropDown
                             label="Beginning Inventory"
-                            type="date"
-                            required
+                            name="begin_date"
                             value={varianceForm.begin_date}
-                            onChange={(e: any) =>
+                            options={physicalCounts.map((pc: any) => ({
+                                label: pc.begin_date,
+                                value: pc.begin_date,
+                            }))}
+                            onChange={(event: any) => {
                                 setVarianceForm((prev) => ({
                                     ...prev,
-                                    begin_date: e.target.value,
+                                    begin_date: event.target.value,
                                     items: [],
-                                }))
-                            }
+                                }));
+                            }}
                         />
                         <Textfield
                             label="Ending Inventory"
                             type="date"
                             required
-                            value={varianceForm.ending_date}
+                            value={varianceForm.ending_date ?? ""}
                             onChange={(e: any) =>
                                 setVarianceForm((prev) => ({
                                     ...prev,
@@ -473,18 +562,48 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                     </div>
                 </div>
 
-                <div className="flex font-semibold items-center justify-between">
-                    <span>Request Data</span>
-                    <div className="mb-2">
-                        <Button 
-                            type="button"
-                            label="Generate Data"
-                            onClick={loadPreview}
-                        />
+               <div className="flex items-center justify-between mb-2">
+                    <div className="font-semibold">
+                        <span>Request Data</span>
+                    </div>
+
+                    <div className="flex items-end gap-3">
+                        {showFilter && (
+                        <div className="w-80">
+                            <SearchableDropDown
+                                label="Special Filter"
+                                name="special_filter"
+                                value={specialFilter}
+                                options={specialFilters}
+                                onChange={(event: any) => {
+                                    setSpecialFilter(event.target.value);
+                                }}
+                            />
+                        </div>
+                        )}
+                        <div className="w-[140px] font-semibold">
+                            <Button 
+                                type="button"
+                                label="Generate Data"
+                                onClick={() => {
+                                    loadPreview();
+                                    setShowFilter(true);
+                                }}
+                                
+                            />
+                        </div>
                     </div>
                 </div>
 
-                <VarianceItemsTable items={varianceForm.items} editable onChange={updateVarianceItem} />
+                <VarianceItemsTable items={filteredVarianceItems} 
+                    editable 
+                    onChange={(index: number, key: string, value: any) =>
+                        updateVarianceItem(
+                            filteredVarianceItems[index].originalIndex,
+                            key,
+                            value
+                        )
+                    } />
 
                 <div className="flex justify-end gap-x-2 mt-3">
                     <div className="w-[120px]"><Button label="Submit" onClick={saveRecord} /></div>
@@ -519,14 +638,28 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
                             {/* <Textfield label="Status" value={selected.status ?? ""} disabled /> */}
-                            <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
+                            <SearchableDropDown
+                                label="Special Filter"
+                                name="special_filter"
+                                value={specialFilter}
+                                options={[
+                                    { label: "All Items", value: "all" },
+                                    { label: "Items with Negative Variance", value: "negative" },
+                                    { label: "Items with Positive Variance", value: "positive" },
+                                    { label: "Items with Adjustment", value: "adjustment" },
+                                ]}
+                                onChange={(event: any) => {
+                                    setSpecialFilter(event.target.value);
+                                }}
+                            /> 
                         </div>
+                        <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
 
                        
                
                         <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
                             <Table
-                                dataSet={viewItems}
+                                dataSet={filteredItems}
                                 columnSettings={varianceViewColumns}
                                 smallText
                                 dataKey="uniform_item_id"
@@ -653,7 +786,17 @@ const VarianceItemsTable = ({
                                     <input className={inputClassName} type="number" value={item.adjustment ?? 0} onChange={(e) => onChange?.(index, "adjustment", e.target.value)} />
                                 ) : money(item.adjustment)}
                             </td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.final_variance)}</td>
+                           <td
+                                className={`w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ${
+                                    Number(item.final_variance) > 0
+                                        ? "text-green-600 font-semibold"
+                                        : Number(item.final_variance) < 0
+                                        ? "text-red-600 font-semibold"
+                                        : ""
+                                }`}
+                            >
+                                ({money(item.final_variance)})
+                            </td>
                             <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.standard_cost)}</td>
                             <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.total_variance_cost)}</td>
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
