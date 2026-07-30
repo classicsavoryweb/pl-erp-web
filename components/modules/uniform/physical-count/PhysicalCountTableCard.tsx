@@ -443,14 +443,14 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
     const columns = [
         { columnHead: "Physical Count No.", path: "physical_count_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Begin Date", path: "begin_date", columnType: COLUMNTYPES.function,
-            function:(data: any) =>
-                data.begin_date ? moment(data.begin_date).format("MM/DD/YYYY") : "-",
-         },
-        { columnHead: "Ending Date", path: "ending_date", columnType: COLUMNTYPES.function,
-            function:(data : any) =>
-                data.ending_date ? moment(data.ending_date).format("MM/DD/YYYY") : "-"
-         },
+        {
+        columnHead: "Covered Date" , path: "" , columnType:COLUMNTYPES.function,
+            function:(data: any) => {
+                const begin_date = data.begin_date ? moment(data.begin_date).format("MM/DD/YYYY") : "-";
+                const end_date = data.ending_date ? moment(data.ending_date).format("MM/DD/YYYY") : "-";
+                return `${begin_date} To ${end_date}`
+            }
+        },
         { columnHead: "Counted By", path: "counted_by", columnType: COLUMNTYPES.string },
        {
             columnHead: "Status",

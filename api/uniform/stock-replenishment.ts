@@ -38,9 +38,10 @@ export const importReplenishmentItems = (payload: any) => axiosHelper({
         : {},
 });
 
-export const reviewReplenishment = (id: number) => axiosHelper({
+export const reviewReplenishment = (id: number, payload: any) => axiosHelper({
     func_path: `/uniform-replenishments/${id}/review`,
     method: "POST",
+    payload,
 });
 
 export const postReplenishment = (id: number) => axiosHelper({
@@ -89,9 +90,10 @@ export const createReceiving = (payload: {}) => axiosHelper({
     payload,
 });
 
-export const reviewReceiving = (id: number) => axiosHelper({
+export const reviewReceiving = (id: number ,payload : any) => axiosHelper({
     func_path: `/uniform-receivings/${id}/review`,
     method: "POST",
+    payload
 });
 
 export const postReceiving = (id: number) => axiosHelper({
