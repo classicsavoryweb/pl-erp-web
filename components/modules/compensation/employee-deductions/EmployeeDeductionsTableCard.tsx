@@ -34,6 +34,7 @@ import { formatNumber } from "@/helper/amount";
 import CountLabel from "@/components/common/CountLabel";
 import Accordion from "@/components/common/Accordion";
 import FetchSalaryDeductionForm from "./FetchSalaryDeductionForm";
+import ViewDeductionAmortizationModal from "./ViewDeductionAmortizationModal";
 
 interface EmployeeDeductionsInterface {
     hasExport?: boolean;
@@ -51,6 +52,7 @@ const EmployeeDeductionsTableCard = ({
     const createModal = useModal();
     const editModal = useModal();
     const viewModal = useModal();
+    const viewAmortizationModal = useModal();
     const editLoanModal = useModal();
     const importModal = useModal();
     const salaryDeductionModal = useModal();
@@ -216,6 +218,14 @@ const EmployeeDeductionsTableCard = ({
                     label: "View",
                     onClick: () => {
                         viewModal.onOpen();
+                        setData(data);
+                    }
+                });
+
+                actions.push({
+                    label: "View Amortization",
+                    onClick: () => {
+                        viewAmortizationModal.onOpen();
                         setData(data);
                     }
                 });
@@ -450,7 +460,7 @@ const EmployeeDeductionsTableCard = ({
                                 count={summary.deduction_count}
                             />
                             <CountLabel
-                                label="Remaing Balance"
+                                label="Remaining Balance"
                                 count={summary.total_balance}
                             />
                             {formHandler.values.status && (
@@ -571,6 +581,11 @@ const EmployeeDeductionsTableCard = ({
                     api.triggerReload();
                     salaryDeductionModal.onClose();
                 }}
+            />
+
+            <ViewDeductionAmortizationModal
+                modal={viewAmortizationModal}
+                data={data}
             />
         </>
     );

@@ -31,6 +31,7 @@ import ViewATDModal from "./ViewATDModal";
 import BranchDropDown from "../../generic/BranchDropDown";
 import ATDDeductionDropDown from "../../generic/ATDDeductionDropDown";
 import Accordion from "@/components/common/Accordion";
+import CountLabel from "@/components/common/CountLabel";
 
 interface ATDTableInterface {
     hasExport?: boolean;
@@ -50,6 +51,10 @@ const ATDTableCard = ({
     const [data, setData] = useState({});
     const [employee, setEmployee] = useState<any>({});
     const { permissions } = useContext(AuthContext);
+    const [summary, setSummary] = useState({
+        deduction_count: 0,
+        total_balance: 0,
+    });
     const paginator = usePagination();
     const filter = useFilter();
 
@@ -199,9 +204,14 @@ const ATDTableCard = ({
             if (resp.error) {
                 toast.error("Error fetching deductions");
             } else {
-                api.setDataSet(resp.data.data);
-                paginator.setPage(resp.data.current_page);
-                paginator.setPaginationData(resp.data);
+                const deductions = resp.data.deductions;
+                api.setDataSet(deductions.data);
+                paginator.setPage(deductions.current_page);
+                paginator.setPaginationData(deductions);
+                setSummary({
+                    deduction_count: Number(resp.data.summary?.deduction_count ?? 0),
+                    total_balance: Number(resp.data.summary?.total_balance ?? 0),
+                });
             }
         })
         .catch(() => {
@@ -323,52 +333,64 @@ const ATDTableCard = ({
                             onChange={formHandler.handleChange}
                         />
                     </Grid>
-                    <div className="flex justify-end gap-x-1">
-                        <div>
-                            <Button
-                                type="submit"
-                                label="Search"
-                                onClick={() => {}}
-                                isIcon
-                                iconType="search"
-                            />    
+                    <div className="flex items-end justify-between gap-4 max-h-[100px]">
+                        <div className="flex items-end gap-1">
+                            <CountLabel
+                                label="Active Deductions"
+                                count={summary.deduction_count}
+                            />
+                            <CountLabel
+                                label="Remaining Balance"
+                                count={summary.total_balance}
+                            />
                         </div>
-                        {(exportPermission === "" || permissions.includes(exportPermission)) &&
-                            <>
-                                { hasExport &&
-                                    <div>
-                                        <Button
-                                            label="Export"
-                                            type="button"
-                                            onClick={() => {
-                                                exportHandler.setValues(prev => ({
-                                                    ...prev,
-                                                    ...formHandler.values
-                                                }));
-                                                exportHandler.submitForm();
-                                            }}
-                                            variant="success"
-                                            isIcon
-                                            iconType="export"
-                                        />    
-                                    </div>
-                                }
-                            </>
-                        }
-                        <div>
-                            <Button
-                                label="Reset"
-                                type="button"
-                                onClick={() => {
-                                    formHandler.resetForm();
-                                    exportHandler.resetForm();
-                                    formHandler.submitForm();
-                                    setEmployee({});
-                                }}
-                                variant="secondary"
-                                isIcon
-                                iconType="reset"
-                            />    
+                        <div className="flex justify-end gap-x-1">
+                            <div>
+                                <Button
+                                    type="submit"
+                                    label="Search"
+                                    onClick={() => {}}
+                                    isIcon
+                                    iconType="search"
+                                />    
+                            </div>
+                            {(exportPermission === "" || permissions.includes(exportPermission)) &&
+                                <>
+                                    { hasExport &&
+                                        <div>
+                                            <Button
+                                                label="Export"
+                                                type="button"
+                                                onClick={() => {
+                                                    exportHandler.setValues(prev => ({
+                                                        ...prev,
+                                                        ...formHandler.values
+                                                    }));
+                                                    exportHandler.submitForm();
+                                                }}
+                                                variant="success"
+                                                isIcon
+                                                iconType="export"
+                                            />    
+                                        </div>
+                                    }
+                                </>
+                            }
+                            <div>
+                                <Button
+                                    label="Reset"
+                                    type="button"
+                                    onClick={() => {
+                                        formHandler.resetForm();
+                                        exportHandler.resetForm();
+                                        formHandler.submitForm();
+                                        setEmployee({});
+                                    }}
+                                    variant="secondary"
+                                    isIcon
+                                    iconType="reset"
+                                />    
+                            </div>
                         </div>
                     </div>
                 </form>
