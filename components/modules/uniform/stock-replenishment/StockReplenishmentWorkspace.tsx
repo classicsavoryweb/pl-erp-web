@@ -199,7 +199,6 @@ const StockReplenishmentWorkspace = ({
         }
 
         toast.success(response.data.message);
-
         setDetail(null);
         setRequestOpen(false);
         setReviewId(null);
@@ -207,7 +206,7 @@ const StockReplenishmentWorkspace = ({
         setIsPost(false);
         setIsReviewReceive(false);
         setReceivingOpen(false); 
-    setReceiveId(null); 
+        setReceiveId(null); 
         
         api.triggerReload();
     };
@@ -271,7 +270,6 @@ const StockReplenishmentWorkspace = ({
             setCancelSubmitting(false);
         }
     };
-
      const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
         switch (status) {
             case "Posted":
@@ -1222,31 +1220,33 @@ const StockReplenishmentWorkspace = ({
                             submitReceiving();
                         }
                 }}>
-                    <SearchableDropDown
-                        label="Replenishment Request"
-                        placeholder="select posted request"
-                        name="replenishment_id"
-                        value={receivingForm.replenishment_id ?? ""}
-                        error = {receivingForm.errors.replenishment_id}
-                        required
-                        disabled={isReviewReceive}
-                        onChange={(event) => {selectReceivingRequest(event.target.value)}}
-                        options={receivable
-                            .filter((record) =>
-                                (record.status === "Posted" || record.status === "Partially Received") &&
-                                record.items?.some((item: any) => {
-                                    const remaining =
-                                        Number(item.remaining_qty) -
-                                        Number(item.pending_received_qty ?? 0);
+                    {!isReviewReceive && (
+                        <SearchableDropDown
+                            label="Replenishment Request"
+                            placeholder="select posted request"
+                            name="replenishment_id"
+                            value={receivingForm.replenishment_id ?? ""}
+                            error = {receivingForm.errors.replenishment_id}
+                            required
+                            disabled={isReviewReceive}
+                            onChange={(event) => {selectReceivingRequest(event.target.value)}}
+                            options={receivable
+                                .filter((record) =>
+                                    (record.status === "Posted" || record.status === "Partially Received") &&
+                                    record.items?.some((item: any) => {
+                                        const remaining =
+                                            Number(item.remaining_qty) -
+                                            Number(item.pending_received_qty ?? 0);
 
-                                    return remaining > 0;
-                                })
-                            )
-                            .map((record) => ({
-                            label: `${record.request_no} - ${record.supplier?.vendor_name ?? ""}`,
-                            value: String(record.id),
-                        }))}
-                    />
+                                        return remaining > 0;
+                                    })
+                                )
+                                .map((record) => ({
+                                label: `${record.request_no} - ${record.supplier?.vendor_name ?? ""}`,
+                                value: String(record.id),
+                            }))}
+                        />
+                    )}
                     <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
                         <Textfield
                             label="Date Received"
@@ -1291,7 +1291,7 @@ const StockReplenishmentWorkspace = ({
                             name="checker"
                             value={receivingForm.checker_name ?? ""}
                             error={receivingForm.errors.checker_employee}
-                            required
+                            
                             disabled
                         />
                         )}
@@ -1320,21 +1320,15 @@ const StockReplenishmentWorkspace = ({
                             })}
                         />
                         <Textfield
-                            label="Transmitted By"
+                            label="Supplier"
                             name="transmitted_by"
-                            disabled={isReviewReceive}
+                            disabled
                             value={receivingForm.transmitted_by ?? ""}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 transmitted_by: event.target.value,
                             })}
                         />
-                        {/* <Textfield
-                            label="Total"
-                            name="total_amount"
-                            value={receivingTotal.toFixed(2)}
-                            disabled
-                        /> */}
                     </div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Receiving Items</span>
@@ -1374,7 +1368,6 @@ const StockReplenishmentWorkspace = ({
                 }
                 onClose={() => {
                     setDetail(null);
-                    // setIsReview(false);
                     setIsPost(false);
                     setIsReviewReceive(false);
                 }}
@@ -1615,12 +1608,6 @@ const StockReplenishmentWorkspace = ({
                                     } else if (isPostReceive) {
                                         runAction("Post Receiving", () => postReceiving(detail.id));
                                     } 
-                                    // else if (isReview) {
-                                    //     runAction("Review Request", () => reviewReplenishment(detail.id));
-                                    // } 
-                                    // else if (isReviewReceive) {
-                                    //     runAction("Review Receiving", () => reviewReceiving(detail.id));
-                                    // }
                                 }}
                             />
                         )}
