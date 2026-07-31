@@ -127,6 +127,16 @@ const WeightedAverageForm = ({
 
         const createFormHandler = useFormik({  
             initialValues  :defaultValues(),
+               validate: (values) => {
+                    if (!values.items || values.items.length === 0) {
+                        toast.error("Load data first.");
+                        return {
+                            items: "Load data first.",
+                        };
+                    }
+
+                    return {};
+                },
             validateOnChange: false,
             validationSchema: Yup.object().shape({
                 tag:Yup.string().required("Tag is Required."),
@@ -195,6 +205,10 @@ const WeightedAverageForm = ({
             }),
 
             onSubmit: async (values , {resetForm, setSubmitting}) =>{
+                if (!values.items || values.items.length === 0) {
+                    toast.error("Load data first.");
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: isReview 
                         ? "Review Weighted Average"
@@ -616,13 +630,6 @@ const WeightedAverageForm = ({
                 }
             },
         ];
-
-        console.log({
-        mode,
-        isReview,
-        isPost,
-        isView,
-    });
     
     return (
         <Modal 

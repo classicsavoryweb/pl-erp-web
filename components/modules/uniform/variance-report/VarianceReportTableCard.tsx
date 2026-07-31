@@ -137,6 +137,11 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             return;
         }
 
+        if(moment(varianceForm.ending_date).isBefore(moment(),"day")){
+            toast.error("Ending date can`t be earlier than today");
+            return;
+        }
+
         if (!moment(varianceForm.ending_date).isAfter(moment(varianceForm.begin_date))) {
             toast.error("Ending date should be greater than Beginning date");
             return;
@@ -167,8 +172,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     useEffect(() => {
         const loadPhysicalCounts = async () => {
             const response = await physicalCountDropdown();
-
-            console.log("Physical Count API:", response);
 
             setPhysicalCounts(response);
 
@@ -476,10 +479,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const totalVarianceCost = viewItems.reduce(
         (sum:number,item : any) => sum + (Number(item.total_variance_cost) || 0), 0
     );
-
-    console.log("Filter:", specialFilter);
-    console.log("Total:", viewItems.length);
-    console.log("Filtered:", filteredItems.length);
     return (
         <>
             <FilterCard
