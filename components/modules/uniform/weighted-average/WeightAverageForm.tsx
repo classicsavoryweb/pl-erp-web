@@ -91,7 +91,9 @@ const WeightedAverageForm = ({
             description: "",
             current_price: "",
             new_standard_price: 0,
+            standard_difference : 0,
             original_new_standard_price : "",
+            original_standard_difference : "",
         });
         const [changeUnitPrice, setChangeUnitPrice] = useState({
             index: -1,
@@ -436,7 +438,7 @@ const WeightedAverageForm = ({
                 (item: any) => item.uniform_item_no === requestItem.uniform_item_no
                 
             );
-
+         
             setChargeDraft({
                 index,
                 additional_charge: requestItem.other_charges ?? "",
@@ -444,7 +446,9 @@ const WeightedAverageForm = ({
                 description: requestItem.description ?? "",
                 current_price:requestItem.current_price ?? "",
                 new_standard_price : requestItem.new_standard_price ?? "",
-                original_new_standard_price : requestItem.new_standard_price ?? ""
+                original_new_standard_price : requestItem.new_standard_price ?? "",
+                standard_difference : requestItem.standard_difference ?? "" ,
+                original_standard_difference : requestItem.standard_difference ?? ""
             });
 
             additionalChargeModal.onOpen();
@@ -792,9 +796,9 @@ const WeightedAverageForm = ({
                             disabled
                         />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
+                    <div className="grid grid-cols-3 gap-3">
                         <Textfield 
-                            label = "Standard Price"
+                            label = "New Standard Price"
                             name = "description"
                             value = {chargeDraft.current_price}
                             disabled
@@ -805,9 +809,15 @@ const WeightedAverageForm = ({
                             value = {chargeDraft.new_standard_price}
                             disabled
                         />
+                         <Textfield 
+                            label = "Price Difference"
+                            name = "description"
+                            value = {chargeDraft.standard_difference}
+                            disabled
+                        />
                     </div>
                     <div className="grid grid-cols-1 gap-3">
-                        <Textfield
+                       <Textfield
                             label="Additional Charge"
                             name="additional_charge"
                             type="number"
@@ -820,6 +830,8 @@ const WeightedAverageForm = ({
                                     additional_charge: event.target.value,
                                     new_standard_price:
                                         Number(chargeDraft.original_new_standard_price || 0) + additionalCharge,
+                                    standard_difference:
+                                        Number(chargeDraft.original_standard_difference || 0) + additionalCharge,
                                 });
                             }}
                         />
