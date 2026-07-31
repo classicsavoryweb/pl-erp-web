@@ -87,6 +87,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const formModal = useModal();
     const viewModal = useModal();
     const cancelModal = useModal();
+    const [itemSearch, setItemSearch] = useState("");
     const [physicalCounts, setPhysicalCounts] = useState<any[]>([]);
     const [specialFilter, setSpecialFilter] = useState<string>("all");
     const [selected, setSelected] = useState<any>(null);
@@ -284,6 +285,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         anchor.remove();
         window.URL.revokeObjectURL(downloadUrl);
     };
+    
 
     const actionsFor = (record: any) => [
         {
@@ -292,6 +294,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 setModalType('View');
                 setSelected(record);
                 viewModal.onOpen();
+                setItemSearch("");
             },
         },
         {
@@ -306,6 +309,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 setModalType("Review");
                 setSelected(record);
                 viewModal.onOpen();
+                 setItemSearch("");
             },
         },
         record.status === "Reviewed" && {
@@ -315,6 +319,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 setModalType("Post");
                 setSelected(record);
                 viewModal.onOpen();
+                 setItemSearch("");
             },
         },
         ["Unposted", "Reviewed"].includes(record.status) && {
@@ -436,45 +441,64 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     ];
 
     const filteredVarianceItems = varianceForm.items
-        .map((item: any, index: number) => ({
-            ...item,
-            originalIndex: index,
-        }))
-        .filter((item: any) => {
-            switch (specialFilter) {
-                case "negative":
-                    return Number(item.variance) < 0;
+    .map((item: any, index: number) => ({
+        ...item,
+        originalIndex: index,
+    }))
+    .filter((item: any) => {
+        const search = itemSearch.toLowerCase().trim();
 
-                case "positive":
-                    return Number(item.variance) > 0;
+        const matchesSearch =
+            !search ||
+            item.uniform_item_no?.toLowerCase().includes(search) ||
+            item.description?.toLowerCase().includes(search);
 
-                case "adjustment":
-                    return Number(item.adjustment ?? 0) !== 0;
-
-                default:
-                    return true;
-            }
-        });
-
-    const filteredItems = viewItems.filter((item: any) => {
-        if (specialFilter === "all") {
-            return true;
+        if (!matchesSearch) {
+            return false;
         }
 
-        if (specialFilter === "negative") {
-            return Number(item.variance) < 0;
-        }
+        switch (specialFilter) {
+            case "negative":
+                return Number(item.variance) < 0;
 
-        if (specialFilter === "positive") {
-            return Number(item.variance) > 0;
-        }
+            case "positive":
+                return Number(item.variance) > 0;
 
-        if (specialFilter === "adjustment") {
-            return Number(item.adjustment) !== 0;
-        }
+            case "adjustment":
+                return Number(item.adjustment ?? 0) !== 0;
 
-        return true;
+            default:
+                return true;
+        }
     });
+
+   const filteredItems = (selected?.items ?? []).filter((item: any) => {
+        const search = itemSearch.toLowerCase().trim();
+
+        const matchesSearch =
+            !search ||
+            item.item?.item_no?.toLowerCase().includes(search) ||
+            item.item?.description?.toLowerCase().includes(search);
+
+        if (!matchesSearch) {
+            return false;
+        }
+
+        // Existing special filter
+        switch (specialFilter) {
+            case "negative":
+                return Number(item.variance) < 0;
+
+            case "positive":
+                return Number(item.variance) > 0;
+
+            case "adjustment":
+                return Number(item.adjustment ?? 0) !== 0;
+
+            default:
+                return true;
+        }
+});
 
     const totalVarianceCost = viewItems.reduce(
         (sum:number,item : any) => sum + (Number(item.total_variance_cost) || 0), 0
@@ -496,7 +520,16 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             />
             <Card>
                 <div className="flex justify-end gap-x-3">
-                    <DropDownButtons actions={[{ label: `Generate ${title}`, onClick: openCreate }]} />
+                    <DropDownButtons actions={[
+                        {
+                            label: `Generate ${title}`,
+                            onClick: () => {
+                                openCreate();
+                                setItemSearch("");
+                            }
+                        }
+                    ]}
+                    />
                 </div>
 
                 <Table
@@ -566,20 +599,30 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                         <span>Request Data</span>
                     </div>
 
-                    <div className="flex items-end gap-3">
+                    <div className="flex items-end gap-4">
                         {showFilter && (
-                        <div className="w-80">
-                            <SearchableDropDown
-                                label="Special Filter"
-                                name="special_filter"
-                                value={specialFilter}
-                                options={specialFilters}
-                                onChange={(event: any) => {
-                                    setSpecialFilter(event.target.value);
-                                }}
-                            />
+                        <div className="flex items-end gap-4">
+                            <div className="w-80">
+                                <SearchableDropDown
+                                    label="Special Filter"
+                                    name="special_filter"
+                                    value={specialFilter}
+                                    options={specialFilters}
+                                    onChange={(event: any) => {
+                                        setSpecialFilter(event.target.value);
+                                    }}
+                                />
+                            </div>
+                            <div className="w-80">
+                                <Textfield
+                                    label="Search Item"
+                                    value={itemSearch}
+                                    onChange={(e: any) => setItemSearch(e.target.value)}
+                                />
+                            </div>
                         </div>
                         )}
+                       
                         <div className="w-[140px] font-semibold">
                             <Button 
                                 type="button"
@@ -637,7 +680,11 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
                             {/* <Textfield label="Status" value={selected.status ?? ""} disabled /> */}
-                            <SearchableDropDown
+                         
+                        </div>
+                        <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
+                        <div className = "grid grid-cols-3 gap-1 items-end">
+                               <SearchableDropDown
                                 label="Special Filter"
                                 name="special_filter"
                                 value={specialFilter}
@@ -651,8 +698,12 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                                     setSpecialFilter(event.target.value);
                                 }}
                             /> 
+                            <Textfield
+                                    label="Search Item"
+                                    value={itemSearch}
+                                    onChange={(e: any) => setItemSearch(e.target.value)}
+                                />
                         </div>
-                        <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
 
                        
                
