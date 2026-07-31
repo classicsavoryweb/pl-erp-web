@@ -682,7 +682,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                             <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
                         </div>
                        
-                        <div className = "grid grid-cols-3 gap-1 items-end">
+                        <div className = "grid grid-cols-4 gap-1 items-end">
                                <SearchableDropDown
                                 label="Special Filter"
                                 name="special_filter"
