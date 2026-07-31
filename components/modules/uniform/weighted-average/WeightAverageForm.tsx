@@ -195,7 +195,6 @@ const WeightedAverageForm = ({
                 overall_remarks:Yup.string().nullable(),
                 items:Yup.array()
                     .min(1,"At least one item is required")
-                    .max(40,"A contain maximum is 40.")
                     .of(Yup.object({
                         uniform_item_no: Yup.string().required(),
                         item_remarks : Yup.string().nullable(),
