@@ -662,10 +662,10 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                     <>
                         <div className="grid grid-cols-5 gap-1 items-end">
                             <div className= "col-span-2">
-                            <Textfield label="Variance No." value={selected.variance_no ?? ""} disabled />
+                                <Textfield label="Variance No." value={selected.variance_no ?? ""} disabled />
                             </div>
                             <div className="col-span-2">
-                            <Textfield label="Physical Count No." value={selected.physical_count?.physical_count_no ?? ""} disabled /> 
+                                <Textfield label="Physical Count No." value={selected.physical_count?.physical_count_no ?? ""} disabled /> 
                             </div>
                             <div className="col-span-1 w-full flex justify-center">
                                 <div className="scale-170 -translate-y-3">
@@ -679,10 +679,9 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                         <div className="grid grid-cols-3 gap-1 items-end">   
                             <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
                             <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
-                            {/* <Textfield label="Status" value={selected.status ?? ""} disabled /> */}
-                         
+                            <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
                         </div>
-                        <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
+                       
                         <div className = "grid grid-cols-3 gap-1 items-end">
                                <SearchableDropDown
                                 label="Special Filter"
