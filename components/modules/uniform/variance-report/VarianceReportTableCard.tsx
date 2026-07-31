@@ -676,33 +676,39 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                                 </div>
                             </div>   
                         </div>
-                        <div className="grid grid-cols-3 gap-1 items-end">   
-                            <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
-                            <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
-                            {/* <Textfield label="Status" value={selected.status ?? ""} disabled /> */}
-                         
+                        <div className="grid grid-cols-5 gap-1 items-end">
+                            <div className="col-span-2">
+                                <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
+                            </div>
+                            <div className="col-span-2">
+                                <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
+                            </div>
                         </div>
                         <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
-                        <div className = "grid grid-cols-3 gap-1 items-end">
-                               <SearchableDropDown
-                                label="Special Filter"
-                                name="special_filter"
-                                value={specialFilter}
-                                options={[
-                                    { label: "All Items", value: "all" },
-                                    { label: "Items with Negative Variance", value: "negative" },
-                                    { label: "Items with Positive Variance", value: "positive" },
-                                    { label: "Items with Adjustment", value: "adjustment" },
-                                ]}
-                                onChange={(event: any) => {
-                                    setSpecialFilter(event.target.value);
-                                }}
-                            /> 
-                            <Textfield
+                        <div className="grid grid-cols-5 gap-1 items-end">
+                            <div className="col-span-2">
+                                <SearchableDropDown
+                                    label="Special Filter"
+                                    name="special_filter"
+                                    value={specialFilter}
+                                    options={[
+                                        { label: "All Items", value: "all" },
+                                        { label: "Items with Negative Variance", value: "negative" },
+                                        { label: "Items with Positive Variance", value: "positive" },
+                                        { label: "Items with Adjustment", value: "adjustment" },
+                                    ]}
+                                    onChange={(event: any) => {
+                                        setSpecialFilter(event.target.value);
+                                    }}
+                                />
+                            </div>
+                            <div className="col-span-2">
+                                <Textfield
                                     label="Search Item"
                                     value={itemSearch}
                                     onChange={(e: any) => setItemSearch(e.target.value)}
                                 />
+                            </div>
                         </div>
 
                        
