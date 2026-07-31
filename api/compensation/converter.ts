@@ -163,10 +163,11 @@ export const createCShubAppliedTransactions = async (payload: {}) => {
     return resData;
 };
 
-export const sendTransactionEmail = async (id:number) => {
+export const sendTransactionEmail = async (id:number, payload: {}) => {
     const resData = await axiosHelper({
         func_path: `/send-transaction-email/${id}`,
         method: 'GET',
+        payload: payload
     });
 
     return resData;

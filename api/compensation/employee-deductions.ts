@@ -149,3 +149,13 @@ export const createHealthCareForSalaryDeduction = async (payload: {}) => {
 
     return resData;
 };
+
+export const getDeductionAmortizationHistory = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-deduction-amortization-history`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+}

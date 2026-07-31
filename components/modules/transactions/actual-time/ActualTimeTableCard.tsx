@@ -255,7 +255,7 @@ const ActualTimeTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch && branch.name ? branch.name : 'default-branch';
+                    const branchName = branch?.name ?? 'all-branches';
                         
                     a.href = downloadUrl;
                     a.download = `${branchName.toUpperCase()}-ACTUAL-LOGS-${moment().format('YYYY-MM-DD')}.xls`;
