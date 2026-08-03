@@ -42,6 +42,15 @@ export const postVariance = (id: number) => axiosHelper({
     method: "POST",
 });
 
+export const getVarianceById = async (id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/uniform-variances/${id}`,
+        method: "GET",
+    });
+
+    return resData;
+};
+
 export const cancelVariance = (id: number, cancel_reason: string) => axiosHelper({
     func_path: `/uniform-variances/${id}/cancel`,
     method: "POST",

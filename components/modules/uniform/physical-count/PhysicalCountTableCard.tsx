@@ -6,15 +6,13 @@ import {
     exportPhysicalCountDetails,
     exportPhysicalCounts,
     getPhysicalCounts,
-    postPhysicalCount,
     previewPhysicalCount,
-    reviewPhysicalCount,
 } from "@/api/uniform/physical-count";
+import PhysicalCountViewForm from "./PhysicalCountViewForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import Badge from "@/components/common/Badge";
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
-import confirm from "@/components/common/Confirm";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/common/Modal";
@@ -33,7 +31,6 @@ import usePagination from "@/hooks/pagination";
 import moment from "moment";
 import { useState, useRef } from "react";
 import { toast } from "react-toastify";
-import ActivityLogsModal from "../../generic/ActivityLogsModal";
 
 interface TableCardProps {
     performPermission: string;
@@ -54,12 +51,6 @@ const textInputClassName = inputClassName.replace("text-right", "text-left");
 
 const responseMessage = (resp: any) =>
     resp?.message ?? resp?.data?.message ?? "Unable to complete request.";
-
-const formatAuditDate = (value?: string | null) =>
-    value ? moment(value).format("MMMM DD, YYYY h:mm A") : "-";
-
-const formatDate = (value?: string | null) =>
-    value ? moment(value).format("YYYY-MM-DD") : "";
 
 const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
     switch (status) {
@@ -214,32 +205,6 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         }
     };
 
-    const runAction = async (record: any, action: "review" | "post") => {
-        const isConfirmed = await confirm({
-            title,
-            message: `Are you sure you want to ${action} this physical count?`,
-        });
-        if (!isConfirmed) return;
-
-        const resp = action === "review"
-            ? await reviewPhysicalCount(record.id)
-            : await postPhysicalCount(record.id);
-
-        if (resp?.error || resp?.errors) {
-            toast.error(responseMessage(resp));
-            return;
-        }
-
-        toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
-        api.triggerReload();
-        viewModal.onClose();
-    };
-
-    const loadPreviewData = async () => {
-        await loadPreview();
-        setHasGeneratedData(true);
-    };
-
     const submitCancel = async () => {
         if (!cancelReason.trim() || !selected) {
             toast.error("Cancel reason is required.");
@@ -366,7 +331,6 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                     return;
                 }
             }
-
 
             const importedItems = data.map((row) => {
                 const physical_count = Number(row["Physical Count"]);
@@ -495,33 +459,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 itemIndex === index ? { ...item, [key]: value } : item
             ),
         }));
-    };
-
-    const viewItems = selected?.items ?? [];
-    const physicalViewColumns = [
-        { columnHead: "Item Code", path: "item_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Description", path: "description", columnType: COLUMNTYPES.string },
-        { columnHead: "UOM", path: "uom", columnType: COLUMNTYPES.string },
-        { columnHead: "Beginning", path: "beginning_inventory", columnType: COLUMNTYPES.amount },
-        { columnHead: "Purchases", path: "total_purchases", columnType: COLUMNTYPES.amount },
-        { columnHead: "Outgoing", path: "total_outgoing", columnType: COLUMNTYPES.amount },
-        { columnHead: "Should Be", path: "should_be_inventory", columnType: COLUMNTYPES.amount },
-        { columnHead: "Physical Count", path: "physical_count", columnType: COLUMNTYPES.function,
-            function:(item : any) => {
-                const physical_count = Number(item.physical_count || 0);
-                const should_be = Number(item.should_be_inventory || 0);
-                return(
-                    <span className = {physical_count < should_be ? "text-red-500" : ""}>
-                        {item.physical_count}
-                    </span>
-                )
-            }
-         },
-        { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount},
-        { columnHead: "Remarks", path: "item_remarks", columnType: COLUMNTYPES.string },
-    ];
-
-    
+    };   
 
     const actionbutton = [
         {
@@ -629,98 +567,6 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
             </Modal>
 
             <Modal
-                size="xxl"
-                title={`${modalType} ${title}`}
-                isShowing={viewModal.isShowing}
-                onClose={viewModal.onClose}
-            >
-                {selected && (
-                    <>
-                        <div className="grid grid-cols-4 gap-1 items-end">
-                            <div className="col-span-3">
-                                <Textfield label="Physical Count No." value={selected.physical_count_no ?? ""} disabled />
-                            </div>
-                            <div className="col-span-1 w-full flex justify-center">
-                                <div className="scale-170 -translate-y-3">
-                                    <Badge
-                                        status={getStatusBadge(selected.status)}
-                                        label={selected.status}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-                        <div className="grid grid-cols-3 gap-1 items-end">                       
-                            <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
-                            <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
-                            <Textfield label="Counted By" value={selected.counted_by ?? ""} disabled /> 
-                        </div>
-
-                        <TextArea label="Remarks" value={selected.remarks ?? ""} disabled />
-
-                        <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
-                            <Table
-                                dataSet={viewItems}
-                                columnSettings={physicalViewColumns}
-                                smallText
-                                dataKey="uniform_item_id"
-                                fixed
-                            />
-                        </div>
-                        <div className="flex justify-between items-center text-sm mt-1">  
-                            <div className="text-xs text-gray-400">          
-                                Showing {(viewItems.length ?? 0)}{" "}
-                                {(viewItems?.length ?? 0) === 1 ? "item" : "items"}
-                            </div>
-                            <div className="flex items-center gap-2 pr-2 mr-2">
-                                <span className="text-gray-400 text-xs">Total Amount:</span>
-                                <span className="font-semibold text-sm">
-                                {money(selected.items_sum_total_amount)}
-                                </span>
-                            </div>
-                        </div>
-
-                        <hr className="mt-6 pb-2 text-slate-300" />
-                        <p>Report Log:</p>
-                        <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
-                            <Textfield label="Prepared By:" value={selected.prepared_by ?? ""} disabled />
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.created_at)} disabled />
-                            <Textfield label="Reviewed By:" value={selected.reviewed_by ?? ""} disabled />
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.reviewed_at)} disabled />
-                            <Textfield label="Posted By:" value={selected.posted_by ?? ""} disabled />                                                                                          
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.posted_at)} disabled />
-                            <Textfield label="Cancelled By:" value={selected.cancelled_by ?? ""} disabled />
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.cancelled_at)} disabled />
-                        </div>
-                        <TextArea label="Cancel Reason" value={selected.cancelled_reason ?? ""} disabled />
-                        {(modalType === "Review" || modalType === "Post") && (
-                        <div className="grid grid-cols-4 mt-4">
-                            <div className="col-span-3"></div>
-
-                            <div className="col-span-1 flex justify-end gap-2">
-                                <Button
-                                    label="Close"
-                                    variant="secondary"
-                                    onClick={viewModal.onClose}
-                                />
-                                <Button
-                                    label={modalType === "Post" ? "Post" : "Review"}
-                                    onClick={() => {
-                                        if (modalType === "Review") {
-                                            runAction(selected, "review");
-                                        }
-                                        if (modalType === "Post") {
-                                            runAction(selected, "post");
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        )}
-                    </>
-                )}
-            </Modal>
-
-            <Modal
                 size="md"
                 title={`Cancel ${title}`}
                 isShowing={cancelModal.isShowing}
@@ -733,6 +579,12 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                     <div className="w-[120px]"><Button label="Submit" onClick={submitCancel} /></div>
                 </div>
             </Modal>
+            <PhysicalCountViewForm
+                modal={viewModal}
+                modalType={modalType}
+                title={title}
+                selected={selected}  
+            />
         </>
     );
 };

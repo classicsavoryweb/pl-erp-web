@@ -14,14 +14,17 @@ import { useEffect, useState } from "react";
 import { useModal } from "@/hooks/modal";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+import AdditionalChargeModal from "./AdditionalChargeModal";
 import { getDropDownMasterlist } from "@/api/uniform/request-and-issuance"
 import { createWeightAverage , getWeightAverageItems , getWeightAverageById , updateWeightStatus , updateUnitPrice } from "@/api/uniform/weighted-average";
 import moment from "moment";
 import Badge from "@/components/common/Badge";
 import  WeightedAverageItem  from "./WeightAverageItemView";
+import PasswordForm from "./PasswordForm";
 import { create } from "lodash";
 import * as XLSX from "xlsx-js-style";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import ChangeUnitPriceForm from "./ChangeUnitPriceForm";
 
 interface WeightAverageFormProps{
     modal: any;
@@ -635,6 +638,7 @@ const WeightedAverageForm = ({
         ];
     
     return (
+        <>
         <Modal 
             isShowing={modal.isShowing}
           title={
@@ -782,166 +786,6 @@ const WeightedAverageForm = ({
                         </span>
                     </div>
                 </div>
-                <Modal
-                    isShowing={additionalChargeModal.isShowing}
-                    title="Additional Charge"
-                    onClose={additionalChargeModal.onClose}
-                    size="md"
-                >
-                    <div className="grid grid-cols-1 gap-3">
-                        <Textfield 
-                            label = "Item Description"
-                            name = "description"
-                            value = {chargeDraft.description}
-                            disabled
-                        />
-                    </div>
-                    <div className="grid grid-cols-3 gap-3">
-                        <Textfield 
-                            label = "New Standard Price"
-                            name = "description"
-                            value = {chargeDraft.current_price}
-                            disabled
-                        />
-                        <Textfield 
-                            label = "Final Standard Price"
-                            name = "description"
-                            value = {chargeDraft.new_standard_price}
-                            disabled
-                        />
-                         <Textfield 
-                            label = "Price Difference"
-                            name = "description"
-                            value = {chargeDraft.standard_difference}
-                            disabled
-                        />
-                    </div>
-                    <div className="grid grid-cols-1 gap-3">
-                       <Textfield
-                            label="Additional Charge"
-                            name="additional_charge"
-                            type="number"
-                            value={chargeDraft.additional_charge}
-                            onChange={(event: any) => {
-                                const additionalCharge = Number(event.target.value || 0);
-
-                                setChargeDraft({
-                                    ...chargeDraft,
-                                    additional_charge: event.target.value,
-                                    new_standard_price:
-                                        Number(chargeDraft.original_new_standard_price || 0) + additionalCharge,
-                                    standard_difference:
-                                        Number(chargeDraft.original_standard_difference || 0) + additionalCharge,
-                                });
-                            }}
-                        />
-                        <TextArea
-                            label="Reason"
-                            name="reason"
-                            value={chargeDraft.reason}
-                            onChange={(event: any) => setChargeDraft({
-                                ...chargeDraft,
-                                reason: event.target.value,
-                            })}
-                        />
-                    </div>
-                    <div>
-                        <div className="flex justify-end gap-x-2">
-                            <Button
-                                label="Cancel"
-                                variant="secondary"
-                                onClick={additionalChargeModal.onClose}
-                            />
-                            <Button
-                                label="Save"
-                                onClick={saveAdditionalCharge}
-                            />
-                        </div>
-                    </div>
-                </Modal>
-                <Modal
-                    isShowing={changeUnitPriceModal.isShowing}
-                    title="Update Price"
-                    onClose={changeUnitPriceModal.onClose}
-                    size="md"
-                >
-                    <div>
-                        <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
-                            <Table
-                                dataSet={filteredChangePriceItems}
-                                columnSettings={changePriceTableColumn}
-                                smallText
-                                dataKey="description"
-                                fixed
-                            />
-                        </div>
-
-                        <div className="flex justify-between items-center text-sm mt-2">
-                            <div className="text-xs text-gray-400">
-                                Showing {filteredChangePriceItems.length}{" "}
-                                {filteredChangePriceItems.length === 1 ? "item" : "items"}
-                            </div>
-                        </div>
-
-                        <div className="flex justify-end gap-3 mt-4">
-                            <Button
-                                type="button"
-                                label="Export"
-                                variant= "success"
-                                onClick={exportChangePriceItems}
-                            />
-
-                            <Button
-                                type="button"
-                                label="Update"
-                                onClick={saveChangeUnitPrice}
-                            />
-                        </div>
-                    </div>
-                </Modal>
-                <Modal
-                    isShowing={passwordModal.isShowing}
-                    title="Enter Password"
-                    onClose={ () => {
-                        passwordModal.onClose();
-                        setPassword("");
-                    }}
-                    size="sm"
-                >
-                    <div
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                e.preventDefault();
-                                confirmPassword();
-                            }
-                        }}
-                    >
-                        <Textfield
-                            label="Password"
-                            type="password"
-                            value={password}
-                            onChange={(e: any) => setPassword(e.target.value)}
-                        />
-
-                        <div className="flex justify-end gap-2 mt-4">
-                            <Button
-                                type="button"
-                                label="Cancel"
-                                variant="secondary"
-                                onClick={() => {
-                                    passwordModal.onClose();
-                                    setPassword("");
-                                }}
-                            />
-
-                            <Button
-                                label="Confirm"
-                                type="button"
-                                onClick={confirmPassword}
-                            />
-                        </div>
-                    </div>
-                </Modal>
                 <WeightedAverageItem
                     modal={viewItemModal}
                     formValue={selectedItem}
@@ -1076,7 +920,29 @@ const WeightedAverageForm = ({
                         
             </form>
         </Modal>
+     
+         <AdditionalChargeModal
+            modal={additionalChargeModal}
+            chargeDraft={chargeDraft}
+            setChargeDraft={setChargeDraft}
+            onSave={saveAdditionalCharge}
+        />
+        <PasswordForm
+            modal= {passwordModal}
+            password={password}
+            setPassword={setPassword}
+            confirmPassword={confirmPassword}
+        />
+        <ChangeUnitPriceForm
+            modal={changeUnitPriceModal}
+            items={changePriceItems}
+            onExport={exportChangePriceItems}
+            onUpdate={saveChangeUnitPrice}
+        />
+    </>
+       
     )
+    
 };
 
 export default WeightedAverageForm;
