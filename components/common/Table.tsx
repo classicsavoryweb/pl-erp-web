@@ -58,6 +58,7 @@ const Table = ({
     resetRows = false,
 }: TableInterface) => {
 
+    const perPageOptions: number[] = [10, 20, 50, 100, 150];
     const currentPage = paginator && paginator.paginationData.current_page;
     const totalPages = paginator && paginator.paginationData.last_page;
     const [selectedRows, setSelectedRows] = useState<any[]>(initialSelectedRows);
@@ -293,9 +294,26 @@ const Table = ({
             </div>
             { !loading && paginator && dataSet.length > 0 &&
                 <div
-                    className="w-full  flex justify-between items-center pt-2"
+                    className="w-full flex justify-between items-center pt-2"
                 >
-                    <p className="dark:text-slate-200">Showing {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} records.</p>
+                    <div className="flex gap-x-2 items-center">
+                        <div className="flex gap-x-1 items-center">
+                            <p>Per page</p>
+                            <select
+                                className="border-1 rounded-sm"
+                                onChange={(e) => {
+                                    paginator.onClickSetPerPageNumber(Number(e.target.value));
+                                }}
+                                value={Number(paginator.per_page ?? 10)}
+                            >
+                                { perPageOptions.map(perPage => {
+                                        return <option className="text-neutral-700" value={perPage}>{perPage}</option>
+                                    })
+                                }
+                            </select>
+                        </div>
+                        <p>Showing {paginator.paginationData.from} to {paginator.paginationData.to} of {paginator.paginationData.total} entries.</p>
+                    </div>
 
                     <div className="flex gap-x-1 justify-end items-center">
                         {currentPage > 1 && (
