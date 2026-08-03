@@ -364,29 +364,29 @@ const VarianceReportViewForm = ({
 
                         {(modalType === "Review" || modalType === "Post") && (
 
-                            <div className="flex justify-end gap-2 mt-4">
+                            <div className="grid grid-cols-4 mt-4">
+                                <div className="col-span-3"></div>
+                                <div className="col-span-1 flex justify-end gap-2">
+                                    <Button
+                                        label="Close"
+                                        variant="secondary"
+                                        onClick={modal.onClose}
+                                    />
 
-                                <Button
-                                    label="Close"
-                                    variant="secondary"
-                                    onClick={modal.onClose}
-                                />
 
-
-                                <Button
-                                    label={modalType === "Post" ? "Post" : "Review"}
-                                    onClick={()=>{
-                                        runAction(
-                                            selected,
-                                            modalType === "Post"
-                                            ? "post"
-                                            : "review"
-                                        )
-                                    }}
-                                />
-
+                                    <Button
+                                        label={modalType === "Post" ? "Post" : "Review"}
+                                        onClick={()=>{
+                                            runAction(
+                                                selected,
+                                                modalType === "Post"
+                                                ? "post"
+                                                : "review"
+                                            )
+                                        }}
+                                    />
+                                </div>
                             </div>
-
                         )}
 
 
