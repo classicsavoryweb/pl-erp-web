@@ -306,8 +306,8 @@ const Table = ({
                                 }}
                                 value={Number(paginator.per_page ?? 10)}
                             >
-                                { perPageOptions.map(perPage => {
-                                        return <option className="text-neutral-700" value={perPage}>{perPage}</option>
+                                { perPageOptions.map((perPage, idx) => {
+                                        return <option className="text-neutral-700" key={idx} value={perPage}>{perPage}</option>
                                     })
                                 }
                             </select>
