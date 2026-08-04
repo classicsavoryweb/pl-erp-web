@@ -11,13 +11,14 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
-import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails, updateWeightStatus} from "@/api/uniform/weighted-average";
+import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails, updateWeightStatus ,cancelWeightAverage } from "@/api/uniform/weighted-average";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import Badge from "@/components/common/Badge";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import  WeightedAverageForm  from "./WeightAverageForm";
+import VarianceReportCancelForm from "./WeightedAverageCancelForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import confirm from "@/components/common/Confirm";
 
@@ -30,6 +31,7 @@ const WeightedAverageTable = () => {
     const [data, setData] = useState({});
     const paginator = usePagination();
     const filter = useFilter();
+    const cancelModal = useModal();
 
      useAsyncEffect(() => {
         api.setLoading(true);
@@ -77,19 +79,11 @@ const WeightedAverageTable = () => {
                    postModal.onOpen();  
                 },
             },
-            ["Unposted", "Reviewed", "Reviewing"].includes(item.status) && {
+           ["Unposted", "Reviewed", "Reviewing"].includes(item.status) && {
                 label: "Cancel",
-                onClick: async () => {
-                    const isConfirmed = await confirm({
-                        title: "Cancel Weighted Average",
-                        message: "Are you sure you want to cancel this weighted average?",
-                    });
-
-                    if (!isConfirmed) return;
-
-                    await updateWeightStatus(item.id, "Cancelled", {});
-                    toast.success("Weighted average cancelled");
-                    api.triggerReload();
+                onClick: () => {
+                    setData(item);
+                    cancelModal.onOpen();
                 },
             },
         ].filter((action): action is { label: string; onClick: () => void } => Boolean(action));
@@ -244,6 +238,12 @@ const WeightedAverageTable = () => {
                 mode = "create"
                 onSubmitCallback= {api.triggerReload}
                 />
+                <VarianceReportCancelForm
+                    modal = {cancelModal}
+                    selected = {data}
+                    onSubmitCallback = {api.triggerReload}
+
+                 />
             </Card>       
         </>
     );

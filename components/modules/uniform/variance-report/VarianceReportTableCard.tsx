@@ -1,27 +1,23 @@
 "use client";
 
 import {
-    cancelVariance,
     createVariance,
     exportVarianceDetails,
     exportVariances,
     getVariances,
-    postVariance,
     previewVariance,
-    reviewVariance,
 } from "@/api/uniform/variance-report";
+import VarianceReportViewForm from "./VarianceReportViewForm";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
 import {physicalCountDropdown} from "@/api/uniform/physical-count";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import Badge from "@/components/common/Badge";
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
-import confirm from "@/components/common/Confirm";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
-import TextArea from "@/components/common/TextArea";
 import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import { COLUMNTYPES } from "@/constants/column";
@@ -33,12 +29,10 @@ import usePagination from "@/hooks/pagination";
 import moment from "moment";
 import { useState , useEffect} from "react";
 import { toast } from "react-toastify";
-import Dropdown from "@/components/common/Dropdown";
-
+import VarianceReportCancelForm from "./VarianceReportCancelForm";
 interface TableCardProps {
     performPermission: string;
 }
-
 
 const title = "Variance Report";
 
@@ -57,28 +51,18 @@ const textInputClassName = inputClassName.replace("text-right", "text-left");
 const responseMessage = (resp: any) =>
     resp?.message ?? resp?.data?.message ?? "Unable to complete request.";
 
-const formatAuditDate = (value?: string | null) =>
-    value ? moment(value).format("MMMM DD, YYYY h:mm A") : "-";
-
-const formatDate = (value?: string | null) =>
-    value ? moment(value).format("MM/DD/YYYY") : "";
-
-
-
- const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
-        switch (status) {
-            case "Posted":
-                return "success";
-            case "Reviewed":
-                return "warning";
-            case "Cancelled":
-                return "danger";
-            default:
-                return "default";
-        }
-    };
-
-
+const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+    switch (status) {
+        case "Posted":
+            return "success";
+        case "Reviewed":
+            return "warning";
+        case "Cancelled":
+            return "danger";
+        default:
+            return "default";
+    }
+};
 
 const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const api = useApiCall();
@@ -219,48 +203,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         }
     };
 
-    const runAction = async (record: any, action: "review" | "post") => {
-        const isConfirmed = await confirm({
-            title,
-            message: `Are you sure you want to ${action} this variance report?`,
-        });
-        if (!isConfirmed) return;
-
-        const resp = action === "review"
-            ? await reviewVariance(record.id)
-            : await postVariance(record.id);
-
-        if (resp?.error || resp?.errors) {
-            toast.error(responseMessage(resp));
-            return;
-        }
-
-        toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
-        viewModal.onClose();
-        api.triggerReload();
-    };
-
-    const submitCancel = async () => {
-        if (!cancelReason.trim() || !selected) {
-            toast.error("Cancel reason is required.");
-            return;
-        }
-
-        cancelModal.setLoading(true);
-        const resp = await cancelVariance(selected.id, cancelReason);
-        cancelModal.setLoading(false);
-
-        if (resp?.error || resp?.errors) {
-            toast.error(responseMessage(resp));
-            return;
-        }
-
-        toast.success(`${title} cancelled`);
-        cancelModal.onClose();
-        setCancelReason("");
-        api.triggerReload();
-    };
-
     const downloadDetailedExport = async (record: any) => {
         const resp = await exportVarianceDetails(record.id);
         const payload = resp?.data ?? resp;
@@ -286,7 +228,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         window.URL.revokeObjectURL(downloadUrl);
     };
     
-
     const actionsFor = (record: any) => [
         {
             label: "View",
@@ -343,10 +284,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             }
         
         },
-        // { columnHead: "Posted Date", path: "posted_at", columnType:COLUMNTYPES.function,
-        //     function:(data : any) => 
-        //         data.posted_at ? moment(data.posted_at).format("MM/DD/YYYY") : "-",
-        // },
         {
             columnHead: "Status",
             path: "status",
@@ -403,27 +340,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         }));
     };
 
-
-
-    const viewItems = selected?.items ?? [];
-    const varianceViewColumns = [
-        { columnHead: "Item Code", path: "item_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Description", path: "description", columnType: COLUMNTYPES.string },
-        { columnHead: "Beginning", path: "beginning_inventory", columnType: COLUMNTYPES.amount },
-        { columnHead: "Purch Dept", path: "purchasing_department", columnType: COLUMNTYPES.amount },
-        { columnHead: "Made Order", path: "made_to_order", columnType: COLUMNTYPES.amount },
-        { columnHead: "ATD", path: "atd", columnType: COLUMNTYPES.amount },
-        { columnHead: "Free", path: "free_uniform", columnType: COLUMNTYPES.amount },
-        { columnHead: "Should Be", path: "should_be_inventory", columnType: COLUMNTYPES.amount },
-        { columnHead: "Physical", path: "physical_count", columnType: COLUMNTYPES.amount },
-        { columnHead: "Variance", path: "variance", columnType: COLUMNTYPES.amount },
-        { columnHead: "Adjustment", path: "adjustment", columnType: COLUMNTYPES.amount },
-        { columnHead: "Final Variance", path: "final_variance", columnType: COLUMNTYPES.amount },
-        { columnHead: "Standard Cost", path: "standard_cost", columnType: COLUMNTYPES.amount },
-        { columnHead: "Variance Cost", path: "total_variance_cost", columnType: COLUMNTYPES.amount },
-        { columnHead: "Reason", path: "reason_of_adjustment", columnType: COLUMNTYPES.string },
-    ];
-
    const specialFilters = [
         {
             label: "All Items",
@@ -441,7 +357,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     ];
 
     const filteredVarianceItems = varianceForm.items
-    .map((item: any, index: number) => ({
+        .map((item: any, index: number) => ({
         ...item,
         originalIndex: index,
     }))
@@ -450,7 +366,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
         const matchesSearch =
             !search ||
-            item.uniform_item_no?.toLowerCase().includes(search) ||
+            item.item_no?.toLowerCase().includes(search) ||
             item.description?.toLowerCase().includes(search);
 
         if (!matchesSearch) {
@@ -472,37 +388,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         }
     });
 
-   const filteredItems = (selected?.items ?? []).filter((item: any) => {
-        const search = itemSearch.toLowerCase().trim();
-
-        const matchesSearch =
-            !search ||
-            item.item?.item_no?.toLowerCase().includes(search) ||
-            item.item?.description?.toLowerCase().includes(search);
-
-        if (!matchesSearch) {
-            return false;
-        }
-
-        // Existing special filter
-        switch (specialFilter) {
-            case "negative":
-                return Number(item.variance) < 0;
-
-            case "positive":
-                return Number(item.variance) > 0;
-
-            case "adjustment":
-                return Number(item.adjustment ?? 0) !== 0;
-
-            default:
-                return true;
-        }
-});
-
-    const totalVarianceCost = viewItems.reduce(
-        (sum:number,item : any) => sum + (Number(item.total_variance_cost) || 0), 0
-    );
     return (
         <>
             <FilterCard
@@ -651,148 +536,24 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                     <div className="w-[120px]"><Button label="Submit" onClick={saveRecord} /></div>
                 </div>
             </Modal>
-
-            <Modal
-                size="entireScreen"
-                title={`${modalType} ${title}`}
-                isShowing={viewModal.isShowing}
-                onClose={viewModal.onClose}
-            >
-                {selected && (
-                    <>
-                        <div className="grid grid-cols-5 gap-1 items-end">
-                            <div className= "col-span-2">
-                            <Textfield label="Variance No." value={selected.variance_no ?? ""} disabled />
-                            </div>
-                            <div className="col-span-2">
-                            <Textfield label="Physical Count No." value={selected.physical_count?.physical_count_no ?? ""} disabled /> 
-                            </div>
-                            <div className="col-span-1 w-full flex justify-center">
-                                <div className="scale-170 -translate-y-3">
-                                    <Badge
-                                        status={getStatusBadge(selected.status)}
-                                        label={selected.status}
-                                    />
-                                </div>
-                            </div>   
-                        </div>
-                        <div className="grid grid-cols-5 gap-1 items-end">
-                            <div className="col-span-2">
-                                <Textfield label="Begin Date" value={formatDate(selected.begin_date)} disabled />
-                            </div>
-                            <div className="col-span-2">
-                                <Textfield label="Ending Date" value={formatDate(selected.ending_date)} disabled />
-                            </div>
-                        </div>
-                        <Textfield label="Remarks" value={selected.remarks ?? ""} disabled />
-                        <div className="grid grid-cols-5 gap-1 items-end">
-                            <div className="col-span-2">
-                                <SearchableDropDown
-                                    label="Special Filter"
-                                    name="special_filter"
-                                    value={specialFilter}
-                                    options={[
-                                        { label: "All Items", value: "all" },
-                                        { label: "Items with Negative Variance", value: "negative" },
-                                        { label: "Items with Positive Variance", value: "positive" },
-                                        { label: "Items with Adjustment", value: "adjustment" },
-                                    ]}
-                                    onChange={(event: any) => {
-                                        setSpecialFilter(event.target.value);
-                                    }}
-                                />
-                            </div>
-                            <div className="col-span-2">
-                                <Textfield
-                                    label="Search Item"
-                                    value={itemSearch}
-                                    onChange={(e: any) => setItemSearch(e.target.value)}
-                                />
-                            </div>
-                        </div>
-
-                       
-               
-                        <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
-                            <Table
-                                dataSet={filteredItems}
-                                columnSettings={varianceViewColumns}
-                                smallText
-                                dataKey="uniform_item_id"
-                                fixed
-                            />
-                        </div>
-                        <div className="flex justify-between items-center text-sm mt-1">
-                            <div className="text-xs text-gray-400">
-                                Showing {viewItems.length}{" "}
-                                {viewItems.length === 1 ? "item" : "items"}
-                            </div>
-
-                            <div className="flex items-center gap-2 pr-2 mr-2">
-                                <span className="text-gray-400 text-xs">Total Variance Cost:</span>
-                                <span className= "font-semibold text-sm">
-                                {totalVarianceCost.toLocaleString(undefined, {
-                                    minimumFractionDigits: 2,
-                                    maximumFractionDigits: 2,
-                                })}</span>
-                            </div>
-                        </div>
-
-                        <hr className="mt-6 pb-2 text-slate-300" />
-                        <p>Report Log:</p>
-                        <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
-                            <Textfield label="Prepared By:" value={selected.prepared_by ?? ""} disabled />
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.created_at)} disabled />
-                            <Textfield label="Reviewed By:" value={selected.reviewed_by ?? ""} disabled />
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.reviewed_at)} disabled />
-                            <Textfield label="Posted By:" value={selected.posted_by ?? ""} disabled />
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.posted_at)} disabled />
-                            <Textfield label="Cancelled By:" value={selected.cancelled_by ?? ""} disabled />
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.cancelled_at)} disabled />
-                        </div>
-                        <TextArea label="Cancel Reason" value={selected.cancelled_reason ?? ""} disabled />
-                        {(modalType === "Review" || modalType === "Post") && (
-                        <div className="grid grid-cols-4 mt-4">
-                            <div className="col-span-3"></div>
-
-                            <div className="col-span-1 flex justify-end gap-2">
-                                <Button
-                                    label="Close"
-                                    variant="secondary"
-                                    onClick={viewModal.onClose}
-                                />
-
-                                <Button
-                                    label={modalType === "Post" ? "Post" : "Review"}
-                                    onClick={() => {
-                                        if (modalType === "Review") {
-                                            runAction(selected, "review");
-                                        }
-                                        if (modalType === "Post") {
-                                            runAction(selected, "post");
-                                        }
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        )}
-                    </>
-                )}
-            </Modal>
-
-            <Modal
-                size="md"
-                title={`Cancel ${title}`}
-                isShowing={cancelModal.isShowing}
-                loading={cancelModal.loading}
-                onClose={cancelModal.onClose}
-            >
-                <TextArea label="Cancel Reason" placeholder="Enter cancel reason" value={cancelReason} onChange={(e: any) => setCancelReason(e.target.value)} required />
-                <div className="flex justify-end gap-x-2 mt-3">
-                    <div className="w-[120px]"><Button label="Cancel" variant="secondary" onClick={cancelModal.onClose} /></div>
-                    <div className="w-[120px]"><Button label="Submit" onClick={submitCancel} /></div>
-                </div>
-            </Modal>
+   
+            <VarianceReportViewForm
+                modal={viewModal}
+                modalType={modalType}
+                title={title}
+                selected={selected}
+                specialFilter={specialFilter}
+                setSpecialFilter ={setSpecialFilter}
+                itemSearch = {itemSearch}
+                setItemSearch = {setItemSearch} 
+            />
+            <VarianceReportCancelForm
+                modal={cancelModal}
+                title={title}
+                selected={selected}
+                responseMessage={responseMessage}
+                onSubmitCallback ={api.triggerReload}
+            />
         </>
     );
 };

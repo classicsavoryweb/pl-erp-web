@@ -84,3 +84,10 @@ export const updateWeightStatus = async (id: number, status: string , payload: a
     return resData;
 };
 
+export const cancelWeightAverage = (id:number , cancel_reason: string) => axiosHelper({
+    func_path : `/uniform-weighted/${id}/cancel`,
+    method:"POST",
+    payload:{cancel_reason}
+
+});
+
