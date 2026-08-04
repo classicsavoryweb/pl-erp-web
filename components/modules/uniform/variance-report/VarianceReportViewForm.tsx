@@ -94,14 +94,10 @@ const VarianceReportViewForm = ({
     };
 
     const handleView = async (record: any) => {
-        console.log("Selected Record:", record);
-
         try {
             const response = await getVarianceById(record.id);
             viewVarianceItemModal.onOpen();
             setSelectedItem(response.data);
-            console.log("Variance Details:", response);
-
         } catch (error) {
             console.error("Error fetching variance:", error);
         }
@@ -136,7 +132,7 @@ const VarianceReportViewForm = ({
         }
     ];
 
-     const totalVarianceCost = viewItems.reduce(
+     const totalVarianceCost = filteredItems.reduce(
         (sum:number,item : any) => sum + (Number(item.total_variance_cost) || 0), 0
     );
 
@@ -172,24 +168,29 @@ const VarianceReportViewForm = ({
 
                 {selected && (
                     <>
-                        <div className="grid grid-cols-5 gap-1 items-end">
-
-                            <div className="col-span-2">
+                        <div className="grid grid-cols-4 gap-1 items-end">
+                            <div className="col-span-1">
                                 <Textfield
                                     label="Variance No."
                                     value={selected.variance_no ?? ""}
                                     disabled
                                 />
                             </div>
-
-                            <div className="col-span-2">
+                            <div className="col-span-1">
                                 <Textfield
-                                    label="Physical Count No."
-                                    value={selected.physical_count?.physical_count_no ?? ""}
+                                    label="Begin Date"
+                                    value={formatDate(selected.begin_date)}
                                     disabled
                                 />
                             </div>
 
+                            <div className="col-span-1">
+                                <Textfield
+                                    label="Ending Date"
+                                    value={formatDate(selected.ending_date)}
+                                    disabled
+                                />
+                            </div>
                             <div className="col-span-1 flex justify-center">
                                 <div className="scale-170 -translate-y-3">
                                     <Badge
@@ -198,37 +199,13 @@ const VarianceReportViewForm = ({
                                     />
                                 </div>
                             </div>
-
                         </div>
-
-
-                        <div className="grid grid-cols-5 gap-1">
-
-                            <div className="col-span-2">
-                                <Textfield
-                                    label="Begin Date"
-                                    value={formatDate(selected.begin_date)}
-                                    disabled
-                                />
-                            </div>
-
-                            <div className="col-span-2">
-                                <Textfield
-                                    label="Ending Date"
-                                    value={formatDate(selected.ending_date)}
-                                    disabled
-                                />
-                            </div>
-
-                        </div>
-
 
                         <Textfield
                             label="Remarks"
                             value={selected.remarks ?? ""}
                             disabled
                         />
-
 
                         <div className="grid grid-cols-4 gap-2">
 
@@ -254,7 +231,6 @@ const VarianceReportViewForm = ({
 
                         </div>
 
-
                         <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
 
                             <Table
@@ -267,11 +243,10 @@ const VarianceReportViewForm = ({
 
                         </div>
 
-
                         <div className="flex justify-between mt-2">
 
                             <span className="text-xs text-gray-400">
-                                Showing {viewItems.length} items
+                                Showing {filteredItems.length} items
                             </span>
 
 
@@ -291,12 +266,9 @@ const VarianceReportViewForm = ({
 
                         </div>
 
-
                         <hr className="mt-6 pb-2 text-slate-300"/>
 
-
                         <p>Report Log:</p>
-
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
@@ -360,8 +332,6 @@ const VarianceReportViewForm = ({
                             disabled
                         />
 
-
-
                         {(modalType === "Review" || modalType === "Post") && (
 
                             <div className="grid grid-cols-4 mt-4">
@@ -388,7 +358,6 @@ const VarianceReportViewForm = ({
                                 </div>
                             </div>
                         )}
-
 
                     </>
                 )}

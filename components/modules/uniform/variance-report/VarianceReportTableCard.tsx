@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    cancelVariance,
     createVariance,
     exportVarianceDetails,
     exportVariances,
@@ -19,7 +18,6 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
-import TextArea from "@/components/common/TextArea";
 import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import { COLUMNTYPES } from "@/constants/column";
@@ -31,6 +29,7 @@ import usePagination from "@/hooks/pagination";
 import moment from "moment";
 import { useState , useEffect} from "react";
 import { toast } from "react-toastify";
+import VarianceReportCancelForm from "./VarianceReportCancelForm";
 interface TableCardProps {
     performPermission: string;
 }
@@ -79,8 +78,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const [cancelReason, setCancelReason] = useState("");
     const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
     const [showFilter , setShowFilter] = useState<boolean>(false);
-    const viewVarianceItemModal = useModal();
-    const [selectedItem , setSelectedItem] = useState<any>(null);
     const [varianceForm, setVarianceForm] = useState({
         begin_date: today(),
         ending_date: today(),
@@ -204,28 +201,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         } finally {
             formModal.setLoading(false);
         }
-    };
-
-
-    const submitCancel = async () => {
-        if (!cancelReason.trim() || !selected) {
-            toast.error("Cancel reason is required.");
-            return;
-        }
-
-        cancelModal.setLoading(true);
-        const resp = await cancelVariance(selected.id, cancelReason);
-        cancelModal.setLoading(false);
-
-        if (resp?.error || resp?.errors) {
-            toast.error(responseMessage(resp));
-            return;
-        }
-
-        toast.success(`${title} cancelled`);
-        cancelModal.onClose();
-        setCancelReason("");
-        api.triggerReload();
     };
 
     const downloadDetailedExport = async (record: any) => {
@@ -561,22 +536,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                     <div className="w-[120px]"><Button label="Submit" onClick={saveRecord} /></div>
                 </div>
             </Modal>
-
-            <Modal
-                size="md"
-                title={`Cancel ${title}`}
-                isShowing={cancelModal.isShowing}
-                loading={cancelModal.loading}
-                onClose={cancelModal.onClose}
-            >
-                <TextArea label="Cancel Reason" placeholder="Enter cancel reason" value={cancelReason} onChange={(e: any) => setCancelReason(e.target.value)} required />
-                <div className="flex justify-end gap-x-2 mt-3">
-                    <div className="w-[120px]"><Button label="Cancel" variant="secondary" onClick={cancelModal.onClose} /></div>
-                    <div className="w-[120px]"><Button label="Submit" onClick={submitCancel} /></div>
-                </div>
-            </Modal>
-
-           
+   
             <VarianceReportViewForm
                 modal={viewModal}
                 modalType={modalType}
@@ -586,6 +546,13 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 setSpecialFilter ={setSpecialFilter}
                 itemSearch = {itemSearch}
                 setItemSearch = {setItemSearch} 
+            />
+            <VarianceReportCancelForm
+                modal={cancelModal}
+                title={title}
+                selected={selected}
+                responseMessage={responseMessage}
+                onSubmitCallback ={api.triggerReload}
             />
         </>
     );

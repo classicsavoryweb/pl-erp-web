@@ -9,6 +9,7 @@ import {
     previewPhysicalCount,
 } from "@/api/uniform/physical-count";
 import PhysicalCountViewForm from "./PhysicalCountViewForm";
+import PhysicalCountCancelForm from "./PhysicalCountCancelForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import Badge from "@/components/common/Badge";
 import Button from "@/components/common/Button";
@@ -203,27 +204,6 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         } finally {
             formModal.setLoading(false);
         }
-    };
-
-    const submitCancel = async () => {
-        if (!cancelReason.trim() || !selected) {
-            toast.error("Cancel reason is required.");
-            return;
-        }
-
-        cancelModal.setLoading(true);
-        const resp = await cancelPhysicalCount(selected.id, cancelReason);
-        cancelModal.setLoading(false);
-
-        if (resp?.error || resp?.errors) {
-            toast.error(responseMessage(resp));
-            return;
-        }
-
-        toast.success(`${title} cancelled`);
-        cancelModal.onClose();
-        setCancelReason("");
-        api.triggerReload();
     };
 
     const downloadDetailedExport = async (record: any) => {
@@ -565,26 +545,21 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                     <div className="w-[120px]"><Button label="Submit" onClick={saveRecord} /></div>
                 </div>
             </Modal>
-
-            <Modal
-                size="md"
-                title={`Cancel ${title}`}
-                isShowing={cancelModal.isShowing}
-                loading={cancelModal.loading}
-                onClose={cancelModal.onClose}
-            >
-                <TextArea label="Cancel Reason" placeholder="Enter cancel reason" value={cancelReason} onChange={(e: any) => setCancelReason(e.target.value)} required />
-                <div className="flex justify-end gap-x-2 mt-3">
-                    <div className="w-[120px]"><Button label="Cancel" variant="secondary" onClick={cancelModal.onClose} /></div>
-                    <div className="w-[120px]"><Button label="Submit" onClick={submitCancel} /></div>
-                </div>
-            </Modal>
             <PhysicalCountViewForm
                 modal={viewModal}
                 modalType={modalType}
                 title={title}
                 selected={selected}  
             />
+            <PhysicalCountCancelForm
+                modal={cancelModal}
+                title={title}
+                selected = {selected}
+                responseMessage = {responseMessage}
+                onSubmitCallback={api.triggerReload}
+
+            />
+
         </>
     );
 };
