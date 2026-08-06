@@ -6,7 +6,7 @@ import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
 import TextArea from "@/components/common/TextArea";
 import Badge from "@/components/common/Badge";
-import SearchableDropDown from "@/components/common/SearchableDropDown";
+import Dropdown from "@/components/common/Dropdown";
 import Table from "@/components/common/Table";
 import moment from "moment";
 import {COLUMNTYPES} from "@/constants/column";
@@ -38,7 +38,6 @@ const VarianceReportViewForm = ({
     itemSearch,
     setItemSearch,
   
-    // runAction,
 }: Props) => {
     const viewVarianceItemModal = useModal();
     const api = useApiCall();
@@ -209,7 +208,7 @@ const VarianceReportViewForm = ({
 
                         <div className="grid grid-cols-4 gap-2">
 
-                            <SearchableDropDown
+                            <Dropdown
                                 label="Special Filter"
                                 name="special_filter"
                                 value={specialFilter}

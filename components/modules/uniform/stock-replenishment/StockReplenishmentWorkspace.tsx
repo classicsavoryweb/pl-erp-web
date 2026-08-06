@@ -1347,6 +1347,7 @@ const StockReplenishmentWorkspace = ({
                             ...receivingForm,
                             remarks: event.target.value,
                         })}
+                        disabled={isReviewReceive}
                     />
                     <ModalFooter loading={submitting} label={isReviewReceive ? "Review" : "Submit"} />
                 </form>

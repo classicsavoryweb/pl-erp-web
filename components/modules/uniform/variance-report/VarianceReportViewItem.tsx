@@ -1,10 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import moment from "moment";
+import Dropdown from "@/components/common/Dropdown";
 interface VarianceReportViewItem {
     modal: any;
     formValue?: any;
@@ -15,6 +16,7 @@ const WeightAverageItem = ({
     modal,
     formValue,
 }: VarianceReportViewItem) => {
+const [filter, setFilter] = useState("All");
 
     const formHandler = useFormik({
         initialValues: {
@@ -72,15 +74,21 @@ const WeightAverageItem = ({
     { columnHead: "Total Net Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
     ];
 
+   const filteredRequestDetails = request_details.filter((item: any) => {
+        if (filter === "All") return true;
+
+        return item.issuance_type === filter;
+    });
+
     return (
        <Modal
         isShowing={modal.isShowing}
-        title="Item Details"
+        title="Request Details"
         onClose={modal.onClose}
         size="xl"
     >
         <div className="p-4">
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-3 gap-2">
                 <Textfield 
                     label= "Item Description"
                     name  ="description"
@@ -93,10 +101,22 @@ const WeightAverageItem = ({
                     value= {formHandler.values.item_no}
                     disabled
                 />
+                <Dropdown
+                    label="Filter"
+                    name="filter"
+                    value={filter}
+                    onChange={(e: any) => setFilter(e.target.value)}
+                    options={[
+                        { label: "All", value: "All" },
+                        { label: "Authority to Deduct", value: "Authority To Deduct" },
+                        { label: "Free Uniform", value: "Free Uniform" },
+                    ]}
+                />
+              
             </div>
             <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
                 <Table
-                    dataSet={request_details}
+                    dataSet={filteredRequestDetails}
                     columnSettings={weightAverageItemColumn}
                     smallText
                     dataKey="receiving_no"
@@ -118,7 +138,7 @@ const WeightAverageItem = ({
                             {request_details
                                 .reduce(
                                     (total: number, item: any) =>
-                                        total + Number(item.new_standard_price || 0),
+                                        total + Number(item.quantity || 0),
                                     0
                                 )
                                 .toLocaleString(undefined, {
