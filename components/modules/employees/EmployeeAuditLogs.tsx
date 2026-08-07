@@ -84,23 +84,26 @@ const EmployeeAuditLogs = () => {
                 title="Properties"
                 size="xl"
             >    
-                { data.properties?.old &&
-                    <div>
-                        <p>Old Data:</p>
-                        <pre className="text-[12px]">
-                            {JSON.stringify(data.properties?.old, null, 2)}
-                        </pre>
-                    </div>
-                }
-                { data.properties?.attributes &&
-                    <div>
-                        <p>{data.properties?.old ? "New Data" : "Data:"}</p>
-                        <pre className="text-[12px]">
-                            {JSON.stringify(data.properties?.attributes, null, 2)}
-                        </pre>
-                    </div>
-
-                }
+                <Grid cols={2}>
+                    { data.properties?.old &&
+                        <div className="mt-2">
+                            <p className="font-semibold text-xs">Old:</p>
+                            {Object.entries(data.properties.old).map(([key, value]) => (
+                            <div className="text-[11px]" key={key}>
+                                <p>{key} : {String(value)}</p>
+                            </div>))}
+                        </div>
+                    }
+                    { data.properties?.attributes &&
+                        <div className="mt-2">
+                            <p className="font-semibold text-xs">Changes:</p>
+                            {Object.entries(data.properties.attributes).map(([key, value]) => (
+                            <div className="text-[11px]" key={key}>
+                                <p>{key} : {String(value)}</p>
+                            </div>))}
+                        </div>
+                    }
+                </Grid>
             </Modal>
 
             <Table
