@@ -242,17 +242,17 @@ const LastPayComputationEditModal = ({
         setInitializedKey(key);
 
         const baseEmployee = baseData?.employee ?? {};
-        const baseBasicSalary = toNumber(
-            baseData?.basic_salary
-            ?? baseEmployee?.current_position?.salary?.basic_salary
-            ?? baseEmployee?.basic_salary
-            ?? 0
-        );
-        const baseDailyRate = toNumber(
-            baseData?.daily_rate
-            ?? baseData?.payrolls?.[0]?.daily_rate
-            ?? (baseBasicSalary ? baseBasicSalary / 26 : 0)
-        );
+
+        if (baseEmployee?.basic_salary === undefined || baseEmployee?.basic_salary === null) {
+            toast.error("Basic salary not found for this employee (employee.basic_salary is missing from the API response).");
+        }
+        const baseBasicSalary = toNumber(baseEmployee?.basic_salary ?? 0);
+
+        const rawDailyRate = baseData?.payrolls?.[0]?.daily_rate;
+        if (rawDailyRate === undefined || rawDailyRate === null) {
+            toast.error("Daily rate not found for this employee (payrolls[0].daily_rate is missing from the API response).");
+        }
+        const baseDailyRate = toNumber(rawDailyRate ?? 0);
 
         const additionalFields : any = [];
         if (details.additional_fields && details.additional_fields.length > 0) {
