@@ -114,9 +114,58 @@ const VarianceReportViewForm = ({
         { columnHead: "Physical", path: "physical_count", columnType: COLUMNTYPES.amount },
         { columnHead: "Variance", path: "variance", columnType: COLUMNTYPES.amount },
         { columnHead: "Adjustment", path: "adjustment", columnType: COLUMNTYPES.amount },
-        { columnHead: "Final Variance", path: "final_variance", columnType: COLUMNTYPES.amount },
+        { columnHead: "Final Variance", path: "final_variance", columnType: COLUMNTYPES.function,
+            function: (item: any) => {
+                const final_variance = Number(item.final_variance || 0);
+                const displayValue =
+                    final_variance === 0
+                        ? "-"
+                        : `(${Math.abs(final_variance).toLocaleString(undefined, {
+                            minimumFractionDigits: 0,
+                            maximumFractionDigits: 2,
+                        })})`;
+
+                return (
+                    <span
+                        className={
+                            final_variance > 0
+                                ? "text-green-500"
+                                : final_variance < 0
+                                    ? "text-red-500"
+                                    : ""
+                        }
+                    >
+                        {displayValue}
+                    </span>
+                );
+            }
+         },
         { columnHead: "Standard Cost", path: "standard_cost", columnType: COLUMNTYPES.amount },
-        { columnHead: "Variance Cost", path: "total_variance_cost", columnType: COLUMNTYPES.amount },
+        { columnHead: "Variance Cost", path: "total_variance_cost", columnType: COLUMNTYPES.function,
+            function:(item:any) => {
+                const var_cost = Number(item.total_variance_cost || 0);
+                const displayValue = 
+                    var_cost === 0 ? "-" : 
+                    `(${Math.abs(var_cost).toLocaleString(undefined,{
+                        minimumFractionDigits:2,
+                        maximumFractionDigits:2,
+                    })})`;
+
+                return(
+                    <span
+                        className={
+                            var_cost > 0 
+                                ? "text-green-500"
+                                : var_cost < 0 
+                                    ? "text-red-500" 
+                                        : ""
+                        }
+                    >
+                        {displayValue}
+                    </span>
+                )
+            }
+         },
         { columnHead: "Reason", path: "reason_of_adjustment", columnType: COLUMNTYPES.string },
         {
             columnHead: "Action",
@@ -134,6 +183,8 @@ const VarianceReportViewForm = ({
      const totalVarianceCost = filteredItems.reduce(
         (sum:number,item : any) => sum + (Number(item.total_variance_cost) || 0), 0
     );
+
+
 
     const runAction = async (record: any, action: "review" | "post") => {
         const isConfirmed = await confirm({
@@ -247,18 +298,50 @@ const VarianceReportViewForm = ({
                             <span className="text-xs text-gray-400">
                                 Showing {filteredItems.length} items
                             </span>
-
-
                             <div>
+                                <span className="text-gray-400 text-xs">
+                                    Total Positive Variance Cost:
+                                </span>
+                                <span className="font-semibold ml-2 mr-2">
+                                    {filteredItems
+                                        .reduce(
+                                            (total: number, item: any) =>
+                                                total + (Number(item.total_variance_cost) > 0 
+                                                    ? Number(item.total_variance_cost) 
+                                                    : 0),
+                                            0
+                                        )
+                                        .toLocaleString(undefined, {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                    })}
+                                </span>
+                          
+                                <span className="text-gray-400 text-xs">
+                                    Total Negative Variance Cost:
+                                </span>
+                                <span className="font-semibold ml-2 mr-2">
+                                    {filteredItems
+                                        .reduce(
+                                            (total: number, item: any) =>
+                                                total + (Number(item.total_variance_cost) < 0 
+                                                    ? Number(item.total_variance_cost) 
+                                                    : 0),
+                                            0
+                                        )
+                                        .toLocaleString(undefined, {
+                                            minimumFractionDigits: 2,
+                                            maximumFractionDigits: 2,
+                                    })}
+                                </span>
+                        
                                 <span className="text-gray-400 text-xs">
                                     Total Variance Cost:
                                 </span>
 
                                 <span className="font-semibold ml-2">
-                                    {totalVarianceCost.toLocaleString(undefined,{
-                                        minimumFractionDigits:2,
-                                        maximumFractionDigits:2
-                                    })}
+                                    {filteredItems.reduce((total: number, item: any) => total + Number(item.total_variance_cost || 0),0)
+                                    .toLocaleString(undefined, {minimumFractionDigits: 2,maximumFractionDigits: 2,})}
                                 </span>
 
                             </div>

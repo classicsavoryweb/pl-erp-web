@@ -31,7 +31,13 @@ const ChangeUnitPriceForm = ({
         {columnHead : "Item Name" , path: "description" , columnType:COLUMNTYPES.string},
         {columnHead : "Old Standard Price" , path: "old_price" , columnType:COLUMNTYPES.amount},
         {columnHead : "New Standard Price" , path: "new_price" , columnType:COLUMNTYPES.amount},
-        {columnHead : "Price Difference" , path: "standard_difference", columnType:COLUMNTYPES.amount},
+        {columnHead : "Price Difference" , path: "standard_difference", columnType:COLUMNTYPES.function,
+            function:(item: any) => {
+                const standard_difference = item.standard_difference;
+                return <span className="text-red-600">{standard_difference}</span>
+                
+            }
+        },
 
     ]
 

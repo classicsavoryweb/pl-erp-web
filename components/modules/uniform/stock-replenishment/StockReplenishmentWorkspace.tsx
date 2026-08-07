@@ -1701,9 +1701,27 @@ const LineEditor = ({ items, mode, isReviewReceive, onChange, onRemove }: any) =
                         )}
                         {mode === "receiving" && (
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
-                                <input type="number" min="0" max={line.remaining_qty} step="0.01" className={numericLineInputClassName}
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max={line.remaining_qty}
+                                    step="0.01"
+                                    className={numericLineInputClassName}
                                     value={line.quantity ?? ""}
-                                    onChange={(event) => onChange(index, "quantity", event.target.value)} />
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        const qty = Number(event.target.value);
+                                        const maxQty = Number(line.remaining_qty);
+
+                                        if (qty > maxQty) {
+                                            toast.error(
+                                                `Cannot receive more than ${maxQty}.`
+                                            );
+                                            return;
+                                        }
+
+                                        onChange(index, "quantity", qty);
+                                    }}
+                                />
                             </td>
                         )}
                         <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
