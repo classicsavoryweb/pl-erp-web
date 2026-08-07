@@ -19,6 +19,13 @@ const AdditionalChargeModal = ({
     onSave
 }:Props)=>{
 
+
+const accountingFormat = (value: number | string | null | undefined) => {
+    return Number(value || 0).toLocaleString("en-PH", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+    });
+};
 return (
     <Modal
         isShowing={modal.isShowing}
@@ -38,19 +45,19 @@ return (
             <Textfield 
                 label = "New Standard Price"
                 name = "description"
-                value = {chargeDraft.current_price}
+                value = {accountingFormat(chargeDraft.current_price)}
                 disabled
             />
-            <Textfield 
-                label = "Final Standard Price"
-                name = "description"
-                value = {chargeDraft.new_standard_price}
+            <Textfield
+                label="Final Standard Price"
+                name="description"
+                value={accountingFormat(chargeDraft.new_standard_price)}
                 disabled
             />
                 <Textfield 
                 label = "Price Difference"
                 name = "description"
-                value = {chargeDraft.standard_difference}
+                value = {accountingFormat(chargeDraft.standard_difference)}
                 disabled
             />
         </div>

@@ -64,6 +64,7 @@ const getStatusBadge = (status: string): "success" | "warning" | "danger" | "def
     }
 };
 
+
 const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const api = useApiCall();
     const paginator = usePagination();
@@ -108,7 +109,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const openCreate = () => {
         setVarianceForm({
             begin_date:  physicalCounts[0].begin_date,
-            ending_date: today(),
+            ending_date: physicalCounts[0].ending_date,
             remarks: "",
             items: [],
         });
@@ -119,16 +120,13 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const loadPreview = async () => {
         if (!varianceForm.begin_date || !varianceForm.ending_date) {
             toast.error("Please select Begin Date and Ending Date.");
-            return;
-        }
-
-        if(moment(varianceForm.ending_date).isBefore(moment(),"day")){
-            toast.error("Ending date can`t be earlier than today");
+            setShowFilter(false);
             return;
         }
 
         if (!moment(varianceForm.ending_date).isAfter(moment(varianceForm.begin_date))) {
             toast.error("Ending date should be greater than Beginning date");
+            setShowFilter(false);
             return;
         }
 
@@ -143,10 +141,12 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
             if (resp?.error || resp?.errors) {
                 toast.error(responseMessage(resp));
+                setShowFilter(false);
                 return;
             }
 
             setVarianceForm(prev => ({ ...prev, items: resp.items ?? [] }));
+            setShowFilter(true);
         } catch {
             toast.error("Error encountered");
         } finally {
@@ -227,6 +227,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         anchor.remove();
         window.URL.revokeObjectURL(downloadUrl);
     };
+    
     
     const actionsFor = (record: any) => [
         {
@@ -450,11 +451,14 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                                 }));
                             }}
                         />
-                        <Textfield
+                        <SearchableDropDown
                             label="Ending Inventory"
-                            type="date"
-                            required
-                            value={varianceForm.ending_date ?? ""}
+                            name="ending_date"
+                            value={varianceForm.ending_date}
+                            options={physicalCounts.map((pc:any) => ({
+                                label:pc.ending_date,
+                                value:pc.ending_date,
+                            }))}
                             onChange={(e: any) =>
                                 setVarianceForm((prev) => ({
                                     ...prev,
@@ -512,9 +516,8 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                             <Button 
                                 type="button"
                                 label="Generate Data"
-                                onClick={() => {
+                                onClick={() => {                                   
                                     loadPreview();
-                                    setShowFilter(true);
                                 }}
                                 
                             />
@@ -566,70 +569,134 @@ const VarianceItemsTable = ({
     items: any[];
     editable?: boolean;
     onChange?: (index: number, key: string, value: any) => void;
-}) => (
-    <div>
-        <div className="overflow-auto max-h-[60vh] relative">
-            <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
-                <thead className="sticky top-0 z-20 text-xs">
-                    <tr>
-                        {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason"].map(header => (
-                            <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
-                        ))}
-                    </tr>
-                </thead>
-                <tbody className= "text-xs">
-                    {items.length === 0 && (
-                        <tr>
-                            <td colSpan={15} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
-                                <EmptyState />
-                                <p>No data available...</p>
-                            </td>
-                        </tr>
-                    )}
-                    {items.map((item, index) => (
-                        <tr key={item.uniform_item_id ?? index}>
-                            <td className="w-10 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
-                            <td className="w max-w py-[10px] px-2 border border-slate-300 dark:border-neutral-700 truncate">{item.description}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.beginning_inventory)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.purchasing_department)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.made_to_order)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.atd)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.free_uniform)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.should_be_inventory)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.physical_count)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.variance)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
-                                {editable ? (
-                                    <input className={inputClassName} type="number" value={item.adjustment ?? 0} onChange={(e) => onChange?.(index, "adjustment", e.target.value)} />
-                                ) : money(item.adjustment)}
-                            </td>
-                           <td
-                                className={`w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ${
-                                    Number(item.final_variance) > 0
-                                        ? "text-green-600 font-semibold"
-                                        : Number(item.final_variance) < 0
-                                        ? "text-red-600 font-semibold"
-                                        : ""
-                                }`}
-                            >
-                                ({money(item.final_variance)})
-                            </td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.standard_cost)}</td>
-                            <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.total_variance_cost)}</td>
-                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
-                                {editable ? (
-                                    <input className={textInputClassName} value={item.reason_of_adjustment ?? ""} onChange={(e) => onChange?.(index, "reason_of_adjustment", e.target.value)} />
-                                ) : item.reason_of_adjustment ?? "-"}
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </div>
-        <div className="mt-1 text-xs text-gray-400">
-            Showing {items.length} {items.length === 1 ? "item" : "items"}
-        </div>
-    </div>
-);
+    
+}) => {
+       const totalPositiveVarianceCost = items.reduce(
+        (total: number, item: any) => {
+            const value = Number(item.total_variance_cost || 0);
+            return total + (value > 0 ? value : 0);
+        },
+        0
+    );
+
+    const totalNegativeVarianceCost = items.reduce(
+        (total: number, item: any) => {
+            const value = Number(item.total_variance_cost || 0);
+            return total + (value < 0 ? value : 0);
+        },
+        0
+    );
+
+    const totalVarianceCost = items.reduce(
+        (total: number, item: any) =>
+            total + Number(item.total_variance_cost || 0),
+        0
+    );
+    return (
+        <>
+            <div>
+                <div className="overflow-auto max-h-[60vh] relative">
+                    <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
+                        <thead className="sticky top-0 z-20 text-xs">
+                            <tr>
+                                {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason"].map(header => (
+                                    <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
+                                ))}
+                            </tr>
+                        </thead>
+                        <tbody className= "text-xs">
+                            {items.length === 0 && (
+                                <tr>
+                                    <td colSpan={15} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
+                                        <EmptyState />
+                                        <p>No data available...</p>
+                                    </td>
+                                </tr>
+                            )}
+                            {items.map((item, index) => (
+                                <tr key={item.uniform_item_id ?? index}>
+                                    <td className="w-10 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
+                                    <td className="w max-w py-[10px] px-2 border border-slate-300 dark:border-neutral-700 truncate">{item.description}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.beginning_inventory)}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.purchasing_department)}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.made_to_order)}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.atd)}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.free_uniform)}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.should_be_inventory)}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.physical_count)}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.variance)}</td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
+                                        {editable ? (
+                                            <input className={inputClassName} type="number" value={item.adjustment ?? 0} onChange={(e) => onChange?.(index, "adjustment", e.target.value)} />
+                                        ) : money(item.adjustment)}
+                                    </td>
+                                <td
+                                        className={`w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ${
+                                            Number(item.final_variance) > 0
+                                                ? "text-green-600 font-semibold"
+                                                : Number(item.final_variance) < 0
+                                                ? "text-red-600 font-semibold"
+                                                : ""
+                                        }`}
+                                    >
+                                        ({money(item.final_variance)})
+                                    </td>
+                                    <td className="w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{money(item.standard_cost)}</td>
+                                    <td className={`w-20 max-w-100 py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ${
+                                        Number(item.total_variance_cost) > 0
+                                            ? "text-green-600 font-semibold"
+                                            : Number(item.total_variance_cost) < 0
+                                            ? "text-red-600 font-semibold"
+                                            : ""
+                                    }`}>({money(item.total_variance_cost)})</td>
+                                    <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
+                                        {editable ? (
+                                            <input className={textInputClassName} value={item.reason_of_adjustment ?? ""} onChange={(e) => onChange?.(index, "reason_of_adjustment", e.target.value)} />
+                                        ) : item.reason_of_adjustment ?? "-"}
+                                    </td>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                </div>
+                <div className="mt-1 text-xs text-gray-400">
+                    Showing {items.length} {items.length === 1 ? "item" : "items"}
+                </div>
+                <div className="flex justify-end gap-6 mt-2 text-xs">
+
+                    <div>
+                        <span className="text-gray-400">
+                            Total Positive Variance Cost:
+                        </span>
+                        <span className="ml-2 font-semibold text-gray-400">
+                            {money(totalPositiveVarianceCost)}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span className="text-gray-400">
+                            Total Negative Variance Cost:
+                        </span>
+                        <span className="ml-2 font-semibold text-gray-400">
+                            {money(Math.abs(totalNegativeVarianceCost))}
+                        </span>
+                    </div>
+
+                    <div>
+                        <span className="text-gray-400">
+                            Total Variance Cost:
+                        </span>
+                        <span className="ml-2 font-semibold">
+                            {totalVarianceCost < 0
+                                ? `${money(Math.abs(totalVarianceCost))}`
+                                : money(totalVarianceCost)}
+                        </span>
+                    </div>
+
+                </div>
+            </div>
+        </>
+    );
+}
 
 export default VarianceReportTableCard;

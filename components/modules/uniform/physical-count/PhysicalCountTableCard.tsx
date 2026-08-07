@@ -30,7 +30,7 @@ import { useFilter } from "@/hooks/use-filter";
 import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import moment from "moment";
-import { useState, useRef } from "react";
+import { useState, useRef , useEffect } from "react";
 import { toast } from "react-toastify";
 
 interface TableCardProps {
@@ -78,6 +78,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
     const [selected, setSelected] = useState<any>(null);
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
     const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
+    const [physicalCounts, setPhysicalCounts] = useState<any[]>([]);
     const [cancelReason, setCancelReason] = useState("");
     const [physicalForm, setPhysicalForm] = useState({
         begin_date: today(),
@@ -88,6 +89,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         total_sales: 0,
         items: [] as any[],
     });
+    
 
     const fetchRecords = () => {
         api.setLoading(true);
@@ -100,6 +102,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 }
 
                 api.setDataSet(resp.data ?? []);
+                setPhysicalCounts(resp.data ?? []);
                 paginator.setPage(resp.current_page ?? 1);
                 paginator.setPaginationData(resp);
             })
@@ -110,7 +113,12 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
     useAsyncEffect(fetchRecords, [paginator.reload, api.reload, filter.reload]);
 
     const openCreate = () => {
-        const lastRecord = api.dataSet?.[0];
+        const lastRecord = api.dataSet?.filter((record:any)=> record.status ==="Posted")
+         ?.sort(
+            (a: any, b: any) =>
+                new Date(b.begin_date).getTime() -
+                new Date(a.begin_date).getTime()
+        )[0];
 
         setPhysicalForm({
             begin_date: lastRecord?.ending_date ?? today(),
@@ -205,6 +213,25 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
             formModal.setLoading(false);
         }
     };
+
+    useEffect(() => {
+    if (physicalCounts.length > 0) {
+        const latestPosted = physicalCounts
+            .filter((pc: any) => pc.status === "Posted")
+            .sort(
+                (a: any, b: any) =>
+                    new Date(b.begin_date).getTime() -
+                    new Date(a.begin_date).getTime()
+            )[0];
+
+        if (latestPosted) {
+            setPhysicalForm(prev => ({
+                ...prev,
+                begin_date: latestPosted.begin_date,
+            }));
+        }
+    }
+    }, [physicalCounts]);
 
     const downloadDetailedExport = async (record: any) => {
         const resp = await exportPhysicalCountDetails(record.id);
@@ -395,7 +422,14 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 return `${begin_date} To ${end_date}`
             }
         },
+        {columnHead: "Ending Inventory Date" , path: "" ,columnType:COLUMNTYPES.function,
+            function:(data: any) => {
+                const ending_inventory_date = data.ending_date ? moment(data.ending_date).format("MM/DD/YYYY") : "";
+                return `${ending_inventory_date}`
+            }
+        },
         { columnHead: "Counted By", path: "counted_by", columnType: COLUMNTYPES.string },
+
        {
             columnHead: "Status",
             path: "status",
@@ -495,7 +529,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 onClose={() => {formModal.onClose(); setHasGeneratedData(false);  }}
             >
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-3">
-                    <Textfield label="Begin Date" type="date" value={physicalForm.begin_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, begin_date: e.target.value }))} required />
+                    <Textfield label="Begin Date" type="date" value={physicalForm.begin_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, begin_date: e.target.value }))} required disabled />
                     <Textfield label="Ending Date" type="date" value={physicalForm.ending_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, ending_date: e.target.value }))} required />
                     <SearchEmployeeDropDown
                         label="Counted By"

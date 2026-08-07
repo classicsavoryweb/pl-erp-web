@@ -1,9 +1,13 @@
 import VarianceReportTableCard from "@/components/modules/uniform/variance-report/VarianceReportTableCard";
+import PageTitle from "@/components/common/PageTitle";
 
 export default function VarianceReportPage() {
     return (
-        <VarianceReportTableCard
-            performPermission="perform_uniform_variance_report"
-        />
+        <>
+            <PageTitle title="Variance Report"/>
+            <VarianceReportTableCard
+                performPermission="perform_uniform_variance_report"
+            />
+        </>
     );
 }
