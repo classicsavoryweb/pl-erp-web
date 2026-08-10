@@ -22,6 +22,7 @@ interface PhysicalCountViewFormProps {
     modalType: "View" | "Review" | "Post";
     title: string;
     selected: any;
+    onReload?: () => void | Promise<void>;
 
 }
 
@@ -30,6 +31,7 @@ const PhysicalCountViewForm = ({
     modalType,
     title,
     selected,
+    onReload,
 }: PhysicalCountViewFormProps) => {
     const api = useApiCall();
 
@@ -103,12 +105,12 @@ const PhysicalCountViewForm = ({
         }
 
         toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
-        api.triggerReload();
+        await onReload?.();
         modal.onClose();
     };
 
     return (
-        <Modal
+            <Modal
                 size="xxl"
                 title={`${modalType} ${title}`}
                 isShowing={modal.isShowing}
@@ -167,7 +169,7 @@ const PhysicalCountViewForm = ({
                             <Textfield label="Reviewed By:" value={selected.reviewed_by ?? ""} disabled />
                             <Textfield label="Date & Time" value={formatAuditDate(selected.reviewed_at)} disabled />
                             <Textfield label="Posted By:" value={selected.posted_by ?? ""} disabled />                                                                                          
-                            <Textfield label="Date & Time" value={formatAuditDate(selected.posted_at)} disabled />
+                            <Textfield label="Date  & Time" value={formatAuditDate(selected.posted_at)} disabled />
                             <Textfield label="Cancelled By:" value={selected.cancelled_by ?? ""} disabled />
                             <Textfield label="Date & Time" value={formatAuditDate(selected.cancelled_at)} disabled />
                         </div>

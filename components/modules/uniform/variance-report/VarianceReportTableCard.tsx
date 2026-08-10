@@ -6,8 +6,10 @@ import {
     exportVariances,
     getVariances,
     previewVariance,
+    getVarianceItemDetails
 } from "@/api/uniform/variance-report";
 import VarianceReportViewForm from "./VarianceReportViewForm";
+import VarianceReportViewItem from "./VarianceReportViewItem";
 import SearchableDropDown from "@/components/common/SearchableDropDown";
 import {physicalCountDropdown} from "@/api/uniform/physical-count";
 import ActionDropDown from "@/components/common/ActionDropDown";
@@ -70,6 +72,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
     const paginator = usePagination();
     const filter = useFilter();
     const formModal = useModal();
+    const viewVarianceItemModal = useModal();
     const viewModal = useModal();
     const cancelModal = useModal();
     const [itemSearch, setItemSearch] = useState("");
@@ -116,6 +119,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
         formModal.onOpen();
     };
+    
 
     const loadPreview = async () => {
         if (!varianceForm.begin_date || !varianceForm.ending_date) {
@@ -195,6 +199,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
 
             toast.success(`${title} created`);
             formModal.onClose();
+            setShowFilter(false);
             api.triggerReload();
         } catch {
             toast.error("Error encountered");
@@ -202,6 +207,26 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
             formModal.setLoading(false);
         }
     };
+
+    const handleView = async (record: any) => {
+
+        try {
+            const response = await getVarianceItemDetails(
+                record.uniform_item_id,
+                varianceForm.begin_date,
+                varianceForm.ending_date
+            );
+
+            setSelected(response.data);
+            viewVarianceItemModal.onOpen();
+
+        } catch (error) {
+            console.error("Error fetching item details:", error);
+            toast.error("Unable to load item details.");
+        }
+    };
+
+
 
     const downloadDetailedExport = async (record: any) => {
         const resp = await exportVarianceDetails(record.id);
@@ -321,6 +346,11 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         { label: "Cancelled", value: "Cancelled" },
     ];
 
+    const handleClose = () => {
+    setShowFilter(false);
+    formModal.onClose();
+    };
+
     const updateVarianceItem = (index: number, key: string, value: any) => {
         setVarianceForm(prev => ({
             ...prev,
@@ -431,7 +461,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 title={`Generate ${title}`}
                 isShowing={formModal.isShowing}
                 loading={formModal.loading}
-                onClose={formModal.onClose}
+                onClose={handleClose}
             >
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                     <div className="grid grid-cols-2 gap-3">
@@ -525,15 +555,18 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                     </div>
                 </div>
 
-                <VarianceItemsTable items={filteredVarianceItems} 
-                    editable 
+                <VarianceItemsTable
+                    items={filteredVarianceItems}
+                    editable
                     onChange={(index: number, key: string, value: any) =>
                         updateVarianceItem(
                             filteredVarianceItems[index].originalIndex,
                             key,
                             value
                         )
-                    } />
+                    }
+                    onView={handleView}
+                />
 
                 <div className="flex justify-end gap-x-2 mt-3">
                     <div className="w-[120px]"><Button label="Submit" onClick={saveRecord} /></div>
@@ -548,7 +581,8 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 specialFilter={specialFilter}
                 setSpecialFilter ={setSpecialFilter}
                 itemSearch = {itemSearch}
-                setItemSearch = {setItemSearch} 
+                setItemSearch = {setItemSearch}
+                onReload={api.triggerReload}
             />
             <VarianceReportCancelForm
                 modal={cancelModal}
@@ -557,6 +591,10 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 responseMessage={responseMessage}
                 onSubmitCallback ={api.triggerReload}
             />
+            <VarianceReportViewItem
+                    modal={viewVarianceItemModal}
+                    formValue ={selected}
+                />
         </>
     );
 };
@@ -565,10 +603,12 @@ const VarianceItemsTable = ({
     items,
     editable = false,
     onChange,
+    onView,
 }: {
     items: any[];
     editable?: boolean;
     onChange?: (index: number, key: string, value: any) => void;
+    onView?: (record: any) => void;
     
 }) => {
        const totalPositiveVarianceCost = items.reduce(
@@ -599,7 +639,7 @@ const VarianceItemsTable = ({
                     <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
                         <thead className="sticky top-0 z-20 text-xs">
                             <tr>
-                                {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason"].map(header => (
+                                {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason", "Action"].map(header => (
                                     <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
                                 ))}
                             </tr>
@@ -607,7 +647,7 @@ const VarianceItemsTable = ({
                         <tbody className= "text-xs">
                             {items.length === 0 && (
                                 <tr>
-                                    <td colSpan={15} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
+                                    <td colSpan={16} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
                                         <EmptyState />
                                         <p>No data available...</p>
                                     </td>
@@ -653,6 +693,12 @@ const VarianceItemsTable = ({
                                         {editable ? (
                                             <input className={textInputClassName} value={item.reason_of_adjustment ?? ""} onChange={(e) => onChange?.(index, "reason_of_adjustment", e.target.value)} />
                                         ) : item.reason_of_adjustment ?? "-"}
+                                    </td>
+                                    <td className="py-[10px] px-2 border border-slate-300 dark:border-neutral-700">
+                                        <Button
+                                            label="View"
+                                             onClick={() => onView?.(item)}
+                                        />
                                     </td>
                                 </tr>
                             ))}

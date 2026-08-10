@@ -15,7 +15,6 @@ import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
-import { useApiCall } from "@/hooks/api-call";
 
 interface Props {
     modal: any;
@@ -26,6 +25,7 @@ interface Props {
     setSpecialFilter: (value: string) => void;
     itemSearch: string;
     setItemSearch: (value: string) => void;
+    onReload?: () => void | Promise<void>;
 }
 
 const VarianceReportViewForm = ({
@@ -37,10 +37,10 @@ const VarianceReportViewForm = ({
     setSpecialFilter,
     itemSearch,
     setItemSearch,
+    onReload,
   
 }: Props) => {
     const viewVarianceItemModal = useModal();
-    const api = useApiCall();
     const [selectedItem , setSelectedItem] = useState<any>(null);
 
     const filteredItems = (selected?.items ?? []).filter((item: any) => {
@@ -204,7 +204,7 @@ const VarianceReportViewForm = ({
 
         toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
         modal.onClose();
-        api.triggerReload();
+        await onReload?.();
     };
 
     return (

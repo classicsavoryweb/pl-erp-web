@@ -584,6 +584,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 modalType={modalType}
                 title={title}
                 selected={selected}  
+                onReload={api.triggerReload}
             />
             <PhysicalCountCancelForm
                 modal={cancelModal}

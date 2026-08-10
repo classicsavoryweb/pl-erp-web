@@ -12,11 +12,11 @@ interface VarianceReportViewItem {
     
 }
 
-const WeightAverageItem = ({
+const VarianceReportItem = ({
     modal,
     formValue,
 }: VarianceReportViewItem) => {
-const [filter, setFilter] = useState("All");
+const [filter, setFilter] = useState("Request and Issuance");
 
     const formHandler = useFormik({
         initialValues: {
@@ -36,13 +36,17 @@ const [filter, setFilter] = useState("All");
         onSubmit: () => {},
     });
 
-    const request_details = Array.isArray(formValue?.request_details) && formValue.request_details.length > 0
-        ? formValue.request_details
-        : [formHandler.values];
+   const request_details = Array.isArray(formValue?.request_details)
+    ? formValue.request_details
+    : [];
+
+    const receiving_details = Array.isArray(formValue?.receiving_details)
+    ? formValue.receiving_details
+    : []; 
 
     useEffect(() => {
         if (!formValue) return;
-
+        setFilter("Request and Issuance");
         formHandler.setValues({
             description:formValue.description ?? "",
             item_no: formValue.item_no ?? "",
@@ -59,32 +63,47 @@ const [filter, setFilter] = useState("All");
         });
     }, [formValue]);
     
-    const weightAverageItemColumn = [
-    { columnHead: "Date Requested", path: "date_requested", columnType: COLUMNTYPES.function,
-        function:(data: any) => 
-            data.date_requested ? moment(data.date_requested).format("MM/DD/YYYY") : "-"
-        
-     },
-    { columnHead: "Standard UOM", path: "uom", columnType: COLUMNTYPES.string },
-    { columnHead: "Total Issuance", path: "quantity", columnType: COLUMNTYPES.string },
-    { columnHead: "Employee Name", path: "employee_name", columnType: COLUMNTYPES.string },
-    { columnHead: "Position", path: "position", columnType: COLUMNTYPES.string },
-    { columnHead: "Branch", path: "branch", columnType: COLUMNTYPES.string },
-    { columnHead: "Type of Issuance", path: "issuance_type", columnType: COLUMNTYPES.string },
-    { columnHead: "Total Net Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
+    const varianceReportItemColumn = [
+        { columnHead: "Date Requested", path: "date_requested", columnType: COLUMNTYPES.function,
+            function:(data: any) => 
+                data.date_requested ? moment(data.date_requested).format("MM/DD/YYYY") : "-"
+            
+            },
+        { columnHead: "Standard UOM", path: "uom", columnType: COLUMNTYPES.string },
+        { columnHead: "Total Issuance", path: "quantity", columnType: COLUMNTYPES.string },
+        { columnHead: "Employee Name", path: "employee_name", columnType: COLUMNTYPES.string },
+        { columnHead: "Position", path: "position", columnType: COLUMNTYPES.string },
+        { columnHead: "Branch", path: "branch", columnType: COLUMNTYPES.string },
+        { columnHead: "Type of Issuance", path: "issuance_type", columnType: COLUMNTYPES.string },
+        { columnHead: "Total Net Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
     ];
 
-   const filteredRequestDetails = request_details.filter((item: any) => {
-        if (filter === "All") return true;
-
-        return item.issuance_type === filter;
-    });
+    const receivingColumns = [
+        {columnHead: "Date Received",path: "date_received",columnType: COLUMNTYPES.function,
+            function: (data: any) =>
+                data.date_received
+                    ? moment(data.date_received).format("MM/DD/YYYY")
+                    : "-"
+        },
+        {columnHead: "Standard UOM",path: "standard_uom",columnType: COLUMNTYPES.string,},
+        {columnHead: "Total Purchases",path: "total_purchases",columnType: COLUMNTYPES.string,},
+        {columnHead: "Replenishment Type",path: "replenishment_type",columnType: COLUMNTYPES.string,},
+        {columnHead: "Supplier",path: "supplier",columnType: COLUMNTYPES.string,},
+        {columnHead: "CRF No.",path: "crf_no",columnType: COLUMNTYPES.string,},
+        {columnHead: "Document No.",path: "document_no",columnType: COLUMNTYPES.string,},
+        {columnHead: "Receiving No.",path: "receiving_no",columnType: COLUMNTYPES.string,},
+        {columnHead: "Total Net Amount",path: "total_net_amount",columnType: COLUMNTYPES.amount,},
+    ];
+    const showRequestIssuance = filter === "Request and Issuance";
+    const showReceiving = filter === "Receiving Stock";
 
     return (
        <Modal
         isShowing={modal.isShowing}
         title="Request Details"
-        onClose={modal.onClose}
+        onClose={() => {
+            modal.onClose();
+         }}
         size="xl"
     >
         <div className="p-4">
@@ -107,21 +126,31 @@ const [filter, setFilter] = useState("All");
                     value={filter}
                     onChange={(e: any) => setFilter(e.target.value)}
                     options={[
-                        { label: "All", value: "All" },
-                        { label: "Authority to Deduct", value: "Authority To Deduct" },
-                        { label: "Free Uniform", value: "Free Uniform" },
+                        { label: "Request and Issuance", value: "Request and Issuance" },
+                        { label: "Receiving Stock", value: "Receiving Stock" },
                     ]}
                 />
               
             </div>
             <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
-                <Table
-                    dataSet={filteredRequestDetails}
-                    columnSettings={weightAverageItemColumn}
-                    smallText
-                    dataKey="receiving_no"
-                    fixed
-                />
+                {showRequestIssuance && (
+                    <Table
+                        dataSet={request_details}
+                        columnSettings={varianceReportItemColumn}
+                        smallText
+                        dataKey="request_number"
+                        fixed
+                    />
+                )}
+                {showReceiving && (
+                    <Table
+                        dataSet={receiving_details}
+                        columnSettings={receivingColumns}
+                        smallText
+                        dataKey="receiving_no"
+                        fixed
+                    />
+                )}
             </div>
             <div className="flex justify-between items-center mt-1 text-sm">
                 <div className="text-xs text-gray-400">
@@ -191,9 +220,10 @@ const [filter, setFilter] = useState("All");
                     </div>
                 </div>
             </div>
+
         </div>
     </Modal>
     );
 };
 
-export default WeightAverageItem;
+export default VarianceReportItem;
