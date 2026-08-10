@@ -58,7 +58,7 @@ const Table = ({
     resetRows = false,
 }: TableInterface) => {
 
-    const perPageOptions: number[] = [10, 20, 50, 100, 150];
+    const perPageOptions: number[] = [10, 20, 50, 100, 150, 200];
     const currentPage = paginator && paginator.paginationData.current_page;
     const totalPages = paginator && paginator.paginationData.last_page;
     const [selectedRows, setSelectedRows] = useState<any[]>(initialSelectedRows);
