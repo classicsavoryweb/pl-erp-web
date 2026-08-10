@@ -22,7 +22,7 @@ import moment from "moment";
 const UsersTableCard = () => {
 
     const users = useApiCall();
-    const paginator = usePagination(25);
+    const paginator = usePagination(10);
     const createUser = useModal();
     const editUser = useModal();
     const [data, setData] = useState<any>({});

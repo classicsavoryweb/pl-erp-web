@@ -30,7 +30,7 @@ import Accordion from "@/components/common/Accordion";
 
 const AdjustmentsTableCard = () => {
     const api = useApiCall();
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const createAdjustments = useModal();
     const viewAdjustments = useModal();
     const filter = useFilter();

@@ -58,7 +58,7 @@ const ActualTimeTableCard = ({
     const [selectedLog, setSelectedLog] = useState<string>("0");
     const [branch, setBranch] = useState<any>({});
     const { permissions } = useContext(AuthContext);
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const filter = useFilter();
 
     const columnSettings = [

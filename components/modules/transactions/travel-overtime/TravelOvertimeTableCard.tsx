@@ -34,7 +34,7 @@ const TravelOvertimeTableCard = () => {
     const importModal = useModal();
     const createModal = useModal();
     const editModal = useModal();
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const filter = useFilter();
 
     const tableAction = [
