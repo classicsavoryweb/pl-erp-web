@@ -11,6 +11,7 @@ import { getAllActivityLogs } from "@/api/activity-logs";
 import { useState } from "react";
 import { useModal } from "@/hooks/modal";
 import Modal from "@/components/common/Modal";
+import Grid from "@/components/common/Grid";
 
 const ActivityLogsTableCard = () => {
     const api = useApiCall();
@@ -68,7 +69,7 @@ const ActivityLogsTableCard = () => {
         {
             label: "View",
             onClick: (data: any) => {
-                setData(data.properties);
+                setData(data);
                 modal.onOpen();
             }
         }
@@ -93,23 +94,26 @@ const ActivityLogsTableCard = () => {
                 title="Properties"
                 size="xl"
             >    
-                { data.old &&
-                    <div>
-                        <p>Old Data:</p>
-                        <pre className="text-[12px]">
-                            {JSON.stringify(data.old, null, 2)}
-                        </pre>
-                    </div>
-                }
-                { data.attributes &&
-                    <div>
-                        <p>{data.old ? "New Data" : "Data:"}</p>
-                        <pre className="text-[12px]">
-                            {JSON.stringify(data.attributes, null, 2)}
-                        </pre>
-                    </div>
-
-                }
+                <Grid cols={2}>
+                    { data.properties?.old &&
+                        <div className="mt-2">
+                            <p className="font-semibold text-xs">Old:</p>
+                            {Object.entries(data.properties.old).map(([key, value]) => (
+                            <div className="text-[11px]" key={key}>
+                                <p>{key} : {String(value)}</p>
+                            </div>))}
+                        </div>
+                    }
+                    { data.properties?.attributes &&
+                        <div className="mt-2">
+                            <p className="font-semibold text-xs">Changes:</p>
+                            {Object.entries(data.properties.attributes).map(([key, value]) => (
+                            <div className="text-[11px]" key={key}>
+                                <p>{key} : {String(value)}</p>
+                            </div>))}
+                        </div>
+                    }
+                </Grid>
             </Modal>
         </>
     );
