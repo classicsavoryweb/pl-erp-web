@@ -196,6 +196,8 @@ const WeightedAverageTable = () => {
                 exportFileName={`WeightAverage-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="status"
                 hasExport
+                hasDateRange
+                dateLabel="Weighted Count Date"
                 api={exportAllWeightAverage}
                 callBack={() => {
                 paginator.setPage(1);

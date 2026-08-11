@@ -387,6 +387,14 @@ const WeightedAverageForm = ({
                 toast.error("Failed to load items");
             }
         };
+
+        const accountingFormat = (value: number | string | null | undefined) => {
+            return Number(value || 0).toLocaleString("en-PH", {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2,
+            });
+        };
+
         const filteredChangePriceItems = changePriceItems.filter(
             (item) =>
                 Number(item.old_price ?? 0).toFixed(2) !==
@@ -620,7 +628,7 @@ const WeightedAverageForm = ({
                     const finalstandardprice = Number(item.new_standard_price) + Number(item.other_charges);
                     return(
                         <span>
-                            {finalstandardprice}
+                            {accountingFormat(finalstandardprice)}
                         </span>
                     )
                 }

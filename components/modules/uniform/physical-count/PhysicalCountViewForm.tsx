@@ -10,11 +10,8 @@ import Table from "@/components/common/Table";
 import moment from "moment";
 import {COLUMNTYPES} from "@/constants/column";
 import { reviewPhysicalCount , postPhysicalCount} from "@/api/uniform/physical-count";
-import { useModal } from "@/hooks/modal";
-import { useState } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
-import { useApiCall } from "@/hooks/api-call";
 
 
 interface PhysicalCountViewFormProps {
@@ -33,7 +30,6 @@ const PhysicalCountViewForm = ({
     selected,
     onReload,
 }: PhysicalCountViewFormProps) => {
-    const api = useApiCall();
 
     const numberValue = (value: any) => Number(value || 0);
 
