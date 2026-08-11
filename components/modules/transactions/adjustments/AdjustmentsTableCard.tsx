@@ -72,6 +72,11 @@ const AdjustmentsTableCard = () => {
             columnType: COLUMNTYPES.date
         },
         {
+            columnHead: "Cutoff Adjusted",
+            path: "cut_off",
+            columnType: COLUMNTYPES.string
+        },
+        {
             columnHead: "Days",
             path: "days",
             columnType: COLUMNTYPES.string
