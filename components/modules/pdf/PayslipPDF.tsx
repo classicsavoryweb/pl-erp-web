@@ -199,15 +199,9 @@ const buildWorkingRows = (payroll: any, summary: any) => {
     return [
         {
             group: "Total Days-In",
-            label: "Regular (Days)",
+            label: "Regular Days",
             input: summary?.regular_days ?? 0,
             salary: payroll?.salary ?? 0,
-        },
-        {
-            group: "Additional Working Time",
-            label: "Regular Overtime",
-            input: Number(summary?.regular_overtime ?? 0),
-            salary: payroll?.overtime_amount ?? 0,
         },
         {
             group: "Additional Working Time",
@@ -226,6 +220,12 @@ const buildWorkingRows = (payroll: any, summary: any) => {
             label: "Legal Hol (Hrs)",
             input: summary?.legal_holiday ?? 0,
             salary: payroll?.legal_holiday_amount ?? 0,
+        },
+        {
+            group: "Additional Working Time",
+            label: "Regular Overtime",
+            input: Number(summary?.regular_overtime ?? 0),
+            salary: payroll?.overtime_amount ?? 0,
         },
         {
             group: "Additional Working Time",
