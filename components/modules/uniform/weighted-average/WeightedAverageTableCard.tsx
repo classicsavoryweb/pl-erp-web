@@ -115,11 +115,11 @@ const WeightedAverageTable = () => {
 
     const columnSettings = [
         { columnHead: "WA Number", path: "weighted_id", columnType: COLUMNTYPES.string },
-        { columnHead: "Posting Date", path: "prepared_at", columnType: COLUMNTYPES.function,
+        { columnHead: "Updated Date", path: "price_updated_at", columnType: COLUMNTYPES.function,
             function: (data: any) =>
-                data.prepared_at ? moment(data.prepared_at).format("MM/DD/YYYY") : "-",
+                data.price_updated_at ? moment(data.price_updated_at).format("MM/DD/YYYY") : "-",
         },
-        { columnHead: "Posted By", path: "posted_by", columnType: COLUMNTYPES.string },
+        { columnHead: "Updated", path: "price_updated_by", columnType: COLUMNTYPES.string },
         { columnHead: "Remarks", path: "overall_remarks", columnType: COLUMNTYPES.string },
          { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function, function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" | "purpose" = "default";

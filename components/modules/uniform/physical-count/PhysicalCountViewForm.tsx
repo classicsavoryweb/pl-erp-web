@@ -33,7 +33,7 @@ const PhysicalCountViewForm = ({
 
     const numberValue = (value: any) => Number(value || 0);
 
-    const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+    const getStatusBadge = (status: string): "success" | "warning" | "danger" | "purpose" |"default" => {
         switch (status) {
             case "Posted":
                 return "success";
@@ -41,6 +41,8 @@ const PhysicalCountViewForm = ({
                 return "warning";
             case "Cancelled":
                 return "danger";
+            case "Updated":
+                return "purpose";
             default:
                 return "default";
         }
