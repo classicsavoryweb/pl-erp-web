@@ -142,8 +142,7 @@ const CreateLogModal = ({
 
             return errors;
         },
-        onSubmit: async (values, { resetForm }) => {
-
+        onSubmit: async (values, { resetForm, setSubmitting }) => {
             let hasThreeLogs = false;
             const dates = values.time_keeping.map(tk => tk.date);
             const duplicates = dates.filter((date, idx) => dates.indexOf(date) !== idx);
@@ -177,42 +176,50 @@ const CreateLogModal = ({
                 })),
             };
 
-            const response = await createBiotimeLog(payload);
-            if (!response.error) {
-                toast.success(response.data.message);
-                modal.onClose();
-                resetForm();
-                onSubmitCallback();
-            } else {
-            if (response.data.message === "Existing") {
-                const isConfirmed = await confirm({
-                title: "Biotime Already Exists",
-                message: "Do you want to overwrite?",
-                });
+            try {
+                setSubmitting(true);
+                const response = await createBiotimeLog(payload);
 
-                if (isConfirmed) {
-                    createBiotimeLog({
-                        ...payload,
-                        overwrite: true,
-                    }).then((resp) => {
-                        if (!resp.error) {
-                            toast.success(resp.data.message);
-                            modal.onClose();
-                            resetForm();
-                            onSubmitCallback();
-                        } else {
-                            toast.error(resp.data.message);
-                        }
-                    }).catch(() => {
-                            toast.error("Error encountered");
+                if (!response.error) {
+                    toast.success(response.data.message);
+                    modal.onClose();
+                    resetForm();
+                    onSubmitCallback();
+                } else {
+                    if (response.data.message === "Existing") {
+                        const isConfirmed = await confirm({
+                        title: "Biotime Already Exists",
+                        message: "Do you want to overwrite?",
                         });
+    
+                        if (isConfirmed) {
+                            createBiotimeLog({
+                                ...payload,
+                                overwrite: true,
+                            }).then((resp) => {
+                                if (!resp.error) {
+                                    toast.success(resp.data.message);
+                                    modal.onClose();
+                                    resetForm();
+                                    onSubmitCallback();
+                                } else {
+                                    toast.error(resp.data.message);
+                                }
+                            }).catch(() => {
+                                    toast.error("Error encountered");
+                            });
+                        }
+                    } else {
+                        toast.error(response.data.message);
+                    }
                 }
-            } else {
-                toast.error(response.data.message);
-            }
+            } catch {
+                toast.error("Error encountered");
+            } finally {
+                setSubmitting(false);
             }
         },
-        });
+    });
 
 
     return (
@@ -390,6 +397,7 @@ const CreateLogModal = ({
                             label="Submit"
                             type="submit"
                             onClick={() => {}}
+                            loading={formHandler.isSubmitting}
                         />            
                     </div>
                     <div>

@@ -92,8 +92,10 @@ const FetchBiotimeLogsModal = ({
             });
 
             if (isConfirm) {
-                fetchBranchBiotimeLogs(values)
-                .then((resp) => {
+                setSubmitting(true);
+                try {
+                    const resp = await fetchBranchBiotimeLogs(values);
+
                     if (!resp.error) {
                         resetForm();
                         modal.onClose();
@@ -101,9 +103,11 @@ const FetchBiotimeLogsModal = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch {
                     toast.error("Error encountered");
-                });
+                } finally {
+                    setSubmitting(false);
+                }
             }
         }
     });
@@ -200,6 +204,7 @@ const FetchBiotimeLogsModal = ({
                             type="submit"
                             label="Submit"
                             onClick={() => {}}
+                            loading={formHandler.isSubmitting}
                         />
                     </div>              
                 </div>
