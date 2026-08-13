@@ -56,3 +56,12 @@ export const importTravelOvertime = async (payload: {}) => {
 
     return resData;
 };
+
+export const deleteTravelOvertime = async (id: number | string) => {
+    const resData = await axiosHelper({
+        func_path: `/delete-travel-overtime/${id}`,
+        method: 'GET',
+    });
+
+    return resData;
+};
