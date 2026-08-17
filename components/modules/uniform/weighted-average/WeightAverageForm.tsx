@@ -6,24 +6,19 @@ import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
 import Textfield from "@/components/common/Textfield";
 import { COLUMNTYPES } from "@/constants/column";
-import { useAsyncEffect } from "@/hooks/async-effect";
 import TextArea from "@/components/common/TextArea";
-import { useApiCall } from "@/hooks/api-call";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { useModal } from "@/hooks/modal";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 import AdditionalChargeModal from "./AdditionalChargeModal";
-import { getDropDownMasterlist } from "@/api/uniform/request-and-issuance"
 import { createWeightAverage , getWeightAverageItems , getWeightAverageById , updateWeightStatus , updateUnitPrice } from "@/api/uniform/weighted-average";
 import moment from "moment";
 import Badge from "@/components/common/Badge";
 import  WeightedAverageItem  from "./WeightAverageItemView";
 import PasswordForm from "./PasswordForm";
-import { create } from "lodash";
 import * as XLSX from "xlsx-js-style";
-import ActionDropDown from "@/components/common/ActionDropDown";
 import ChangeUnitPriceForm from "./ChangeUnitPriceForm";
 
 interface WeightAverageFormProps{
@@ -77,8 +72,6 @@ const WeightedAverageForm = ({
     formValue,
     onSubmitCallback,
     }: WeightAverageFormProps) => {
-        const [ item, setitem ] = useState<any[]>([]);
-        const api = useApiCall();
         const [selectedItem, setSelectedItem] = useState<any>(null);
         const [password , setPassword] = useState("");
         const viewItemModal = useModal();
@@ -98,37 +91,6 @@ const WeightedAverageForm = ({
             original_new_standard_price : "",
             original_standard_difference : "",
         });
-        const [changeUnitPrice, setChangeUnitPrice] = useState({
-            index: -1,
-            change_unit_price: "",
-        });
-        const [itemdraft , setitemdraft]  = useState({
-            weighted_id_number : "",
-            uniform_item_no : "",
-            description : "",
-            standard_uom : "",
-            current_price : "",
-            total_quantity : "",
-            standard_uom_two : "",
-            total_amount : "",
-            new_standard_price : "",
-            other_charges : "",
-            standard_difference : "",
-            final_standard_price: "",
-            reason : "",
-        });
-        useAsyncEffect(() => {
-            if(!modal.isShowing) return;
-            getDropDownMasterlist()
-                .then((resp) => {
-                    if (resp.error) {
-                        toast.error("Error fetching options");
-                        return;
-                    }
-                setitem(resp.data.items ?? []);
-                })
-                .catch(() => toast.error("Error encountered"));
-        },[modal.isShowing]);
 
         const createFormHandler = useFormik({  
             initialValues  :defaultValues(),
@@ -139,7 +101,6 @@ const WeightedAverageForm = ({
                             items: "Load data first.",
                         };
                     }
-
                     return {};
                 },
             validateOnChange: false,
@@ -284,8 +245,7 @@ const WeightedAverageForm = ({
         const isView = mode == "view";
         const isReview = mode == "review";
         const isPost = createFormHandler.values.status?.toLowerCase() === "posted";
-        const items = createFormHandler.values.items || [];
-    
+
         useEffect(() => {
             if (!modal.isShowing) return;
 
@@ -394,12 +354,6 @@ const WeightedAverageForm = ({
                 maximumFractionDigits: 2,
             });
         };
-
-        const filteredChangePriceItems = changePriceItems.filter(
-            (item) =>
-                Number(item.old_price ?? 0).toFixed(2) !==
-                Number(item.new_price ?? 0).toFixed(2)
-        );
 
         const exportChangePriceItems = () => {
             const exportData = changePriceItems.map(item => ({
@@ -541,11 +495,6 @@ const WeightedAverageForm = ({
 
             if (!row) return;
 
-            const totalAmount = Number(row.total_amount || 0);
-            const totalQuantity = Number(row.total_quantity || 0);
-            const standardDiff = Number(row.standard_difference || 0);
-       
-
             rows[chargeDraft.index] = {
                 ...row,
                 other_charges: additionalCharge.toFixed(2),
@@ -564,15 +513,6 @@ const WeightedAverageForm = ({
             createFormHandler.setFieldValue("items", rows);
             additionalChargeModal.onClose();
         };
-
-        const modalTitle =
-            mode === "create"
-                ? "Generate Weighted Average"
-                : isReview
-                ? "Review Weighted Average"
-                : isPost
-                ? "Post Weighted Average"
-                : "View Weighted Average";
 
         const tableActions = [
             ...(mode !== "create"
@@ -603,14 +543,6 @@ const WeightedAverageForm = ({
                    }]
 
             :[]),     
-        ]
-
-        const changePriceTableColumn = [
-            {columnHead : "Item Name" , path: "description" , columnType:COLUMNTYPES.string},
-            {columnHead : "Old Standard Price" , path: "old_price" , columnType:COLUMNTYPES.amount},
-            {columnHead : "New Standard Price" , path: "new_price" , columnType:COLUMNTYPES.amount},
-            {columnHead : "Price Difference" , path: "standard_difference", columnType:COLUMNTYPES.amount},
-
         ]
 
         const weightAverageColumn =[
@@ -905,11 +837,7 @@ const WeightedAverageForm = ({
                         variant="secondary"
                         onClick={() => {
                             modal.onClose();
-                            createFormHandler.resetForm();
-                        setitemdraft({weighted_id_number:"",uniform_item_no:"",description:"",standard_uom:"",standard_uom_two:"",current_price:"",total_quantity:"",new_standard_price:"",
-                                other_charges:"",total_amount:"",standard_difference:"",reason:"",final_standard_price:""
-                            });
-                    
+                            createFormHandler.resetForm();              
                         }}
                     />
                     <Button

@@ -11,7 +11,7 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
-import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails, updateWeightStatus ,cancelWeightAverage } from "@/api/uniform/weighted-average";
+import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails} from "@/api/uniform/weighted-average";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
@@ -20,7 +20,6 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import  WeightedAverageForm  from "./WeightAverageForm";
 import VarianceReportCancelForm from "./WeightedAverageCancelForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import confirm from "@/components/common/Confirm";
 
 const WeightedAverageTable = () => {
     const api = useApiCall();

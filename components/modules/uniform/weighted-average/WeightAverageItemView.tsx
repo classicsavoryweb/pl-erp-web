@@ -110,7 +110,24 @@ const WeightAverageItem = ({
                 <div className="flex gap-6 justify-end text-xs text-gray-400">
                     <div className="flex items-center">
                         <span className="font-normal">
-                            Total Standard Quantity:
+                            Quantity:
+                        </span>
+                        <span className="ml-2 mr-2 font-semibold">
+                            {receivingDetails
+                                .reduce(
+                                    (total: number, item: any) =>
+                                        total + Number(item.total_quantity || 0),
+                                    0
+                                )
+                                .toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
+                        </span>
+                    </div>
+                     <div className="flex items-center">
+                        <span className="font-normal">
+                            Standard Price:
                         </span>
                         <span className="ml-2 mr-2 font-semibold">
                             {receivingDetails

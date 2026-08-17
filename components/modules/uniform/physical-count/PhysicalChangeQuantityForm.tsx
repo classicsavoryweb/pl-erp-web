@@ -2,8 +2,6 @@
 
 import Modal from "@/components/common/Modal";
 import Button from "@/components/common/Button";
-import Textfield from "@/components/common/Textfield";
-import TextArea from "@/components/common/TextArea";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 
