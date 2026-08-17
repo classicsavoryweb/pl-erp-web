@@ -285,10 +285,10 @@ const VarianceReportViewForm = ({
                                 Showing {filteredItems.length} items
                             </span>
                             <div>
-                                <span className="font-semibold text-gray-400 text-sm">
+                                <span className="font-bold text-gray text-sm">
                                     Total Positive Variance Cost:
                                 </span>
-                                <span className="font-bold ml-2 mr-5 text-base">
+                                <span className="font-extrabold ml-2 mr-5 text-base text-green-500 ">
                                     {filteredItems
                                         .reduce(
                                             (total: number, item: any) =>
@@ -303,10 +303,10 @@ const VarianceReportViewForm = ({
                                     })}
                                 </span>
                           
-                                <span className="font-semibold text-gray-400 text-sm">
+                                <span className="font-bold text-gray text-sm">
                                     Total Negative Variance Cost:
                                 </span>
-                                <span className="font-bold ml-2 mr-5 text-base">
+                                <span className="font-extrabold ml-2 mr-5 text-base text-red-500">
                                     {filteredItems
                                         .reduce(
                                             (total: number, item: any) =>
