@@ -32,10 +32,10 @@ export default function RootLayout({
 						easing="linear"
 						showSpinner
 					/>
-						<ToastContainer/>
-						<AuthProvider>
-							{children}
-						</AuthProvider>
+					<ToastContainer/>
+					<AuthProvider>
+						{children}
+					</AuthProvider>
 				</ThemeProvider>
 			</body>
 		</html>

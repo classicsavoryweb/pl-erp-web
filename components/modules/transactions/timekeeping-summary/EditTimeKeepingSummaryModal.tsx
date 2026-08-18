@@ -6,8 +6,10 @@ import Grid from "@/components/common/Grid";
 import Modal from "@/components/common/Modal";
 import TextArea from "@/components/common/TextArea";
 import Textfield from "@/components/common/Textfield";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 import { useFormik } from "formik";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
 
@@ -21,6 +23,8 @@ const EditTimeKeepingSummaryModal = ({
     data,
     onSubmitCallBack
 }: ModalInterface) => {
+
+    const {permissions} = useContext(AuthContext);
 
     useEffect(() => {
         if (modal.isShowing) {
@@ -48,6 +52,14 @@ const EditTimeKeepingSummaryModal = ({
             adjustment_amount: Yup.number().required("Taxable adjustment is required")
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
+            if (
+                !canEditRestrictedRecords(permissions, "EMPLOYEE", data.employee.employee_number, 0) ||
+                !canEditRestrictedRecords(permissions, "BRANCH", "", data.branch_id)
+            ) {
+                toast.error("You cannot this record");
+                return;
+            }
+
             const isConfirmed = await confirm({
                 title: "Timekeeping Summary",
                 message: "Are you sure you want to save changes?"
