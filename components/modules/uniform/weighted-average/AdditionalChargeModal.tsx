@@ -126,8 +126,6 @@ return (
                     }}
                     onBlur={() => {
                         const value = Number(chargeDraft.additional_charge || 0);
-
-                        // If completely empty, KEEP IT EMPTY
                         if (chargeDraft.additional_charge === "") {
                             setAdditionalChargeInput("");
                             return;
@@ -149,7 +147,6 @@ return (
                         border-slate-300
                         focus:border-slate-400
                         p-2
-                        text-white
                         cursor-text
                         dark:bg-neutral-800
                         dark:border-neutral-700
