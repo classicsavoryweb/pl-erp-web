@@ -626,12 +626,6 @@ const VarianceItemsTable = ({
         },
         0
     );
-
-    const totalVarianceCost = items.reduce(
-        (total: number, item: any) =>
-            total + Number(item.total_variance_cost || 0),
-        0
-    );
     return (
         <>
             <div>
@@ -705,41 +699,27 @@ const VarianceItemsTable = ({
                         </tbody>
                     </table>
                 </div>
-                <div className="mt-1 text-xs text-gray-400">
-                    Showing {items.length} {items.length === 1 ? "item" : "items"}
-                </div>
-                <div className="flex justify-end gap-6 mt-2 text-xs">
+                <div className="flex justify-between mt-2">
+                            <span className="text-xs text-gray-400">
+                                Showing {items.length} {items.length === 1 ? "item" : "items"}
+                            </span>
+                            <div>
+                                <span className="font-bold text-gray text-sm">
+                                    Total Positive Variance Cost:
+                                </span>
+                                <span className="font-extrabold ml-2 mr-5 text-base text-green-500 ">
+                                   {money(totalPositiveVarianceCost)}
+                                </span>
+                          
+                                <span className="font-bold text-gray text-sm">
+                                    Total Negative Variance Cost:
+                                </span>
+                                <span className="font-extrabold ml-2 mr-5 text-base text-red-500">
+                                   {money(totalNegativeVarianceCost)}
+                                </span>            
+                            </div>
 
-                    <div>
-                        <span className="text-gray-400">
-                            Total Positive Variance Cost:
-                        </span>
-                        <span className="ml-2 font-semibold text-gray-400">
-                            {money(totalPositiveVarianceCost)}
-                        </span>
-                    </div>
-
-                    <div>
-                        <span className="text-gray-400">
-                            Total Negative Variance Cost:
-                        </span>
-                        <span className="ml-2 font-semibold text-gray-400">
-                            {money(Math.abs(totalNegativeVarianceCost))}
-                        </span>
-                    </div>
-
-                    <div>
-                        <span className="text-gray-400">
-                            Total Variance Cost:
-                        </span>
-                        <span className="ml-2 font-semibold">
-                            {totalVarianceCost < 0
-                                ? `${money(Math.abs(totalVarianceCost))}`
-                                : money(totalVarianceCost)}
-                        </span>
-                    </div>
-
-                </div>
+                        </div>
             </div>
         </>
     );
