@@ -514,8 +514,8 @@ const StockReplenishmentWorkspace = ({
                 return {
                     replenishment_item_id: item.id,
                     item: item.item,
-                    remaining_qty: Math.max(0, remainingQty),
-                    quantity: Math.max(0, remainingQty),
+                    remaining_qty: Math.max(remainingQty),
+                    quantity: Math.max(remainingQty),
                     unit_price: Number(item.unit_price),
                     remarks: "",
                 };
@@ -1709,16 +1709,19 @@ const LineEditor = ({ items, mode, isReviewReceive, onChange, onRemove }: any) =
                                     className={numericLineInputClassName}
                                     value={line.quantity ?? ""}
                                     onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        const value = event.target.value;
+                                        if (value === "") {
+                                            onChange(index, "quantity", "");
+                                            return;
+                                        }
                                         const qty = Number(event.target.value);
                                         const maxQty = Number(line.remaining_qty);
-
                                         if (qty > maxQty) {
                                             toast.error(
                                                 `Cannot receive more than ${maxQty}.`
                                             );
                                             return;
                                         }
-
                                         onChange(index, "quantity", qty);
                                     }}
                                 />
