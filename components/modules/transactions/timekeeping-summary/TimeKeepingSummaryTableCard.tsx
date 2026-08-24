@@ -28,6 +28,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import AddTaxableAdjustmentModal from "./AddTaxableAdjustmentModal";
 import Accordion from "@/components/common/Accordion";
 import EditTimeKeepingSummaryModal from "./EditTimeKeepingSummaryModal";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -191,6 +192,14 @@ const TimeKeepingSummaryTableCard = ({
                             {
                                 label: "Edit",
                                 onClick: (data: any) => {
+                                    if (
+                                        !canEditRestrictedRecords(permissions, "EMPLOYEE", data.employee.employee_number, 0) ||
+                                        !canEditRestrictedRecords(permissions, "BRANCH", "", data.branch_id)
+                                    ) {
+                                        toast.error("You cannot this record");
+                                        return;
+                                    }
+
                                     setSelectedSummary(data);
                                     editModal.onOpen();
                                 }
