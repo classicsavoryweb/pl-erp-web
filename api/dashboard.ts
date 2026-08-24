@@ -29,3 +29,13 @@ export const getEmployeeExpiringContracts = async (payload?: {}) => {
 
     return resData;
 };
+
+export const getPayrollSummaryDetails = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-payroll-summary-details',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
