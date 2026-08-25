@@ -67,6 +67,12 @@ const createEmptyReceiving = () => ({
     transmitted_by: "",
     remarks: "",
     items: [] as any[],
+    errors: {
+        replenishment_id: "",
+        checker_employee: "",
+        crf_no: "",
+        document_no: "",
+    },
 });
 
 const lineInputClassName = [
@@ -85,7 +91,7 @@ const formatAuditDate = (value?: string | null) =>
     value ? moment(value).format("MMMM DD, YYYY h:mm A") : "-";
 
 const formatDate = (value?: string | null) =>
-    value ? moment(value).format("YYYY-MM-DD") : "";
+    value ? moment(value).format("MM/DD/YYYY") : "";
 
 interface StockReplenishmentWorkspaceProps {
     module: StockModule;
@@ -122,6 +128,12 @@ const StockReplenishmentWorkspace = ({
     const [replaceSubmitting, setReplaceSubmitting] = useState(false);
     const [detail, setDetail] = useState<any>(null);
     const [detailType, setDetailType] = useState<StockModule>(module);
+    const [isReview, setIsReview] = useState(false);
+    const [isPost, setIsPost] = useState(false);
+    const [isReviewReceive , setIsReviewReceive] = useState(false);
+    const [isPostReceive , setIsPostReceive] = useState(false);
+    const [reviewId, setReviewId] = useState<number | null>(null);
+    const [receiveId , setReceiveId] = useState<number | null>(null);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -172,14 +184,30 @@ const StockReplenishmentWorkspace = ({
     }, [items, selectedSupplier]);
 
     const runAction = async (title: string, action: () => Promise<any>) => {
-        const accepted = await confirm({ title, message: `Are you sure you want to ${title.toLowerCase()}?` });
+        const accepted = await confirm({
+            title,
+            message: `Are you sure you want to ${title.toLowerCase()}?`
+        });
+
         if (!accepted) return;
+
         const response = await action();
+
         if (response.error) {
             toast.error(messageOf(response));
             return;
         }
+
         toast.success(response.data.message);
+        setDetail(null);
+        setRequestOpen(false);
+        setReviewId(null);
+        setIsReview(false);
+        setIsPost(false);
+        setIsReviewReceive(false);
+        setReceivingOpen(false); 
+        setReceiveId(null); 
+        
         api.triggerReload();
     };
 
@@ -226,7 +254,7 @@ const StockReplenishmentWorkspace = ({
         try {
             const response = cancelTarget.kind === "requests"
                 ? await cancelReplenishment(cancelTarget.record.id, reason)
-                : await cancelReceiving(cancelTarget.record.id, reason);
+                : await cancelReceiving(cancelTarget.record.id, {reason:reason});
 
             if (response.error) {
                 toast.error(messageOf(response));
@@ -240,6 +268,22 @@ const StockReplenishmentWorkspace = ({
             toast.error("Error encountered");
         } finally {
             setCancelSubmitting(false);
+        }
+    };
+     const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+        switch (status) {
+            case "Posted":
+                return "success";
+            case "Partially Received":
+                return "warning";
+             case "Fully Received":
+                return "success";
+            case "Reviewed":
+                return "warning";
+            case "Cancelled":
+                return "danger";
+            default:
+                return "default";
         }
     };
 
@@ -454,19 +498,28 @@ const StockReplenishmentWorkspace = ({
     };
 
     const selectReceivingRequest = (requestId: string) => {
-        const request = receivable.find((record) => String(record.id) === String(requestId));
+        const request = receivable.find(
+            (record) => String(record.id) === String(requestId)
+        );
+
         setReceivingForm((form) => ({
             ...form,
             replenishment_id: requestId,
             transmitted_by: request?.supplier?.vendor_name ?? "",
-            items: (request?.items ?? []).map((item: any) => ({
-                replenishment_item_id: item.id,
-                item: item.item,
-                remaining_qty: Number(item.remaining_qty),
-                quantity: Number(item.remaining_qty),
-                unit_price: Number(item.unit_price),
-                remarks: "",
-            })),
+            items: (request?.items ?? []).map((item: any) => {
+                const remainingQty =
+                    Number(item.remaining_qty) -
+                    Number(item.pending_received_qty ?? 0);
+
+                return {
+                    replenishment_item_id: item.id,
+                    item: item.item,
+                    remaining_qty: Math.max(remainingQty),
+                    quantity: Math.max(remainingQty),
+                    unit_price: Number(item.unit_price),
+                    remarks: "",
+                };
+            }),
         }));
     };
 
@@ -484,8 +537,31 @@ const StockReplenishmentWorkspace = ({
             ...receivingForm,
             items: receivingForm.items.filter((item) => Number(item.quantity) > 0),
         };
-        if (!payload.replenishment_id || !payload.crf_no || !payload.document_no ||
-            !payload.checker_name || payload.items.length === 0) {
+            if (
+            !payload.replenishment_id ||
+            !payload.crf_no ||
+            !payload.document_no ||
+            !payload.checker_name ||
+            payload.items.length === 0
+        ) {
+            setReceivingForm((prev) => ({
+                ...prev,
+                errors: {
+                    replenishment_id: !payload.replenishment_id
+                        ? "Replenishment request is required."
+                        : "",
+                    checker_employee: !payload.checker_name
+                        ? "Checker is required."
+                        : "",
+                    crf_no: !payload.crf_no
+                        ? "CRF Number is required."
+                        : "",
+                    document_no: !payload.document_no
+                        ? "Document Number is required."
+                        : "",
+                },
+            }));
+
             toast.error("Complete the receiving details and enter at least one received quantity.");
             return;
         }
@@ -536,7 +612,6 @@ const StockReplenishmentWorkspace = ({
                 break;
             case "Reviewed":
             case "Partially Received":
-            case "Closed":
                 status = "warning";
                 break;
         }
@@ -575,7 +650,10 @@ const StockReplenishmentWorkspace = ({
 
     const requestColumns = [
         { columnHead: "Request No.", path: "request_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Date", path: "requested_date", columnType: COLUMNTYPES.date },
+        { columnHead: "Date", path: "requested_date", columnType: COLUMNTYPES.function,
+            function: (data: any) =>
+                data.requested_date ? moment(data.requested_date).format("MM/DD/YYYY") : "-",
+         },
         { columnHead: "Supplier", path: "supplier.vendor_name", columnType: COLUMNTYPES.string },
         { columnHead: "Type", path: "replenishment_type", columnType: COLUMNTYPES.string },
         { columnHead: "Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
@@ -595,6 +673,8 @@ const StockReplenishmentWorkspace = ({
                     onClick: () => {
                         setDetail(record);
                         setDetailType("requests");
+                        setIsReview(false);
+                        setIsPost(false);               
                     },
                 }, {
                     label: "Detailed Export",
@@ -605,10 +685,24 @@ const StockReplenishmentWorkspace = ({
                     actions.push({
                         label: "Review",
                         permission: performPermission,
-                        onClick: () => runAction(
-                            "Review request",
-                            () => reviewReplenishment(record.id)
-                        ),
+                        onClick: () => {
+                            setIsReview(true);
+                            setIsPost(false);
+                            setIsReviewReceive(false);
+                            setIsPostReceive(false);
+
+                            setReviewId(record.id);
+
+                            setRequestForm({
+                                supplier_id: String(record.supplier_id ?? ""),
+                                replenishment_type: record.replenishment_type ?? "",
+                                requested_date: record.requested_date ?? "",
+                                remarks: record.remarks ?? "",
+                                items: record.items ?? [],
+                            });
+
+                            setRequestOpen(true);
+                        }
                     });
                 }
 
@@ -616,10 +710,15 @@ const StockReplenishmentWorkspace = ({
                     actions.push({
                         label: "Post",
                         permission: performPermission,
-                        onClick: () => runAction(
-                            "Post request",
-                            () => postReplenishment(record.id)
-                        ),
+                         onClick: () => {
+                            setDetail(record);
+                            setDetailType("requests");
+                            setIsReview(false);
+                            setIsPost(true);
+                            setIsReviewReceive(false);
+                            setIsPostReceive(false);
+                            
+                        }
                     });
                 }
 
@@ -655,7 +754,10 @@ const StockReplenishmentWorkspace = ({
     const receivingColumns = [
         { columnHead: "Receiving No.", path: "receiving_no", columnType: COLUMNTYPES.string },
         { columnHead: "Request No.", path: "replenishment.request_no", columnType: COLUMNTYPES.string },
-        { columnHead: "Date Received", path: "date_received", columnType: COLUMNTYPES.date },
+        { columnHead: "Date Received", path: "date_received", columnType: COLUMNTYPES.function,
+            function:(data:any) =>
+                data.date_received ? moment(data.date_received).format("MM/DD/YYYY") : "-",
+         },
         { columnHead: "CRF No.", path: "crf_no", columnType: COLUMNTYPES.string },
         { columnHead: "Document No.", path: "document_no", columnType: COLUMNTYPES.string },
         { columnHead: "Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
@@ -685,10 +787,40 @@ const StockReplenishmentWorkspace = ({
                     actions.push({
                         label: "Review",
                         permission: performPermission,
-                        onClick: () => runAction(
-                            "Review receiving",
-                            () => reviewReceiving(record.id)
-                        ),
+                        onClick: () => {
+                            setDetail(null);
+
+                            setIsReview(false);
+                            setIsPost(false);
+
+                            setIsReviewReceive(true);
+                            setIsPostReceive(false);
+
+                            setReceiveId(record.id);
+
+                            setReceivingForm({
+                                ...createEmptyReceiving(),
+                                replenishment_id: String(record.replenishment_id ?? ""),
+                                date_received: record.date_received ?? "",
+                                crf_no: record.crf_no ?? "",
+                                document_no: record.document_no ?? "",
+                                checker_name: record.checker_name ?? "",
+                                transmitted_by: record.transmitted_by ?? "",
+                                remarks: record.remarks ?? "",
+                                items: (record.items ?? []).map((item:any)=>({
+                                    ...item,
+                                    replenishment_item_id: item.id,
+                                    requested_qty: item.requested_qty 
+                                        ?? item.replenishment_item?.requested_qty 
+                                        ?? 0,
+                                    quantity: item.quantity ?? "",
+                                    unit_price: item.unit_price ?? 0,
+                                    remarks: item.remarks ?? "",
+                                }))
+                            });
+
+                            setReceivingOpen(true);
+                        }
                     });
                 }
 
@@ -696,10 +828,14 @@ const StockReplenishmentWorkspace = ({
                     actions.push({
                         label: "Post",
                         permission: performPermission,
-                        onClick: () => runAction(
-                            "Post receiving",
-                            () => postReceiving(record.id)
-                        ),
+                        onClick: () => {
+                            setDetail(record);
+                            setDetailType("receiving");
+                            setIsReviewReceive(false);
+                            setIsPostReceive(true);
+                            setIsPost(false);
+                            setIsReview(false);
+                        }
                     });
                 }
 
@@ -718,13 +854,28 @@ const StockReplenishmentWorkspace = ({
 
     const detailItems = detail?.items ?? [];
     const requestTotal = requestForm.items.reduce(
-        (total, item) => total + Number(item.approved_qty || 0) * Number(item.unit_price || 0),
+        (total: number, item: any) =>
+            total + Number(item.approved_qty || 0) * Number(item.unit_price || 0),
         0
     );
+
     const receivingTotal = receivingForm.items.reduce(
-        (total, item) => total + Number(item.quantity || 0) * Number(item.unit_price || 0),
+        (total: number, item: any) =>
+            total + Number(item.quantity || 0) * Number(item.unit_price || 0),
         0
     );
+    
+    const replenishmentbutton = [ 
+        {
+            label: "Generate List",
+            onClick: handleGenerateList
+        },
+        {
+            label: "Import Supplier/Item list",
+            onClick : () => importInputRef.current?.click()    
+        }
+
+    ];
 
     return (
         <>
@@ -768,9 +919,19 @@ const StockReplenishmentWorkspace = ({
                             label: module === "requests"
                                 ? "Create replenishment request"
                                 : "Create receiving transaction",
-                            onClick: () => module === "requests"
-                                ? setRequestOpen(true)
-                                : setReceivingOpen(true),
+                            onClick: () => {
+                                if (module === "requests") {
+                                    setIsReview(false);
+                                    setIsPost(false);
+                                    setRequestForm(createEmptyRequest());
+                                    setRequestOpen(true);
+                                } else {
+                                    setIsReviewReceive(false);
+                                    setIsPostReceive(false);
+                                    setReceivingForm(createEmptyReceiving());
+                                    setReceivingOpen(true);
+                                }
+                            },
                         }]} />
                     </div>
                 )}
@@ -914,19 +1075,34 @@ const StockReplenishmentWorkspace = ({
                     </div>
                 </form>
             </Modal>
+            <Modal
+                isShowing={requestOpen}
+                title={isReview ? "Review Replenishment Request" : "New Replenishment Request"}
+                onClose={() => {
+                    setRequestOpen(false);
+                    setIsReview(false);
+                    setReviewId(null);
+                }}
+                size="xxl"
+            >
+                <form
+                    onSubmit={(event) => {
+                        event.preventDefault();
 
-            <Modal isShowing={requestOpen} title="New Replenishment Request"
-                onClose={closeRequestModal} size="xxl">
-                <form onSubmit={(event) => {
-                    event.preventDefault();
-                    submitRequest();
-                }}>
+                        if (isReview && reviewId !== null) {
+                            runAction("Review Request", () => reviewReplenishment(reviewId,requestForm));
+                        } else {
+                            submitRequest();
+                        }
+                    }}
+                >
                     <SearchableDropDown
                         label="Supplier"
                         placeholder="select supplier"
                         name="supplier_id"
-                        value={requestForm.supplier_id}
+                        value={requestForm.supplier_id ?? ""}
                         required
+                        disabled={isReview}
                         onChange={(event) => {
                             setRequestForm({
                                 ...requestForm,
@@ -945,8 +1121,9 @@ const StockReplenishmentWorkspace = ({
                             label="Request Type"
                             placeholder="select request type"
                             name="replenishment_type"
-                            value={requestForm.replenishment_type}
+                            value={requestForm.replenishment_type ?? ""}
                             required
+                            disabled={isReview}
                             onChange={(event) => setRequestForm({
                                 ...requestForm,
                                 replenishment_type: event.target.value,
@@ -960,24 +1137,13 @@ const StockReplenishmentWorkspace = ({
                             label="Requested Date"
                             name="requested_date"
                             type="date"
-                            value={requestForm.requested_date}
+                            value={requestForm.requested_date ?? ""}
                             required
+                            disabled={isReview}
                             onChange={(event) => setRequestForm({
                                 ...requestForm,
                                 requested_date: event.target.value,
                             })}
-                        />
-                        <Textfield
-                            label="Status"
-                            name="status"
-                            value="Unposted"
-                            disabled
-                        />
-                        <Textfield
-                            label="Total"
-                            name="total_amount"
-                            value={requestTotal.toFixed(2)}
-                            disabled
                         />
                     </div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
@@ -990,47 +1156,41 @@ const StockReplenishmentWorkspace = ({
                                 accept=".xlsx,.xls,.csv,.txt"
                                 onChange={(event) => handleImportItems(event.target.files?.[0])}
                             />
-                            <div className="w-[140px]">
-                                <Button
-                                    type="button"
-                                    label="Generate List"
-                                    disabled={!requestForm.supplier_id || submitting}
-                                    loading={submitting}
-                                    onClick={handleGenerateList}
-                                />
-                            </div>
-                            <div className="w-[220px]">
-                                <Button
-                                    type="button"
-                                    label="Import Supplier/Item List"
-                                    disabled={!requestForm.supplier_id || submitting}
-                                    onClick={() => importInputRef.current?.click()}
-                                />
-                            </div>
-                            <div className="w-[130px]">
-                                <Button
-                                    type="button"
-                                    label="Add Request"
-                                    disabled={submitting}
-                                    onClick={() => addRequestItem(requestItemId)}
-                                />
+                            <div
+                                onClick={(e) => {
+                                    e.preventDefault();
+                                    e.stopPropagation();
+                                }}
+                            >
+                                <DropDownButtons actions={replenishmentbutton} />
                             </div>
                         </div>
                     </div>
-                    <SearchableDropDown
-                        label="Description"
-                        placeholder="select description"
-                        name="uniform_item_id"
-                        value={requestItemId}
-                        disabled={!requestForm.supplier_id}
-                        onChange={(event) => setRequestItemId(event.target.value)}
-                        options={availableItems.map((item) => ({
-                            label: `${item.item_no} - ${item.description} (${item.size?.description ?? ""})`,
-                            value: String(item.id),
-                        }))}
-                    />
+                    <div className="grid grid-cols-1 gap-x-3 md:grid-cols-5">
+                        <div className="col-span-4">
+                            <SearchableDropDown
+                                label="Description"
+                                placeholder="select description"
+                                name="uniform_item_id"
+                                value={requestItemId ?? ""}
+                                disabled={!requestForm.supplier_id}
+                                onChange={(event) => setRequestItemId(event.target.value)}
+                                options={availableItems.map((item) => ({
+                                    label: `${item.item_no} - ${item.description} (${item.size?.description ?? ""})`,
+                                    value: String(item.id),
+                                }))}
+                            />
+                        </div>
+                        <div className="col-span-1 mt-3">
+                            <Button
+                                label="Add Request" 
+                                variant = "success"
+                                onClick ={() => addRequestItem(requestItemId)}
+                            />
+                        </div>
+                    </div>
                     <LineEditor
-                        items={requestForm.items}
+                        items={requestForm.items ?? []}
                         mode="request"
                         onChange={updateRequestItem}
                         onRemove={(index: number) => setRequestForm((form) => ({
@@ -1041,51 +1201,79 @@ const StockReplenishmentWorkspace = ({
                     <TextArea
                         label="Overall Remarks"
                         name="remarks"
-                        value={requestForm.remarks}
+                        value={requestForm.remarks ?? ""}
                         onChange={(event) => setRequestForm({
                             ...requestForm,
                             remarks: event.target.value,
                         })}
                     />
-                    <ModalFooter loading={submitting} />
+                    <ModalFooter loading={submitting} label={isReview ? "Review" : "Submit"}/>
                 </form>
             </Modal>
 
-            <Modal isShowing={receivingOpen} title="Receive Stock"
-                onClose={closeReceivingModal} size="xxl">
+            <Modal isShowing={receivingOpen} title={isReviewReceive ? "Review Receive Stock" :"Receive Stock"}
+                onClose={ ()=>{
+                    setIsReviewReceive(false);
+                    setReceiveId(null);
+                    setReceivingOpen(false);
+                }} 
+                size="xxl">
                 <form onSubmit={(event) => {
                     event.preventDefault();
-                    submitReceiving();
+                    if (isReviewReceive && receiveId !== null) {
+                            runAction("Review Receiving", () => reviewReceiving(receiveId,receivingForm));
+                        } else {
+                            submitReceiving();
+                        }
                 }}>
-                    <SearchableDropDown
-                        label="Replenishment Request"
-                        placeholder="select posted request"
-                        name="replenishment_id"
-                        value={receivingForm.replenishment_id}
-                        required
-                        onChange={(event) => selectReceivingRequest(event.target.value)}
-                        options={receivable.map((record) => ({
-                            label: `${record.request_no} - ${record.supplier?.vendor_name ?? ""}`,
-                            value: String(record.id),
-                        }))}
-                    />
+                    {!isReviewReceive && (
+                        <SearchableDropDown
+                            label="Replenishment Request"
+                            placeholder="select posted request"
+                            name="replenishment_id"
+                            value={receivingForm.replenishment_id ?? ""}
+                            error = {receivingForm.errors.replenishment_id}
+                            required
+                            disabled={isReviewReceive}
+                            onChange={(event) => {selectReceivingRequest(event.target.value)}}
+                            options={receivable
+                                .filter((record) =>
+                                    (record.status === "Posted" || record.status === "Partially Received") &&
+                                    record.items?.some((item: any) => {
+                                        const remaining =
+                                            Number(item.remaining_qty) -
+                                            Number(item.pending_received_qty ?? 0);
+
+                                        return remaining > 0;
+                                    })
+                                )
+                                .map((record) => ({
+                                label: `${record.request_no} - ${record.supplier?.vendor_name ?? ""}`,
+                                value: String(record.id),
+                            }))}
+                        />
+                    )}
                     <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
                         <Textfield
                             label="Date Received"
                             name="date_received"
                             type="date"
-                            value={receivingForm.date_received}
+                            value={receivingForm.date_received ?? ""}
                             required
+                            disabled={isReviewReceive}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 date_received: event.target.value,
                             })}
                         />
+                        {!isReviewReceive && (
                         <SearchEmployeeDropDown
                             label="Checker"
                             placeholder="select employee"
                             name="checker_employee"
-                            value={receivingForm.checker_employee}
+                            value={isReviewReceive ? receivingForm.checker_name ?? "" : receivingForm.checker_employee ?? ""}
+                            error={receivingForm.errors.checker_employee}
+                            disabled={isReviewReceive}
                             required
                             status="active"
                             onChange={(event: any) => {
@@ -1102,11 +1290,24 @@ const StockReplenishmentWorkspace = ({
                                 });
                             }}
                         />
+                        )}
+                        {isReviewReceive && (
+                        <Textfield
+                            label="Checker"
+                            name="checker"
+                            value={receivingForm.checker_name ?? ""}
+                            error={receivingForm.errors.checker_employee}
+                            
+                            disabled
+                        />
+                        )}
                         <Textfield
                             label="CRF Number"
                             name="crf_no"
-                            value={receivingForm.crf_no}
+                            value={receivingForm.crf_no ?? ""}
+                            error={receivingForm.errors.crf_no}
                             required
+                            disabled={isReviewReceive}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 crf_no: event.target.value,
@@ -1115,68 +1316,93 @@ const StockReplenishmentWorkspace = ({
                         <Textfield
                             label="Document Number"
                             name="document_no"
-                            value={receivingForm.document_no}
+                            value={receivingForm.document_no ?? ""}
+                            error={receivingForm.errors.document_no}
                             required
+                            disabled={isReviewReceive}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 document_no: event.target.value,
                             })}
                         />
                         <Textfield
-                            label="Transmitted By"
+                            label="Supplier"
                             name="transmitted_by"
-                            value={receivingForm.transmitted_by}
+                            disabled
+                            value={receivingForm.transmitted_by ?? ""}
                             onChange={(event) => setReceivingForm({
                                 ...receivingForm,
                                 transmitted_by: event.target.value,
                             })}
-                        />
-                        <Textfield
-                            label="Total"
-                            name="total_amount"
-                            value={receivingTotal.toFixed(2)}
-                            disabled
                         />
                     </div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Receiving Items</span>
                     </div>
                     <LineEditor
-                        items={receivingForm.items}
+                        items={receivingForm.items ?? []}
                         mode="receiving"
+                        isReviewReceive={isReviewReceive}
                         onChange={updateReceivingItem}
                     />
                     <TextArea
                         label="Remarks"
                         name="remarks"
-                        value={receivingForm.remarks}
+                        value={receivingForm.remarks ?? ""}
                         onChange={(event) => setReceivingForm({
                             ...receivingForm,
                             remarks: event.target.value,
                         })}
+                        disabled={isReviewReceive}
                     />
-                    <ModalFooter loading={submitting} />
+                    <ModalFooter loading={submitting} label={isReviewReceive ? "Review" : "Submit"} />
                 </form>
             </Modal>
 
-            <Modal isShowing={Boolean(detail)}
-                title={detailType === "requests" ? "View Request" : "View Receiving"}
-                onClose={() => setDetail(null)} size="lg">
+            <Modal  isShowing={Boolean(detail)}
+                title={
+                    detailType === "requests"
+                        ? isPost
+                            ? "Post Request"
+                            : "View Request"
+                        : detailType === "receiving"
+                            ? isReviewReceive
+                                ? "Review Receiving"
+                                : isPostReceive
+                                    ? "Post Receiving"
+                                    : "View Receiving"
+                            : "View"
+                }
+                onClose={() => {
+                    setDetail(null);
+                    setIsPost(false);
+                    setIsReviewReceive(false);
+                }}
+                size="lg"
+            >
                 {detailType === "requests" ? (
-                    <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
+                <div>
+                    <div className="grid grid-cols-4 gap-1 items-end">
+                        <div className = "col-span-3">
+                             <Textfield
+                            label="Supplier"
+                            value={detail?.supplier?.vendor_name ?? ""}
+                            disabled
+                            />
+                        </div>
+                        <div className="col-span-1 w-full flex justify-center">
+                            <div className="scale-160 -translate-y-3">
+                                <Badge
+                                status={getStatusBadge(detail?.status)}
+                                label={detail?.status ?? ""}
+                                />
+                            </div>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-3 gap-1 items-end">
                         <Textfield
                             label="Request Number"
                             value={detail?.request_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Status"
-                            value={detail?.status ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Supplier"
-                            value={detail?.supplier?.vendor_name ?? ""}
                             disabled
                         />
                         <Textfield
@@ -1189,84 +1415,113 @@ const StockReplenishmentWorkspace = ({
                             value={formatDate(detail?.requested_date)}
                             disabled
                         />
-                        <Textfield
-                            label="Total"
-                            value={Number(detail?.total_amount ?? 0).toFixed(2)}
-                            disabled
-                        />
                     </div>
+                </div>
                 ) : (
-                    <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
-                        <Textfield
-                            label="Receiving Number"
-                            value={detail?.receiving_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Request Number"
-                            value={detail?.replenishment?.request_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Supplier"
-                            value={detail?.supplier?.vendor_name ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Status"
-                            value={detail?.status ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Date Received"
-                            value={formatDate(detail?.date_received)}
-                            disabled
-                        />
-                        <Textfield
-                            label="Checker"
-                            value={detail?.checker_name ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="CRF Number"
-                            value={detail?.crf_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Document Number"
-                            value={detail?.document_no ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Transmitted By"
-                            value={detail?.transmitted_by ?? ""}
-                            disabled
-                        />
-                        <Textfield
-                            label="Total"
-                            value={Number(detail?.total_amount ?? 0).toFixed(2)}
-                            disabled
-                        />
-                    </div>
+                    <div>
+                        <div className="grid grid-cols-4 gap-1 items-end">
+                            <div className ="col-span-3">
+                                <Textfield
+                                    label="Supplier"
+                                    value={detail?.supplier?.vendor_name ?? ""}
+                                    disabled
+                                />
+                            </div>
+                            <div className="col-span-1 w-full flex justify-center">
+                                <div className="scale-170 -translate-y-3">
+                                    <Badge
+                                    status={getStatusBadge(detail?.status)}
+                                    label={detail?.status ?? ""}
+                                    />
+                                </div>
+                            </div>
+                        </div>
+                            <div className = "grid grid-cols-3 gap-1 items-end">
+                                <Textfield
+                                    label="Receiving Number"
+                                    value={detail?.receiving_no ?? ""}
+                                    disabled
+                                />
+                                
+                                <Textfield
+                                    label="Request Number"
+                                    value={detail?.replenishment?.request_no ?? ""}
+                                    disabled
+                                />
+                                <Textfield
+                                    label="Date Received"
+                                    value={formatDate(detail?.date_received)}
+                                    disabled
+                                />
+                                <Textfield
+                                    label="Checker"
+                                    value={detail?.checker_name ?? ""}
+                                    disabled
+                                />
+                                <Textfield
+                                    label="CRF Number"
+                                    value={detail?.crf_no ?? ""}
+                                    disabled
+                                />
+                                <Textfield
+                                    label="Document Number"
+                                    value={detail?.document_no ?? ""}
+                                    disabled
+                                />
+                               
+                            </div>
+                        </div>
+                    
                 )}
-                <TextArea
+                <Textfield
                     label="Remarks"
                     value={detail?.remarks ?? ""}
                     disabled
                 />
-                <Table dataSet={detailItems} columnSettings={[
-                    { columnHead: "Item", path: "item.description", columnType: COLUMNTYPES.string },
-                    {
-                        columnHead: detailType === "requests" ? "Approved" : "Received",
-                        path: detailType === "requests" ? "approved_qty" : "quantity",
-                        columnType: COLUMNTYPES.amount,
-                    },
-                    ...(detailType === "requests" ? [{
-                        columnHead: "Remaining", path: "remaining_qty", columnType: COLUMNTYPES.amount,
-                    }] : []),
-                    { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.amount },
-                    { columnHead: "Remarks", path: "remarks", columnType: COLUMNTYPES.string },
-                ]} />
+                <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
+                    <Table dataSet={detailItems} columnSettings={[
+                        { columnHead: "Item", path: "item.description", columnType: COLUMNTYPES.string },
+                        {
+                            columnHead: detailType === "requests" ? "Approved" : "Received",
+                            path: detailType === "requests" ? "approved_qty" : "quantity",
+                            columnType: COLUMNTYPES.amount,
+                        },
+                        ...(detailType === "requests" ? [{
+                            columnHead: "Remaining", path: "remaining_qty", columnType: COLUMNTYPES.amount,
+                        }] : []),
+                        { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.amount },
+                        { columnHead: "Remarks", path: "remarks", columnType: COLUMNTYPES.string },
+                    ]} fixed/>
+                </div>
+                <div className="flex justify-between items-center mt-2">
+                    <div className="text-xs text-gray-400">
+                        {detailItems.length} {detailItems.length === 1 ? "item" : "items"}
+                    </div>
+
+                    <div className="text-right whitespace-nowrap">
+                        <span className="font-normal text-xs text-gray-400">
+                            Total Amount:
+                        </span>
+                        <span className="ml-2 font-semibold text-sm text-gray-400">
+                            {detailItems
+                                .reduce(
+                                    (sum: number, item: any) =>
+                                        sum +
+                                        Number(
+                                            detailType === "requests"
+                                                ? item.approved_qty
+                                                : item.quantity
+                                        ) *
+                                        Number(item.unit_price || 0),
+                                    0
+                                )
+                                .toLocaleString(undefined, {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
+                        </span>
+                    </div>
+                </div>
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <p>Report Log:</p>
                 <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
@@ -1307,50 +1562,84 @@ const StockReplenishmentWorkspace = ({
                     />
                     <Textfield
                         label="Date & Time"
+                        name="cancelled_at"
                         value={formatAuditDate(detail?.cancelled_at)}
                         disabled
                     />
-                    {detailType === "requests" && (
-                        <>
-                            <Textfield
-                                label="Closed By:"
-                                value={detail?.closed_by ?? ""}
-                                disabled
-                            />
-                            <Textfield
-                                label="Date & Time"
-                                value={formatAuditDate(detail?.closed_at)}
-                                disabled
-                            />
-                        </>
-                    )}
+                    <Textfield
+                        label="Closed By:"
+                        name="closed_by"
+                        value={detail?.closed_by ?? ""}
+                        disabled
+                    />
+                    <Textfield
+                        label="Date & Time"
+                        value={formatAuditDate(detail?.closed_at)}
+                        disabled
+                    />   
                 </div>
                 <TextArea
-                    label="Cancel Reason"
-                    value={detail?.cancelled_reason ?? ""}
+                    label="Close Reason"
+                    value={
+                        detailType === "receiving" && detail?.closed_by
+                            ? "Already Closed in Replenishment"
+                            : (detail?.closed_reason ?? "")
+                    }
                     disabled
                 />
-                {detailType === "requests" && (
+                {(detailType === "requests") || isReview  && (
                     <TextArea
                         label="Close Reason"
                         value={detail?.closed_reason ?? ""}
                         disabled
                     />
                 )}
+                <div className="grid grid-cols-4">
+                    <div className="col-span-2"></div>
+
+                    <div className="col-span-2 mt-auto flex justify-end gap-2 pt-4">
+                        <Button
+                            label="Close"
+                            onClick={() => {
+                                setDetail(null);
+                                setIsReview(false);
+                            }}
+                        />
+
+                        {(isReview || isPost || isReviewReceive || isPostReceive) && (
+                            <Button
+                                label={(isPost || isPostReceive) ? "Post" : "Review"}
+                                onClick={() => {
+                                    if (isPost) {
+                                        runAction("Post Request", () => postReplenishment(detail.id));
+                                    } else if (isPostReceive) {
+                                        runAction("Post Receiving", () => postReceiving(detail.id));
+                                    } 
+                                }}
+                            />
+                        )}
+                    </div>
+                </div>
             </Modal>
 
         </>
     );
 };
 
-const ModalFooter = ({ loading }: any) => (
+const ModalFooter = ({
+    loading,
+    label = "Submit",
+}: {
+    loading: boolean;
+    label?: string;
+}) => (
     <>
         <hr className="mt-6 pb-2 text-slate-300" />
         <div className="flex justify-end">
             <div className="w-[120px]">
                 <Button
                     type="submit"
-                    label="Submit"
+                    label={label}
                     loading={loading}
                     onClick={() => {}}
                 />
@@ -1359,29 +1648,30 @@ const ModalFooter = ({ loading }: any) => (
     </>
 );
 
-const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
-    <div className="my-3 overflow-x-auto">
-        <table className="w-full min-w-[1000px] border-collapse text-sm">
-            <thead className="bg-red-800 text-white">
+const LineEditor = ({ items, mode, isReviewReceive, onChange, onRemove }: any) => (
+    <div>
+    <div className="overflow-auto max-h-[60vh] relative">
+        <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
+            <thead className="sticky top-0 z-20">
                 <tr>
-                    <th className="p-2 text-left">Item</th>
-                    <th className="p-2 text-right">Stock</th>
-                    {mode === "request" && <th className="p-2 text-right">Requested</th>}
-                    {mode === "request" && <th className="p-2 text-right">Approved</th>}
-                    {mode === "receiving" && <th className="p-2 text-right">Remaining</th>}
-                    {mode === "receiving" && <th className="p-2 text-right">Receiving Now</th>}
-                    <th className="p-2 text-right">Unit Price</th>
-                    <th className="p-2 text-right">Total Amount</th>
-                    <th className="p-2 text-left">Remarks</th>
-                    {mode === "request" && <th className="w-20 p-2 text-left">Action</th>}
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Item</th>
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Stock on hand</th>
+                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
+                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Approved</th>}
+                    {mode === "receiving" && !isReviewReceive &&  <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
+                    {mode === "receiving" && <th className="p-3 bg-red-800 text-left text-zinc-100">Receiving Now</th>}
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Unit Price</th>
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Total Amount</th>
+                    <th className="p-3 bg-red-800 text-left text-zinc-100">Remarks</th>
+                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Action</th>}
                 </tr>
             </thead>
-            <tbody>
+            <tbody className="text-xs">
                 {items.length === 0 && (
                     <tr>
                         <td
                             colSpan={mode === "request" ? 8 : 7}
-                            className="border p-4 text-center"
+                            className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center"
                         >
                             <EmptyState />
                             <p>No data available...</p>
@@ -1389,57 +1679,78 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                     </tr>
                 )}
                 {items.map((line: any, index: number) => (
-                    <tr className="align-middle" key={line.uniform_item_id ?? line.replenishment_item_id}>
-                        <td className="border border-slate-300 p-2">
+                    <tr className="align-middle py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700" key={line.uniform_item_id ?? line.replenishment_item_id}>
+                        <td className=" p-2">
                             {line.item?.item_no} - {line.item?.description}
                         </td>
-                        <td className="border border-slate-300 p-2 text-right">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             {Number(line.item?.stock_on_hand ?? 0).toLocaleString()}
                         </td>
                         {mode === "request" && (
-                            <td className="border border-slate-300 p-1">
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 <input type="number" min="0.01" step="0.01" className={numericLineInputClassName}
-                                    value={line.requested_qty}
+                                    value= {line.requested_qty ?? ""}
                                     onChange={(event) => onChange(index, "requested_qty", event.target.value)} />
                             </td>
                         )}
                         {mode === "request" && (
-                            <td className="border border-slate-300 p-1">
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">
                                 <input type="number" min="0.01" step="0.01" className={readOnlyNumericLineInputClassName}
                                     value={line.approved_qty}
                                     readOnly />
                             </td>
                         )}
-                        {mode === "receiving" && (
-                            <td className="border border-slate-300 p-2 text-right">
+                        {mode === "receiving" &&  !isReviewReceive  && (
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 {Number(line.remaining_qty).toLocaleString()}
                             </td>
                         )}
                         {mode === "receiving" && (
-                            <td className="border border-slate-300 p-1">
-                                <input type="number" min="0" max={line.remaining_qty} step="0.01" className={numericLineInputClassName}
-                                    value={line.quantity}
-                                    onChange={(event) => onChange(index, "quantity", event.target.value)} />
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
+                                <input
+                                    type="number"
+                                    min="0"
+                                    max={line.remaining_qty}
+                                    step="0.01"
+                                    className={numericLineInputClassName}
+                                    value={line.quantity ?? ""}
+                                    onChange={(event: React.ChangeEvent<HTMLInputElement>) => {
+                                        const value = event.target.value;
+                                        if (value === "") {
+                                            onChange(index, "quantity", "");
+                                            return;
+                                        }
+                                        const qty = Number(event.target.value);
+                                        const maxQty = Number(line.remaining_qty);
+                                        if (qty > maxQty) {
+                                            toast.error(
+                                                `Cannot receive more than ${maxQty}.`
+                                            );
+                                            return;
+                                        }
+                                        onChange(index, "quantity", qty);
+                                    }}
+                                />
                             </td>
                         )}
-                        <td className="border border-slate-300 p-1">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             <input type="number" min="0" step="0.01" className={mode === "request" ? readOnlyNumericLineInputClassName : numericLineInputClassName}
-                                value={line.unit_price}
+                                value={line.unit_price ?? ""}
                                 readOnly={mode === "request"}
                                 onChange={(event) => onChange(index, "unit_price", event.target.value)} />
                         </td>
-                        <td className="border border-slate-300 p-2 text-right">
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                             {(Number((mode === "request" ? line.approved_qty : line.quantity) || 0) * Number(line.unit_price || 0)).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                         </td>
-                        <td className="border border-slate-300 p-1">
-                            <input className={lineInputClassName} value={line.remarks}
+                        <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
+                            <input className={lineInputClassName} value={line.remarks ?? ""}
                                 onChange={(event) => onChange(index, "remarks", event.target.value)} />
                         </td>
                         {mode === "request" && (
-                            <td className="border border-slate-300 p-2">
+                            <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">
                                 <button
                                     type="button"
-                                    className="font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
+                                    className="font-large text-red-600 hover:text-red-200 hover:underline cursor-pointer"
                                     onClick={() => onRemove(index)}
                                 >
                                     Remove
@@ -1450,7 +1761,38 @@ const LineEditor = ({ items, mode, onChange, onRemove }: any) => (
                 ))}
             </tbody>
         </table>
+     </div>
+        <div className="flex justify-between items-center mt-1 text-xs text-gray-400">
+            <div>
+                Showing {items.length} {items.length === 1 ? "item" : "items"}
+            </div>
+            <div className="text-right whitespace-nowrap">
+                <span className="font-normal text-xs">
+                    Total Amount:
+                </span>
+                <span className="ml-2 font-semibold text-sm">
+                    {items
+                        .reduce(
+                            (sum: number, line: any) =>
+                                sum +
+                                (Number(
+                                    mode === "request"
+                                        ? line.approved_qty
+                                        : line.quantity
+                                ) || 0) *
+                                Number(line.unit_price || 0),
+                            0
+                        )
+                        .toLocaleString(undefined, {
+                            minimumFractionDigits: 2,
+                            maximumFractionDigits: 2,
+                        })}
+                </span>
+            </div>
+        </div>
+   
     </div>
+    
 );
 
 export default StockReplenishmentWorkspace;

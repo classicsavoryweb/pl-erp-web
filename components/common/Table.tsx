@@ -39,6 +39,7 @@ interface TableInterface {
     smallText?: boolean;
     initialSelectedRows?: any[];
     resetRows?: boolean;
+    fixed?:boolean;
 };
 
 const Table = ({
@@ -56,6 +57,7 @@ const Table = ({
     smallText,
     initialSelectedRows = [],
     resetRows = false,
+    fixed = false,
 }: TableInterface) => {
 
     const perPageOptions: number[] = [10, 20, 50, 100, 150, 200];
@@ -89,22 +91,24 @@ const Table = ({
     return (
 
         <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-[13px]"}`}>
-            <div className="overflow-x-auto">
+        <div className={fixed ? "" : "overflow-x-auto"}>
             <table className="table-auto w-full rounded-md dark:text-slate-200 dark:bg-neutral-800">
-                <thead className="bg-red-800">
+                <thead className={`bg-red-800 ${fixed ? "sticky top-0 z-30" : ""}`}>
                     <tr>
-                        { withCheckBox &&
+                        {withCheckBox && (
                             <th
-                                className="text-left p-2 border-slate-300 dark:border-neutral-700 border-1 text-zinc-100 hover:cursor-pointer"
+                                className={`
+                                    text-left p-2 border-slate-300 dark:border-neutral-700 border text-zinc-100 hover:cursor-pointer
+                                `}
                                 onClick={() => {
                                     let newDataset = [];
+
                                     if (selectedRows.length === dataSet.length) {
                                         newDataset = [];
                                     } else {
                                         newDataset = dataSet.map((data) => {
-                                            const val = _.get(data, dataKey);
-                                            return val;
-                                        })
+                                            return _.get(data, dataKey);
+                                        });
                                     }
 
                                     setSelectedRows(newDataset);
@@ -113,46 +117,43 @@ const Table = ({
                             >
                                 Select All
                             </th>
-                        }
-                        {
-                            columnSettings.map((settings, key) => {
-                                return (
-                                    <th key={key}
-                                        className={`
-                                            text-left p-2 border-slate-300 dark:border-neutral-700 border-1 text-zinc-100
-                                        `}
-                                    >
-                                        { canSortColumns 
-                                            ?
-                                            <div className="flex justify-between items-center">
-                                                <p>
-                                                    {settings.columnHead}
-                                                </p>
-                                                { (canSortColumns && settings.sort) &&
-                                                    <SortColumn
-                                                        sortColumn={(sortSetting) => {
-                                                            onSort && onSort(sortSetting);
-                                                        }}
-                                                        path={settings.path}
-                                                    />
-                                                }
-                                            </div>
-                                            :
-                                            <p>
-                                                {settings.columnHead}
-                                            </p>
-                                        }
-                                    </th>
-                                )
-                            })
-                        }
-                        {   withActions &&
+                        )}
+
+                        {columnSettings.map((settings, key) => (
                             <th
-                                className="text-left p-2 border-slate-300 dark:border-neutral-700 border-1 text-zinc-100"
+                                key={key}
+                                className={`
+                                    text-left p-2 border-slate-300 dark:border-neutral-700 border text-zinc-100
+                                `}
+                            >
+                                {canSortColumns ? (
+                                    <div className="flex justify-between items-center">
+                                        <p>{settings.columnHead}</p>
+
+                                        {settings.sort && (
+                                            <SortColumn
+                                                sortColumn={(sortSetting) => {
+                                                    onSort && onSort(sortSetting);
+                                                }}
+                                                path={settings.path}
+                                            />
+                                        )}
+                                    </div>
+                                ) : (
+                                    <p>{settings.columnHead}</p>
+                                )}
+                            </th>
+                        ))}
+
+                        {withActions && (
+                            <th
+                                className={`
+                                    text-left p-2 border-slate-300 dark:border-neutral-700 border text-zinc-100
+                                `}
                             >
                                 Action
                             </th>
-                        }
+                        )}
                     </tr>
                 </thead>
                 <tbody>

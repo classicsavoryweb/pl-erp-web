@@ -11,23 +11,26 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
-import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails, updateWeightStatus} from "@/api/uniform/weighted-average";
+import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails} from "@/api/uniform/weighted-average";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
 import Badge from "@/components/common/Badge";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import  WeightedAverageForm  from "./WeightAverageForm";
+import VarianceReportCancelForm from "./WeightedAverageCancelForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import confirm from "@/components/common/Confirm";
 
 const WeightedAverageTable = () => {
     const api = useApiCall();
     const createModal = useModal();
+    const reviewModal = useModal();
+    const postModal = useModal();
     const viewModal = useModal();
     const [data, setData] = useState({});
     const paginator = usePagination();
     const filter = useFilter();
+    const cancelModal = useModal();
 
      useAsyncEffect(() => {
         api.setLoading(true);
@@ -62,48 +65,24 @@ const WeightedAverageTable = () => {
                 onClick: () => downloadDetailedExport(item),
             },
             item.status === "Unposted" && {
-                label: "Reviewed",
-                onClick: async () => {
-                    const isConfirmed = await confirm({
-                        title: "Review Weighted Average",
-                        message: "Are you sure you want to mark this as Reviewed?",
-                    });
-    
-                    if (!isConfirmed) return;
-    
-                    await updateWeightStatus(item.id, "Reviewed");
-                    toast.success("Marked as Reviewed");
-                    api.triggerReload();
+                label: "Review",
+                onClick:  () => {
+                   setData(item)
+                    reviewModal.onOpen();
                 },
             },
             ["Reviewed", "Reviewing"].includes(item.status) && {
-                label: "Posted",
+                label: "Post",
                 onClick: async () => {
-                    const isConfirmed = await confirm({
-                        title: "Post Weighted Average",
-                        message: "Are you sure you want to mark this as Posted?",
-                    });
-
-                    if (!isConfirmed) return;
-    
-                    await updateWeightStatus(item.id, "Posted");
-                    toast.success("Marked As Posted");
-                    api.triggerReload();
+                   setData(item);
+                   postModal.onOpen();  
                 },
             },
-            ["Unposted", "Reviewed", "Reviewing"].includes(item.status) && {
+           ["Unposted", "Reviewed", "Reviewing"].includes(item.status) && {
                 label: "Cancel",
-                onClick: async () => {
-                    const isConfirmed = await confirm({
-                        title: "Cancel Weighted Average",
-                        message: "Are you sure you want to cancel this weighted average?",
-                    });
-
-                    if (!isConfirmed) return;
-
-                    await updateWeightStatus(item.id, "Cancelled");
-                    toast.success("Weighted average cancelled");
-                    api.triggerReload();
+                onClick: () => {
+                    setData(item);
+                    cancelModal.onOpen();
                 },
             },
         ].filter((action): action is { label: string; onClick: () => void } => Boolean(action));
@@ -135,19 +114,26 @@ const WeightedAverageTable = () => {
 
     const columnSettings = [
         { columnHead: "WA Number", path: "weighted_id", columnType: COLUMNTYPES.string },
-        { columnHead: "Posting Date", path: "prepared_at", columnType: COLUMNTYPES.date },
-        { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function, function: (data: any) => {
-                let status: "default" | "success" | "warning" | "danger" = "default";
+        { columnHead: "Updated Date", path: "price_updated_at", columnType: COLUMNTYPES.function,
+            function: (data: any) =>
+                data.price_updated_at ? moment(data.price_updated_at).format("MM/DD/YYYY") : "-",
+        },
+        { columnHead: "Updated", path: "price_updated_by", columnType: COLUMNTYPES.string },
+        { columnHead: "Remarks", path: "overall_remarks", columnType: COLUMNTYPES.string },
+         { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function, function: (data: any) => {
+                let status: "default" | "success" | "warning" | "danger" | "purpose" = "default";
 
                 switch(data.status) {
                     case "Posted": 
                         status = "success";
                         break;
+                    case "Updated":
+                        status = "purpose";
+                        break;
                     case "Cancelled":
                         status = "danger";
                         break;
                     case "Reviewed":
-                    case "Reviewing":
                         status = "warning";
                         break;
                     default:
@@ -161,8 +147,6 @@ const WeightedAverageTable = () => {
                     
                 />
          }},
-        { columnHead: "Posted By", path: "posted_by", columnType: COLUMNTYPES.string },
-        { columnHead: "Remarks", path: "overall_remarks", columnType: COLUMNTYPES.string },
         {
             columnHead: "Action",
             path: "id",
@@ -185,16 +169,6 @@ const WeightedAverageTable = () => {
             }
         },
     ];
-
-    // const tableActions = [
-    //     {
-    //         label: "View",
-    //         onClick:(item: any) =>{
-    //             setData(item);
-    //             viewModal.onOpen();
-    //         }
-    //     }
-    // ];
     return (
         <>
             <FilterCard
@@ -209,12 +183,20 @@ const WeightedAverageTable = () => {
                         path: "status",
                         columnType: COLUMNTYPES.status
                     },
+                    {
+                        columnHead: "Weighted Average Number",
+                        path: "weighted_id",
+                        columnType: COLUMNTYPES.string
+
+                    }
                     
                 ]}
                 filterHandler={filter}
                 exportFileName={`WeightAverage-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="status"
                 hasExport
+                hasDateRange
+                dateLabel="Weighted Count Date"
                 api={exportAllWeightAverage}
                 callBack={() => {
                 paginator.setPage(1);
@@ -234,10 +216,21 @@ const WeightedAverageTable = () => {
                     
                 />
                 
-                
                 <WeightedAverageForm 
                 modal = {viewModal}
                 mode = "view"
+                formValue={data}
+                onSubmitCallback= {api.triggerReload}
+                />
+                <WeightedAverageForm 
+                modal = {reviewModal}
+                mode = "review"
+                formValue={data}
+                onSubmitCallback= {api.triggerReload}
+                />
+                <WeightedAverageForm 
+                modal = {postModal}
+                mode = "post"
                 formValue={data}
                 onSubmitCallback= {api.triggerReload}
                 />
@@ -246,6 +239,12 @@ const WeightedAverageTable = () => {
                 mode = "create"
                 onSubmitCallback= {api.triggerReload}
                 />
+                <VarianceReportCancelForm
+                    modal = {cancelModal}
+                    selected = {data}
+                    onSubmitCallback = {api.triggerReload}
+
+                 />
             </Card>       
         </>
     );

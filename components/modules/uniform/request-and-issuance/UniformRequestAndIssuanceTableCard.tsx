@@ -20,7 +20,6 @@ import UniformRequestAndIssuanceForm from "./UniformRequestAndIssuanceForm";
 import moment from "moment";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import confirm from "@/components/common/Confirm";
 
 
 
@@ -49,7 +48,7 @@ const UniformSizesTableCard = () => {
             } else {
                 api.setDataSet(resp.data.data);
                 paginator.setPage(resp.data.current_page);
-                paginator.setPaginationData(resp.data);                       
+                paginator.setPaginationData(resp.data);                     
             }                    
             })
             .catch(() => toast.error("Error encountered"))
@@ -120,33 +119,47 @@ const UniformSizesTableCard = () => {
         { columnHead: "Request Number", path: "request_number", columnType: COLUMNTYPES.string },
         { columnHead: "Date Requested", path: "date_requested", columnType: COLUMNTYPES.function,
             function: (data: any) =>
-                data.date_requested ? moment(data.date_requested).format("MM/DD/YY") : "-",
-         },
+                data.date_requested ? moment(data.date_requested).format("MM/DD/YYYY") : "-",
+        },
+        { columnHead: "Item Name", path: "",columnType: COLUMNTYPES.function,
+            function:(row : any) => row.items?.[0]?.description ?? "-"
+        },
+        { columnHead: "Quantity", path:"", columnType: COLUMNTYPES.function,
+            function:(row : any) => row.items?.[0]?.requested_quantity ?? "-"
+        },
         { columnHead: "Date Posted", path: "date_posted", columnType: COLUMNTYPES.function ,
             function: (data : any) =>
-                data.date_posted ? moment(data.date_posted).format("MM/DD/YY") : "-", 
+                data.date_posted ? moment(data.date_posted).format("MM/DD/YYYY") : "-", 
          },
         { columnHead: "Full Name", path: "employee_name", columnType: COLUMNTYPES.string },
-        { columnHead: "Issuance Type", path: "issuance_type", columnType: COLUMNTYPES.function,
-            function: (row : any ) =>{
-            const value = row.issuance_type;
-                if(value == "Authority To Deduct"){
-                    return ("ATD");
-                }else{
-                    return ("FREE")
-                }
+       {
+            columnHead: "Issuance Type",
+            path: "issuance_type",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => {
+                const value = row.issuance_type;
+
+                return (
+                    <span
+                        className={`px-2 py-1 text-m font-semibold ${
+                            value === "Authority To Deduct"
+                                ? "text-red-600"
+                                : "text-green-600"
+                        }`}
+                    >
+                        {value === "Authority To Deduct" ? "ATD" : "FREE"}
+                    </span>
+                );
             },
         },
         { columnHead: "Branch", path: "branches.short_name", columnType: COLUMNTYPES.string },
         { columnHead: "Position", path: "position", columnType: COLUMNTYPES.string },
         { columnHead: "Date Hired", path: "date_hired", columnType: COLUMNTYPES.function,
             function: (data: any) =>
-                data.date_hired ? moment(data.date_hired).format("MM/DD/YY") : "-"
+                data.date_hired ? moment(data.date_hired).format("MM/DD/YYYY") : "-"
         },
         
         { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount },
-        
-        // { columnHead: "Sent Email", path: "sent_email", columnType: COLUMNTYPES.string },
         { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" = "default";
@@ -198,32 +211,53 @@ const UniformSizesTableCard = () => {
     return (
         <>
             <FilterCard
+                filterHandler={filter}
                 columnSettings={[
                     {
-                        columnHead: "Description",
-                        path: "description",
+                        columnHead: "Employee Name",
+                        path: "employee_name",
                         columnType: COLUMNTYPES.string
-                    },
-                    {
-                        columnHead: "Status",
-                        path: "status",
-                        columnType: COLUMNTYPES.status
                     },
                     {
                         columnHead: "Issuance Type",
                         path: "issuance_type",
                         columnType: COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Item Name",
+                        path: "item_name",
+                        columnType:COLUMNTYPES.string
                     }
                     
                 ]}
-                filterHandler={filter}
-                exportFileName={`Sizes-${moment().format("YYYY-MM-DD")}.xls`}
-                defaultColumnSelected="description"
-                 hasExport
+                defaultColumnSelected="employee_name"
+                hasExport
                 api={exportAllRequestAndIssuance}
+                exportFileName={`Request-and-Issuance-${moment().format("YYYY-MM-DD")}.xls`}
+                withBranch
+                withStatus
+                statusOption={[
+                    {
+                        label: "Unposted",
+                        value: "Unposted"
+                    },
+                    {
+                        label: "Posted",
+                        value: "Posted"
+                    },
+                    {
+                        label: "Reviewed",
+                        value: "Reviewed"
+                    },
+                    {
+                        label: "Cancelled",
+                        value: "Cancelled"
+                    },
+                ]}
                 callBack={() => {
                 paginator.setPage(1);
                 }}
+              
             />
             <Card>
                 <div className="flex justify-end gap-x-3">
@@ -238,7 +272,7 @@ const UniformSizesTableCard = () => {
                     paginator={paginator}
                 />
             </Card>
-             <UniformRequestAndIssuanceForm 
+            <UniformRequestAndIssuanceForm 
                 modal = {createModal}
                 mode = "create"
                 onSubmitCallback={api.triggerReload}

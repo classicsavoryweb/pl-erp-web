@@ -12,6 +12,7 @@ import { useFormik } from "formik";
 import { useEffect } from "react";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
+import moment from "moment";
 
 interface FormModalInterface {
     modal: any;
@@ -25,12 +26,19 @@ const UniformFreeUniformLimitForm = ({
     formValue,
 }: FormModalInterface) => {
     const isEdit = Boolean(formValue?.id);
+    const today = new Date().toISOString().split("T")[0];
 
     const formHandler = useFormik({
         initialValues: {
             description: "",
             allowed_count: 1,
             status: "active",
+            date_from: moment().format("YYYY-MM-DD"),
+            // date_to: moment().format("YYYY-MM-DD"),
+            created_by: "",
+            updated_by:"",
+            created_at:"",
+            updated_at:"",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -40,8 +48,21 @@ const UniformFreeUniformLimitForm = ({
                 .required("Allowed count is required.")
                 .min(1, "Allowed count must be at least 1."),
             status: Yup.string().required("Status is required."),
+            date_from:Yup.date().required("Date Effectivity is required."),
+            // date_to:Yup.date().required("Date To is required.")
         }),
         onSubmit: async (values, { resetForm, setSubmitting }) => {
+
+            // if( formHandler.values.date_from > formHandler.values.date_to){
+            //     toast.error("Date from can`t be later than Date to");
+            //     return;
+            // }
+
+           if (moment(formHandler.values.date_from).isBefore(moment(), "day")) {
+                toast.error("Date Effectivity must be today or a future date.");
+                return;
+            }
+            
             const isConfirmed = await confirm({
                 title: isEdit ? "Edit Free Uniform Limit" : "Create Free Uniform Limit",
                 message: isEdit
@@ -85,6 +106,12 @@ const UniformFreeUniformLimitForm = ({
                 description: formValue.description ?? "",
                 allowed_count: formValue.allowed_count ?? 1,
                 status: formValue.status ?? "active",
+                date_from: formValue.date_from ?? "",
+                // date_to: formValue.date_to ?? "",
+                created_by: formValue.created_by ?? "",
+                updated_by: formValue.updated_by ?? "",
+                created_at: formValue.created_at ? moment(formValue.created_at).format("MM/DD/YYYY") : "",
+                updated_at: formValue.updated_at ? moment(formValue.updated_at).format("MM/DD/YYYY") : "",
             });
         }
     }, [modal.isShowing, formValue]);
@@ -101,34 +128,93 @@ const UniformFreeUniformLimitForm = ({
             size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                <TextArea
-                    label="Description"
-                    placeholder="enter description"
-                    name="description"
-                    value={formHandler.values.description}
-                    required
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.description}
-                />
-                <Textfield
-                    type="number"
-                    label="Allowed Count"
-                    placeholder="enter allowed count"
-                    name="allowed_count"
-                    value={formHandler.values.allowed_count}
-                    required
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.allowed_count}
-                />
-                <ActiveInactiveDropDown
-                    label="Status"
-                    placeholder="select status"
-                    name="status"
-                    value={formHandler.values.status}
-                    required
-                    onChange={formHandler.handleChange}
-                    error={formHandler.errors.status}
-                />
+                <div>
+                    <TextArea
+                        label="Description"
+                        placeholder="enter description"
+                        name="description"
+                        value={formHandler.values.description}
+                        required
+                        onChange={formHandler.handleChange}
+                        error={formHandler.errors.description}
+                    />
+                    <div className="grid grid-cols-2 gap-4">
+                        <Textfield 
+                            type="date"
+                            label= "Date Effectivity"
+                            name="date_from"
+                            value={formHandler.values.date_from}
+                            required
+                            onChange={formHandler.handleChange}
+                            error= {formHandler.errors.date_from}
+                        />
+                      
+                        <Textfield
+                        type="number"
+                        label="Allowed Count"
+                        placeholder="enter allowed count"
+                        name="allowed_count"
+                        value={formHandler.values.allowed_count}
+                        required
+                        onChange={formHandler.handleChange}
+                        error={formHandler.errors.allowed_count}
+                        />
+                    </div>
+                    
+                    <ActiveInactiveDropDown
+                        label="Status"
+                        placeholder="select status"
+                        name="status"
+                        value={formHandler.values.status}
+                        required
+                        onChange={formHandler.handleChange}
+                        error={formHandler.errors.status}
+                    />
+                </div>
+                { isEdit && (
+                <div>
+                    <hr className="mt-6 pb-2 text-slate-300"/>
+                    <span>Report Logs:</span>
+                    <div className="grid grid-cols-2 gap-4">
+                        <Textfield 
+                            type="text"
+                            label= "Created By"
+                            name="created_by"
+                            value={formHandler.values.created_by }
+                            onChange={formHandler.handleChange}
+                            error= {formHandler.errors.created_by}
+                            disabled
+                        />
+                        <Textfield 
+                            type="text"
+                            label="Created At"
+                            name="created_at"
+                            value={formHandler.values.created_at}
+                            onChange={formHandler.handleChange}
+                            error={formHandler.errors.created_at}
+                            disabled
+                        />
+                        <Textfield 
+                            type="text"
+                            label= "Updated By"
+                            name="updated_by"
+                            value={formHandler.values.updated_by }
+                            onChange={formHandler.handleChange}
+                            error= {formHandler.errors.updated_by}
+                            disabled
+                        />
+                        <Textfield 
+                            type="text"
+                            label="Updated At"
+                            name="updated_at"
+                            value={formHandler.values.updated_at}
+                            onChange={formHandler.handleChange}
+                            error={formHandler.errors.updated_at}
+                            disabled
+                        />
+                    </div>
+                </div>
+                )}
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">

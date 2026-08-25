@@ -368,16 +368,17 @@ const UniformItemForm = ({
                     />
                 </div>
 
-                <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
+                <div className="flex font-semibold border-b border-slate-300 items-center justify-between pb-2">
                     <span>Suppliers</span>
-                    <button
-                        type="button"
-                        className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline disabled:text-slate-400 disabled:hover:no-underline"
-                        onClick={addSupplier}
-                        disabled={formHandler.values.suppliers.length >= 3}
-                    >
-                        Add Supplier
-                    </button>
+
+                    <div>
+                        <Button
+                            type="button"
+                            variant="success"
+                            label="Add Request"
+                            onClick={addSupplier}
+                        />
+                    </div>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 items-end">
                     <SearchableDropDown
@@ -424,7 +425,12 @@ const UniformItemForm = ({
                     smallText
                     dataKey="vendor_no"
                 />
-
+                <div className="flex justify-between items-center text-sm">
+                    <div className="text-xs text-gray-400">
+                        {(formHandler.values.suppliers?.length ?? 0)}{" "}
+                        {(formHandler.values.suppliers?.length ?? 0) === 1 ? "supplier" : "suppliers"}
+                    </div>
+                </div>
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">

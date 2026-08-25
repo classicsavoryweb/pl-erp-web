@@ -47,3 +47,18 @@ export const cancelPhysicalCount = (id: number, cancel_reason: string) => axiosH
     method: "POST",
     payload: { cancel_reason },
 });
+
+export const physicalCountDropdown = (payload?: {}) => axiosHelper({
+    func_path: "/physical_count_dropdown",
+    method: "GET",
+    payload,
+});
+
+export const updateQuantity = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: "/update-quantity",
+        method: "POST",
+        payload,
+    })
+}
+

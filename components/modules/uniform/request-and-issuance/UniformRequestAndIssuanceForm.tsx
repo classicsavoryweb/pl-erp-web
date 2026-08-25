@@ -67,9 +67,11 @@ const UniformRequestAndIssuanceForm = ({
     
 }: UniformRequestFormProps) => {
     const [item , setitem] = useState<any[]>([]);
+    const [showAllItems , setShowAllItems] = useState(false)
     const isView = mode === "view";
     const isReview = mode === "review";
     const isPost = mode === "post"
+    const isCreate = mode === "create";
     type ItemDraft = {
     item_no: string;
     description: string;
@@ -147,14 +149,8 @@ const UniformRequestAndIssuanceForm = ({
         initialValues:defaultValues,        
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            employee_name: Yup.string().required("Name is required."),
+            employee_id: Yup.number().required("Name is required"),
             issuance_type: Yup.string().required("Issuance Type is required."),
-            branch: Yup.string().required("Branch is required."),
-            position: Yup.string().required("Position is required."),
-            date_hired: Yup.string().required("Date Hired is required."),
-            total_amount: Yup.number().min(0).required("Total Amount is required."),
-            status: Yup.string().required("Status is required."),
-            sent_email: Yup.string().required("Sent Email is required."),
             items: Yup.array()
                 .min(1, "At least one request item is required.")
                 .max(20, "A request can contain at most 20 items.")
@@ -165,6 +161,10 @@ const UniformRequestAndIssuanceForm = ({
         }),
         
         onSubmit: async (values, {resetForm, setSubmitting}) => {
+             if (values.items.length === 0) {
+                toast.error("Please add at least one request item.");
+                return;
+            }
 
             const isConfirmed = await confirm({
                 title: isReview
@@ -204,64 +204,66 @@ const UniformRequestAndIssuanceForm = ({
             }
             };
             try {
-            let resp = await submitRequest(payload);   
-            if (resp.errors) {
-                const firstError = Object.values(resp.errors).flat()?.[0];
-                toast.error(firstError || resp.message || "Request failed");
-                return;
-            }
-            if (resp.error) {
-                const firstError = Object.values(resp.data?.errors ?? {}).flat()?.[0];
-                toast.error(firstError || resp.data?.message || "Request failed");
-                return;
-            }
+                let resp = await submitRequest(payload);   
+                if (resp.errors) { 
+                    const firstError = Object.values(resp.errors).flat()?.[0];
+                    toast.error(firstError || resp.message || "Request failed");
+                    return;
+                }
+                if (resp.error) {
+                    const firstError = Object.values(resp.data?.errors ?? {}).flat()?.[0];
+                    toast.error(firstError || resp.data?.message || "Request failed");
+                    return;
+                }
 
 
-            toast.success(
-                isReview
-                    ? "Request Reviewed Successfully"
-                    : isPost
-                    ? "Post Successfully"
-                    : "Create Request Successfully"
-            );
+                toast.success(
+                    isReview
+                        ? "Request Reviewed Successfully"
+                        : isPost
+                        ? "Post Successfully"
+                        : "Create Request Successfully"
+                );
 
-            onSubmitCallback();
-            modal.onClose();
-            resetForm();
-
+                onSubmitCallback();
+                modal.onClose();
+                resetForm();
             } finally {
                 setSubmitting(false);
             }
         }
     });
-        const filteredItems = useMemo(() => {
+       const filteredItems = useMemo(() => {
+            if (showAllItems) {
+                return item;
+            }
             const employeeGender = normalizeGender(createFormHandler.values.gender);
             const issuanceType = createFormHandler.values.issuance_type;
 
-                return item.filter((record) => {
-                    const itemGender = normalizeGender(
-                        record?.gender?.code ?? record?.gender?.description
-                    );
+            return item.filter((record) => {
+                const itemGender = normalizeGender(
+                    record?.gender?.code ?? record?.gender?.description
+                );
 
-                    const genderMatch =
-                        !employeeGender ||
-                        !itemGender ||
-                        itemGender === "unisex" ||
-                        itemGender === employeeGender;
-                    
-                    const issuanceMatch = 
-                        issuanceType === "Free Uniform" 
+                const genderMatch =
+                    !employeeGender ||
+                    !itemGender ||
+                    itemGender === "unisex" ||
+                    itemGender === employeeGender;
+
+                const issuanceMatch =
+                    issuanceType === "Free Uniform"
                         ? record.free_uniform === true
                         : true;
 
-                    return genderMatch && issuanceMatch;
-                });
+                return genderMatch && issuanceMatch;
+            });
         }, [
             item,
+            showAllItems,
             createFormHandler.values.gender,
             createFormHandler.values.issuance_type,
-            ]
-        );
+        ]);
     
 
     useEffect(() => {
@@ -345,6 +347,12 @@ const UniformRequestAndIssuanceForm = ({
 
       
     };
+
+        const totalAmount = createFormHandler.values.items.reduce(
+        (sum: number, item: any) => sum + Number(item.total_amount || 0),
+        0
+    );
+
     const removeRequest = async (items: any) => {
         const isConfirmed = await confirm({
             title: "Remove Item",
@@ -371,45 +379,46 @@ const UniformRequestAndIssuanceForm = ({
         {
         columnHead: "Requested Quantity",
         path: "requested_quantity",
-        columnType: isReview ? COLUMNTYPES.function : COLUMNTYPES.string,
-
+        columnType: (isReview || isCreate)
+            ? COLUMNTYPES.function
+            : COLUMNTYPES.string,
             function: (row: any) => {
-            if (!isReview) return row.requested_quantity;
+                if (isReview && isCreate) {
+                    return row.requested_quantity;
+                }
+                const items = createFormHandler.values.items;
+                const current = items.find(
+                    (i: any) => i.item_no === row.item_no
+                );
+                return (
+                    <Textfield
+                        label=""
+                        type="number"
+                        value={
+                            current?.requested_quantity === 0
+                                ? ""
+                                : current?.requested_quantity ?? ""
+                        }
+                        onChange={(e: any) => {
+                            const value = e.target.value;
+                            const qty = value === "" ? 0 : Number(value);
 
-            const items = createFormHandler.values.items;
+                            const updated = items.map((i: any) => {
+                                if (i.item_no !== row.item_no) return i;
 
-            const current = items.find((i: any) => i.item_no === row.item_no);
+                                const stock = Number(i.stock_on_hand || 0);
+                                const price = Number(i.unit_price || 0);
 
-            return (
-                <Textfield
-                    label=""
-                    type="number"
-                    value={
-                        current?.requested_quantity === 0
-                            ? ""
-                            : current?.requested_quantity ?? ""
-                    }
-                    onChange={(e: any) => {
-                        const value = e.target.value;
-                        const qty = value === "" ? 0 : Number(value);
-
-                        const updated = items.map((i: any) => {
-                            if (i.item_no !== row.item_no) return i;
-
-                            const stock = Number(i.stock_on_hand || 0);
-                            const price = Number(i.unit_price || 0);
-
-                            return {
-                                ...i,
-                                requested_quantity: qty,
-                                remaining_quantity: stock - qty,
-                                total_amount: qty * price, 
-                            };
-                        });
-
-                        createFormHandler.setFieldValue("items", updated);
-                    }}
-                />
+                                return {
+                                    ...i,
+                                    requested_quantity: qty,
+                                    remaining_quantity: stock - qty,
+                                    total_amount: qty * price,
+                                };
+                            });
+                            createFormHandler.setFieldValue("items", updated);
+                        }}
+                    />
                 );
             }
         },
@@ -425,7 +434,7 @@ const UniformRequestAndIssuanceForm = ({
             function: (requestItem: any) => (
                 <button
                     type="button"
-                    className="font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
+                    className="font-medium text-red-400 hover:text-red-200 hover:underline cursor-pointer"
                     onClick={() => removeRequest(requestItem)}
                 >
                     Remove
@@ -459,6 +468,9 @@ const UniformRequestAndIssuanceForm = ({
             onClose={() => {
                 modal.onClose();
                 createFormHandler.resetForm();
+                setitemdraft({item_no:"",description:"",size:"",gender:"",stock_on_hand:"",requested_quantity:0,remaining_quantity:0,
+                    standard_unit:"",standard_unit_price:"",total_amount:0,item_remarks:"",uniform_item_no:"",
+                });
             }}
             loading={modal.loading}
             size={mode === "create" || isReview || isPost ? "xxl" : "lg"}
@@ -561,7 +573,7 @@ const UniformRequestAndIssuanceForm = ({
                         }}
                         error={createFormHandler.errors.issuance_type}
                         options={freeOrATD}
-                        disabled={isView || isPost || isReview}
+                        disabled={isView || isPost || isReview || !createFormHandler.values.employee_id }
                     />
                     <Textfield
                         label="Branch"
@@ -587,23 +599,36 @@ const UniformRequestAndIssuanceForm = ({
                         error={createFormHandler.errors.date_hired}
                         disabled
                     /> 
-                    <Textfield
-                        type="number"
-                        label="Total"
-                        placeholder="total amount"
-                        name="total_amount"
-                        value={grandTotal.toFixed(2)}
-                        disabled
-                    />
+                   
                 </div>
                 {mode === "view" && (
-                    <Table
-                        dataSet={createFormHandler.values.items}
-                        columnSettings={requestItemsColumns}
-                        smallText
-                        dataKey="item_no"
-                    />
+                    <div>
+                        <Table
+                            dataSet={createFormHandler.values.items}
+                            columnSettings={requestItemsColumns}
+                            smallText
+                            dataKey="item_no"
+                        />
+                        <div className="flex justify-between items-center text-sm">
+                            <div className="text-xs text-gray-400">
+                                {(createFormHandler.values.items?.length ?? 0)}{" "}
+                                {(createFormHandler.values.items?.length ?? 0) === 1 ? "item" : "items"}
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                                <span className="text-gray-400 text-xs">Total Amount:</span>
+                                <span className="font-semibold text-sm text-gray-400">
+                                    {totalAmount.toLocaleString("en-US", {
+                                        minimumFractionDigits: 2,
+                                        maximumFractionDigits: 2,
+                                    })}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                    
                 )}
+             
                 {mode !== "review" && mode !== "create" && mode!=="post" &&  ( 
                 <div>
                     <hr className="mt-6 pb-2 text-slate-300" /> 
@@ -707,44 +732,59 @@ const UniformRequestAndIssuanceForm = ({
                 <div>
                     <div className="flex mt-4 font-semibold border-b border-slate-300 pb-1 mb-1 items-center justify-between">
                         <span>Request Items</span>
-                        <button
-                            type="button"
-                            className="text-sm font-medium text-red-800 hover:text-red-700 hover:underline cursor-pointer"
-                            onClick={addRequest}
-                        >
-                            Add Request
-                        </button>
                     </div>
-                    <SearchableDropDown
-                        label="Description"
-                        placeholder="select description"
-                        name="vendor_no"
-                        value={itemdraft.item_no}
-                        disabled={isView}
-                        onChange={(e: any) => {
-                            const selected = e.target.obj;
-                            const stockOnHand = getReviewAvailableStock(selected);
+                    <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-6 items-end">
+                        <div className="lg:col-span-5">
+                            <SearchableDropDown
+                                label="Description"
+                                placeholder="select description"
+                                name="vendor_no"
+                                value={itemdraft.item_no}
+                                disabled={
+                                    isView ||
+                                    !createFormHandler.values.employee_id ||
+                                    !createFormHandler.values.issuance_type
+                                }
+                                onChange={(e: any) => {
+                                    const selected = e.target.obj;
+                                    const stockOnHand = getReviewAvailableStock(selected);
 
-                            setitemdraft({
-                                ...itemdraft,
-                                item_no: selected?.item_no ?? "",
-                                uniform_item_no: selected?.item_no ?? "", 
-                                description: selected?.description ?? "",
-                                gender: selected?.gender?.code ?? "",
-                                stock_on_hand: String(stockOnHand),
-                                size: selected?.size?.description ?? "",
-                                standard_unit: selected?.standard_unit ?? "",
-                                standard_unit_price: selected?.standard_unit_price ?? "",
-                            });
-                        }}                            
-                        options={filteredItems.map((item) => ({
-                            label: `${item.description}-(${item.gender?.code})-${item.size?.description}`,
-                            value: item.item_no,
-                            obj: item,
-                        }
-                        
-                    )) }
-                    />
+                                    setitemdraft({
+                                        ...itemdraft,
+                                        item_no: selected?.item_no ?? "",
+                                        uniform_item_no: selected?.item_no ?? "",
+                                        description: selected?.description ?? "",
+                                        gender: selected?.gender?.code ?? "",
+                                        stock_on_hand: String(stockOnHand),
+                                        size: selected?.size?.description ?? "",
+                                        standard_unit: selected?.standard_unit ?? "",
+                                        standard_unit_price: selected?.standard_unit_price ?? "",
+                                    });
+                                }}
+                                options={filteredItems.map((item) => ({
+                                    label: `${item.description}-(${item.gender?.code})-${item.size?.description}`,
+                                    value: item.item_no,
+                                    obj: item,
+                                }))}
+                            />
+                        </div>
+                        <div className="lg:col-span-1 flex items-end h-full pb-2">
+                            <label className="flex items-center gap-2 text-sm font-medium text-gray-500 cursor-pointer hover:text-red-600">
+                                <input
+                                    type="checkbox"
+                                    checked={showAllItems}
+                                    disabled={
+                                        isView ||
+                                        !createFormHandler.values.employee_id ||
+                                        !createFormHandler.values.issuance_type
+                                    }
+                                    onChange={(e) => setShowAllItems(e.target.checked)}
+                                    className="h-4 w-4 rounded border-gray-400 text-red-600 focus:ring-red-500 disabled:cursor-not-allowed disabled:opacity-50"
+                                />
+                                <span>Show All</span>
+                            </label>
+                        </div>
+                    </div>
                 </div>
                 )}
                 {mode === "view" ? null : mode!=="post" &&  (
@@ -813,23 +853,37 @@ const UniformRequestAndIssuanceForm = ({
                         label="Total Amount"
                         placeholder="Total Amount"
                         name="item_total_amount"
-                        value={Number(itemdraft.total_amount || 0).toFixed(2)}
+                        value={new Intl.NumberFormat("en-US" ,{minimumFractionDigits: 2 , maximumFractionDigits: 2,}).format(Number(itemdraft.total_amount || 0))}
                         disabled
                     />
                 </div>
                 )}
-                {mode === "view" ? null : (
-                <div>
-                <Textfield
-                    label="Item Remarks"
-                    name="item_remarks"
-                    type="text"
-                    value={itemdraft.item_remarks}
-                    disabled = {isPost}
-                    onChange={(e: any) => setitemdraft({ ...itemdraft, item_remarks: e.target.value })}
-                />
+                 {mode === "view" ? null : (
+                <div  className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-4">
+                   
+                    <div className = "lg:col-span-3">
+                        <Textfield
+                            label="Item Remarks"
+                            name="item_remarks"
+                            type="text"
+                            value={itemdraft.item_remarks}
+                            disabled = {isPost}
+                            onChange={(e: any) => setitemdraft({ ...itemdraft, item_remarks: e.target.value })}
+                        />
+                    </div>
+                    {mode === "post" ? null : (
+                    <div className="lg:col-span-1 mt-3">
+                        <Button
+                            type="button"
+                            variant="success"
+                            label="Add Request"
+                            onClick={addRequest}
+                        />
+                    </div>
+                    )}
                 </div>
-                 )}                                                                                                                                        
+                 )}
+                                                                                                                                                  
                 {mode === "view" ? null : (
                 <Table
                     dataSet={createFormHandler.values.items}
@@ -838,6 +892,22 @@ const UniformRequestAndIssuanceForm = ({
                     dataKey="item_no"
                 />
                 )}
+               <div className="flex justify-between items-center text-sm">
+                    <div className="text-xs text-gray-400">
+                        {(createFormHandler.values.items?.length ?? 0)}{" "}
+                        {(createFormHandler.values.items?.length ?? 0) === 1 ? "item" : "items"}
+                    </div>
+
+                    <div className="flex items-center gap-2">
+                        <span className="text-gray-400 text-xs">Total Amount:</span>
+                        <span className="font-semibold text-sm">
+                            {totalAmount.toLocaleString("en-US", {
+                                minimumFractionDigits: 2,
+                                maximumFractionDigits: 2,
+                            })}
+                        </span>
+                    </div>
+                </div>
                 {mode === "view" ? null : (
                     <>
                     <hr className="mt-6 pb-2 text-slate-300" />
@@ -845,14 +915,28 @@ const UniformRequestAndIssuanceForm = ({
                         <div className="w-[120px]">
                             <Button
                                 type="submit"
-                                label="Submit"
+                                label={mode === "create" ? "Submit" 
+                                    :mode === "review" ? "Review"
+                                    :mode === "post" ? "Post"
+                                    : "Submit"
+                                }
                                 loading={createFormHandler.isSubmitting}
-                                onClick={()=>{}}
+                                onClick={async () => {
+                                    const errors = await createFormHandler.validateForm();
+
+                                    if (errors.items) {
+                                        toast.error(errors.items as string);
+                                        return;
+                                    }
+
+                                    createFormHandler.handleSubmit();
+                                }}
                             />
                         </div>
                     </div>
                     </>
                 )}
+                
             </form>
         </Modal>
     );
