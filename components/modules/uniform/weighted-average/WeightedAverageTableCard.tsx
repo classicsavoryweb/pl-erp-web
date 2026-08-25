@@ -11,7 +11,7 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import { useState } from "react";
-import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails, updateWeightStatus ,cancelWeightAverage } from "@/api/uniform/weighted-average";
+import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails} from "@/api/uniform/weighted-average";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
 import moment from "moment";
@@ -20,7 +20,6 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import  WeightedAverageForm  from "./WeightAverageForm";
 import VarianceReportCancelForm from "./WeightedAverageCancelForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import confirm from "@/components/common/Confirm";
 
 const WeightedAverageTable = () => {
     const api = useApiCall();
@@ -115,11 +114,11 @@ const WeightedAverageTable = () => {
 
     const columnSettings = [
         { columnHead: "WA Number", path: "weighted_id", columnType: COLUMNTYPES.string },
-        { columnHead: "Posting Date", path: "prepared_at", columnType: COLUMNTYPES.function,
+        { columnHead: "Updated Date", path: "price_updated_at", columnType: COLUMNTYPES.function,
             function: (data: any) =>
-                data.prepared_at ? moment(data.prepared_at).format("MM/DD/YYYY") : "-",
+                data.price_updated_at ? moment(data.price_updated_at).format("MM/DD/YYYY") : "-",
         },
-        { columnHead: "Posted By", path: "posted_by", columnType: COLUMNTYPES.string },
+        { columnHead: "Updated", path: "price_updated_by", columnType: COLUMNTYPES.string },
         { columnHead: "Remarks", path: "overall_remarks", columnType: COLUMNTYPES.string },
          { columnHead: "Status", path: "status", columnType: COLUMNTYPES.function, function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" | "purpose" = "default";
@@ -196,6 +195,8 @@ const WeightedAverageTable = () => {
                 exportFileName={`WeightAverage-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="status"
                 hasExport
+                hasDateRange
+                dateLabel="Weighted Count Date"
                 api={exportAllWeightAverage}
                 callBack={() => {
                 paginator.setPage(1);

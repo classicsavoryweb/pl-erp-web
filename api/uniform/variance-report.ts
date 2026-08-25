@@ -56,3 +56,10 @@ export const cancelVariance = (id: number, cancel_reason: string) => axiosHelper
     method: "POST",
     payload: { cancel_reason },
 });
+
+export const getVarianceItemDetails = (uniform_item_id:number,begin_date:string,end_date:string) => axiosHelper({
+    func_path:`/variance-details`,
+    method: "GET",
+    payload:{uniform_item_id,begin_date,end_date}
+});
+

@@ -2,6 +2,12 @@
 import Grid from "@/components/common/Grid";
 import PageTitle from "@/components/common/PageTitle";
 import Authenticated from "@/components/layouts/Authenticated";
+import EmployeeBirthmonthTableCard from "@/components/modules/dashboard/EmployeeBirthmonthTableCard";
+import EmployeeContractEndingTableCard from "@/components/modules/dashboard/EmployeeContractEndingTableCard";
+import SummaryCards from "@/components/modules/dashboard/SummaryCards";
+import EmployeeAnniversary from "@/components/modules/dashboard/EmployeeAnniversaryTableCard";
+import ItemCriticalLevel from "@/components/modules/dashboard/ItemCriticalLevelTableCard";
+import SummaryCardUniform from "@/components/modules/dashboard/SummaryCardUniform";
 import EmployeeBirthmonthTableCard from "@/components/modules/dashboard/hr/EmployeeBirthmonthTableCard";
 import EmployeeContractEndingTableCard from "@/components/modules/dashboard/hr/EmployeeContractEndingTableCard";
 import SummaryCards from "@/components/modules/dashboard/hr/SummaryCards";
@@ -33,6 +39,18 @@ export default function Home() {
 							<EmployeeContractEndingTableCard/>
 						</div>
 						<EmployeeBirthmonthTableCard/>
+					</Grid>
+				</>
+			}
+
+			{ permissions.includes("has_uniform_dashboard") &&
+				<>
+					<SummaryCardUniform />
+					<Grid cols = {2}>
+						<ItemCriticalLevel />
+						<div className="col-span-1">
+							<EmployeeAnniversary />
+						</div>
 					</Grid>
 				</>
 			}

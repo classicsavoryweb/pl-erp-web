@@ -382,18 +382,14 @@ const UniformRequestAndIssuanceForm = ({
         columnType: (isReview || isCreate)
             ? COLUMNTYPES.function
             : COLUMNTYPES.string,
-
             function: (row: any) => {
                 if (isReview && isCreate) {
                     return row.requested_quantity;
                 }
-
                 const items = createFormHandler.values.items;
-
                 const current = items.find(
                     (i: any) => i.item_no === row.item_no
                 );
-
                 return (
                     <Textfield
                         label=""
@@ -420,7 +416,6 @@ const UniformRequestAndIssuanceForm = ({
                                     total_amount: qty * price,
                                 };
                             });
-
                             createFormHandler.setFieldValue("items", updated);
                         }}
                     />

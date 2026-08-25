@@ -15,7 +15,6 @@ import { useModal } from "@/hooks/modal";
 import { useState } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
-import { useApiCall } from "@/hooks/api-call";
 
 interface Props {
     modal: any;
@@ -26,6 +25,7 @@ interface Props {
     setSpecialFilter: (value: string) => void;
     itemSearch: string;
     setItemSearch: (value: string) => void;
+    onReload?: () => void | Promise<void>;
 }
 
 const VarianceReportViewForm = ({
@@ -37,10 +37,10 @@ const VarianceReportViewForm = ({
     setSpecialFilter,
     itemSearch,
     setItemSearch,
+    onReload,
   
 }: Props) => {
     const viewVarianceItemModal = useModal();
-    const api = useApiCall();
     const [selectedItem , setSelectedItem] = useState<any>(null);
 
     const filteredItems = (selected?.items ?? []).filter((item: any) => {
@@ -180,12 +180,6 @@ const VarianceReportViewForm = ({
         }
     ];
 
-     const totalVarianceCost = filteredItems.reduce(
-        (sum:number,item : any) => sum + (Number(item.total_variance_cost) || 0), 0
-    );
-
-
-
     const runAction = async (record: any, action: "review" | "post") => {
         const isConfirmed = await confirm({
             title,
@@ -204,7 +198,7 @@ const VarianceReportViewForm = ({
 
         toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
         modal.onClose();
-        api.triggerReload();
+        await onReload?.();
     };
 
     return (
@@ -250,15 +244,12 @@ const VarianceReportViewForm = ({
                                 </div>
                             </div>
                         </div>
-
                         <Textfield
                             label="Remarks"
                             value={selected.remarks ?? ""}
                             disabled
                         />
-
                         <div className="grid grid-cols-4 gap-2">
-
                             <Dropdown
                                 label="Special Filter"
                                 name="special_filter"
@@ -271,16 +262,12 @@ const VarianceReportViewForm = ({
                                 ]}
                                 onChange={(e:any)=>setSpecialFilter(e.target.value)}
                             />
-
-
                             <Textfield
                                 label="Search Item"
                                 value={itemSearch}
                                 onChange={(e:any)=>setItemSearch(e.target.value)}
                             />
-
                         </div>
-
                         <div className="max-h-[500px] overflow-y-auto overflow-x-auto">
 
                             <Table
@@ -292,17 +279,16 @@ const VarianceReportViewForm = ({
                             />
 
                         </div>
-
                         <div className="flex justify-between mt-2">
 
                             <span className="text-xs text-gray-400">
                                 Showing {filteredItems.length} items
                             </span>
                             <div>
-                                <span className="text-gray-400 text-xs">
+                                <span className="font-bold text-gray text-sm">
                                     Total Positive Variance Cost:
                                 </span>
-                                <span className="font-semibold ml-2 mr-2">
+                                <span className="font-extrabold ml-2 mr-5 text-base text-green-500 ">
                                     {filteredItems
                                         .reduce(
                                             (total: number, item: any) =>
@@ -317,10 +303,10 @@ const VarianceReportViewForm = ({
                                     })}
                                 </span>
                           
-                                <span className="text-gray-400 text-xs">
+                                <span className="font-bold text-gray text-sm">
                                     Total Negative Variance Cost:
                                 </span>
-                                <span className="font-semibold ml-2 mr-2">
+                                <span className="font-extrabold ml-2 mr-5 text-base text-red-500">
                                     {filteredItems
                                         .reduce(
                                             (total: number, item: any) =>
@@ -333,17 +319,7 @@ const VarianceReportViewForm = ({
                                             minimumFractionDigits: 2,
                                             maximumFractionDigits: 2,
                                     })}
-                                </span>
-                        
-                                <span className="text-gray-400 text-xs">
-                                    Total Variance Cost:
-                                </span>
-
-                                <span className="font-semibold ml-2">
-                                    {filteredItems.reduce((total: number, item: any) => total + Number(item.total_variance_cost || 0),0)
-                                    .toLocaleString(undefined, {minimumFractionDigits: 2,maximumFractionDigits: 2,})}
-                                </span>
-
+                                </span>            
                             </div>
 
                         </div>

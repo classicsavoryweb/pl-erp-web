@@ -7,6 +7,7 @@ import {
     exportPhysicalCounts,
     getPhysicalCounts,
     previewPhysicalCount,
+    updateQuantity
 } from "@/api/uniform/physical-count";
 import PhysicalCountViewForm from "./PhysicalCountViewForm";
 import PhysicalCountCancelForm from "./PhysicalCountCancelForm";
@@ -18,12 +19,11 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
-import TextArea from "@/components/common/TextArea";
 import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import SearchEmployeeDropDown from "@/components/modules/generic/SearchEmployeeDropDown";
 import { COLUMNTYPES } from "@/constants/column";
-import * as XLSX from "xlsx";
+import * as XLSX from "xlsx-js-style";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useFilter } from "@/hooks/use-filter";
@@ -32,6 +32,8 @@ import usePagination from "@/hooks/pagination";
 import moment from "moment";
 import { useState, useRef , useEffect } from "react";
 import { toast } from "react-toastify";
+import PasswordForm from "./PasswordForm";
+import ChangeQuanityForm from "./PhysicalChangeQuantityForm";
 
 interface TableCardProps {
     performPermission: string;
@@ -53,7 +55,7 @@ const textInputClassName = inputClassName.replace("text-right", "text-left");
 const responseMessage = (resp: any) =>
     resp?.message ?? resp?.data?.message ?? "Unable to complete request.";
 
-const getStatusBadge = (status: string): "success" | "warning" | "danger" | "default" => {
+const getStatusBadge = (status: string): "success" | "warning" | "danger" | "purpose" |"default" => {
     switch (status) {
         case "Posted":
             return "success";
@@ -61,6 +63,8 @@ const getStatusBadge = (status: string): "success" | "warning" | "danger" | "def
             return "warning";
         case "Cancelled":
             return "danger";
+        case "Updated":
+            return "purpose";
         default:
             return "default";
     }
@@ -72,14 +76,18 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
     const filter = useFilter();
     const formModal = useModal();
     const viewModal = useModal();
+    const passwordModal = useModal();
     const cancelModal = useModal();
     const activityLog = useModal();
+    const changeQuantityModal = useModal();
     const importInputRef = useRef<HTMLInputElement | null>(null);
     const [selected, setSelected] = useState<any>(null);
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
     const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
     const [physicalCounts, setPhysicalCounts] = useState<any[]>([]);
     const [cancelReason, setCancelReason] = useState("");
+    const [password , setPassword] = useState("");
+    const [changeQuantityItems , setChangeQuantityItems] = useState<any[]>([]);
     const [physicalForm, setPhysicalForm] = useState({
         begin_date: today(),
         ending_date: today(),
@@ -113,7 +121,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
     useAsyncEffect(fetchRecords, [paginator.reload, api.reload, filter.reload]);
 
     const openCreate = () => {
-        const lastRecord = api.dataSet?.filter((record:any)=> record.status ==="Posted")
+        const lastRecord = api.dataSet?.filter((record:any)=> record.status ==="Updated")
          ?.sort(
             (a: any, b: any) =>
                 new Date(b.begin_date).getTime() -
@@ -306,11 +314,9 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
 
         try {
             const buffer = await file.arrayBuffer();
-
             const workbook = XLSX.read(buffer);
             const sheetName = workbook.SheetNames[0];
             const worksheet = workbook.Sheets[sheetName];
-
             const data = XLSX.utils.sheet_to_json<any>(worksheet);
 
             for (const row of data) {
@@ -410,6 +416,15 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 cancelModal.onOpen();
             },
         },
+        record.status === "Posted" && {
+            label : "Update to Masterlist",
+            permission: performPermission,
+            onClick: () => {
+                setSelected(record);
+                passwordModal.onOpen();
+            }
+
+        }
     ].filter(Boolean) as any[];
 
     const columns = [
@@ -475,6 +490,21 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         }));
     };   
 
+    const confirmPassword = () => { 
+        if (password !== process.env.NEXT_PUBLIC_WEIGHTED_AVERAGE_PASSWORD) { 
+            toast.error("Invalid password"); 
+            return; 
+        } 
+        if(!selected?.items || selected.items.length === 0){
+            toast.error("No items Founds");
+        }
+        setChangeQuantityItems(selected.items); 
+        passwordModal.onClose(); 
+        setPassword(""); 
+        changeQuantityModal.onOpen(); 
+    };
+  
+
     const actionbutton = [
         {
             label : "Generate Data",
@@ -492,6 +522,77 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
             onClick: () => importInputRef.current?.click()
         }
     ]
+
+   const saveChangeQuantity = async () => 
+    {
+        if (!changeQuantityItems.length) { 
+            toast.error("No items to update."); 
+            return; 
+        } 
+        try { 
+            await updateQuantity({ 
+                physical_count_id: selected?.physical_count_no, 
+                items: changeQuantityItems.map((item: any) => ({ 
+                    item_no: item.item_no,
+                     physical_count: Number(item.physical_count || 0), 
+                    })),
+                }); 
+                     
+                toast.success( "All quantities updated successfully." ); 
+                changeQuantityModal.onClose(); 
+                api.triggerReload(); 
+            } 
+        catch (error) { 
+            console.error(error); 
+            toast.error("Failed to update quantities."); 
+        } 
+    };
+    
+    const exportChangeQuantityItems = () => {
+        const exportData = changeQuantityItems.map(item => ({
+            "Uniform Number": item.item_no,
+            "Description": item.description,
+            "UOM" : item.uom,
+            "Beginning Inventory": item.beginning_inventory,
+            "Purchases":item.total_purchases,
+            "ATD": item.atd,
+            "Free Uniform": item.free_uniform,
+            "Total Outgoing": item.total_outgoing,
+            "Should Be": item.should_be_inventory,
+            "Physical Count": item.physical_count,
+        }));
+        const worksheet = XLSX.utils.json_to_sheet(exportData);
+        const shouldBe = "I";
+        const physicalCount = "J";
+
+        for (let row = 2; row <= exportData.length + 1; row++) {
+            const shouldbe = worksheet[`${shouldBe}${row}`]?.v;
+            const physicalcount = worksheet[`${physicalCount}${row}`]?.v;
+
+            if (Number(shouldbe).toFixed(2) !== Number(physicalcount).toFixed(2)) {
+                for (let col = 0; col < 10; col++) {
+                    const cellAddress = XLSX.utils.encode_cell({
+                        r: row - 1, 
+                        c: col
+                    });
+
+                    if (worksheet[cellAddress]) {
+                        worksheet[cellAddress].s = {
+                            fill: {
+                                fgColor: { rgb: "FFF2CC" }
+                            },
+                            font: {
+                                bold: true
+                            }
+                        };
+                    }
+                }
+            }
+        }
+        const workbook = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(workbook, worksheet, "Updated Quantity");
+        XLSX.writeFile(workbook, `UPDATED_QUANTITY_ITEMS-${moment().format("YYYY-MM-DD")}.xlsx`);
+    };
 
 
     return (
@@ -584,6 +685,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 modalType={modalType}
                 title={title}
                 selected={selected}  
+                onReload={api.triggerReload}
             />
             <PhysicalCountCancelForm
                 modal={cancelModal}
@@ -591,7 +693,18 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
                 selected = {selected}
                 responseMessage = {responseMessage}
                 onSubmitCallback={api.triggerReload}
-
+            />
+           <PasswordForm
+                modal={passwordModal}
+                password={password}
+                setPassword={setPassword}
+                onConfirm={confirmPassword}
+            />
+           <ChangeQuanityForm
+                modal={changeQuantityModal}
+                items={changeQuantityItems}
+                onExport={exportChangeQuantityItems}
+                onUpdate={saveChangeQuantity}
             />
 
         </>
