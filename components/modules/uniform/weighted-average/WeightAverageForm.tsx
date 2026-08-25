@@ -206,9 +206,9 @@ const WeightedAverageForm = ({
                         case "create":
                             return createWeightAverage(requestPayload);
                         case "review":
-                            return updateWeightStatus(formValue.id,"Reviewed", createFormHandler.values.items);
+                            return updateWeightStatus(formValue.id,{status:"Reviewed", items:createFormHandler.values.items});
                         case "post": 
-                            return updateWeightStatus(formValue.id,"Posted", createFormHandler.values.items);
+                            return updateWeightStatus(formValue.id,{status:"Posted", items:createFormHandler.values.items});
                         default:
                             throw new Error("Invalid Mode");
                     }
@@ -677,6 +677,7 @@ const WeightedAverageForm = ({
                         <div className="flex-[1]">
                             <Button
                                 type="button"
+                                variant="success"
                                 label={mode === "create" ? "Generate Data" : "Update Unit Price"}
                                 onClick={() => {
                                     if (mode === "create") {

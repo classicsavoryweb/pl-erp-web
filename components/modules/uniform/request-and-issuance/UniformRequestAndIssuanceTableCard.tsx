@@ -272,7 +272,7 @@ const UniformSizesTableCard = () => {
                     paginator={paginator}
                 />
             </Card>
-             <UniformRequestAndIssuanceForm 
+            <UniformRequestAndIssuanceForm 
                 modal = {createModal}
                 mode = "create"
                 onSubmitCallback={api.triggerReload}

@@ -30,7 +30,7 @@ const VarianceReportCancelForm = ({
             }
     
             modal.setLoading(true);
-            const resp = await cancelWeightAverage(selected.id, cancelReason);
+            const resp = await cancelWeightAverage(selected.id, {cancel_reason:cancelReason});
             modal.setLoading(false);
     
             if (resp?.error || resp?.errors) {

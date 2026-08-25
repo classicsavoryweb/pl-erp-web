@@ -51,15 +51,15 @@ export const getVarianceById = async (id: number) => {
     return resData;
 };
 
-export const cancelVariance = (id: number, cancel_reason: string) => axiosHelper({
+export const cancelVariance = (id: number, payload:{cancel_reason: string}) => axiosHelper({
     func_path: `/uniform-variances/${id}/cancel`,
     method: "POST",
-    payload: { cancel_reason },
+    payload,
 });
 
-export const getVarianceItemDetails = (uniform_item_id:number,begin_date:string,end_date:string) => axiosHelper({
+export const getVarianceItemDetails = (payload:{uniform_item_id:number;begin_date:string;end_date:string}) => axiosHelper({
     func_path:`/variance-details`,
     method: "GET",
-    payload:{uniform_item_id,begin_date,end_date}
+    payload,
 });
 

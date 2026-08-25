@@ -254,7 +254,7 @@ const StockReplenishmentWorkspace = ({
         try {
             const response = cancelTarget.kind === "requests"
                 ? await cancelReplenishment(cancelTarget.record.id, reason)
-                : await cancelReceiving(cancelTarget.record.id, reason);
+                : await cancelReceiving(cancelTarget.record.id, {reason:reason});
 
             if (response.error) {
                 toast.error(messageOf(response));
@@ -865,11 +865,7 @@ const StockReplenishmentWorkspace = ({
         0
     );
     
-    const replenishmentbutton = [
-        {
-            label: "Add Request",
-            onClick : () => addRequestItem(requestItemId)
-        },
+    const replenishmentbutton = [ 
         {
             label: "Generate List",
             onClick: handleGenerateList
@@ -1079,17 +1075,16 @@ const StockReplenishmentWorkspace = ({
                     </div>
                 </form>
             </Modal>
-
-                <Modal
-                    isShowing={requestOpen}
-                    title={isReview ? "Review Replenishment Request" : "New Replenishment Request"}
-                    onClose={() => {
-                        setRequestOpen(false);
-                        setIsReview(false);
-                        setReviewId(null);
-                    }}
-                    size="xxl"
-                >
+            <Modal
+                isShowing={requestOpen}
+                title={isReview ? "Review Replenishment Request" : "New Replenishment Request"}
+                onClose={() => {
+                    setRequestOpen(false);
+                    setIsReview(false);
+                    setReviewId(null);
+                }}
+                size="xxl"
+            >
                 <form
                     onSubmit={(event) => {
                         event.preventDefault();
@@ -1171,18 +1166,29 @@ const StockReplenishmentWorkspace = ({
                             </div>
                         </div>
                     </div>
-                    <SearchableDropDown
-                        label="Description"
-                        placeholder="select description"
-                        name="uniform_item_id"
-                        value={requestItemId ?? ""}
-                        disabled={!requestForm.supplier_id}
-                        onChange={(event) => setRequestItemId(event.target.value)}
-                        options={availableItems.map((item) => ({
-                            label: `${item.item_no} - ${item.description} (${item.size?.description ?? ""})`,
-                            value: String(item.id),
-                        }))}
-                    />
+                    <div className="grid grid-cols-1 gap-x-3 md:grid-cols-5">
+                        <div className="col-span-4">
+                            <SearchableDropDown
+                                label="Description"
+                                placeholder="select description"
+                                name="uniform_item_id"
+                                value={requestItemId ?? ""}
+                                disabled={!requestForm.supplier_id}
+                                onChange={(event) => setRequestItemId(event.target.value)}
+                                options={availableItems.map((item) => ({
+                                    label: `${item.item_no} - ${item.description} (${item.size?.description ?? ""})`,
+                                    value: String(item.id),
+                                }))}
+                            />
+                        </div>
+                        <div className="col-span-1 mt-3">
+                            <Button
+                                label="Add Request" 
+                                variant = "success"
+                                onClick ={() => addRequestItem(requestItemId)}
+                            />
+                        </div>
+                    </div>
                     <LineEditor
                         items={requestForm.items ?? []}
                         mode="request"
