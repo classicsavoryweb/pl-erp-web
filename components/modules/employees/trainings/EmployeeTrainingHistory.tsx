@@ -14,6 +14,8 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import { EmployeeContext } from "@/context/EmployeeProvider";
 import EmployeeTrainingForm from "./EmployeeTrainingForm";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const EmployeeTraingingHistory = () => {
     const params = useParams();
@@ -24,6 +26,7 @@ const EmployeeTraingingHistory = () => {
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload, employee } = useContext(EmployeeContext);
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -80,6 +83,10 @@ const EmployeeTraingingHistory = () => {
         {
             label: "Edit",
             onClick: (data:any) => {
+                if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
+                    toast.error("You cannot this record");
+                    return;
+                }
                 setAction("edit");
                 setData({
                     id: data.id,
@@ -117,6 +124,10 @@ const EmployeeTraingingHistory = () => {
                             {
                                 label: "Add",
                                 onClick: () => {
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
+                                        toast.error("You cannot this record");
+                                        return;
+                                    }
                                     setAction("add");
                                     modal.onOpen();
                                 }
