@@ -30,7 +30,7 @@ import Accordion from "@/components/common/Accordion";
 
 const AdjustmentsTableCard = () => {
     const api = useApiCall();
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const createAdjustments = useModal();
     const viewAdjustments = useModal();
     const filter = useFilter();
@@ -70,6 +70,11 @@ const AdjustmentsTableCard = () => {
             columnHead: "Date",
             path: "date",
             columnType: COLUMNTYPES.date
+        },
+        {
+            columnHead: "Cutoff Adjusted",
+            path: "cut_off",
+            columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Days",

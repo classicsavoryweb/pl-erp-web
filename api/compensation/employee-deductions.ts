@@ -48,11 +48,10 @@ export const exportAllEmployeeDeductions = async (payload?: {}) => {
     return resData;
 };
 
-export const getEmployeeDeduction = async (payload?: {}) => {
+export const getEmployeeDeduction = async (id: string | number) => {
     const resData = await axiosHelper({
-        func_path: '/get-employee-deduction',
+        func_path: `/get-employee-deduction/${id}`,
         method: 'GET',
-        payload: payload
     });
 
     return resData;

@@ -9,12 +9,16 @@ import Badge from "@/components/common/Badge";
 import { getTenure } from "@/helper/tenure";
 import { EmployeeContext } from "@/context/EmployeeProvider";
 import moment from "moment";
+import { toast } from "react-toastify";
+import { canEditRestrictedRecords } from "@/helper/restriction";
+import { AuthContext } from "@/context/AuthProvider";
 
 const EmployeeDetailsCard = () => {
     const params = useParams();
     const employeeNumber = params["employee-number"];
     const router = useRouter();
     const {employee, loading} = useContext(EmployeeContext);
+    const { permissions } = useContext(AuthContext);
 
     return (
         <div className="flex gap-x-4">
@@ -54,6 +58,10 @@ const EmployeeDetailsCard = () => {
                             <Button
                                 label="Edit"
                                 onClick={() => {
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
+                                        toast.error("You cannot this record");
+                                        return;
+                                    }
                                     router.push(`/employees/edit/${employeeNumber}`)
                                 }}
                             />

@@ -69,7 +69,7 @@ const styles = StyleSheet.create({
         fontWeight: "bold",
     },
     groupCell: {
-        width: 62,
+        width: 100,
         fontWeight: "bold",
     },
     descCell: {
@@ -184,20 +184,30 @@ const buildWorkingRows = (payroll: any, summary: any) => {
         Number(summary?.regular_overtime ?? 0) +
         Number(summary?.legal_holiday_overtime ?? 0) +
         Number(summary?.special_holiday_overtime ?? 0) +
-        Number(summary?.night_differential_overtime ?? 0);
+        Number(summary?.night_differential_overtime ?? 0) +
+        Number(summary?.cancelled_off ?? 0) +
+        Number(summary?.cancelled_off_overtime ?? 0);
 
     const totalOvertimePay =
         Number(payroll?.overtime_amount ?? 0) +
         Number(payroll?.legal_holiday_overtime_amount ?? 0) +
         Number(payroll?.special_holiday_overtime_amount ?? 0) +
-        Number(payroll?.night_differential_overtime_amount ?? 0);
+        Number(payroll?.night_differential_overtime_amount ?? 0) +
+        Number(payroll?.cancelled_off ?? 0) +
+        Number(payroll?.cancelled_off_overtime_amount ?? 0);
 
     return [
         {
             group: "Total Days-In",
-            label: "Regular (Days)",
+            label: "Regular Days",
             input: summary?.regular_days ?? 0,
             salary: payroll?.salary ?? 0,
+        },
+        {
+            group: "Additional Working Time",
+            label: "Cancelled Off",
+            input: summary?.cancelled_off ?? 0,
+            salary: payroll?.cancelled_off ?? 0,
         },
         {
             group: "Additional Working Time",
@@ -210,6 +220,18 @@ const buildWorkingRows = (payroll: any, summary: any) => {
             label: "Legal Hol (Hrs)",
             input: summary?.legal_holiday ?? 0,
             salary: payroll?.legal_holiday_amount ?? 0,
+        },
+        {
+            group: "Additional Working Time",
+            label: "Regular Overtime",
+            input: Number(summary?.regular_overtime ?? 0),
+            salary: payroll?.overtime_amount ?? 0,
+        },
+        {
+            group: "Additional Working Time",
+            label: "Cancelled Off OT (Hrs)",
+            input: summary?.cancelled_off_overtime ?? 0,
+            salary: payroll?.cancelled_off_overtime_amount ?? 0,
         },
         {
             group: "Additional Working Time",
@@ -240,12 +262,6 @@ const buildWorkingRows = (payroll: any, summary: any) => {
             label: "Total Overtime (Hrs)",
             input: totalOvertimeHours,
             salary: totalOvertimePay,
-        },
-        {
-            group: "Additional Working Time",
-            label: "Total Regular (Hrs)",
-            input: Number(summary?.regular_days ?? 0) * 8,
-            salary: 0,
         },
         {
             group: "Reduction in Working Time",

@@ -20,6 +20,7 @@ import * as Yup from "yup";
 import IncentivesCard from "@/components/modules/compensation/payroll/payroll-details/IncentivesCard";
 import TardinessHistoryCard from "@/components/modules/compensation/payroll/payroll-details/TardinessHistoryCard";
 import TardinessDetails from "@/components/modules/compensation/payroll/payroll-details/TardinessDetails";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const Page = () => {
     const params = useParams();
@@ -100,24 +101,37 @@ const Page = () => {
             modify_deductions: false,
         },
         validateOnChange: false,
-        onSubmit: async (values) => {
+        onSubmit: async (values, {setSubmitting}) => {
+            if (!canEditRestrictedRecords(permissions, "EMPLOYEE", payrollDetails.employee.employee_number, 0)) {
+                toast.error("You cannot edit your own record");
+                return;
+            }
+
             if (values.save_changes) {
+                setSubmitting(true);
                 const isConfirmed = await confirm({
                     message : "Are you sure you want to save changes",
                     title: "Payroll Details"
                 });
 
                 if (isConfirmed) {
-                    const resp = await previewPayrollComputation(Number(payrollId), values);
+                    try {
+                        const resp = await previewPayrollComputation(Number(payrollId), values);
 
-                    if (!resp.error) {
-                        setPayrollDetails(resp.data);
-                        toast.success("Payroll successfully updated");
-                    } else {
-                        toast.error(resp.data.message);
+                        if (!resp.error) {
+                            setPayrollDetails(resp.data);
+                            toast.success("Payroll successfully updated");
+                        } else {
+                            toast.error(resp.data.message);
+                        }
+                    } catch {
+                        toast.error("Error encountered")
+                    } finally {
+                        setSubmitting(false);
                     }
                 }
             } else {
+                setSubmitting(true);
                 try {
                     const resp = await previewPayrollComputation(Number(payrollId), values);
 
@@ -128,6 +142,8 @@ const Page = () => {
                     }
                 } catch {
                     toast.error("Error preview computation.");
+                } finally {
+                    setSubmitting(false);
                 }
             }
         }

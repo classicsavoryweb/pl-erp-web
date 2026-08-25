@@ -47,8 +47,9 @@ const EditAdjustmentTypeModal = ({
 
             if (isConfirmed) {
                 setSubmitting(true);
-                editAdjustmentType(values, formValue.id)
-                .then((resp) => {
+                try {
+                    const resp = await editAdjustmentType(values, formValue.id);
+
                     if(!resp.error) {
                         toast.success("Adjustment type updated successfully");
                         onSubmitCallback();
@@ -57,11 +58,11 @@ const EditAdjustmentTypeModal = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch {
                     toast.error("Error encountered");
-                }).finally((() => {
+                } finally {
                     setSubmitting(false);
-                }));
+                }
             }
         }
     });

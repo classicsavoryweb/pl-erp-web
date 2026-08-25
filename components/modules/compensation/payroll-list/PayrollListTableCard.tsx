@@ -23,7 +23,7 @@ import ActivityLogsModal from "../../generic/ActivityLogsModal";
 const PayrollListTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
-    const filter = useFilter();    
+    const filter = useFilter({status: "included"});    
     const [data, setData] = useState<any>(null);
     const createModal = useModal();
     const editModal = useModal();
@@ -245,7 +245,6 @@ const PayrollListTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
-                
             />
             <Card>
                 <div className="flex justify-end gap-x-3">

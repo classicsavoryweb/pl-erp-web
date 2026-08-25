@@ -31,6 +31,7 @@ const LoginForm = () => {
                     } else {
                         const expiresInHours = 12 / 24;
                         const user = resp.data.user;
+                        const employee = resp.data.employee;
                         // const {
                         //     employee_status,
                         //     home_branch,
@@ -52,7 +53,7 @@ const LoginForm = () => {
                         });
                         Cookies.set('authToken', resp.data.token, { path: '/', expires: expiresInHours });
                         Cookies.set('userDetails', JSON.stringify(user), { path: '/', expires: expiresInHours });
-
+                        Cookies.set('employeeDetails', JSON.stringify(employee), { path: '/', expires: expiresInHours });
                         router.push("/");
                     }
                 })

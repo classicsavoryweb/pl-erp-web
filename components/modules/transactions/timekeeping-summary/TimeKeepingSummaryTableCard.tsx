@@ -28,6 +28,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import AddTaxableAdjustmentModal from "./AddTaxableAdjustmentModal";
 import Accordion from "@/components/common/Accordion";
 import EditTimeKeepingSummaryModal from "./EditTimeKeepingSummaryModal";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -40,7 +41,7 @@ const TimeKeepingSummaryTableCard = ({
     hasExport = true,
     exportPermission = "export_all_transactions_time_keeping_summary",
 }: FilterInterface) => {
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>(null);
@@ -191,6 +192,14 @@ const TimeKeepingSummaryTableCard = ({
                             {
                                 label: "Edit",
                                 onClick: (data: any) => {
+                                    if (
+                                        !canEditRestrictedRecords(permissions, "EMPLOYEE", data.employee.employee_number, 0) ||
+                                        !canEditRestrictedRecords(permissions, "BRANCH", "", data.branch_id)
+                                    ) {
+                                        toast.error("You cannot this record");
+                                        return;
+                                    }
+
                                     setSelectedSummary(data);
                                     editModal.onOpen();
                                 }
