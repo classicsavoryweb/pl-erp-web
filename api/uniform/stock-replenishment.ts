@@ -29,7 +29,7 @@ export const generateReplenishmentList = (payload: {}) => axiosHelper({
     payload,
 });
 
-export const importReplenishmentItems = (payload: any) => axiosHelper({
+export const importReplenishmentItems = (payload: {}) => axiosHelper({
     func_path: "/uniform-replenishments/import-items",
     method: "POST",
     payload,
@@ -38,7 +38,7 @@ export const importReplenishmentItems = (payload: any) => axiosHelper({
         : {},
 });
 
-export const reviewReplenishment = (id: number, payload: any) => axiosHelper({
+export const reviewReplenishment = (id: number, payload: {}) => axiosHelper({
     func_path: `/uniform-replenishments/${id}/review`,
     method: "POST",
     payload,
@@ -90,7 +90,7 @@ export const createReceiving = (payload: {}) => axiosHelper({
     payload,
 });
 
-export const reviewReceiving = (id: number ,payload : any) => axiosHelper({
+export const reviewReceiving = (id: number ,payload : {}) => axiosHelper({
     func_path: `/uniform-receivings/${id}/review`,
     method: "POST",
     payload
@@ -101,8 +101,8 @@ export const postReceiving = (id: number) => axiosHelper({
     method: "POST",
 });
 
-export const cancelReceiving = (id: number, reason: string) => axiosHelper({
+export const cancelReceiving = (id: number, payload:{reason: string}) => axiosHelper({
     func_path: `/uniform-receivings/${id}/cancel`,
     method: "POST",
-    payload: { reason },
+    payload
 });

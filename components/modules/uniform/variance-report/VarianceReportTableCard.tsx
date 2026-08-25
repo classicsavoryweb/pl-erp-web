@@ -208,25 +208,21 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         }
     };
 
-    const handleView = async (record: any) => {
-
-        try {
-            const response = await getVarianceItemDetails(
-                record.uniform_item_id,
-                varianceForm.begin_date,
-                varianceForm.ending_date
-            );
-
-            setSelected(response.data);
-            viewVarianceItemModal.onOpen();
-
-        } catch (error) {
-            console.error("Error fetching item details:", error);
-            toast.error("Unable to load item details.");
-        }
+   const handleView = async (record: any) => {
+    try {
+        const payload = {
+            uniform_item_id: record.uniform_item_id,
+            begin_date: varianceForm.begin_date,
+            end_date: varianceForm.ending_date,
+        };
+        const response = await getVarianceItemDetails(payload);
+        setSelected(response.data);
+        viewVarianceItemModal.onOpen();
+    } catch (error) {
+        console.error("Error fetching item details:", error);
+        toast.error("Unable to load item details.");
+    }
     };
-
-
 
     const downloadDetailedExport = async (record: any) => {
         const resp = await exportVarianceDetails(record.id);
@@ -252,7 +248,6 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         anchor.remove();
         window.URL.revokeObjectURL(downloadUrl);
     };
-    
     
     const actionsFor = (record: any) => [
         {
@@ -512,12 +507,10 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                         />
                     </div>
                 </div>
-
                <div className="flex items-center justify-between mb-2">
                     <div className="font-semibold">
                         <span>Request Data</span>
                     </div>
-
                     <div className="flex items-end gap-4">
                         {showFilter && (
                         <div className="flex items-end gap-4">
@@ -545,16 +538,15 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                         <div className="w-[140px] font-semibold">
                             <Button 
                                 type="button"
+                                variant="success"
                                 label="Generate Data"
                                 onClick={() => {                                   
                                     loadPreview();
                                 }}
-                                
                             />
                         </div>
                     </div>
                 </div>
-
                 <VarianceItemsTable
                     items={filteredVarianceItems}
                     editable
@@ -567,12 +559,10 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                     }
                     onView={handleView}
                 />
-
                 <div className="flex justify-end gap-x-2 mt-3">
                     <div className="w-[120px]"><Button label="Submit" onClick={saveRecord} /></div>
                 </div>
             </Modal>
-   
             <VarianceReportViewForm
                 modal={viewModal}
                 modalType={modalType}
@@ -592,9 +582,9 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
                 onSubmitCallback ={api.triggerReload}
             />
             <VarianceReportViewItem
-                    modal={viewVarianceItemModal}
-                    formValue ={selected}
-                />
+                modal={viewVarianceItemModal}
+                formValue ={selected}
+            />
         </>
     );
 };

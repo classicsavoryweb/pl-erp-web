@@ -93,13 +93,12 @@ const Table = ({
         <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-[13px]"}`}>
         <div className={fixed ? "" : "overflow-x-auto"}>
             <table className="table-auto w-full rounded-md dark:text-slate-200 dark:bg-neutral-800">
-                <thead>
+                <thead className={`bg-red-800 ${fixed ? "sticky top-0 z-30" : ""}`}>
                     <tr>
                         {withCheckBox && (
                             <th
                                 className={`
                                     text-left p-2 border-slate-300 dark:border-neutral-700 border text-zinc-100 hover:cursor-pointer
-                                    ${fixed ? "sticky top-0 z-30 bg-red-800" : "bg-red-800"}
                                 `}
                                 onClick={() => {
                                     let newDataset = [];
@@ -125,7 +124,6 @@ const Table = ({
                                 key={key}
                                 className={`
                                     text-left p-2 border-slate-300 dark:border-neutral-700 border text-zinc-100
-                                    ${fixed ? "sticky top-0 z-30 bg-red-800" : "bg-red-800"}
                                 `}
                             >
                                 {canSortColumns ? (
@@ -151,7 +149,6 @@ const Table = ({
                             <th
                                 className={`
                                     text-left p-2 border-slate-300 dark:border-neutral-700 border text-zinc-100
-                                    ${fixed ? "sticky top-0 z-30 bg-red-800" : "bg-red-800"}
                                 `}
                             >
                                 Action

@@ -35,7 +35,7 @@ const VarianceReportCancelForm = ({
             }
     
             modal.setLoading(true);
-            const resp = await cancelVariance(selected.id, cancelReason);
+            const resp = await cancelVariance(selected.id, {cancel_reason:cancelReason});
             modal.setLoading(false);
     
             if (resp?.error || resp?.errors) {

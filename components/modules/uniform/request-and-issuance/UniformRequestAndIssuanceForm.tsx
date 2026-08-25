@@ -875,6 +875,7 @@ const UniformRequestAndIssuanceForm = ({
                     <div className="lg:col-span-1 mt-3">
                         <Button
                             type="button"
+                            variant="success"
                             label="Add Request"
                             onClick={addRequest}
                         />
