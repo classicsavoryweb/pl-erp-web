@@ -1,3 +1,5 @@
+"use client";
+
 import Button from "@/components/common/Button";
 import Dropdown from "@/components/common/Dropdown";
 import Modal from "@/components/common/Modal";
@@ -9,6 +11,9 @@ import { generateEntries } from "@/api/compensation/entries";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import confirm from "@/components/common/Confirm";
+import { useModal } from "@/hooks/modal";
+import { useState } from "react";
+import EntryValidationModal from "./EntryValidationModal";
 
 interface DateRangeConfirmModalForm {
     modal: any;
@@ -48,6 +53,9 @@ const DateRangeConfirmModal = ({
     const modalTitle = sendToApsys ? "Send Entries to APSYS" : "Generate Entries";
     const submitLabel = sendToApsys ? "Send to APSYS" : "Generate";
 
+    const [validationResponse, setValidationResponse] = useState<any>({});
+    const validationModal = useModal();
+
     const formHandler = useFormik({
         initialValues: {
             action: "generate",
@@ -78,102 +86,120 @@ const DateRangeConfirmModal = ({
                     setSubmitting(false);
                     return;
                 }
+                try {
+                    const resp = await generateEntries({
+                        ...values,
+                        proceed: "No"
+                    });
 
-                generateEntries({
-                    ...values
-                })
-                .then((resp) => {
                     if (!resp.error) {
                         resetForm();
                         modal.onClose();
                         toast.success(resp.data.message);
                     } else {
+                        if (resp.status === 409) {
+                            resetForm();
+                            modal.onClose();
+                            setValidationResponse(resp.data.data);
+                            validationModal.onOpen();
+                        }
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch {
                     toast.error("Error encountered");
-                }).finally(() => {
+                } finally {
                     setSubmitting(false);
-                });
+                }
             }
         }
     });
 
     return (
-        <Modal
-            isShowing={modal.isShowing}
-            title={modalTitle}
-            onClose={() => {
-                modal.onClose();
-                formHandler.resetForm();
-            }}
-            loading={modal.loading}
-            size="md"
-        >
-            <form onSubmit={formHandler.handleSubmit}>
-                <CutOffDropDown
-                    value={formHandler.values.selected_cutoff}
-                    onChange={(e) => {
-                        const nextCutoff = e.target.obj || currentCutoff;
-                        const nextDates = normalizeCutoffDates(
-                            nextCutoff?.start_time,
-                            nextCutoff?.end_time,
-                            formHandler.values.year
-                        );
+        <>
+            <Modal
+                isShowing={modal.isShowing}
+                title={modalTitle}
+                onClose={() => {
+                    modal.onClose();
+                    formHandler.resetForm();
+                }}
+                loading={modal.loading}
+                size="md"
+            >
+                <form onSubmit={formHandler.handleSubmit}>
+                    <CutOffDropDown
+                        value={formHandler.values.selected_cutoff}
+                        onChange={(e) => {
+                            const nextCutoff = e.target.obj || currentCutoff;
+                            const nextDates = normalizeCutoffDates(
+                                nextCutoff?.start_time,
+                                nextCutoff?.end_time,
+                                formHandler.values.year
+                            );
 
-                        formHandler.setFieldValue("cutoff", nextCutoff);
-                        formHandler.setFieldValue("selected_cutoff", e.target.value);
-                        formHandler.setFieldValue("date_from", nextDates.dateFrom);
-                        formHandler.setFieldValue("date_to", nextDates.dateTo);
-                    }}
-                    required
-                    error={formHandler.errors.selected_cutoff}
-                />
-                <Dropdown
-                    placeholder="select year"
-                    label="Year"
-                    name="year"
-                    value={String(formHandler.values.year)}
-                    onChange={(e) => {
-                        const nextYear = e.target.value;
-                        const nextDates = normalizeCutoffDates(
-                            formHandler.values.cutoff?.start_time,
-                            formHandler.values.cutoff?.end_time,
-                            nextYear
-                        );
-
-                        formHandler.handleChange(e);
-                        formHandler.setFieldValue("date_from", nextDates.dateFrom);
-                        formHandler.setFieldValue("date_to", nextDates.dateTo);
-                    }}
-                    required
-                    error={formHandler.errors.year}
-                    options={Array.from({ length: 100 }, (_, i) => {
-                        const year = currentYear - i;
-                        return {
-                            label: year.toString(),
-                            value: year.toString(),
-                        };
-                    })}
-                />
-                <div className="flex justify-end gap-2 mt-4">
-                    <Button
-                        label="Cancel"
-                        variant="secondary"
-                        onClick={() => {
-                            modal.onClose();
-                            formHandler.resetForm();
+                            formHandler.setFieldValue("cutoff", nextCutoff);
+                            formHandler.setFieldValue("selected_cutoff", e.target.value);
+                            formHandler.setFieldValue("date_from", nextDates.dateFrom);
+                            formHandler.setFieldValue("date_to", nextDates.dateTo);
                         }}
+                        required
+                        error={formHandler.errors.selected_cutoff}
                     />
-                    <Button
-                        type="submit"
-                        label={submitLabel}
-                        loading={formHandler.isSubmitting}
-                        onClick={() => {}}
+                    <Dropdown
+                        placeholder="select year"
+                        label="Year"
+                        name="year"
+                        value={String(formHandler.values.year)}
+                        onChange={(e) => {
+                            const nextYear = e.target.value;
+                            const nextDates = normalizeCutoffDates(
+                                formHandler.values.cutoff?.start_time,
+                                formHandler.values.cutoff?.end_time,
+                                nextYear
+                            );
+
+                            formHandler.handleChange(e);
+                            formHandler.setFieldValue("date_from", nextDates.dateFrom);
+                            formHandler.setFieldValue("date_to", nextDates.dateTo);
+                        }}
+                        required
+                        error={formHandler.errors.year}
+                        options={Array.from({ length: 100 }, (_, i) => {
+                            const year = currentYear - i;
+                            return {
+                                label: year.toString(),
+                                value: year.toString(),
+                            };
+                        })}
                     />
-                </div>
-            </form>
-        </Modal>
+                    <div className="flex justify-end gap-2 mt-4">
+                        <Button
+                            label="Cancel"
+                            variant="secondary"
+                            onClick={() => {
+                                modal.onClose();
+                                formHandler.resetForm();
+                            }}
+                        />
+                        <Button
+                            type="submit"
+                            label={submitLabel}
+                            loading={formHandler.isSubmitting}
+                            onClick={() => {}}
+                        />
+                    </div>
+                </form>
+            </Modal>
+
+            <EntryValidationModal
+                modal={validationModal}
+                api={generateEntries}
+                validationData={validationResponse}
+                payload={formHandler.values}
+                allocation_id={0}
+                type="Payroll"
+            />
+        </>
     );
 };
 

@@ -108,7 +108,7 @@ const EditActualTimeModal = ({
             return errors;
         },
 
-        onSubmit: async (values) => {
+        onSubmit: async (values, {setSubmitting}) => {
             if (values.punches.length !== 2 && values.punches.length !== 4) {
                 toast.error("You can only submit 2 or 4 number of punches");
                 return;
@@ -129,20 +129,22 @@ const EditActualTimeModal = ({
                             : punch.punch_time,
                     })),
                 };
-
-                editBiotimePunches(payload, selectedLog)
-                    .then((resp) => {
-                        if (!resp.error) {
-                            toast.success(resp.data.message);
-                            modal.onClose();
-                            onSubmitCallBack();
-                        } else {
-                            toast.error(resp.data.message);
-                        }
-                    })
-                    .catch(() => {
-                        toast.error("Error encountered");
-                    });
+                setSubmitting(true);
+                try {
+                    const resp = await editBiotimePunches(payload, selectedLog);
+                    
+                    if (!resp.error) {
+                        toast.success(resp.data.message);
+                        modal.onClose();
+                        onSubmitCallBack();
+                    } else {
+                        toast.error(resp.data.message);
+                    }
+                } catch {
+                    toast.error("Error encountered");
+                } finally {
+                    setSubmitting(false);
+                }
             }
         }
     });
@@ -326,6 +328,7 @@ const EditActualTimeModal = ({
                             label="Submit"
                             type="submit"
                             onClick={() => {}}
+                            loading={formHandler.isSubmitting}
                         />
                     </div>
                     <div>

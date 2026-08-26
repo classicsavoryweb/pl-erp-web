@@ -13,6 +13,8 @@ import { toast } from "react-toastify";
 import { EmployeeContext } from "@/context/EmployeeProvider";
 import EmployeeVaccinationForm from "./EmployeeVaccinationForm";
 import Badge from "@/components/common/Badge";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const EmployeeVaccinationHistory = () => {
     const params = useParams();
@@ -23,6 +25,7 @@ const EmployeeVaccinationHistory = () => {
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload, employee } = useContext(EmployeeContext);
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -80,6 +83,10 @@ const EmployeeVaccinationHistory = () => {
         {
             label: "Edit",
             onClick: (data:any) => {
+                if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
+                    toast.error("You cannot this record");
+                    return;
+                }
                 setAction("edit");
                 setData({
                     id: data.id,
@@ -110,6 +117,10 @@ const EmployeeVaccinationHistory = () => {
                     <Button
                         label="Add"
                         onClick={() => {
+                            if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
+                                toast.error("You cannot this record");
+                                return;
+                            }
                             setAction("add");
                             modal.onOpen();
                         }}

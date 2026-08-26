@@ -22,7 +22,7 @@ import Textfield from "@/components/common/Textfield";
 import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import Accordion from "@/components/common/Accordion";
-import { exportAllTravelOvertimes, getAllTravelOvertimes } from "@/api/transactions/travel-overtime";
+import { deleteTravelOvertime, exportAllTravelOvertimes, getAllTravelOvertimes } from "@/api/transactions/travel-overtime";
 import { useState } from "react";
 import CreateTravelOvertimeModal from "./CreateTravelOvertimeModal";
 import EditTravelOvertimeModal from "./EditTravelOvertimeModal";
@@ -34,7 +34,7 @@ const TravelOvertimeTableCard = () => {
     const importModal = useModal();
     const createModal = useModal();
     const editModal = useModal();
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const filter = useFilter();
 
     const tableAction = [
@@ -43,6 +43,30 @@ const TravelOvertimeTableCard = () => {
             onClick: (data: any) => {
                 setData(data);
                 editModal.onOpen();
+            }
+        },
+        {
+            label: "Delete",
+            onClick: async (data: any) => {
+                const isConfirmed = await confirm({
+                    title: "Travel Overtime",
+                    message: "Are you sure you want to delete?"
+                });
+
+                if (isConfirmed) {
+                    try {
+                        const resp = await deleteTravelOvertime(data.id);
+
+                        if (!resp.error) {
+                            toast.success(resp.data.message);
+                            api.triggerReload();
+                        } else {
+                            toast.error(resp.data.message);
+                        }
+                    } catch {
+                        toast.error("Error encountered");
+                    }
+                }
             }
         }
     ]

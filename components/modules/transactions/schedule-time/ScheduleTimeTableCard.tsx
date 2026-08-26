@@ -53,7 +53,7 @@ const ScheduleTimeTableCard = ({
     const transferAllModal = useModal();
     const editModal = useModal();
     const activityLogsModal = useModal();
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
     const filter = useFilter();
@@ -233,7 +233,7 @@ const ScheduleTimeTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch && branch.name ? branch.name : 'default-branch';
+                    const branchName = branch?.name ?? 'all-branches';
     
                     a.href = downloadUrl;
                     a.download = `${branchName.toUpperCase()}-SCHEDULE-TIME-${moment().format('YYYY-MM-DD')}.xls`;

@@ -60,10 +60,11 @@ export const generateThirteenthMonthMonthlyAllocation = async (payload: {}) => {
     return resData;
 };
 
-export const generateThirteenthMonthMonthlyAllocationEntries = async (id: number) => {
+export const generateThirteenthMonthMonthlyAllocationEntries = async (payload: {}, id: number) => {
     const resData = await axiosHelper({
         func_path: `/generate-thirteenth-month-monthly-allocation-entries/${id}`,
         method: 'GET',
+        payload: payload
     });
 
     return resData;

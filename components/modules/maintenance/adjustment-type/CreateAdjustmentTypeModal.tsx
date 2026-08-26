@@ -39,8 +39,10 @@ const CreateAdjustmentTypeModal = ({
 
             if (isConfirmed) {
                 setSubmitting(true);
-                createAdjustmentType(values)
-                .then((resp) => {
+
+                try {
+                    const resp = await createAdjustmentType(values);
+
                     if(!resp.error) {
                         toast.success("Adjustment type created successfully");
                         onSubmitCallback();
@@ -49,11 +51,11 @@ const CreateAdjustmentTypeModal = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch {
                     toast.error("Error encountered");
-                }).finally((() => {
+                } finally {
                     setSubmitting(false);
-                }));
+                }
             }
         }
     });

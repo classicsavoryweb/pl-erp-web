@@ -15,6 +15,8 @@ import { useContext, useState } from "react";
 import { toast } from "react-toastify";
 import Button from "@/components/common/Button";
 import BankDetailsForm from "./BankDetailsForm";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const EmployeeBankDetailsHistory = () => {
     const params = useParams();
@@ -25,6 +27,7 @@ const EmployeeBankDetailsHistory = () => {
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload } = useContext(EmployeeContext);
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -84,6 +87,10 @@ const EmployeeBankDetailsHistory = () => {
                                 {
                                     label: "Edit",
                                     onClick: () => {
+                                        if (!canEditRestrictedRecords(permissions, "EMPLOYEE", String(employeeNumber), 0)) {
+                                            toast.error("You cannot this record");
+                                            return;
+                                        }
                                         setAction("edit");
                                         modal.onOpen();
                                         setData({
@@ -118,6 +125,10 @@ const EmployeeBankDetailsHistory = () => {
                     <Button
                         label="Add"
                         onClick={() => {
+                            if (!canEditRestrictedRecords(permissions, "EMPLOYEE", String(employeeNumber), 0)) {
+                                toast.error("You cannot this record");
+                                return;
+                            }
                             setAction("add");
                             modal.onOpen();
                         }}

@@ -27,6 +27,8 @@ import GenerateTimeKeepingModal from "./GenerateTimekeepingModal";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import AddTaxableAdjustmentModal from "./AddTaxableAdjustmentModal";
 import Accordion from "@/components/common/Accordion";
+import EditTimeKeepingSummaryModal from "./EditTimeKeepingSummaryModal";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -39,12 +41,13 @@ const TimeKeepingSummaryTableCard = ({
     hasExport = true,
     exportPermission = "export_all_transactions_time_keeping_summary",
 }: FilterInterface) => {
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>(null);
     const generateModal= useModal();
     const addAdjustmentModal = useModal();
+    const editModal = useModal();
     const [selectedSummary, setSelectedSummary] = useState<any>({});
     const canAddAdjustment = permissions.includes("perform_transactions_adjustments");
 
@@ -187,13 +190,28 @@ const TimeKeepingSummaryTableCard = ({
                         data={data}
                         actions={[
                             {
-                                label: "Add Taxable Adjustment",
-                                permission: "perform_transactions_adjustments",
-                                onClick: (row: any) => {
-                                    setSelectedSummary(row);
-                                    addAdjustmentModal.onOpen();
+                                label: "Edit",
+                                onClick: (data: any) => {
+                                    if (
+                                        !canEditRestrictedRecords(permissions, "EMPLOYEE", data.employee.employee_number, 0) ||
+                                        !canEditRestrictedRecords(permissions, "BRANCH", "", data.branch_id)
+                                    ) {
+                                        toast.error("You cannot this record");
+                                        return;
+                                    }
+
+                                    setSelectedSummary(data);
+                                    editModal.onOpen();
                                 }
-                            }
+                            },
+                            // {
+                            //     label: "Add Taxable Adjustment",
+                            //     permission: "perform_transactions_adjustments",
+                            //     onClick: (row: any) => {
+                            //         setSelectedSummary(row);
+                            //         addAdjustmentModal.onOpen();
+                            //     }
+                            // }
                         ]}
                     />
                 );
@@ -448,12 +466,10 @@ const TimeKeepingSummaryTableCard = ({
                 modal={generateModal}
             />
 
-            <AddTaxableAdjustmentModal
-                modal={addAdjustmentModal}
+            <EditTimeKeepingSummaryModal
+                modal={editModal}
                 data={selectedSummary}
-                onSubmitCallback={() => {
-                    api.triggerReload();
-                }}
+                onSubmitCallBack={api.triggerReload}
             />
         </>
     );

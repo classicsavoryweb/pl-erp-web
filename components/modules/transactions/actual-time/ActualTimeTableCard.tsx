@@ -58,7 +58,7 @@ const ActualTimeTableCard = ({
     const [selectedLog, setSelectedLog] = useState<string>("0");
     const [branch, setBranch] = useState<any>({});
     const { permissions } = useContext(AuthContext);
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const filter = useFilter();
 
     const columnSettings = [
@@ -255,7 +255,7 @@ const ActualTimeTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch && branch.name ? branch.name : 'default-branch';
+                    const branchName = branch?.name ?? 'all-branches';
                         
                     a.href = downloadUrl;
                     a.download = `${branchName.toUpperCase()}-ACTUAL-LOGS-${moment().format('YYYY-MM-DD')}.xls`;

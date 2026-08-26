@@ -92,8 +92,9 @@ const FetchScheduleModal = ({
             });
 
             if (isConfirm) {
-                fetchTransactionScheduleTime(values)
-                .then((resp) => {
+                setSubmitting(true);
+                try {
+                    const resp = await fetchTransactionScheduleTime(values);
                     if (!resp.error) {
                         resetForm();
                         modal.onClose();
@@ -101,9 +102,11 @@ const FetchScheduleModal = ({
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch(() => {
+                } catch {
                     toast.error("Error encountered");
-                });
+                } finally {
+                    setSubmitting(false);
+                }
             }
         }
     });

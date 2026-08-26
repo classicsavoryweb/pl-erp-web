@@ -83,6 +83,7 @@ const NetPayCard = ({ formHandler } : { formHandler: any }) => {
 
             { (payrollDetails.status === "initial" && permissions.includes("perform_compensation_payroll")) &&
                 <Button
+                    loading={formHandler.isSubmitting}
                     type="submit"
                     onClick={() => {
                         formHandler.setFieldValue("save_changes", true);

@@ -57,7 +57,7 @@ const OvertimeTableCard = ({
     const timekeepingModal = useModal();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const filter = useFilter();
     const [data, setData] = useState<any>({});
     const [dataSet, setDataSet] = useState<any[]>([]);
@@ -372,7 +372,7 @@ const OvertimeTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch ? branch.name : 'default-branch';
+                    const branchName = branch?.name ?? 'all-branches';
     
                     a.href = downloadUrl;
                     a.download = `${branchName.toUpperCase()}-OVERTIME-${moment().format('YYYY-MM-DD')}.xls`;
