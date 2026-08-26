@@ -253,7 +253,7 @@ const StockReplenishmentWorkspace = ({
         setCancelSubmitting(true);
         try {
             const response = cancelTarget.kind === "requests"
-                ? await cancelReplenishment(cancelTarget.record.id, reason)
+                ? await cancelReplenishment(cancelTarget.record.id, {reason:reason})
                 : await cancelReceiving(cancelTarget.record.id, {reason:reason});
 
             if (response.error) {
@@ -302,7 +302,7 @@ const StockReplenishmentWorkspace = ({
 
         setCloseSubmitting(true);
         try {
-            const response = await closeReplenishment(closeTarget.id, reason);
+            const response = await closeReplenishment(closeTarget.id, {reason:reason});
             if (response.error) {
                 toast.error(messageOf(response));
                 return;
@@ -332,7 +332,7 @@ const StockReplenishmentWorkspace = ({
 
         setReplaceSubmitting(true);
         try {
-            const response = await replaceReplenishmentSupplier(replaceTarget.id, replacementSupplierId);
+            const response = await replaceReplenishmentSupplier(replaceTarget.id, {supplierId:replacementSupplierId});
             if (response.error) {
                 toast.error(messageOf(response));
                 return;
