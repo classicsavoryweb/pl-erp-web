@@ -58,8 +58,7 @@ const EmployeeDetailsCard = () => {
                             <Button
                                 label="Edit"
                                 onClick={() => {
-                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
-                                        toast.error("You cannot this record");
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", employee.employee_number, 0)) {
                                         return;
                                     }
                                     router.push(`/employees/edit/${employeeNumber}`)

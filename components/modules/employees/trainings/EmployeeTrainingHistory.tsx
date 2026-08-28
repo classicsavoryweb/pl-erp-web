@@ -83,8 +83,7 @@ const EmployeeTraingingHistory = () => {
         {
             label: "Edit",
             onClick: (data:any) => {
-                if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
-                    toast.error("You cannot this record");
+                if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
                     return;
                 }
                 setAction("edit");
@@ -124,8 +123,7 @@ const EmployeeTraingingHistory = () => {
                             {
                                 label: "Add",
                                 onClick: () => {
-                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
-                                        toast.error("You cannot this record");
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
                                         return;
                                     }
                                     setAction("add");

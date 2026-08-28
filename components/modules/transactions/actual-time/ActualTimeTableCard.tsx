@@ -34,6 +34,7 @@ import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import FetchBiotimeLogsModal from "./FetchBiotimeLogs";
 import Accordion from "@/components/common/Accordion";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -149,6 +150,13 @@ const ActualTimeTableCard = ({
         {
             label: "Edit",
             onClick: (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.home_branch_id)
+                ) {
+                    return;
+                }
+
                 setSelectedLog(data.id);
                 setData(data.punches);
                 editModal.onOpen();
@@ -157,6 +165,12 @@ const ActualTimeTableCard = ({
         {
             label: "Delete",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.home_branch_id)
+                ) {
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: "Delete Log",
                     message: "Are you sure you want to delete this actual time log?"

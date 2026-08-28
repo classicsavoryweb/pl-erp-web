@@ -102,8 +102,10 @@ const Page = () => {
         },
         validateOnChange: false,
         onSubmit: async (values, {setSubmitting}) => {
-            if (!canEditRestrictedRecords(permissions, "EMPLOYEE", payrollDetails.employee.employee_number, 0)) {
-                toast.error("You cannot edit your own record");
+            if (
+                !canEditRestrictedRecords(permissions, "PAYROLL", "EMPLOYEE", payrollDetails.employee.employee_number, 0) ||
+                !canEditRestrictedRecords(permissions, "PAYROLL", "BRANCH", "", payrollDetails.timekeeping_branch_id)
+            ) {
                 return;
             }
 
@@ -179,7 +181,7 @@ const Page = () => {
                 <div className="w-8/12">
                     <EmployeeDetailCard
                         formHandler={formHandler}
-                    />
+                    />                                      
                     <div className="mt-[16px]">
                         <AdditionalWorkingHours
                             formHandler={formHandler}

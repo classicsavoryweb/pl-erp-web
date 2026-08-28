@@ -24,6 +24,7 @@ import { getCurrentCutoff } from "@/helper/cutoff";
 import { useModal } from "@/hooks/modal";
 import EditUndertimeModal from "./EditUndertimeModal";
 import Accordion from "@/components/common/Accordion";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -238,6 +239,13 @@ const TimeKeepingTableCard = ({
         {
             label: "Edit",
             onClick: (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.branch_id)
+                ) {
+                    return;
+                }
+
                 setSelectedTimekeeping(data);
                 editModal.onOpen();
             }

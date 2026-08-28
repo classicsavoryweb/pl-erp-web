@@ -23,10 +23,12 @@ import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import Accordion from "@/components/common/Accordion";
 import { deleteTravelOvertime, exportAllTravelOvertimes, getAllTravelOvertimes } from "@/api/transactions/travel-overtime";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import CreateTravelOvertimeModal from "./CreateTravelOvertimeModal";
 import EditTravelOvertimeModal from "./EditTravelOvertimeModal";
 import ImportTravelTimeModal from "./ImportTravelTimeModal";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const TravelOvertimeTableCard = () => {
     const api = useApiCall();
@@ -36,11 +38,18 @@ const TravelOvertimeTableCard = () => {
     const editModal = useModal();
     const paginator = usePagination(10);
     const filter = useFilter();
+    const {permissions} = useContext(AuthContext)
 
     const tableAction = [
         {
             label: "Edit",
             onClick: (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 setData(data);
                 editModal.onOpen();
             }
@@ -48,6 +57,12 @@ const TravelOvertimeTableCard = () => {
         {
             label: "Delete",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: "Travel Overtime",
                     message: "Are you sure you want to delete?"
