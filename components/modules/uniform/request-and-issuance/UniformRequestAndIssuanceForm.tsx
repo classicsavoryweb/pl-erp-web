@@ -829,6 +829,7 @@ const UniformRequestAndIssuanceForm = ({
                         label="Request Quantity"
                         name="request_quantity"
                         type="number"
+                        disabled={!itemdraft.item_no}
                         value={itemdraft.requested_quantity === ""
                                 ? ""
                                 : itemdraft.requested_quantity
