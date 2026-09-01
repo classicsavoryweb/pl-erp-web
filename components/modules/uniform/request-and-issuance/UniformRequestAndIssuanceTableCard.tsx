@@ -196,8 +196,6 @@ const UniformSizesTableCard = () => {
                 />
             ),
         },
-        
-        
     ];
 
     const actionSettings = [
@@ -236,6 +234,7 @@ const UniformSizesTableCard = () => {
                 exportFileName={`Request-and-Issuance-${moment().format("YYYY-MM-DD")}.xls`}
                 withBranch
                 withStatus
+                isExpanded
                 statusOption={[
                     {
                         label: "Unposted",

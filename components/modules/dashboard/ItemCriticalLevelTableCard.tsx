@@ -25,7 +25,6 @@ const ItemCriticalLevel = () => {
                 toast.error("Error fetching employees");
             } else {
                 api.setDataSet(resp.data.data);
-                console.log(resp.data.data);
                 paginator.setPage(resp.data.current_page);
                 paginator.setPaginationData(resp.data);
             }
