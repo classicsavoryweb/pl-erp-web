@@ -19,8 +19,6 @@ const  ChangeQuanityForm= ({
     onUpdate
 }:ChangeQuanityForm) =>{
 
-    console.log(items);
-
      const filteredChangeQuantityItems = items.filter(
         (item) =>
             Number(item.should_be_inventory ?? 0).toFixed(2) !==

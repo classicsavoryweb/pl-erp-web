@@ -49,22 +49,22 @@ export const postReplenishment = (id: number) => axiosHelper({
     method: "POST",
 });
 
-export const cancelReplenishment = (id: number, reason: string) => axiosHelper({
+export const cancelReplenishment = (id: number, payload:{reason: string}) => axiosHelper({
     func_path: `/uniform-replenishments/${id}/cancel`,
     method: "POST",
-    payload: { reason },
+    payload,
 });
 
-export const replaceReplenishmentSupplier = (id: number, supplierId: string | number) => axiosHelper({
+export const replaceReplenishmentSupplier = (id: number, payload:{supplierId: string | number}) => axiosHelper({
     func_path: `/uniform-replenishments/${id}/replace-supplier`,
     method: "POST",
-    payload: { supplier_id: supplierId },
+    payload
 });
 
-export const closeReplenishment = (id: number, reason: string) => axiosHelper({
+export const closeReplenishment = (id: number, payload:{reason: string}) => axiosHelper({
     func_path: `/uniform-replenishments/${id}/close`,
     method: "POST",
-    payload: { reason },
+    payload
 });
 
 export const getReceivableReplenishments = () => axiosHelper({

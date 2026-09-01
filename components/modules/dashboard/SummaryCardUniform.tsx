@@ -267,15 +267,25 @@ const SummaryCardUniform = () => {
     return (
         <>
             <Grid
-                cols={5}
+                cols={6}
             >
-                <SummaryCardCount
-                    title="Ongoing Request"
-                    displayReport={data.total_request || 0}
+                 <SummaryCardCount
+                    title="Items to be Replenish"
+                    displayReport={data.item_need_replenish || 0}
                     loading={loading}
                 />
                 <SummaryCardCount
-                    title="Ongoing Replenishment"
+                    title="Free Uniform Pending Request"
+                    displayReport={data.total_request_free || 0}
+                    loading={loading}
+                />
+                 <SummaryCardCount
+                    title="ATD Pending Request"
+                    displayReport={data.total_request_atd || 0}
+                    loading={loading}
+                />
+                <SummaryCardCount
+                    title="Pending Replenishment"
                     displayReport={data.total_replenishment || 0}
                     loading={loading}
                 />
@@ -285,17 +295,11 @@ const SummaryCardUniform = () => {
                     loading={loading}
                 />
                 <SummaryCardCount
-                    title="Ongoing Receive Stocks"
+                    title="Pending Receive Stocks"
                     displayReport={data.total_receiving || 0}
                     loading={loading}
-                />
-                 <SummaryCardCount
-                    title="Free Uniform Limit"
-                    displayReport={data.allowed_count || 0}
-                    loading={loading}
-                />
+                />    
             </Grid>
-        
             <Grid cols={3}>
                 <Card
                     size="graph"
