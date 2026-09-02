@@ -98,9 +98,8 @@ const DateRangeConfirmModal = ({
                         toast.success(resp.data.message);
                     } else {
                         if (resp.status === 409) {
-                            resetForm();
-                            modal.onClose();
                             setValidationResponse(resp.data.data);
+                            modal.onClose();
                             validationModal.onOpen();
                         }
                         toast.error(resp.data.message);
