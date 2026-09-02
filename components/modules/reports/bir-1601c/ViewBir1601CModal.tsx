@@ -73,20 +73,23 @@ const ViewBir1601CModal = ({
 
     const isFinal = record?.status === "final";
 
-    const totalNonTaxable = record
-        ? Number(record.statutory_minimum_wage ?? 0)
-        + Number(record.holiday_pay_ot_ndf ?? 0)
-        + Number(record.thirteenth_month_pay ?? 0)
-        + Number(record.de_minimis_benefits ?? 0)
-        + Number(record.ee_contributions ?? 0)
-        + Number(record.other_non_taxable_compensation ?? 0)
-        : 0;
-
     const formHandler = useFormik({
         initialValues: {
+            total_compensation: "0",
+            statutory_minimum_wage: "0",
+            holiday_pay_ot_ndf: "0",
+            thirteenth_month_pay: "0",
             de_minimis_benefits: "0",
+            ee_contributions: "0",
             other_non_taxable_compensation: "0",
+            total_taxable_compensation: "0",
+            taxable_compensation_not_subject_to_wtax: "0",
+            net_taxable_compensation: "0",
+            total_taxes_withheld: "0",
             add_less_adjustment: "0",
+            total_remittance: "0",
+            tax_still_due: "0",
+            total_amount_due: "0",
             previous_month_1_period: "",
             previous_month_1_date_paid: "",
             previous_month_1_bank: "",
@@ -129,12 +132,31 @@ const ViewBir1601CModal = ({
         }
     });
 
+    const totalNonTaxable = Number(formHandler.values.statutory_minimum_wage ?? 0)
+        + Number(formHandler.values.holiday_pay_ot_ndf ?? 0)
+        + Number(formHandler.values.thirteenth_month_pay ?? 0)
+        + Number(formHandler.values.de_minimis_benefits ?? 0)
+        + Number(formHandler.values.ee_contributions ?? 0)
+        + Number(formHandler.values.other_non_taxable_compensation ?? 0);
+
     const applyRecord = (data: any) => {
         setRecord(data);
         formHandler.setValues({
+            total_compensation: String(data.total_compensation ?? 0),
+            statutory_minimum_wage: String(data.statutory_minimum_wage ?? 0),
+            holiday_pay_ot_ndf: String(data.holiday_pay_ot_ndf ?? 0),
+            thirteenth_month_pay: String(data.thirteenth_month_pay ?? 0),
             de_minimis_benefits: String(data.de_minimis_benefits ?? 0),
+            ee_contributions: String(data.ee_contributions ?? 0),
             other_non_taxable_compensation: String(data.other_non_taxable_compensation ?? 0),
+            total_taxable_compensation: String(data.total_taxable_compensation ?? 0),
+            taxable_compensation_not_subject_to_wtax: String(data.taxable_compensation_not_subject_to_wtax ?? 0),
+            net_taxable_compensation: String(data.net_taxable_compensation ?? 0),
+            total_taxes_withheld: String(data.total_taxes_withheld ?? 0),
             add_less_adjustment: String(data.add_less_adjustment ?? 0),
+            total_remittance: String(data.total_remittance ?? 0),
+            tax_still_due: String(data.tax_still_due ?? 0),
+            total_amount_due: String(data.total_amount_due ?? 0),
             previous_month_1_period: data.previous_month_1_period ?? "",
             previous_month_1_date_paid: data.previous_month_1_date_paid ?? "",
             previous_month_1_bank: data.previous_month_1_bank ?? "",
@@ -359,10 +381,34 @@ const ViewBir1601CModal = ({
                         {/* Part II — amounts */}
                         <div className="flex-none w-[480px] border-2 border-slate-200 dark:border-neutral-700 rounded-md p-3">
                             <p className="font-semibold mb-2">Part II</p>
-                            <AmountRow label="Total Amount of Compensation" value={record.total_compensation} />
-                            <AmountRow label="Statutory Minimum Wage (MWEs)" value={record.statutory_minimum_wage} />
-                            <AmountRow label="Holiday Pay, OT, NDF (Min. Wage)" value={record.holiday_pay_ot_ndf} />
-                            <AmountRow label="13th Month Pay and Other Benefits" value={record.thirteenth_month_pay} />
+                            <AmountRow
+                                label="Total Amount of Compensation"
+                                name="total_compensation"
+                                value={formHandler.values.total_compensation}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
+                            <AmountRow
+                                label="Statutory Minimum Wage (MWEs)"
+                                name="statutory_minimum_wage"
+                                value={formHandler.values.statutory_minimum_wage}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
+                            <AmountRow
+                                label="Holiday Pay, OT, NDF (Min. Wage)"
+                                name="holiday_pay_ot_ndf"
+                                value={formHandler.values.holiday_pay_ot_ndf}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
+                            <AmountRow
+                                label="13th Month Pay and Other Benefits"
+                                name="thirteenth_month_pay"
+                                value={formHandler.values.thirteenth_month_pay}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
                             <AmountRow
                                 label="De Minimis Benefits"
                                 name="de_minimis_benefits"
@@ -370,7 +416,13 @@ const ViewBir1601CModal = ({
                                 onChange={formHandler.handleChange}
                                 disabled={isFinal}
                             />
-                            <AmountRow label="SSS, GSIS, PHIC, HDMF Contributions EE" value={record.ee_contributions} />
+                            <AmountRow
+                                label="SSS, GSIS, PHIC, HDMF Contributions EE"
+                                name="ee_contributions"
+                                value={formHandler.values.ee_contributions}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
                             <AmountRow
                                 label="Other Non-Taxable Compensation"
                                 name="other_non_taxable_compensation"
@@ -379,10 +431,34 @@ const ViewBir1601CModal = ({
                                 disabled={isFinal}
                             />
                             <AmountRow label="Total Non-Taxable Compensation" value={totalNonTaxable} />
-                            <AmountRow label="Total Taxable Compensation" value={record.total_taxable_compensation} />
-                            <AmountRow label="Less : Taxable Compe Not Subject to W/Tax" value={record.taxable_compensation_not_subject_to_wtax} />
-                            <AmountRow label="Net Taxable Compensation" value={record.net_taxable_compensation} />
-                            <AmountRow label="Total Taxes Withheld" value={record.total_taxes_withheld} />
+                            <AmountRow
+                                label="Total Taxable Compensation"
+                                name="total_taxable_compensation"
+                                value={formHandler.values.total_taxable_compensation}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
+                            <AmountRow
+                                label="Less : Taxable Compe Not Subject to W/Tax"
+                                name="taxable_compensation_not_subject_to_wtax"
+                                value={formHandler.values.taxable_compensation_not_subject_to_wtax}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
+                            <AmountRow
+                                label="Net Taxable Compensation"
+                                name="net_taxable_compensation"
+                                value={formHandler.values.net_taxable_compensation}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
+                            <AmountRow
+                                label="Total Taxes Withheld"
+                                name="total_taxes_withheld"
+                                value={formHandler.values.total_taxes_withheld}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
                             <AmountRow
                                 label="Add/Less Adjustment"
                                 name="add_less_adjustment"
@@ -390,9 +466,27 @@ const ViewBir1601CModal = ({
                                 onChange={formHandler.handleChange}
                                 disabled={isFinal}
                             />
-                            <AmountRow label="Taxes Withheld for Remittance" value={record.total_remittance} />
-                            <AmountRow label="Tax Still Due/(Overremittance)" value={record.tax_still_due} />
-                            <AmountRow label="Total Amount Still Due/(Overremittance)" value={record.total_amount_due} />
+                            <AmountRow
+                                label="Taxes Withheld for Remittance"
+                                name="total_remittance"
+                                value={formHandler.values.total_remittance}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
+                            <AmountRow
+                                label="Tax Still Due/(Overremittance)"
+                                name="tax_still_due"
+                                value={formHandler.values.tax_still_due}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
+                            <AmountRow
+                                label="Total Amount Still Due/(Overremittance)"
+                                name="total_amount_due"
+                                value={formHandler.values.total_amount_due}
+                                onChange={formHandler.handleChange}
+                                disabled={isFinal}
+                            />
                         </div>
 
                         {/* Section A + B */}
