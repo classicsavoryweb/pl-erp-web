@@ -92,7 +92,7 @@ const ViewDeductionAmortizationModal = ({
 
             <div className="mt-3 flex justify-between items-center">
                 <p>Amortization</p>
-                <p>{paginator.paginationData?.total ?? 0} Cutoffs paid</p>
+                <p>{paginator.paginationData?.total ?? 0} Cutoffs Paid</p>
             </div>
 
             <Table
