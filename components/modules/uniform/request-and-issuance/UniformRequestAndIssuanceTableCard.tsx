@@ -185,7 +185,7 @@ const UniformSizesTableCard = () => {
                 />
             }
         },
-        { columnHead: "ATD Status", path: "status", columnType: COLUMNTYPES.function,
+        { columnHead: "ATD Status", path: "atd_status", columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" = "default";
 
