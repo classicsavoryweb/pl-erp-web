@@ -154,12 +154,12 @@ const Slip = ({ issuance, custodianName }: { issuance: any; custodianName: strin
                         </Text>
                     </View>
                     <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>Requested by</Text>
+                        <Text style={styles.infoLabel}>Requested By</Text>
                         <Text style={styles.infoColon}>:</Text>
                         <Text style={styles.infoValue}>{requestedBy}</Text>
                     </View>
                     <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>Approved by</Text>
+                        <Text style={styles.infoLabel}>Approved By</Text>
                         <Text style={styles.infoColon}>:</Text>
                         <Text style={styles.infoValue}>{approvedBy}</Text>
                     </View>
@@ -176,11 +176,11 @@ const Slip = ({ issuance, custodianName }: { issuance: any; custodianName: strin
             <View style={styles.sigRow}>
                 <View style={{ flex: 1, paddingRight: 12 }}>
                     <View style={{ flexDirection: "row", alignItems: "flex-end", marginBottom: 10 }}>
-                        <Text style={styles.sigLabel}>Received date:</Text>
+                        <Text style={styles.sigLabel}>Received Date:</Text>
                         <View style={styles.sigNameBox}><Text> </Text></View>
                     </View>
                     <View style={{ flexDirection: "row", alignItems: "flex-end" }}>
-                        <Text style={styles.sigLabel}>Received by:</Text>
+                        <Text style={styles.sigLabel}>Received By:</Text>
                         <View style={styles.sigNameBox}><Text>{receivedBy}</Text></View>
                     </View>
                 </View>

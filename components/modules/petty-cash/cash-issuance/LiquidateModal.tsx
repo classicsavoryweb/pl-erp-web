@@ -3,10 +3,12 @@
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import Dropdown from "@/components/common/Dropdown";
+import SearchableDropDown from "@/components/common/SearchableDropDown";
 import Button from "@/components/common/Button";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import PostLiquidationDenominationModal, { DenominationEntry } from "./PostLiquidationDenominationModal";
+import ImportLiquidationFromCSHubModal from "./ImportLiquidationFromCSHubModal";
 import { useModal } from "@/hooks/modal";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -33,6 +35,7 @@ const LIQUIDATION_TYPES = [
 interface LiquidateModalProps {
     modal: any;
     issuance: any;
+    viewOnly?: boolean;
     onRefreshCustodian?: () => void;
     onPostSuccess?: () => void;
 }
@@ -110,7 +113,10 @@ const formatAmount = (value: any) =>
         ? Number(value).toLocaleString("en-PH", { style: "currency", currency: "PHP" })
         : "—";
 
-const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: LiquidateModalProps) => {
+const formatPCV = (pcvNumber: any, cshubTransNo: any) =>
+    cshubTransNo ? `${pcvNumber} (${cshubTransNo})` : pcvNumber;
+
+const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian, onPostSuccess }: LiquidateModalProps) => {
     const [liquidations, setLiquidations] = useState<any[]>([]);
     const [nextLiqId, setNextLiqId] = useState("");
     const [editingId, setEditingId] = useState<number | null>(null);
@@ -121,9 +127,12 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
     const [removedIds, setRemovedIds] = useState<number[]>([]);
     const [changeAmount, setChangeAmount] = useState(0);
     const [postLoading, setPostLoading] = useState(false);
+    const [formViewOnly, setFormViewOnly] = useState(false);
+    const isSubmittingLiquidationRef = useRef(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const formModal = useModal();
     const denomModal = useModal();
+    const importLiquidationModal = useModal();
 
     const triggerReload = () => setReload((n) => n + 1);
 
@@ -131,6 +140,7 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
         setEditingId(null);
         setAttachments([]);
         setRemovedIds([]);
+        setFormViewOnly(false);
     };
 
     const formHandler = useFormik({
@@ -140,6 +150,7 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
             reference_document_date: today,
             description: "",
             amount: "",
+            supplier_vendor: "",
             expense_type_id: "",
         },
         validateOnChange: false,
@@ -158,64 +169,75 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                 .typeError("Amount must be a number.")
                 .required("Amount is required.")
                 .min(0.01, "Amount must be greater than 0."),
+            supplier_vendor: Yup.string()
+                .required("Supplier/Vendor is required.")
+                .max(150, "Max 150 characters."),
             expense_type_id: Yup.string().required("Expense type is required."),
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {
-            const isEdit = editingId !== null;
+            if (isSubmittingLiquidationRef.current) return;
+            isSubmittingLiquidationRef.current = true;
 
-            if (attachments.length === 0) {
-                toast.error("At least one attachment is required.");
-                return;
+            try {
+                const isEdit = editingId !== null;
+
+                if (attachments.length === 0) {
+                    toast.error("At least one attachment is required.");
+                    return;
+                }
+
+                const isConfirmed = await confirm({
+                    title: isEdit ? "Update Liquidation" : "Add Liquidation",
+                    message: isEdit
+                        ? "Are you sure you want to update this liquidation?"
+                        : "Are you sure you want to add this liquidation?",
+                });
+
+                if (!isConfirmed) return;
+
+                setSubmitting(true);
+
+                const formData = new FormData();
+                if (!isEdit) formData.append("petty_cash_issuance_id", String(issuance?.id));
+                formData.append("liquidation_type", values.liquidation_type);
+                formData.append("reference_document_number", values.reference_document_number);
+                formData.append("reference_document_date", values.reference_document_date);
+                formData.append("description", values.description);
+                formData.append("amount", String(values.amount));
+                formData.append("supplier_vendor", values.supplier_vendor);
+                formData.append("expense_type_id", String(values.expense_type_id));
+
+                const newFiles = attachments.filter((a) => !a.isExisting && a.file);
+                newFiles.forEach((a, i) => {
+                    formData.append(`attachments[${i}]`, a.file!);
+                    formData.append(`attachment_names[${i}]`, a.file_name);
+                });
+
+                if (isEdit && removedIds.length > 0) {
+                    removedIds.forEach((id, i) => formData.append(`removed_attachment_ids[${i}]`, String(id)));
+                }
+
+                const call = isEdit
+                    ? editLiquidation(formData, editingId!)
+                    : createLiquidation(formData);
+
+                await call
+                    .then((resp) => {
+                        if (!resp.error) {
+                            toast.success(isEdit ? "Liquidation updated." : "Liquidation added.");
+                            triggerReload();
+                            resetForm();
+                            resetFormState();
+                            formModal.onClose();
+                        } else {
+                            toast.error(resp.data?.message || "Error saving liquidation.");
+                        }
+                    })
+                    .catch(() => toast.error("Error encountered."));
+            } finally {
+                setSubmitting(false);
+                isSubmittingLiquidationRef.current = false;
             }
-
-            const isConfirmed = await confirm({
-                title: isEdit ? "Update Liquidation" : "Add Liquidation",
-                message: isEdit
-                    ? "Are you sure you want to update this liquidation?"
-                    : "Are you sure you want to add this liquidation?",
-            });
-
-            if (!isConfirmed) return;
-
-            setSubmitting(true);
-
-            const formData = new FormData();
-            if (!isEdit) formData.append("petty_cash_issuance_id", String(issuance?.id));
-            formData.append("liquidation_type", values.liquidation_type);
-            formData.append("reference_document_number", values.reference_document_number);
-            formData.append("reference_document_date", values.reference_document_date);
-            formData.append("description", values.description);
-            formData.append("amount", String(values.amount));
-            formData.append("expense_type_id", String(values.expense_type_id));
-
-            const newFiles = attachments.filter((a) => !a.isExisting && a.file);
-            newFiles.forEach((a, i) => {
-                formData.append(`attachments[${i}]`, a.file!);
-                formData.append(`attachment_names[${i}]`, a.file_name);
-            });
-
-            if (isEdit && removedIds.length > 0) {
-                removedIds.forEach((id, i) => formData.append(`removed_attachment_ids[${i}]`, String(id)));
-            }
-
-            const call = isEdit
-                ? editLiquidation(formData, editingId!)
-                : createLiquidation(formData);
-
-            call
-                .then((resp) => {
-                    if (!resp.error) {
-                        toast.success(isEdit ? "Liquidation updated." : "Liquidation added.");
-                        triggerReload();
-                        resetForm();
-                        resetFormState();
-                        formModal.onClose();
-                    } else {
-                        toast.error(resp.data?.message || "Error saving liquidation.");
-                    }
-                })
-                .catch(() => toast.error("Error encountered."))
-                .finally(() => setSubmitting(false));
         },
     });
 
@@ -254,6 +276,7 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
     }, [modal.isShowing]);
 
     const handleEdit = (row: any) => {
+        setFormViewOnly(false);
         setEditingId(row.id);
         formHandler.setValues({
             liquidation_type: row.liquidation_type ?? "Cash Advance Liquidation",
@@ -261,6 +284,29 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
             reference_document_date: row.reference_document_date ?? today,
             description: row.description ?? "",
             amount: row.amount ?? "",
+            supplier_vendor: row.supplier_vendor ?? "",
+            expense_type_id: String(row.expense_type_id ?? ""),
+        });
+        const existing: Attachment[] = (row.attachments ?? []).map((a: any) => ({
+            id: a.id,
+            file_name: a.file_name,
+            isExisting: true,
+        }));
+        setAttachments(existing);
+        setRemovedIds([]);
+        formModal.onOpen();
+    };
+
+    const handleViewLiquidation = (row: any) => {
+        setFormViewOnly(true);
+        setEditingId(row.id);
+        formHandler.setValues({
+            liquidation_type: row.liquidation_type ?? "Cash Advance Liquidation",
+            reference_document_number: row.reference_document_number ?? "",
+            reference_document_date: row.reference_document_date ?? today,
+            description: row.description ?? "",
+            amount: row.amount ?? "",
+            supplier_vendor: row.supplier_vendor ?? "",
             expense_type_id: String(row.expense_type_id ?? ""),
         });
         const existing: Attachment[] = (row.attachments ?? []).map((a: any) => ({
@@ -309,6 +355,8 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
         const change = Math.round((Number(issuance?.amount) - totalLiquidated) * 100) / 100;
 
         if (change > 0) {
+            setChangeAmount(change);
+            denomModal.onOpen();
             return;
         }
 
@@ -397,11 +445,13 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
         ? (liquidations.find((l) => l.id === editingId)?.liquidation_id ?? "")
         : nextLiqId;
 
+    const totalLiquidatedAmount = liquidations.reduce((sum: number, l: any) => sum + Number(l.amount), 0);
+
     return (
         <>
             <Modal
                 isShowing={modal.isShowing}
-                title="Liquidate Cash Issuance"
+                title={viewOnly ? "View Cash Issuance Liquidation" : "Liquidate Cash Issuance"}
                 onClose={() => {
                     modal.onClose();
                     formHandler.resetForm();
@@ -409,18 +459,17 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                 }}
                 size="xxl"
             >
-                {/* Info Bar */}
                 <div className="grid grid-cols-4 gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-5 text-sm">
                     <div>
                         <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">PCV Number</p>
-                        <p className="font-medium">{issuance?.pcv_number ?? "—"}</p>
+                        <p className="font-medium">{issuance?.pcv_number ? formatPCV(issuance.pcv_number, issuance.cshub_trans_no) : "—"}</p>
                     </div>
                     <div>
                         <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Detailed Purpose</p>
                         <p className="font-medium">{issuance?.detailed_purpose ?? "—"}</p>
                     </div>
                     <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Amount</p>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Cash Issuance Amount</p>
                         <p className="font-medium">{formatAmount(issuance?.amount)}</p>
                     </div>
                     <div>
@@ -429,13 +478,13 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                     </div>
                 </div>
 
-                {/* Table Header */}
                 <div className="flex items-center justify-between mb-2">
                     <p className="font-semibold text-sm">Liquidation Records</p>
+                    {!viewOnly && (
                     <DropDownButtons
                         actions={[
                             ...(liquidations.length > 0
-                                ? [{ label: "Post Liquidation", onClick: handlePostLiquidation }]
+                                ? [{ label: "Post Liquidation", onClick: handlePostLiquidation, disabled: tableLoading }]
                                 : []
                             ),
                             {
@@ -446,11 +495,15 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                                     formModal.onOpen();
                                 },
                             },
+                            ...(issuance?.cshub_trans_no
+                                ? [{ label: "Import Liquidation from CSHUB", onClick: () => importLiquidationModal.onOpen() }]
+                                : []
+                            ),
                         ]}
                     />
+                    )}
                 </div>
 
-                {/* Liquidations Table */}
                 <div className="overflow-x-auto border dark:border-neutral-600 rounded min-h-[220px]">
                     <table className="w-full text-sm">
                         <thead className="bg-gray-100 dark:bg-neutral-800">
@@ -495,8 +548,13 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                                             <ActionDropDown
                                                 data={row}
                                                 actions={[
-                                                    { label: "Edit", onClick: handleEdit },
-                                                    { label: "Void", onClick: handleVoid },
+                                                    { label: "View", onClick: handleViewLiquidation },
+                                                    ...(!viewOnly
+                                                        ? [
+                                                            { label: "Edit", onClick: handleEdit },
+                                                            { label: "Void", onClick: handleVoid },
+                                                        ]
+                                                        : []),
                                                 ]}
                                             />
                                         </td>
@@ -505,6 +563,15 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                             )}
                         </tbody>
                     </table>
+                </div>
+
+                <div className="flex justify-end mt-2">
+                    <div className="text-sm font-semibold">
+                        Total Liquidated Amount:{" "}
+                        <span className="tabular-nums">
+                            {totalLiquidatedAmount.toLocaleString("en-PH", { style: "currency", currency: "PHP" })}
+                        </span>
+                    </div>
                 </div>
             </Modal>
 
@@ -516,25 +583,38 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                 onCancel={denomModal.onClose}
             />
 
-            {/* Liquidation Form Modal */}
+            <ImportLiquidationFromCSHubModal
+                modal={importLiquidationModal}
+                issuance={issuance}
+                onImported={triggerReload}
+            />
+
             <Modal
                 isShowing={formModal.isShowing}
-                title={editingId ? "Edit Liquidation" : "Add Liquidation"}
+                title={formViewOnly ? "View Liquidation" : editingId ? "Edit Liquidation" : "Add Liquidation"}
                 onClose={handleCancelForm}
                 size="xxl"
             >
                 <div className="flex gap-x-6">
-                    {/* Left: Form */}
                     <div className="flex-1 min-w-0">
                         <form onSubmit={formHandler.handleSubmit}>
                             <div className="grid grid-cols-2 gap-x-4">
-                                <Textfield
-                                    label="Liquidation ID"
-                                    name="liquidation_id"
-                                    value={currentLiqId}
-                                    disabled
-                                    onChange={() => { }}
-                                />
+                                <div className="grid grid-cols-2 gap-x-4">
+                                    <Textfield
+                                        label="Liquidation ID"
+                                        name="liquidation_id"
+                                        value={currentLiqId}
+                                        disabled
+                                        onChange={() => { }}
+                                    />
+                                    <Textfield
+                                        label="Cash Issuance Amount"
+                                        name="cash_issuance_amount"
+                                        value={formatAmount(issuance?.amount)}
+                                        disabled
+                                        onChange={() => { }}
+                                    />
+                                </div>
                                 <Textfield
                                     label="Requested By"
                                     name="requested_by"
@@ -549,6 +629,7 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                                     value={formHandler.values.liquidation_type}
                                     onChange={formHandler.handleChange}
                                     required
+                                    disabled={formViewOnly}
                                     error={formHandler.errors.liquidation_type}
                                     options={LIQUIDATION_TYPES}
                                 />
@@ -559,6 +640,7 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                                     value={formHandler.values.reference_document_number}
                                     onChange={formHandler.handleChange}
                                     required
+                                    disabled={formViewOnly}
                                     error={formHandler.errors.reference_document_number}
                                 />
                                 <Textfield
@@ -568,30 +650,42 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                                     value={formHandler.values.reference_document_date}
                                     onChange={formHandler.handleChange}
                                     required
+                                    disabled={formViewOnly}
                                     error={formHandler.errors.reference_document_date}
                                 />
-                                <Dropdown
+                                <SearchableDropDown
                                     label="Expense Type"
                                     placeholder="select expense type"
                                     name="expense_type_id"
                                     value={formHandler.values.expense_type_id}
-                                    onChange={formHandler.handleChange}
+                                    onChange={(e: any) => formHandler.setFieldValue("expense_type_id", e.target.value)}
                                     required
+                                    disabled={formViewOnly}
                                     error={formHandler.errors.expense_type_id}
                                     options={expenseTypeOptions}
                                 />
-                                <div className="col-span-2">
-                                    <Textfield
-                                        label="Amount"
-                                        placeholder="enter amount"
-                                        name="amount"
-                                        type="number"
-                                        value={formHandler.values.amount}
-                                        onChange={formHandler.handleChange}
-                                        required
-                                        error={formHandler.errors.amount}
-                                    />
-                                </div>
+                                <Textfield
+                                    label="Supplier/Vendor"
+                                    placeholder="enter supplier/vendor"
+                                    name="supplier_vendor"
+                                    value={formHandler.values.supplier_vendor}
+                                    onChange={formHandler.handleChange}
+                                    required
+                                    disabled={formViewOnly}
+                                    isUpperCase
+                                    error={formHandler.errors.supplier_vendor}
+                                />
+                                <Textfield
+                                    label="Amount"
+                                    placeholder="enter amount"
+                                    name="amount"
+                                    type="number"
+                                    value={formHandler.values.amount}
+                                    onChange={formHandler.handleChange}
+                                    required
+                                    disabled={formViewOnly}
+                                    error={formHandler.errors.amount}
+                                />
                                 <div className="col-span-2 py-1">
                                     <p className="mb-[-2px]">
                                         Description<span className="text-red-400">*</span>
@@ -603,10 +697,11 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                                         onChange={formHandler.handleChange}
                                         maxLength={250}
                                         rows={3}
+                                        disabled={formViewOnly}
                                         className={`w-full rounded-md focus:outline-none border-2 ${formHandler.errors.description
                                             ? "border-red-400"
                                             : "border-slate-300 focus:border-slate-400"
-                                            } p-2 resize-none dark:bg-neutral-800 dark:border-neutral-700`}
+                                            } p-2 resize-none dark:bg-neutral-800 dark:border-neutral-700 ${formViewOnly ? "bg-gray-100 dark:bg-neutral-800 hover:cursor-not-allowed" : ""}`}
                                     />
                                     {formHandler.errors.description && (
                                         <p className="text-red-400 text-sm">{formHandler.errors.description}</p>
@@ -619,28 +714,28 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                         </form>
                     </div>
 
-                    {/* Divider */}
                     <div className="w-px bg-gray-200 dark:bg-neutral-700 shrink-0" />
 
-                    {/* Right: Attachments */}
                     <div className="w-[380px] shrink-0 flex flex-col">
                         <div className="flex items-center justify-between mb-3">
-                            {/* <p className="font-semibold text-sm">Attachments</p> */}
-                            <Button
-                                label="Attach File"
-                                variant="secondary"
-                                onClick={() => fileInputRef.current?.click()}
-                            />
-                            <input
-                                ref={fileInputRef}
-                                type="file"
-                                className="hidden"
-                                accept="image/*,application/pdf"
-                                onChange={handleFileChange}
-                            />
+                            {!formViewOnly && (
+                                <>
+                                    <Button
+                                        label="Attach File"
+                                        variant="secondary"
+                                        onClick={() => fileInputRef.current?.click()}
+                                    />
+                                    <input
+                                        ref={fileInputRef}
+                                        type="file"
+                                        className="hidden"
+                                        accept="image/*,application/pdf"
+                                        onChange={handleFileChange}
+                                    />
+                                </>
+                            )}
                         </div>
 
-                        {/* File list */}
                         <div className="flex flex-col gap-y-2">
                             {attachments.length === 0 ? (
                                 <p className="text-xs text-gray-400 text-center py-4 border border-dashed dark:border-neutral-600 rounded">
@@ -660,14 +755,18 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
                                         </span>
                                         <div className="flex gap-x-1 shrink-0 items-center">
                                             <AttachmentViewer att={att} />
-                                            <span className="text-gray-300 dark:text-neutral-600">|</span>
-                                            <button
-                                                type="button"
-                                                onClick={() => handleRemoveAttachment(i)}
-                                                className="text-xs text-red-400 hover:underline"
-                                            >
-                                                Remove
-                                            </button>
+                                            {!formViewOnly && (
+                                                <>
+                                                    <span className="text-gray-300 dark:text-neutral-600">|</span>
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveAttachment(i)}
+                                                        className="text-xs text-red-400 hover:underline"
+                                                    >
+                                                        Remove
+                                                    </button>
+                                                </>
+                                            )}
                                         </div>
                                     </div>
                                 ))
@@ -678,13 +777,19 @@ const LiquidateModal = ({ modal, issuance, onRefreshCustodian, onPostSuccess }: 
 
                 <hr className="mt-5 mb-3 border-slate-200 dark:border-neutral-700" />
                 <div className="flex justify-end gap-x-2">
-                    <Button label="Cancel" variant="secondary" type="button" onClick={handleCancelForm} />
-                    <Button
-                        type="button"
-                        label={editingId ? "Update Liquidation" : "Add Liquidation"}
-                        loading={formHandler.isSubmitting}
-                        onClick={() => formHandler.submitForm()}
-                    />
+                    {formViewOnly ? (
+                        <Button label="Close" variant="secondary" type="button" onClick={handleCancelForm} />
+                    ) : (
+                        <>
+                            <Button label="Cancel" variant="secondary" type="button" onClick={handleCancelForm} />
+                            <Button
+                                type="button"
+                                label={editingId ? "Update Liquidation" : "Add Liquidation"}
+                                loading={formHandler.isSubmitting}
+                                onClick={() => formHandler.submitForm()}
+                            />
+                        </>
+                    )}
                 </div>
             </Modal>
         </>

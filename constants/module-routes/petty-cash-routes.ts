@@ -45,6 +45,11 @@ export const pettyCashRoutes: Route[] = [
                 pathname: "/petty-cash/cash-issuance",
                 permission: "is_petty_cash_custodian",
             },
+            {
+                name: "Replenishment",
+                pathname: "/petty-cash/replenishment",
+                permission: "is_petty_cash_custodian",
+            },
         ],
     },
 ];

@@ -44,6 +44,14 @@ export const createCashIssuance = async (payload: {}) => {
     return await axiosHelper({ func_path: '/create-cash-issuance', method: 'POST', payload });
 };
 
-export const voidCashIssuance = async (id: number) => {
-    return await axiosHelper({ func_path: `/void-cash-issuance/${id}`, method: 'POST' });
+export const voidCashIssuance = async (id: number, payload: {}) => {
+    return await axiosHelper({ func_path: `/void-cash-issuance/${id}`, method: 'POST', payload });
+};
+
+export const getCSHubImportCandidates = async (payload?: {}) => {
+    return await axiosHelper({ func_path: '/get-cshub-import-candidates', method: 'GET', payload });
+};
+
+export const importCSHubPettyCash = async (payload: {}) => {
+    return await axiosHelper({ func_path: '/import-cshub-petty-cash', method: 'POST', payload });
 };

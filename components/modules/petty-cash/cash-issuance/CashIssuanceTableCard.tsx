@@ -7,6 +7,7 @@ import Table from "@/components/common/Table";
 import Button from "@/components/common/Button";
 import Textfield from "@/components/common/Textfield";
 import Dropdown from "@/components/common/Dropdown";
+import SearchableDropDown from "@/components/common/SearchableDropDown";
 import { COLUMNTYPES } from "@/constants/column";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
@@ -14,7 +15,7 @@ import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import { useFilter } from "@/hooks/use-filter";
 import { toast } from "react-toastify";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import moment from "moment";
 import { getMyCustodianInfo } from "@/api/petty-cash/department-fund";
 import { getAllCashIssuances, exportAllCashIssuances, getMyEmployees, getApproverEmployees, voidCashIssuance } from "@/api/petty-cash/cash-issuance";
@@ -25,6 +26,7 @@ import CreateCashIssuanceForm from "./CreateCashIssuanceForm";
 import ViewCashIssuanceForm from "./ViewCashIssuanceForm";
 import LiquidateModal from "./LiquidateModal";
 import PrintCashIssuanceModal from "./PrintCashIssuanceModal";
+import ImportFromCSHubModal from "./ImportFromCSHubModal";
 
 const STATUS_OPTIONS = [
     { label: "Unliquidated", value: "Unliquidated" },
@@ -41,8 +43,10 @@ const CashIssuanceTableCard = () => {
     const viewModal = useModal();
     const liquidateModal = useModal();
     const printModal = useModal();
+    const importModal = useModal();
     const [selectedRow, setSelectedRow] = useState<any>(null);
     const [viewModalMode, setViewModalMode] = useState<"view" | "void">("view");
+    const [liquidateViewOnly, setLiquidateViewOnly] = useState(false);
 
     const [custodianInfo, setCustodianInfo] = useState<any>(null);
     const [custodianLoading, setCustodianLoading] = useState(true);
@@ -52,16 +56,24 @@ const CashIssuanceTableCard = () => {
 
     const refreshCustodian = () => setCustodianReload((n) => n + 1);
 
+    const getDefaultDateRange = () => ({
+        date_from: moment().subtract(3, "months").startOf("month").format("YYYY-MM-DD"),
+        date_to: moment().format("YYYY-MM-DD"),
+    });
+
     const [filterValues, setFilterValues] = useState({
         pcv_number: "",
         branch_id: "",
         status: "",
-        date_from: "",
-        date_to: "",
+        ...getDefaultDateRange(),
         requested_by: "",
         received_by: "",
         approved_by: "",
     });
+
+    useEffect(() => {
+        filter.setFilters(filterValues);
+    }, []);
 
     useAsyncEffect(() => {
         setCustodianLoading(true);
@@ -111,9 +123,9 @@ const CashIssuanceTableCard = () => {
     };
 
     const handleReset = () => {
-        const empty = { pcv_number: "", branch_id: "", status: "", date_from: "", date_to: "", requested_by: "", received_by: "", approved_by: "" };
-        setFilterValues(empty);
-        filter.setFilters({});
+        const defaults = { pcv_number: "", branch_id: "", status: "", ...getDefaultDateRange(), requested_by: "", received_by: "", approved_by: "" };
+        setFilterValues(defaults);
+        filter.setFilters(defaults);
         filter.onReload();
         paginator.setPage(1);
     };
@@ -152,8 +164,15 @@ const CashIssuanceTableCard = () => {
     }));
 
     const columnSettings = [
-        { columnHead: "PCV Number", path: "pcv_number", columnType: COLUMNTYPES.string },
-        { columnHead: "Date", path: "date", columnType: COLUMNTYPES.date },
+        {
+            columnHead: "PCV Number",
+            path: "pcv_number",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => (
+                <span>{row.pcv_number}{row.cshub_trans_no ? ` (${row.cshub_trans_no})` : ""}</span>
+            ),
+        },
+        { columnHead: "Transaction Date", path: "date", columnType: COLUMNTYPES.date },
         { columnHead: "Branch", path: "branch_name", columnType: COLUMNTYPES.string },
         { columnHead: "Requested By", path: "requested_by_name", columnType: COLUMNTYPES.string },
         { columnHead: "Received By", path: "received_by_name", columnType: COLUMNTYPES.string },
@@ -169,14 +188,15 @@ const CashIssuanceTableCard = () => {
                 const val = Number(row.overunder_amount);
                 const formatted = Math.abs(val).toLocaleString("en-PH", { style: "currency", currency: "PHP" });
                 if (val === 0) return <span>{formatted}</span>;
-                // under (val < 0): change returned → fund increased → positive/green
-                // over  (val > 0): excess deducted → fund decreased → negative/red
+                // under = green (+), over = red (-)
                 return val < 0
                     ? <span className="text-green-600 dark:text-green-400">+{formatted}</span>
                     : <span className="text-red-600 dark:text-red-400">-{formatted}</span>;
             },
         },
+        { columnHead: "Liquidation Date", path: "liquidated_at", columnType: COLUMNTYPES.date },
         { columnHead: "Status", path: "status", columnType: COLUMNTYPES.string },
+        { columnHead: "Source", path: "source", columnType: COLUMNTYPES.string },
         {
             columnHead: "Action",
             path: "action",
@@ -195,6 +215,7 @@ const CashIssuanceTableCard = () => {
                         label: "Liquidate",
                         onClick: () => {
                             setSelectedRow(row);
+                            setLiquidateViewOnly(false);
                             liquidateModal.onOpen();
                         },
                     });
@@ -211,8 +232,13 @@ const CashIssuanceTableCard = () => {
                     label: "View",
                     onClick: () => {
                         setSelectedRow(row);
-                        setViewModalMode("view");
-                        viewModal.onOpen();
+                        if (row.status === "Liquidated" || row.status === "Fully Liquidated") {
+                            setLiquidateViewOnly(true);
+                            liquidateModal.onOpen();
+                        } else {
+                            setViewModalMode("view");
+                            viewModal.onOpen();
+                        }
                     },
                 });
                 return <ActionDropDown data={row} actions={actions} />;
@@ -243,7 +269,6 @@ const CashIssuanceTableCard = () => {
 
     return (
         <>
-            {/* Filters */}
             <Accordion title="Filters" isExpanded>
                 <form className="pt-5" onSubmit={(e) => { e.preventDefault(); handleSearch(); }}>
                     <Grid cols={4}>
@@ -284,28 +309,31 @@ const CashIssuanceTableCard = () => {
                             onChange={(e) => setFilterValues((prev) => ({ ...prev, status: e.target.value }))}
                             options={[{ label: "All Statuses", value: "" }, ...STATUS_OPTIONS]}
                         />
-                        <Dropdown
+                        <SearchableDropDown
                             label="Requested By"
                             placeholder="all"
                             name="requested_by"
                             value={filterValues.requested_by}
-                            onChange={(e) => setFilterValues((prev) => ({ ...prev, requested_by: e.target.value }))}
+                            onChange={(e: any) => setFilterValues((prev) => ({ ...prev, requested_by: e.target.value }))}
+                            allowClear
                             options={[{ label: "All", value: "" }, ...requesterOptions]}
                         />
-                        <Dropdown
+                        <SearchableDropDown
                             label="Received By"
                             placeholder="all"
                             name="received_by"
                             value={filterValues.received_by}
-                            onChange={(e) => setFilterValues((prev) => ({ ...prev, received_by: e.target.value }))}
+                            onChange={(e: any) => setFilterValues((prev) => ({ ...prev, received_by: e.target.value }))}
+                            allowClear
                             options={[{ label: "All", value: "" }, ...requesterOptions]}
                         />
-                        <Dropdown
+                        <SearchableDropDown
                             label="Approved By"
                             placeholder="all"
                             name="approved_by"
                             value={filterValues.approved_by}
-                            onChange={(e) => setFilterValues((prev) => ({ ...prev, approved_by: e.target.value }))}
+                            onChange={(e: any) => setFilterValues((prev) => ({ ...prev, approved_by: e.target.value }))}
+                            allowClear
                             options={[{ label: "All", value: "" }, ...approverOptions]}
                         />
                     </Grid>
@@ -340,7 +368,6 @@ const CashIssuanceTableCard = () => {
                 </form>
             </Accordion>
 
-            {/* Table */}
             <Card>
                 <div className="grid grid-cols-12 items-center mb-3 text-sm">
                     <div className="col-span-4" />
@@ -358,6 +385,10 @@ const CashIssuanceTableCard = () => {
                                 {
                                     label: "Add Cash Issuance",
                                     onClick: () => createModal.onOpen(),
+                                },
+                                {
+                                    label: "Import from CSHUB",
+                                    onClick: () => importModal.onOpen(),
                                 },
                             ]}
                         />
@@ -381,13 +412,13 @@ const CashIssuanceTableCard = () => {
                 modal={viewModal}
                 formValue={selectedRow}
                 isVoidMode={viewModalMode === "void"}
-                onVoid={async () => {
+                onVoid={async (reason) => {
                     const isConfirmed = await confirm({
                         title: "Void Cash Issuance",
                         message: `Are you sure you want to void ${selectedRow?.pcv_number}? This action cannot be undone.`,
                     });
                     if (!isConfirmed) return;
-                    voidCashIssuance(selectedRow?.id)
+                    await voidCashIssuance(selectedRow?.id, { reason })
                         .then((resp) => {
                             if (!resp.error) {
                                 toast.success("Cash issuance voided successfully.");
@@ -404,6 +435,7 @@ const CashIssuanceTableCard = () => {
             <LiquidateModal
                 modal={liquidateModal}
                 issuance={selectedRow}
+                viewOnly={liquidateViewOnly}
                 onRefreshCustodian={refreshCustodian}
                 onPostSuccess={() => {
                     api.triggerReload();
@@ -414,6 +446,13 @@ const CashIssuanceTableCard = () => {
                 modal={printModal}
                 issuance={selectedRow}
                 custodianName={custodianInfo?.user?.name ?? ""}
+            />
+            <ImportFromCSHubModal
+                modal={importModal}
+                onImported={() => {
+                    api.triggerReload();
+                    refreshCustodian();
+                }}
             />
         </>
     );

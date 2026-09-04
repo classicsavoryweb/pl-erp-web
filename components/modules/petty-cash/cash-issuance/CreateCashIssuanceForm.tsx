@@ -3,6 +3,7 @@
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import Dropdown from "@/components/common/Dropdown";
+import SearchableDropDown from "@/components/common/SearchableDropDown";
 import Button from "@/components/common/Button";
 import { useFormik } from "formik";
 import * as Yup from "yup";
@@ -146,7 +147,7 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
         setApprovers([]);
     };
 
-    const handleRequestedByChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const handleRequestedByChange = (e: any) => {
         const value = e.target.value;
         formHandler.setFieldValue("requested_by_employee_number", value);
         formHandler.setFieldValue("received_by_employee_number", value);
@@ -203,25 +204,27 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
                     options={branchOptions}
                 />
 
-                <Dropdown
+                <SearchableDropDown
                     label="Requested By"
-                    placeholder={employeesLoading ? "loading..." : "select employee"}
+                    placeholder="select employee"
                     name="requested_by_employee_number"
                     value={formHandler.values.requested_by_employee_number}
                     onChange={handleRequestedByChange}
                     required
+                    loading={employeesLoading}
                     disabled={!formHandler.values.branch_id || employeesLoading}
                     error={formHandler.errors.requested_by_employee_number}
                     options={employeeOptions}
                 />
 
-                <Dropdown
+                <SearchableDropDown
                     label="Received By"
-                    placeholder={employeesLoading ? "loading..." : "select employee"}
+                    placeholder="select employee"
                     name="received_by_employee_number"
                     value={formHandler.values.received_by_employee_number}
-                    onChange={formHandler.handleChange}
+                    onChange={(e: any) => formHandler.setFieldValue("received_by_employee_number", e.target.value)}
                     required
+                    loading={employeesLoading}
                     disabled={!formHandler.values.branch_id || employeesLoading}
                     error={formHandler.errors.received_by_employee_number}
                     options={employeeOptions}
@@ -238,21 +241,20 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
                     error={formHandler.errors.amount}
                 />
 
-                <Dropdown
+                <SearchableDropDown
                     label="Approved By"
                     placeholder={
                         !formHandler.values.branch_id || !Number(formHandler.values.amount)
                             ? "select branch and amount first"
-                            : approversLoading
-                            ? "loading..."
                             : approvers.length === 0
                             ? "no eligible approvers"
                             : "select approver"
                     }
                     name="approved_by_employee_number"
                     value={formHandler.values.approved_by_employee_number}
-                    onChange={formHandler.handleChange}
+                    onChange={(e: any) => formHandler.setFieldValue("approved_by_employee_number", e.target.value)}
                     required
+                    loading={approversLoading}
                     disabled={!formHandler.values.branch_id || !Number(formHandler.values.amount) || approversLoading}
                     error={formHandler.errors.approved_by_employee_number}
                     options={approverOptions}

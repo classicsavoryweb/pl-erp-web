@@ -15,13 +15,19 @@ import usePagination from "@/hooks/pagination";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import confirm from "@/components/common/Confirm";
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
     getMyCustodianInfo,
     getTransactionTypes,
     getDepartmentFundTransactions,
     addDepartmentFundTransaction,
+    getPostedReplenishments,
 } from "@/api/petty-cash/department-fund";
+
+const formatAmount = (value: any) =>
+    value != null && value !== ""
+        ? Number(value).toLocaleString("en-PH", { style: "currency", currency: "PHP" })
+        : "—";
 
 const DepartmentFundCard = () => {
     const api = useApiCall();
@@ -33,6 +39,11 @@ const DepartmentFundCard = () => {
     const [custodianReload, setCustodianReload] = useState(0);
     const [transactionTypes, setTransactionTypes] = useState<any[]>([]);
     const [selectedType, setSelectedType] = useState<any>(null);
+    const [postedReplenishments, setPostedReplenishments] = useState<any[]>([]);
+    const [selectedReplenishment, setSelectedReplenishment] = useState<any>(null);
+    const isSubmittingTransactionRef = useRef(false);
+
+    const isReplenishmentType = selectedType?.name === "Replenishment";
 
     useAsyncEffect(() => {
         setCustodianLoading(true);
@@ -86,32 +97,47 @@ const DepartmentFundCard = () => {
                 errors.transaction_type_id = "Transaction type is required.";
             }
             if (!values.reason.trim()) {
-                errors.reason = "Reason is required.";
+                errors.reason = isReplenishmentType ? "Remarks is required." : "Reason is required.";
             }
-            if (selectedType?.cash_fund_required) {
-                if (!values.cash_fund) {
-                    errors.cash_fund = "Cash fund amount is required.";
-                } else if (Number(values.cash_fund) <= 0) {
-                    errors.cash_fund = "Cash fund must be greater than 0.";
+            if (isReplenishmentType) {
+                if (!values.report_id) {
+                    errors.report_id = "Replenishment ID is required.";
                 }
-            }
-            if (selectedType?.report_id_required && !values.report_id.trim()) {
-                errors.report_id = "Report ID is required.";
+            } else {
+                if (selectedType?.cash_fund_required) {
+                    if (!values.cash_fund) {
+                        errors.cash_fund = "Cash fund amount is required.";
+                    } else if (selectedType?.allow_negative) {
+                        if (Number(values.cash_fund) === 0) {
+                            errors.cash_fund = "Cash fund amount cannot be zero.";
+                        }
+                    } else if (Number(values.cash_fund) <= 0) {
+                        errors.cash_fund = "Cash fund must be greater than 0.";
+                    }
+                }
+                if (selectedType?.report_id_required && !values.report_id.trim()) {
+                    errors.report_id = "Report ID is required.";
+                }
             }
             return errors;
         },
         onSubmit: async (values, { resetForm, setSubmitting }) => {
-            const isConfirmed = await confirm({
-                title: "Add Transaction",
-                message: "Are you sure you want to add this transaction?",
-            });
+            if (isSubmittingTransactionRef.current) return;
+            isSubmittingTransactionRef.current = true;
 
-            if (isConfirmed) {
+            try {
+                const isConfirmed = await confirm({
+                    title: "Add Transaction",
+                    message: "Are you sure you want to add this transaction?",
+                });
+
+                if (!isConfirmed) return;
+
                 setSubmitting(true);
-                addDepartmentFundTransaction({
+                await addDepartmentFundTransaction({
                     transaction_type_id: values.transaction_type_id,
                     report_id: values.report_id || null,
-                    cash_fund: values.cash_fund || null,
+                    cash_fund: isReplenishmentType ? null : values.cash_fund || null,
                     reason: values.reason,
                 })
                     .then((resp) => {
@@ -119,6 +145,7 @@ const DepartmentFundCard = () => {
                             toast.success("Transaction added successfully");
                             resetForm();
                             setSelectedType(null);
+                            setSelectedReplenishment(null);
                             transactionModal.onClose();
                             api.triggerReload();
                             setCustodianReload((n) => n + 1);
@@ -126,8 +153,10 @@ const DepartmentFundCard = () => {
                             toast.error(resp.data.message || "Error adding transaction");
                         }
                     })
-                    .catch(() => toast.error("Error encountered"))
-                    .finally(() => setSubmitting(false));
+                    .catch(() => toast.error("Error encountered"));
+            } finally {
+                setSubmitting(false);
+                isSubmittingTransactionRef.current = false;
             }
         },
     });
@@ -137,14 +166,35 @@ const DepartmentFundCard = () => {
         formHandler.setFieldValue("transaction_type_id", id);
         formHandler.setFieldValue("report_id", "");
         formHandler.setFieldValue("cash_fund", "");
+        setSelectedReplenishment(null);
         const found = transactionTypes.find((t) => String(t.id) === String(id));
         setSelectedType(found ?? null);
+
+        if (found?.name === "Replenishment") {
+            getPostedReplenishments()
+                .then((resp) => {
+                    if (!resp.error) {
+                        setPostedReplenishments(resp.data.replenishments ?? []);
+                    } else {
+                        toast.error(resp.data?.message || "Error loading posted replenishments");
+                    }
+                })
+                .catch(() => toast.error("Error encountered"));
+        }
+    };
+
+    const handleReplenishmentIdChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        const replenishmentId = e.target.value;
+        formHandler.setFieldValue("report_id", replenishmentId);
+        const found = postedReplenishments.find((r) => r.replenishment_id === replenishmentId);
+        setSelectedReplenishment(found ?? null);
     };
 
     const handleModalClose = () => {
         transactionModal.onClose();
         formHandler.resetForm();
         setSelectedType(null);
+        setSelectedReplenishment(null);
     };
 
     const columnSettings = [
@@ -178,7 +228,6 @@ const DepartmentFundCard = () => {
 
     return (
         <>
-            {/* Transactions Table */}
             <Card>
                 <div className="grid grid-cols-12 items-center mb-3 text-sm">
                     <div className="col-span-4" />
@@ -190,7 +239,7 @@ const DepartmentFundCard = () => {
                         <p className="font-semibold text-gray-500">Remaining Cash Fund</p>
                         <p>{Number(custodianInfo.remaining_cash_fund).toLocaleString("en-PH", { style: "currency", currency: "PHP" })}</p>
                     </div>
-                    <div className="col-span-1 flex justify-end">
+                    <div className="col-span-2 flex justify-end">
                         <DropDownButtons
                             actions={[
                                 {
@@ -209,13 +258,11 @@ const DepartmentFundCard = () => {
                 />
             </Card>
 
-            {/* Branches */}
             <Card>
                 <p className="font-semibold text-sm text-gray-500 mb-1">Branches</p>
                 <p className="text-sm">{custodianInfo.branches?.map((b: any) => b.name).join(", ") || "—"}</p>
             </Card>
 
-            {/* Add Transaction Modal */}
             <Modal
                 isShowing={transactionModal.isShowing}
                 title="Add Transaction"
@@ -234,7 +281,34 @@ const DepartmentFundCard = () => {
                         options={transactionTypes.map((t) => ({ label: t.name, value: t.id }))}
                     />
 
-                    {selectedType?.report_id_required && (
+                    {isReplenishmentType && (
+                        <>
+                            <Dropdown
+                                label="Report ID"
+                                placeholder="select replenishment ID"
+                                name="report_id"
+                                value={formHandler.values.report_id}
+                                onChange={handleReplenishmentIdChange}
+                                required
+                                error={(formHandler.errors as any).report_id}
+                                options={postedReplenishments.map((r) => ({
+                                    label: r.replenishment_id,
+                                    value: r.replenishment_id,
+                                }))}
+                            />
+                            {selectedReplenishment && (
+                                <Textfield
+                                    label="Total Replenishment Amount"
+                                    name="total_replenishment_amount"
+                                    value={formatAmount(selectedReplenishment.total_replenishment_amount)}
+                                    disabled
+                                    onChange={() => { }}
+                                />
+                            )}
+                        </>
+                    )}
+
+                    {!isReplenishmentType && selectedType?.report_id_required && (
                         <Dropdown
                             label="Report ID"
                             placeholder="select report ID"
@@ -247,7 +321,7 @@ const DepartmentFundCard = () => {
                         />
                     )}
 
-                    {selectedType?.cash_fund_required && (
+                    {!isReplenishmentType && selectedType?.cash_fund_required && (
                         <Textfield
                             label="Cash Fund"
                             placeholder="enter amount"
@@ -261,8 +335,8 @@ const DepartmentFundCard = () => {
                     )}
 
                     <Textfield
-                        label="Reason"
-                        placeholder="enter reason"
+                        label={isReplenishmentType ? "Remarks" : "Reason"}
+                        placeholder={isReplenishmentType ? "enter remarks" : "enter reason"}
                         name="reason"
                         value={formHandler.values.reason}
                         onChange={formHandler.handleChange}

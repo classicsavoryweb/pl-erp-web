@@ -20,3 +20,9 @@ export const getExpenseTypes = async () =>
 
 export const postLiquidation = async (id: number, payload?: object) =>
     axiosHelper({ func_path: `/post-liquidation/${id}`, method: 'POST', payload });
+
+export const getCSHubLiquidationCandidates = async (issuanceId: number, params?: object) =>
+    axiosHelper({ func_path: `/get-cshub-liquidation-candidates/${issuanceId}`, method: 'GET', payload: params });
+
+export const importCSHubLiquidations = async (issuanceId: number, payload: object) =>
+    axiosHelper({ func_path: `/import-cshub-liquidations/${issuanceId}`, method: 'POST', payload });
