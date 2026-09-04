@@ -183,7 +183,32 @@ const UniformSizesTableCard = () => {
                     label={data.status}
                     status={status}
                 />
-         }
+            }
+        },
+        { columnHead: "ATD Status", path: "status", columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let status: "default" | "success" | "warning" | "danger" = "default";
+
+                switch(data.status) {
+                    case "ATD Generated": 
+                        status = "success";
+                        break;
+                    case "ATD Acknowledged":
+                        status = "warning";
+                        break;
+                    case "ATD Created":
+                        status = "default";
+                        break;
+                    default:
+                        status = "default";
+                        break;
+                };
+
+                return <Badge
+                    label={data.status}
+                    status={status}
+                />
+            }
         },
         {
             columnHead: "Action",
