@@ -189,7 +189,7 @@ const UniformSizesTableCard = () => {
             function: (data: any) => {
                 let status: "default" | "success" | "warning" | "danger" = "default";
 
-                switch(data.status) {
+                switch(data.atd_status) {
                     case "ATD Generated": 
                         status = "success";
                         break;
@@ -205,7 +205,7 @@ const UniformSizesTableCard = () => {
                 };
 
                 return <Badge
-                    label={data.status}
+                    label={data.atd_status}
                     status={status}
                 />
             }
