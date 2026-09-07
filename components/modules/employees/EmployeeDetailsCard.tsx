@@ -4,14 +4,16 @@ import Card from "@/components/common/Card";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
 import { useContext } from "react";
-import EmployeeBasicInfo from "./EmployeeBasicInfo";
 import Badge from "@/components/common/Badge";
 import { getTenure } from "@/helper/tenure";
 import { EmployeeContext } from "@/context/EmployeeProvider";
 import moment from "moment";
 import { toast } from "react-toastify";
 import { canEditRestrictedRecords } from "@/helper/restriction";
-import { AuthContext } from "@/context/AuthProvider";
+import { AuthContext } from "@/context/AuthProvider"; 
+import Textfield from "@/components/common/Textfield";
+import Grid from "@/components/common/Grid";
+import TextArea from "@/components/common/TextArea";
 
 const EmployeeDetailsCard = () => {
     const params = useParams();
@@ -25,7 +27,7 @@ const EmployeeDetailsCard = () => {
             <div className="w-7/12">
                 <Card
                     loading={loading}
-                    size="big"
+                    size="medium"
                 >
                     <div className="flex justify-between pb-5">
                         <div className="flex justify-start items-center gap-x-10">
@@ -58,8 +60,7 @@ const EmployeeDetailsCard = () => {
                             <Button
                                 label="Edit"
                                 onClick={() => {
-                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
-                                        toast.error("You cannot this record");
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", employee.employee_number, 0)) {
                                         return;
                                     }
                                     router.push(`/employees/edit/${employeeNumber}`)
@@ -68,137 +69,208 @@ const EmployeeDetailsCard = () => {
                         </div>
                     </div>
 
-                    <hr className=" text-slate-300" />
-                    <div className="py-5">
-                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Employment Details</p>
-                            <EmployeeBasicInfo
-                                label="Employee Number"
-                                detail={employee.employee_number}
-                            />
-                            <EmployeeBasicInfo
-                                label="Biometric Number"
-                                detail={employee.biometric_number}
-                            />
-                            <EmployeeBasicInfo
-                                label="Date Hired"
-                                detail={ moment(employee.date_hired).format("MMMM DD, YYYY")}
-                            />
-                            <EmployeeBasicInfo
-                                label="Employment Type"
-                                detail={employee.type}
-                            />
-                            <EmployeeBasicInfo
-                                label="Regularization Date"
-                                detail={ employee.regularization_date ? moment(employee.regularization_date).format("MMMM DD, YYYY") : "—" }
-                            />
-                            { employee.status === "inactive" &&
-                                <>
-                                    <EmployeeBasicInfo
-                                        label="Date Separated"
-                                        detail={employee.separation_date ? moment(employee.separation_date).format("MMMM DD, YYYY") : "—" }
-                                    />
-                                    <EmployeeBasicInfo
-                                        label="Separation Reason"
-                                        detail={employee.separation?.description}
-                                    />
-                                </>
-                            }
-                            <EmployeeBasicInfo
-                                label="2nd Employee Number"
-                                detail={employee.employee_number_2}
-                            />
-                    </div>
+                    <p className="text-md font-semibold text-red-800 dark:text-red-500">Employment Details</p>
+                    <Grid cols={2}>
+                        <Textfield
+                            disabled
+                            label="Employee Number"
+                            value={employee.employee_number}
+                        />
+                        <Textfield
+                            disabled
+                            label="Biometric Number"
+                            value={employee.biometric_number}
+                        />
+                        <Textfield
+                            disabled
+                            label="Date Hired"
+                            value={ moment(employee.date_hired).format("MMMM DD, YYYY")}
+                        />
+                        <Textfield
+                            disabled
+                            label="Employment Type"
+                            value={employee.type}
+                        />
+                        <Textfield
+                            disabled
+                            label="Regularization Date"
+                            value={ employee.regularization_date ? moment(employee.regularization_date).format("MMMM DD, YYYY") : "—" }
+                        />
+                        { employee.status === "inactive" &&
+                            <>
+                                <Textfield
+                                    disabled
+                                    label="Date Separated"
+                                    value={employee.separation_date ? moment(employee.separation_date).format("MMMM DD, YYYY") : "—" }
+                                />
+                                <Textfield
+                                    disabled
+                                    label="Separation Reason"
+                                    value={employee.separation?.description}
+                                />
+                            </>
+                        }
+                        <Textfield
+                            disabled
+                            label="2nd Employee Number"
+                            value={employee.employee_number_2}
+                        />
+                    </Grid>
+                </Card>
 
-                    <hr className=" text-slate-300" />
-                    <div className="py-5">
-                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Personal Details</p>
-                            <EmployeeBasicInfo
-                                label="First Name"
-                                detail={employee.first_name}
-                            />
-                            <EmployeeBasicInfo
-                                label="Middle Name"
-                                detail={employee.middle_name}
-                            />
-                            <EmployeeBasicInfo
-                                label="Last Name"
-                                detail={employee.last_name}
-                            />
-                            <EmployeeBasicInfo
-                                label="Civil Status"
-                                detail={employee.civil_status}
-                            />
-                            <EmployeeBasicInfo
-                                label="Birthday"
-                                detail={employee.birthday ? moment(employee.birthday).format("MMMM DD, YYYY") : "—" }
-                            />
-                            <EmployeeBasicInfo
-                                label="Age"
-                                detail={employee.age}
-                            />
-                            <EmployeeBasicInfo
-                                label="Birthplace"
-                                detail={employee.birthplace}
-                            />
-                            <EmployeeBasicInfo
-                                label="Gender"
-                                detail={employee.gender}
-                            />
-                            <EmployeeBasicInfo
-                                label="Height"
-                                detail={employee.height}
-                            /> 
-                    </div>
+                <div className="py-[2px]"/>
+                <Card
+                    loading={loading}
+                    size="medium"
+                >
+                    <p className="text-md font-semibold text-red-800 dark:text-red-500">Personal Details</p>
+                    <Grid cols={2}>
+                        <Textfield
+                            disabled
+                            label="First Name"
+                            value={employee.first_name}
+                        />
+                        <Textfield
+                            disabled
+                            label="Middle Name"
+                            value={employee.middle_name}
+                        />
+                        <Textfield
+                            disabled
+                            label="Last Name"
+                            value={employee.last_name}
+                        />
+                        <Textfield
+                            disabled
+                            label="Civil Status"
+                            value={employee.civil_status}
+                        />
+                        <Textfield
+                            disabled
+                            label="Birthday"
+                            value={employee.birthday ? moment(employee.birthday).format("MMMM DD, YYYY") : "—" }
+                        />
+                        <Textfield
+                            disabled
+                            label="Age"
+                            value={employee.age}
+                        />
+                        <Textfield
+                            disabled
+                            label="Birthplace"
+                            value={employee.birthplace}
+                        />
+                        <Textfield
+                            disabled
+                            label="Gender"
+                            value={employee.gender}
+                        />
+                        <Textfield
+                            disabled
+                            label="Height"
+                            value={employee.height}
+                        /> 
+                    </Grid>
+                </Card>
 
-                    <hr className=" text-slate-300" />
-                    <div className="py-5">
-                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Contact Details</p>
-                        <EmployeeBasicInfo
+                <div className="py-[2px]"/>
+                <Card
+                    loading={loading}
+                    size="medium"
+                >
+                    <p className="text-md font-semibold text-red-800 dark:text-red-500">Contact Details</p>
+                    <Grid cols={2}>
+                        <Textfield
+                            disabled
                             label="Email"
-                            detail={employee.email}
+                            value={employee.email}
                         />
-                        <EmployeeBasicInfo
+                        <Textfield
+                            disabled
                             label="Contact Number"
-                            detail={employee.contact_number}
+                            value={employee.contact_number}
                         />
-                        <EmployeeBasicInfo
+                        <Textfield
+                            disabled
                             label="Present Address"
-                            detail={employee.address}
+                            value={employee.address}
                         />
-                        <EmployeeBasicInfo
+                        <Textfield
+                            disabled
                             label="Permanent Address"
-                            detail={employee.provincial_address}
+                            value={employee.provincial_address}
                         />
-                        <EmployeeBasicInfo
+                        <Textfield
+                            disabled
                             label="Region"
-                            detail={employee.region}
+                            value={employee.region}
                         />
-                    </div>
+                    </Grid>
+                </Card>
 
-                    <hr className=" text-slate-300" />
-                    <div className="pt-5">
-                        <p className="text-md font-semibold text-red-800 dark:text-red-500">Government Identification</p>
-                            <EmployeeBasicInfo
-                                label="TIN"
-                                detail={employee.tin}
-                            />
-                            <EmployeeBasicInfo
-                                label="SSS"
-                                detail={employee.sss}
-                            />
-                            <EmployeeBasicInfo
-                                label="PAGIBIG"
-                                detail={employee.pagibig}
-                            />
-                            <EmployeeBasicInfo
-                                label="Philhealth"
-                                detail={employee.philhealth}
-                            />
-                            <EmployeeBasicInfo
-                                label="Tax Type"
-                                detail={employee.tax_type}
-                            />
-                    </div>
+                <div className="py-[2px]"/>
+                <Card
+                    loading={loading}
+                    size="medium"
+                >
+                    <p className="text-md font-semibold text-red-800 dark:text-red-500">Government Identification</p>
+                    <Grid cols={2}>
+                        <Textfield
+                            disabled
+                            label="TIN"
+                            value={employee.tin}
+                        />
+                        <Textfield
+                            disabled
+                            label="SSS"
+                            value={employee.sss}
+                        />
+                        <Textfield
+                            disabled
+                            label="PAGIBIG"
+                            value={employee.pagibig}
+                        />
+                        <Textfield
+                            disabled
+                            label="Philhealth"
+                            value={employee.philhealth}
+                        />
+                        <Textfield
+                            disabled
+                            label="Tax Type"
+                            value={employee.tax_type}
+                        />
+                    </Grid>
+                </Card>
+
+                <div className="py-[2px]"/>
+                <Card
+                    loading={loading}
+                    size="medium"
+                >
+                    <p className="font-semibold text-red-800 dark:text-red-500">Emergency Contact</p>
+                    <Grid cols={2}>
+                        <Textfield
+                            disabled
+                            label="Contact Name"
+                            value={employee.emergency_contact_name}
+                        />
+                        <Textfield
+                            disabled
+                            label="Contact Number"
+                            value={employee.emergency_contact_number}
+                        />
+                        <Textfield
+                            disabled
+                            label="Relationship"
+                            value={employee.emergency_contact_relationship}
+                        />
+                        <Textfield
+                            disabled
+                            label="Address"
+                            value={employee.emergency_contact_address}
+                        />
+                    </Grid>
                 </Card>
             </div>
 
@@ -207,17 +279,20 @@ const EmployeeDetailsCard = () => {
                     loading={loading}
                 >
                     <p className="font-semibold text-red-800 dark:text-red-500">Position</p>
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Description"
-                        detail={employee.current_position?.description}
+                        value={employee.current_position?.description}
                     />
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Date Started"
-                        detail={employee.positions && moment(employee.positions[employee.positions.length - 1]?.pivot.date_started).format("MMMM DD, YYYY")}
+                        value={employee.positions && moment(employee.positions[employee.positions.length - 1]?.pivot.date_started).format("MMMM DD, YYYY")}
                     />
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Station"
-                        detail={employee.station?.name}
+                        value={employee.station?.name}
                     />
                 </Card>
                 <div className="py-[2px]"/>
@@ -225,92 +300,95 @@ const EmployeeDetailsCard = () => {
                     loading={loading}
                 >
                     <p className="font-semibold text-red-800 dark:text-red-500">Branch</p>
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Current Branch"
-                        detail={employee.current_branch?.name}
+                        value={employee.current_branch?.name}
                     />
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Region"
-                        detail={employee.current_branch?.location}
+                        value={employee.current_branch?.location}
                     />
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Company"
-                        detail={employee.current_branch?.company}
+                        value={employee.current_branch?.company}
                     />
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Date Assigned"
-                        detail={employee.branches && moment(employee.branches[employee.branches.length - 1]?.pivot.date_assigned).format("MMMM DD, YYYY")}
+                        value={employee.branches && moment(employee.branches[employee.branches.length - 1]?.pivot.date_assigned).format("MMMM DD, YYYY")}
                     />
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Home Branch"
-                        detail={employee.home_branch?.name}
+                        value={employee.home_branch?.name}
                     />
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Region"
-                        detail={employee.home_branch?.location}
+                        value={employee.home_branch?.location}
                     />
                     <div className="py-3">
                         <hr className=" text-slate-300" />
                     </div>
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Branch OIC"
-                        detail={employee.current_branch?.branch_head}
+                        value={employee.current_branch?.branch_head}
                     />
-                    <EmployeeBasicInfo
+                    <Textfield
+                        disabled
                         label="Group Head"
-                        detail={employee.current_branch?.group_head}
+                        value={employee.current_branch?.group_head}
                     />
                 </Card>
-                
-                    <>
-                        <div className="py-[2px]"/>
-                        <Card
-                            loading={loading}
-                        >
-                            <p className="font-semibold text-red-800 dark:text-red-500">Education</p>
-                            
-                                <>
-                                    <EmployeeBasicInfo
-                                        label="College"
-                                        detail={employee.education?.college}
-                                    />
-                                    <EmployeeBasicInfo
-                                        label="Course"
-                                        detail={employee.education?.course}
-                                    />
-                                    <EmployeeBasicInfo
-                                        label="Address"
-                                        detail={employee.education?.college_address}
-                                    />
-                                    <EmployeeBasicInfo
-                                        label="Duration"
-                                        detail={employee.education?.college_date_started && employee.education?.college_date_graduated}
-                                    />
-                                </>
 
-                                <>
-                                    { employee.education?.college &&
-                                        <div className="py-3">
-                                            <hr className=" text-slate-300" />
-                                        </div>
-                                    }
-
-                                    <EmployeeBasicInfo
-                                        label="Highschool"
-                                        detail={employee.education?.highschool}
-                                    />
-                                    <EmployeeBasicInfo
-                                        label="Address"
-                                        detail={employee.education?.highschool_address}
-                                    />
-                                    <EmployeeBasicInfo
-                                        label="Duration"
-                                        detail={employee.education?.highschool_date_started && employee.education?.highschool_date_graduated}
-                                    />
-                                </>
-                            
-                        </Card>
-                    </>
+                <div className="py-[2px]"/>
+                <Card
+                    loading={loading}
+                >
+                    <p className="font-semibold text-red-800 dark:text-red-500">Education</p>
+                    <Textfield
+                        disabled
+                        label="College"
+                        value={employee.education?.college}
+                    />
+                    <Textfield
+                        disabled
+                        label="Course"
+                        value={employee.education?.course}
+                    />
+                    <Textfield
+                        disabled
+                        label="Address"
+                        value={employee.education?.college_address}
+                    />
+                    <Textfield
+                        disabled
+                        label="Duration"
+                        value={employee.education?.college_date_started && employee.education?.college_date_graduated}
+                    />
+                    <div className="py-3">
+                        <hr className=" text-slate-300" />
+                    </div>
+                    <Textfield
+                        disabled
+                        label="Highschool"
+                        value={employee.education?.highschool}
+                    />
+                    <Textfield
+                        disabled
+                        label="Address"
+                        value={employee.education?.highschool_address}
+                    />
+                    <Textfield
+                        disabled
+                        label="Duration"
+                        value={employee.education?.highschool_date_started && employee.education?.highschool_date_graduated}
+                    />
+                </Card>
                 
                 { employee.dependents && employee.dependents.length > 0 &&
                     <>
@@ -326,13 +404,15 @@ const EmployeeDetailsCard = () => {
                                             className="pt-1"
                                             key={idx}
                                         >
-                                            <EmployeeBasicInfo
+                                            <Textfield
+                                                disabled
                                                 label="Name"
-                                                detail={dependent.dependent_name}
+                                                value={dependent.dependent_name}
                                             />
-                                            <EmployeeBasicInfo
+                                            <Textfield
+                                                disabled
                                                 label="Birthday"
-                                                detail={moment(dependent.birthday).format("MMMM DD, YYYY")}
+                                                value={moment(dependent.birthday).format("MMMM DD, YYYY")}
                                             />
                                         </div>
                                     )
@@ -341,28 +421,6 @@ const EmployeeDetailsCard = () => {
                         </Card>
                     </>
                 }
-                <div className="py-[2px]"/>
-                <Card
-                    loading={loading}
-                >
-                    <p className="font-semibold text-red-800 dark:text-red-500">Emergency Contact</p>
-                    <EmployeeBasicInfo
-                        label="Contact Name"
-                        detail={employee.emergency_contact_name}
-                    />
-                    <EmployeeBasicInfo
-                        label="Contact Number"
-                        detail={employee.emergency_contact_number}
-                    />
-                    <EmployeeBasicInfo
-                        label="Address"
-                        detail={employee.emergency_contact_address}
-                    />
-                    <EmployeeBasicInfo
-                        label="Relationship"
-                        detail={employee.emergency_contact_relationship}
-                    />
-                </Card>
                 { employee.schedule &&
                     <>
                         <div className="py-[2px]"/>
@@ -370,17 +428,20 @@ const EmployeeDetailsCard = () => {
                             loading={loading}
                         >
                             <p className="font-semibold text-red-800 dark:text-red-500">Schedule Details</p>
-                            <EmployeeBasicInfo
+                            <Textfield
+                                disabled
                                 label="Schedule Type"
-                                detail={employee.schedule.schedule_type?.name}
+                                value={employee.schedule.schedule_type?.name}
                             />
-                            <EmployeeBasicInfo
+                            <Textfield
+                                disabled
                                 label="Flexible Schedule"
-                                detail={employee.schedule.flexible_schedule}
+                                value={employee.schedule.flexible_schedule}
                             />
-                            <EmployeeBasicInfo
+                            <Textfield
+                                disabled
                                 label="Incentive Leave"
-                                detail={employee.schedule.incentive_leave}
+                                value={employee.schedule.incentive_leave}
                             />
                         </Card>
                     </>
@@ -390,9 +451,10 @@ const EmployeeDetailsCard = () => {
                         loading={loading}
                     >
                         <p className="text-md font-semibold text-red-800 dark:text-red-500">Others</p>
-                        <EmployeeBasicInfo
+                        <TextArea
+                            disabled
                             label="Remarks"
-                            detail={employee.remarks}
+                            value={employee.remarks}
                         />
                 </Card>
             </div>

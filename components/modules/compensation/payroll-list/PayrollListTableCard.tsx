@@ -108,6 +108,11 @@ const PayrollListTableCard = () => {
             }
         },
         {
+            columnHead: "Salary",
+            path: "salary_amount",
+            columnType: COLUMNTYPES.amount,
+        },
+        {
             columnHead: "Status",
             path: "employee.status",
             columnType: COLUMNTYPES.status,
@@ -133,7 +138,7 @@ const PayrollListTableCard = () => {
                         label={data.is_statutory_only === 1 ? "statutory only": "full payroll"}
                     />
             }
-        }
+        },
     ];
 
     const actionSettings = [

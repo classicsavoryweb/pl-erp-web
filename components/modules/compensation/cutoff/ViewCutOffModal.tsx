@@ -25,11 +25,13 @@ type ActionType = {
 interface ModalInterface {
     modal: any;
     data: any;
+    onSubmitCallback: () => void;
 }
 
 const ViewCutOffModal = ({
     modal,
-    data
+    data,
+    onSubmitCallback
 }: ModalInterface) => {
     const [value, setValue] = useState<any>({});
     const generatePayrollModal = useModal();
@@ -91,6 +93,7 @@ const ViewCutOffModal = ({
                     if (!resp.error) {
                         setValue(resp.data.cut_off);
                         toast.success(resp.data.message);
+                        onSubmitCallback();
                     } else {
                         toast.error(resp.data.message);
                     }

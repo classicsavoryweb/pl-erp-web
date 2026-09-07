@@ -193,10 +193,9 @@ const TimeKeepingSummaryTableCard = ({
                                 label: "Edit",
                                 onClick: (data: any) => {
                                     if (
-                                        !canEditRestrictedRecords(permissions, "EMPLOYEE", data.employee.employee_number, 0) ||
-                                        !canEditRestrictedRecords(permissions, "BRANCH", "", data.branch_id)
+                                        !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                                        !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.branch_id)
                                     ) {
-                                        toast.error("You cannot this record");
                                         return;
                                     }
 

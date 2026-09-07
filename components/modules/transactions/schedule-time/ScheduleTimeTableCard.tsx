@@ -32,6 +32,7 @@ import TransferTimeKeepingBranchAllModal from "./TransferTimeKeepingBranchAllMod
 import Accordion from "@/components/common/Accordion";
 import EditScheduleTimeModal from "./EditScheduleTimeModal";
 import ActivityLogsModal from "../../generic/ActivityLogsModal";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -152,6 +153,13 @@ const ScheduleTimeTableCard = ({
         {
             label: "Edit",
             onClick: (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.branch_id)
+                ) {
+                    return;
+                }
+
                 setData(data);
                 editModal.onOpen();
             }

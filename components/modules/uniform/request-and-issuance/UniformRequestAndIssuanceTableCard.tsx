@@ -183,7 +183,32 @@ const UniformRequestAndIssuanceTableCard = () => {
                     label={data.status}
                     status={status}
                 />
-         }
+            }
+        },
+        { columnHead: "ATD Status", path: "atd_status", columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                let status: "default" | "success" | "warning" | "danger" = "default";
+
+                switch(data.atd_status) {
+                    case "ATD Generated": 
+                        status = "success";
+                        break;
+                    case "ATD Acknowledged":
+                        status = "warning";
+                        break;
+                    case "ATD Created":
+                        status = "default";
+                        break;
+                    default:
+                        status = "default";
+                        break;
+                };
+
+                return <Badge
+                    label={data.atd_status}
+                    status={status}
+                />
+            }
         },
         {
             columnHead: "Action",

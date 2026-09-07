@@ -119,8 +119,7 @@ const EditEmployeeFormCard = () => {
             ),
         }),
         onSubmit:async (values, {setSubmitting}) => {
-            if (!canEditRestrictedRecords(permissions, "EMPLOYEE", employee.employee_number, 0)) {
-                toast.error("You cannot this record");
+            if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE",employee.employee_number, 0)) {
                 return;
             }
             const isConfirmed = await confirm({

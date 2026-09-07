@@ -37,6 +37,7 @@ import ViewTimeKeepingModal from "./ViewTimeKeepingModal";
 import ChooseTimeKeepingModal from "./ChooseTimeKeepingModal";
 import FetchOvertimeModal from "./FetchOvertimeModal";
 import Accordion from "@/components/common/Accordion";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -200,6 +201,12 @@ const OvertimeTableCard = ({
         {
             label: "Force Adjustment",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 setData(data);
                 const isConfirmed = await confirm({
                     title: "Force Adjustment",
@@ -229,6 +236,12 @@ const OvertimeTableCard = ({
         {
             label: "Void",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: "Void Overtime",
                     message: "Are you sure you want to void this overtime?",

@@ -46,7 +46,7 @@ const Textfield = ({
                     type={isPassword && showPassword ? "text" : type}
                     name={name}
                     placeholder={placeholder}
-                    value={value}
+                    value={type == "file" ? value ?? "" : value ?? "—"}
                     onBlur={onBlur}
                     onChange={(e) => {
                         if (isUpperCase) {

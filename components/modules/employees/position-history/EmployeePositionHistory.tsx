@@ -95,8 +95,7 @@ const EmployeePositionHistory = () => {
                                 {
                                     label: "Edit",
                                     onClick: () => {
-                                        if (!canEditRestrictedRecords(permissions, "EMPLOYEE", String(employeeNumber), 0)) {
-                                            toast.error("You cannot this record");
+                                        if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
                                             return;
                                         }
                                         setAction("edit");
@@ -138,8 +137,7 @@ const EmployeePositionHistory = () => {
                             {
                                 label: "Add",
                                 onClick: () => {
-                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEE", String(employeeNumber), 0)) {
-                                        toast.error("You cannot this record");
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
                                         return;
                                     }
                                     setData(api.dataSet[0]);

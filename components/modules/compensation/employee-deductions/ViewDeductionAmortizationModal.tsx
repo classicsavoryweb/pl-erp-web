@@ -20,7 +20,7 @@ const ViewDeductionAmortizationModal = ({
     data
 }: ModalInterface) => {
 
-    const paginator = usePagination();
+    const paginator = usePagination(20);
     const api = useApiCall();
 
     useAsyncEffect(() => {
@@ -90,7 +90,11 @@ const ViewDeductionAmortizationModal = ({
                 />
             </Grid>
 
-            <p className="mt-3">Amortization</p>
+            <div className="mt-3 flex justify-between items-center">
+                <p>Amortization</p>
+                <p>{paginator.paginationData?.total ?? 0} Cutoffs Paid</p>
+            </div>
+
             <Table
                 dataSet={api.dataSet}
                 columnSettings={columnSettings}
