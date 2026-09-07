@@ -29,6 +29,12 @@ const SendConverterModal = ({
         },
         validationSchema: Yup.object().shape({
             crediting_date: Yup.string().required("Crediting Date is required")
+            .test(
+            'future-date',
+            `Date must be the same or later than ${moment(data.generated_at).format("YYYY-MM-DD")}`,
+            function (value) {
+                return moment(value).isSameOrAfter(moment(data.generated_at).format("YYYY-MM-DD"));
+            })
         }),
         validateOnChange: false,
         onSubmit: async (values, {setSubmitting, resetForm}) => {
