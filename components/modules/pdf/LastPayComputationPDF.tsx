@@ -15,10 +15,10 @@ interface LastPayComputationPDFProps {
 
 const styles = StyleSheet.create({
     page: {
-        paddingTop: 28,
+        paddingTop: 24,
         paddingLeft: 40,
         paddingRight: 40,
-        paddingBottom: 30,
+        paddingBottom: 20,
         fontSize: 9,
         lineHeight: 1.3,
     },
