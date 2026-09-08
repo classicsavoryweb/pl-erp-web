@@ -89,12 +89,12 @@ const ViewLastPayModal = ({
                     value={formatNumber(data.tax_refund)}
                     disabled
                 />
-                <Textfield
+                {/* <Textfield
                     label="Sales Incentives"
                     name="sales"
                     value={formatNumber(data.sales)}
                     disabled
-                />
+                /> */}
                 <Textfield
                     label="Incentives"
                     name="incentives"
@@ -107,11 +107,11 @@ const ViewLastPayModal = ({
                     value={formatNumber(data.sl_vl)}
                     disabled
                 />
-                <Textfield
+                {/* <Textfield
                     label="Meal Allowance"
                     value={formatNumber(data.meal)}
                     disabled
-                />
+                /> */}
             </Grid>
 
             { (data.additional_fields && data.additional_fields.lenght > 0) &&

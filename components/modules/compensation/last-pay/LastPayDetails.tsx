@@ -195,7 +195,7 @@ const LastPayDetails = ({
                         error={formHandler.errors.tax_refund}
                         disabled={disabled}
                     />
-                    <Textfield
+                    {/* <Textfield
                         label="Sales Incentives"
                         type="number"
                         name="sales"
@@ -203,7 +203,7 @@ const LastPayDetails = ({
                         value={formHandler.values.sales}
                         error={formHandler.errors.sales}
                         disabled={disabled}
-                    />
+                    /> */}
                     <Textfield
                         label="Incentives"
                         type="number"
@@ -222,7 +222,7 @@ const LastPayDetails = ({
                         error={formHandler.errors.sl_vl}
                         disabled={disabled}
                     />
-                    <Textfield
+                    {/* <Textfield
                         label="Meal Allowance"
                         type="number"
                         name="meal_allowance"
@@ -230,7 +230,7 @@ const LastPayDetails = ({
                         value={formHandler.values.meal_allowance}
                         error={formHandler.errors.meal_allowance}
                         disabled={disabled}
-                    />
+                    /> */}
                 </Grid>
 
                 <div className="mt-3 flex items-center justify-between">
