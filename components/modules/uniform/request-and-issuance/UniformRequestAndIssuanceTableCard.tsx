@@ -23,7 +23,7 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 
 
 
-const UniformSizesTableCard = () => {
+const UniformRequestAndIssuanceTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const viewModal = useModal();
@@ -329,4 +329,4 @@ const UniformSizesTableCard = () => {
     );
 };
 
-export default UniformSizesTableCard;
+export default UniformRequestAndIssuanceTableCard;

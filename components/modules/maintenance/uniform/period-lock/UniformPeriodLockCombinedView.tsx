@@ -83,7 +83,7 @@ const UniformPeriodLockCombinedView = () => {
 
     const tableActions = [
         {
-            label: "Edit Date Period",
+            label: "Edit",
             permission: "perform_uniform_period_lock",
             onClick: (record: any) => {
                 setSelected({
