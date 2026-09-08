@@ -5,7 +5,7 @@ import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import RolesDropDown from "../generic/RolesDropDown";
+import RolesMultiSelect from "../generic/RolesMultiSelect";
 import { useEffect } from "react";
 import Dropdown from "@/components/common/Dropdown";
 import confirm from "@/components/common/Confirm";
@@ -28,7 +28,7 @@ const EditUsersForm = ({
             middle_name: "",
             last_name: "",
             email: "",
-            role_id: "",
+            role_ids: [] as (string | number)[],
             employee_number: "",
             password: "",
             confirm_password: "",
@@ -40,7 +40,7 @@ const EditUsersForm = ({
             last_name: Yup.string().required("Last name is required."),
             email: Yup.string().required("Email is required."),
             employee_number: Yup.string().required("Employee number is required."),
-            role_id: Yup.string().required("Role is required."),
+            role_ids: Yup.array().min(1, "At least one role is required."),
             status: Yup.string().required("Status is required."),
             password: Yup.string(),
             confirm_password: Yup.string().when('password', (password, schema) =>
@@ -142,13 +142,11 @@ const EditUsersForm = ({
                     onChange={updateUsersForm.handleChange}
                     error={updateUsersForm.errors.email}
                 />
-                <RolesDropDown
-                    label="Role"
-                    placeholder="select role"
-                    name="role_id"
-                    onChange={updateUsersForm.handleChange}
-                    value={updateUsersForm.values.role_id}
-                    error={updateUsersForm.errors.role_id}
+                <RolesMultiSelect
+                    label="Roles"
+                    value={updateUsersForm.values.role_ids}
+                    onChange={(roleIds) => updateUsersForm.setFieldValue("role_ids", roleIds)}
+                    error={updateUsersForm.errors.role_ids as string | undefined}
                     required
                 />
                 <Dropdown

@@ -1,12 +1,11 @@
 import { createUser } from "@/api/users";
 import Button from "@/components/common/Button";
-import Dropdown from "@/components/common/Dropdown";
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import { toast } from "react-toastify";
 import * as Yup from "yup";
-import RolesDropDown from "../generic/RolesDropDown";
+import RolesMultiSelect from "../generic/RolesMultiSelect";
 import SearchEmployeeDropDown from "../generic/SearchEmployeeDropDown";
 import confirm from "@/components/common/Confirm";
 
@@ -19,14 +18,13 @@ const CreateUsersForm = ({
     modal,
     onSubmitCallback
 }: FormModalInterface) => {
- 
     const createUserForm = useFormik({
         initialValues: {
             first_name: "",
             middle_name: "",
             last_name: "",
             email: "",
-            role_id: "",
+            role_ids: [] as (string | number)[],
             employee_number: "",
             password: "",
             confirm_password: "",
@@ -38,7 +36,7 @@ const CreateUsersForm = ({
             email: Yup.string().required("Email is required."),
             employee_number: Yup.string().required("Employee number is required."),
             password: Yup.string().required("Password is required."),
-            role_id: Yup.string().required("Role is required."),
+            role_ids: Yup.array().min(1, "At least one role is required."),
             confirm_password: Yup.string().required("Confirm password is required.")
                 .oneOf([Yup.ref('password')], "Passwords must match.")
         }),
@@ -90,7 +88,7 @@ const CreateUsersForm = ({
                         middle_name: emp.middle_name ?? "",
                         last_name: emp.last_name,
                         email: emp.email,
-                        role_id: "",
+                        role_ids: [],
                         employee_number: emp.employee_number,
                         password: "",
                         confirm_password: "",
@@ -145,13 +143,11 @@ const CreateUsersForm = ({
                     onChange={createUserForm.handleChange}
                     error={createUserForm.errors.email}
                 />
-                <RolesDropDown
-                    label="Role"
-                    placeholder="select role"
-                    name="role_id"
-                    onChange={createUserForm.handleChange}
-                    value={createUserForm.values.role_id}
-                    error={createUserForm.errors.role_id}
+                <RolesMultiSelect
+                    label="Roles"
+                    value={createUserForm.values.role_ids}
+                    onChange={(roleIds) => createUserForm.setFieldValue("role_ids", roleIds)}
+                    error={createUserForm.errors.role_ids as string | undefined}
                     required
                 />
                 <Textfield
