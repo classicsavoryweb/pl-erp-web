@@ -250,6 +250,11 @@ const UniformRequestAndIssuanceTableCard = () => {
                         columnHead: "Item Name",
                         path: "item_name",
                         columnType:COLUMNTYPES.string
+                    },
+                    {
+                        columnHead: "Request Number",
+                        path: "request_number",
+                        columnType:COLUMNTYPES.string
                     }
                     
                 ]}
