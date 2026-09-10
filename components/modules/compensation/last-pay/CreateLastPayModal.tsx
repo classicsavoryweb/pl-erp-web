@@ -9,6 +9,7 @@ import confirm from "@/components/common/Confirm";
 import * as Yup from "yup";
 import { createLastPayRecord, previewLastPayComputation } from "@/api/compensation/last-pay";
 import { toast } from "react-toastify";
+import EmployeeForLastPayDropDown from "../../generic/EmployeeForLastPayDropDown";
 
 interface ModalInterface {
     modal: any;
@@ -77,6 +78,8 @@ const CreateLastPayModal = ({
                             toast.success("Last pay successfully created");
                             callBack();
                             formHandler.resetForm();
+                            setSelectedEmployee({});
+                            setShowing(false);
                             modal.onClose();
                         }
                     } else {
@@ -118,7 +121,7 @@ const CreateLastPayModal = ({
             }}
             size="md"
         >
-            <HoldedEmployeeDropDown
+            <EmployeeForLastPayDropDown
                 label = "Employee"
                 placeholder = "select employee"
                 name = "employee_id"

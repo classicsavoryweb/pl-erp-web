@@ -1,26 +1,23 @@
 "use client";
 
 import { getAllRoles } from "@/api/roles-and-permissions";
-import Dropdown from "@/components/common/Dropdown";
+import CheckboxGroup from "@/components/common/CheckboxGroup";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
+
 interface SelectInterface {
     label: string;
-    placeholder?: string;
-    name: string;
-    onChange: (e: any) => void;
     error?: string;
-    value?: string;
+    value: (string | number)[];
+    onChange: (value: (string | number)[]) => void;
     required?: boolean;
 }
 
-const RolesDropDown = ({
+const RolesMultiSelect = ({
     label,
-    placeholder,
-    name,
-    onChange,
     error,
     value,
+    onChange,
     required = false
 }: SelectInterface) => {
 
@@ -46,13 +43,11 @@ const RolesDropDown = ({
     }, []);
 
     return (
-        <Dropdown
+        <CheckboxGroup
             label={label}
-            placeholder={placeholder}
-            name={name}
-            onChange={onChange}
             error={error}
             value={value}
+            onChange={onChange}
             loading={roles.loading}
             options={roles.dataSet}
             required={required}
@@ -60,4 +55,4 @@ const RolesDropDown = ({
     );
 };
 
-export default RolesDropDown;
+export default RolesMultiSelect;

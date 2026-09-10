@@ -42,6 +42,16 @@ export const getEmployeesNotOnPayrollList = async (payload?: {}) => {
     return resData;
 };
 
+export const getEmployeesForLastPayList = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-employees-for-last-pay-list',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
 export const getEmployees = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/get-employees',
