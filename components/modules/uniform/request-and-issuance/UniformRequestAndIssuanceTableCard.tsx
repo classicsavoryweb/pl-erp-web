@@ -11,7 +11,7 @@ import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
 import Badge from "@/components/common/Badge";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { getAllRequestAndIssuance , exportAllRequestAndIssuance , exportRequestAndIssuanceDetails, updateRequestStatus} from "@/api/uniform/request-and-issuance";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
@@ -20,6 +20,7 @@ import UniformRequestAndIssuanceForm from "./UniformRequestAndIssuanceForm";
 import moment from "moment";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import { AuthContext } from "@/context/AuthProvider";
 
 
 
@@ -33,6 +34,9 @@ const UniformRequestAndIssuanceTableCard = () => {
     const [data, setData] = useState({});
     const paginator = usePagination();
     const filter = useFilter();
+    const { permissions } = useContext(AuthContext);
+    const canReview = permissions.includes("perform_uniform_request_and_issuance_review");
+    const canPost = permissions.includes("perform_uniform_request_and_issuance_post");
 
 
      useAsyncEffect(() => {
@@ -67,14 +71,14 @@ const UniformRequestAndIssuanceTableCard = () => {
             label: "Detailed Export",
             onClick: () => downloadDetailedExport(item),
         },
-        item.status === "Unposted" && {
+        item.status === "Unposted" && canReview && {
             label: "Review",
             onClick: () => {
                 setData(item);
                 reviewModal.onOpen();
             },
         },
-        item.status === "Reviewed" && {
+        item.status === "Reviewed" && canPost && {
             label: "Post",
             onClick: () => {
                 setData(item);
