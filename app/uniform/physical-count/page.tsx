@@ -7,6 +7,8 @@ export default function PhysicalCountPage() {
             <PageTitle title= "Physical Count" />
             <PhysicalCountTableCard
                 performPermission="perform_uniform_physical_count"
+                reviewPermission="perform_uniform_physical_count_review"
+                postPermission="perform_uniform_physical_count_post"
             />
         </>
     );

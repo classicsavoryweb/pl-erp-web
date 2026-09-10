@@ -37,6 +37,8 @@ import ChangeQuanityForm from "./PhysicalChangeQuantityForm";
 
 interface TableCardProps {
     performPermission: string;
+    reviewPermission?: string;
+    postPermission?: string;
 }
 
 const title = "Physical Count";
@@ -70,7 +72,11 @@ const getStatusBadge = (status: string): "success" | "warning" | "danger" | "pur
     }
 };
 
-const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
+const PhysicalCountTableCard = ({
+    performPermission,
+    reviewPermission = performPermission,
+    postPermission = performPermission,
+}: TableCardProps) => {
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
@@ -391,7 +397,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         },
         record.status === "Unposted" && {
             label: "Review",
-            permission: performPermission,
+            permission: reviewPermission,
             onClick: () =>{
                 setModalType("Review");
                 setSelected(record);
@@ -400,7 +406,7 @@ const PhysicalCountTableCard = ({ performPermission }: TableCardProps) => {
         },
         record.status === "Reviewed" && {
             label: "Post",
-            permission: performPermission,
+            permission: postPermission,
              onClick: () =>{
                 setModalType("Post");
                 setSelected(record);
