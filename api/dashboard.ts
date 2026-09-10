@@ -69,3 +69,23 @@ export const getPayrollSummaryDetails = async (payload?: {}) => {
 
     return resData;
 };
+
+export const getEmployeesForLastPay = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-employees-for-last-pay',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getAllBranchesWithMissingAccounts = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-all-branches-with-missing-accounts',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
