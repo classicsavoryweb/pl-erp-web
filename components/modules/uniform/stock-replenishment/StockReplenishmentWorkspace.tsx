@@ -96,11 +96,15 @@ const formatDate = (value?: string | null) =>
 interface StockReplenishmentWorkspaceProps {
     module: StockModule;
     performPermission: string;
+    reviewPermission?: string;
+    postPermission?: string;
 }
 
 const StockReplenishmentWorkspace = ({
     module,
     performPermission,
+    reviewPermission = performPermission,
+    postPermission = performPermission,
 }: StockReplenishmentWorkspaceProps) => {
     const { permissions } = useContext(AuthContext);
     const canPerform = permissions.includes(performPermission);
@@ -786,7 +790,7 @@ const StockReplenishmentWorkspace = ({
                 if (record.status === "Unposted") {
                     actions.push({
                         label: "Review",
-                        permission: performPermission,
+                        permission: reviewPermission,
                         onClick: () => {
                             setDetail(null);
 
@@ -827,7 +831,7 @@ const StockReplenishmentWorkspace = ({
                 if (record.status === "Reviewed") {
                     actions.push({
                         label: "Post",
-                        permission: performPermission,
+                        permission: postPermission,
                         onClick: () => {
                             setDetail(record);
                             setDetailType("receiving");

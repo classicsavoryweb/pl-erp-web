@@ -34,6 +34,8 @@ import { toast } from "react-toastify";
 import VarianceReportCancelForm from "./VarianceReportCancelForm";
 interface TableCardProps {
     performPermission: string;
+    reviewPermission?: string;
+    postPermission?: string;
 }
 
 const title = "Variance Report";
@@ -67,7 +69,11 @@ const getStatusBadge = (status: string): "success" | "warning" | "danger" | "def
 };
 
 
-const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
+const VarianceReportTableCard = ({
+    performPermission,
+    reviewPermission = performPermission,
+    postPermission = performPermission,
+}: TableCardProps) => {
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
@@ -265,8 +271,8 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         },
         record.status === "Unposted" && {
             label: "Review",
-            permission: performPermission,
-            
+            permission: reviewPermission,
+
             onClick: () => {
                 setModalType("Review");
                 setSelected(record);
@@ -276,7 +282,7 @@ const VarianceReportTableCard = ({ performPermission }: TableCardProps) => {
         },
         record.status === "Reviewed" && {
             label: "Post",
-            permission: performPermission,
+            permission: postPermission,
             onClick: () => {
                 setModalType("Post");
                 setSelected(record);

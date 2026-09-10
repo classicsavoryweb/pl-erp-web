@@ -7,6 +7,8 @@ export default function VarianceReportPage() {
             <PageTitle title="Variance Report"/>
             <VarianceReportTableCard
                 performPermission="perform_uniform_variance_report"
+                reviewPermission="perform_uniform_variance_report_review"
+                postPermission="perform_uniform_variance_report_post"
             />
         </>
     );
