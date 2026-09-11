@@ -74,7 +74,7 @@ const ActualTimeTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Home Branch",
+            columnHead: "Current Branch",
             path: "employee.current_branch.short_name",
             columnType: COLUMNTYPES.string
         },
@@ -167,7 +167,7 @@ const ActualTimeTableCard = ({
             onClick: async (data: any) => {
                 if (
                     !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
-                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.home_branch_id)
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
                 ) {
                     return;
                 }
@@ -312,7 +312,7 @@ const ActualTimeTableCard = ({
                         />
                         <BranchDropDown
                             placeholder="select branch"
-                            label="Home Branch"
+                            label="Current Branch"
                             name="branch_id"
                             value={formHandler.values.branch_id}
                             onChange={(e) => {
