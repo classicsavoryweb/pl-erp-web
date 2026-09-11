@@ -37,7 +37,7 @@ const TextArea = ({
                 <textarea
                     name={name}
                     placeholder={placeholder}
-                    value={value ?? ""}
+                    value={value}
                     onChange={onChange}
                     disabled={disabled}
                     className={`
