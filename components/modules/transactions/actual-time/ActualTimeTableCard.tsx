@@ -152,7 +152,7 @@ const ActualTimeTableCard = ({
             onClick: (data: any) => {
                 if (
                     !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
-                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.home_branch_id)
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
                 ) {
                     return;
                 }
