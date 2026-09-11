@@ -15,13 +15,14 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import Badge from "@/components/common/Badge";
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
+import Dropdown from "@/components/common/Dropdown";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
 import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
-import SearchEmployeeDropDown from "@/components/modules/generic/SearchEmployeeDropDown";
+import EmployeeMultiSelect from "@/components/modules/generic/EmployeeMultiSelect";
 import { COLUMNTYPES } from "@/constants/column";
 import * as XLSX from "xlsx-js-style";
 import { useApiCall } from "@/hooks/api-call";
@@ -29,6 +30,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import { useFilter } from "@/hooks/use-filter";
 import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
+import { useFormik } from "formik";
 import moment from "moment";
 import { useState, useRef , useEffect } from "react";
 import { toast } from "react-toastify";
@@ -94,16 +96,53 @@ const PhysicalCountTableCard = ({
     const [cancelReason, setCancelReason] = useState("");
     const [password , setPassword] = useState("");
     const [changeQuantityItems , setChangeQuantityItems] = useState<any[]>([]);
-    const [physicalForm, setPhysicalForm] = useState({
-        begin_date: today(),
-        ending_date: today(),
-        counted_by: "",
-        counted_by_employee: null as any,
-        remarks: "",
-        total_sales: 0,
-        items: [] as any[],
+    const physicalCountForm = useFormik({
+        initialValues: {
+            begin_date: today(),
+            ending_date: today(),
+            counted_by_employees: [] as any[],
+            remarks: "",
+            total_sales: 0,
+            items: [] as any[],
+        },
+        onSubmit: async (values) => {
+            if (!values.items.length) {
+                toast.error("Load items first.");
+                return;
+            }
+
+            if (!values.counted_by_employees.length) {
+                toast.error("Counted By required!");
+                return;
+            }
+
+            formModal.setLoading(true);
+
+            try {
+                const resp = await createPhysicalCount({
+                    begin_date: values.begin_date,
+                    ending_date: values.ending_date,
+                    counted_by_employee_ids: values.counted_by_employees.map((employee: any) => employee.id),
+                    remarks: values.remarks,
+                    items: values.items,
+                });
+
+                if (resp?.error || resp?.errors) {
+                    toast.error(responseMessage(resp));
+                    return;
+                }
+
+                toast.success(`${title} created`);
+                formModal.onClose();
+                api.triggerReload();
+            } catch {
+                toast.error("Error encountered");
+            } finally {
+                formModal.setLoading(false);
+            }
+        },
     });
-    
+
 
     const fetchRecords = () => {
         api.setLoading(true);
@@ -134,26 +173,27 @@ const PhysicalCountTableCard = ({
                 new Date(a.begin_date).getTime()
         )[0];
 
-        setPhysicalForm({
-            begin_date: lastRecord?.ending_date ?? today(),
-            ending_date:  today(),
-            counted_by: "",
-            counted_by_employee: null,
-            remarks: "",
-            total_sales: 0,
-            items: [],
+        physicalCountForm.resetForm({
+            values: {
+                begin_date: lastRecord?.ending_date ?? today(),
+                ending_date: today(),
+                counted_by_employees: [],
+                remarks: "",
+                total_sales: 0,
+                items: [],
+            },
         });
 
         formModal.onOpen();
     };
 
     const loadPreview = async () => {
-        if (physicalForm.begin_date > physicalForm.ending_date) {
+        if (physicalCountForm.values.begin_date > physicalCountForm.values.ending_date) {
             toast.error("Begin date cannot be later than ending date");
             return;
         }
 
-        setPhysicalForm(prev => ({
+        physicalCountForm.setValues(prev => ({
             ...prev,
             items: [],
             total_sales: 0,
@@ -161,9 +201,9 @@ const PhysicalCountTableCard = ({
 
         try {
             const resp = await previewPhysicalCount({
-                begin_date: physicalForm.begin_date,
-                ending_date: physicalForm.ending_date,
-                items: physicalForm.items,
+                begin_date: physicalCountForm.values.begin_date,
+                ending_date: physicalCountForm.values.ending_date,
+                items: physicalCountForm.values.items,
             });
 
             if (resp?.error || resp?.errors) {
@@ -173,7 +213,7 @@ const PhysicalCountTableCard = ({
 
             const previewItems = resp?.items?.items ?? [];
 
-            setPhysicalForm(prev => ({
+            physicalCountForm.setValues(prev => ({
                 ...prev,
                 items: previewItems,
                 total_sales: resp?.items?.total_sales ?? 0,
@@ -191,43 +231,6 @@ const PhysicalCountTableCard = ({
         }
     };
 
-    const saveRecord = async () => {
-        if (!physicalForm.items.length) {
-            toast.error("Load items first.");
-            return;
-        }
-
-        if(!physicalForm.counted_by){
-            toast.error("Counted By required!")
-            return;
-        }
-
-        formModal.setLoading(true);
-
-        try {
-            const resp = await createPhysicalCount({
-                begin_date: physicalForm.begin_date,
-                ending_date: physicalForm.ending_date,
-                counted_by: physicalForm.counted_by,
-                remarks: physicalForm.remarks,
-                items: physicalForm.items,
-            });
-
-            if (resp?.error || resp?.errors) {
-                toast.error(responseMessage(resp));
-                return;
-            }
-
-            toast.success(`${title} created`);
-            formModal.onClose();
-            api.triggerReload();
-        } catch {
-            toast.error("Error encountered");
-        } finally {
-            formModal.setLoading(false);
-        }
-    };
-
     useEffect(() => {
     if (physicalCounts.length > 0) {
         const latestPosted = physicalCounts
@@ -239,10 +242,7 @@ const PhysicalCountTableCard = ({
             )[0];
 
         if (latestPosted) {
-            setPhysicalForm(prev => ({
-                ...prev,
-                begin_date: latestPosted.begin_date,
-            }));
+            physicalCountForm.setFieldValue("begin_date", latestPosted.begin_date);
         }
     }
     }, [physicalCounts]);
@@ -273,7 +273,7 @@ const PhysicalCountTableCard = ({
     };
 
     const downloadTemplate = () => {
-        const data = physicalForm.items.map((item) => ({
+        const data = physicalCountForm.values.items.map((item) => ({
             "ID": item.uniform_item_id,
             "Item Code": item.item_no,
             "Item Description": item.description,
@@ -302,7 +302,7 @@ const PhysicalCountTableCard = ({
     };
 
     const handleDownloadTemplate = () => {
-        if (!physicalForm.items || physicalForm.items.length === 0) {
+        if (!physicalCountForm.values.items || physicalCountForm.values.items.length === 0) {
             toast.error("Please generate the data first before downloading the template.");
             return;
         }
@@ -313,7 +313,7 @@ const PhysicalCountTableCard = ({
     const handleImportItems = async (file?: File) => {
         if (!file) return;
 
-        if (!hasGeneratedData || physicalForm.items.length === 0) {
+        if (!hasGeneratedData || physicalCountForm.values.items.length === 0) {
             toast.error("Please generate the data first before importing.");
             return;
         }
@@ -326,7 +326,7 @@ const PhysicalCountTableCard = ({
             const data = XLSX.utils.sheet_to_json<any>(worksheet);
 
             for (const row of data) {
-                const originalItem = physicalForm.items.find(
+                const originalItem = physicalCountForm.values.items.find(
                     (item) => item.uniform_item_id === row["ID"]
                 );
 
@@ -353,7 +353,7 @@ const PhysicalCountTableCard = ({
 
             const importedItems = data.map((row) => {
                 const physical_count = Number(row["Physical Count"]);
-                const originalItem = physicalForm.items.find(
+                const originalItem = physicalCountForm.values.items.find(
                     (item) => item.uniform_item_id === row["ID"]
                 );
                 return {
@@ -365,10 +365,7 @@ const PhysicalCountTableCard = ({
             });
 
 
-            setPhysicalForm(prev => ({
-                ...prev,
-                items: importedItems,
-            }));
+            physicalCountForm.setFieldValue("items", importedItems);
 
             toast.success("Items imported successfully");
 
@@ -470,6 +467,19 @@ const PhysicalCountTableCard = ({
         },
     ];
 
+    const beginDateOptions = Array.from(
+        new Map(
+            physicalCounts
+                .filter((pc: any) => pc.status !== "Cancelled" && pc.ending_date)
+                .map((pc: any) => [pc.ending_date, pc])
+        ).values()
+    )
+        .sort((a: any, b: any) => new Date(b.ending_date).getTime() - new Date(a.ending_date).getTime())
+        .map((pc: any) => ({
+            label: moment(pc.ending_date).format("MM/DD/YYYY"),
+            value: moment(pc.ending_date).format("YYYY-MM-DD"),
+        }));
+
     const filterColumns = [
         { columnHead: "Physical Count No.", path: "physical_count_no" },
         { columnHead: "Counted By", path: "counted_by" },
@@ -488,13 +498,13 @@ const PhysicalCountTableCard = ({
     ];
 
     const updatePhysicalItem = (index: number, key: string, value: any) => {
-        setPhysicalForm(prev => ({
+        physicalCountForm.setValues(prev => ({
             ...prev,
             items: prev.items.map((item, itemIndex) =>
                 itemIndex === index ? { ...item, [key]: value } : item
             ),
         }));
-    };   
+    };
 
     const confirmPassword = () => { 
         if (password !== process.env.NEXT_PUBLIC_WEIGHTED_AVERAGE_PASSWORD) { 
@@ -635,34 +645,38 @@ const PhysicalCountTableCard = ({
                 loading={formModal.loading}
                 onClose={() => {formModal.onClose(); setHasGeneratedData(false);  }}
             >
-                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-3">
-                    <Textfield label="Begin Date" type="date" value={physicalForm.begin_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, begin_date: e.target.value }))} required disabled />
-                    <Textfield label="Ending Date" type="date" value={physicalForm.ending_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, ending_date: e.target.value }))} required />
-                    <SearchEmployeeDropDown
-                        label="Counted By"
-                        placeholder="select employee"
-                        name="counted_by_employee"
-                        value={physicalForm.counted_by_employee}
-                        status="active"
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2">
+                    <Dropdown
+                        label="Beginning Date"
+                        placeholder="select ending inventory date"
+                        name="begin_date"
+                        value={physicalCountForm.values.begin_date}
+                        onChange={(e: any) => physicalCountForm.setFieldValue("begin_date", e.target.value)}
+                        options={beginDateOptions}
                         required
-                        onChange={(event: any) => {
-                            const employee = event.target.value;
-                            const employeeName = employee?.proper_full_name
-                                ?? employee?.full_name
-                                ?? [employee?.first_name, employee?.middle_name, employee?.last_name]
-                                    .filter(Boolean)
-                                    .join(" ");
-
-                            setPhysicalForm(prev => ({
-                                ...prev,
-                                counted_by_employee: employee,
-                                counted_by: employeeName,
-                            }));
-                        }}
-                    />    
+                    />
+                    <Textfield
+                        label="Ending Date"
+                        type="date"
+                        value={physicalCountForm.values.ending_date}
+                        onChange={(e) => physicalCountForm.setFieldValue("ending_date", e.target.value)}
+                        required
+                    />
+                </div>
+                <div className="mt-1">
+                    <EmployeeMultiSelect
+                        label="Counted By"
+                        value={physicalCountForm.values.counted_by_employees}
+                        onChange={(employees) => physicalCountForm.setFieldValue("counted_by_employees", employees)}
+                        required
+                    />
                 </div>
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-1">
-                    <Textfield label="Remarks" value={physicalForm.remarks} onChange={(e: any) => setPhysicalForm(prev => ({ ...prev, remarks: e.target.value }))} />
+                    <Textfield
+                        label="Remarks"
+                        value={physicalCountForm.values.remarks}
+                        onChange={(e: any) => physicalCountForm.setFieldValue("remarks", e.target.value)}
+                    />
                 </div>
 
                 <div className="flex mt-4 font-semibold pb-1 mb-1 items-center justify-between">
@@ -680,10 +694,16 @@ const PhysicalCountTableCard = ({
                     </div>
                 </div>
 
-                <PhysicalCountItemsTable items={physicalForm.items} editable onChange={updatePhysicalItem} />
+                <PhysicalCountItemsTable items={physicalCountForm.values.items} editable onChange={updatePhysicalItem} />
 
                 <div className="flex justify-end gap-x-2 mt-3">
-                    <div className="w-[120px]"><Button label="Submit" onClick={saveRecord} /></div>
+                    <div className="w-[120px]">
+                        <Button
+                            label="Submit"
+                            loading={physicalCountForm.isSubmitting}
+                            onClick={() => physicalCountForm.handleSubmit()}
+                        />
+                    </div>
                 </div>
             </Modal>
             <PhysicalCountViewForm
