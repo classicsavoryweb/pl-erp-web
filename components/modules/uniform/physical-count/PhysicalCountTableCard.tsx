@@ -15,13 +15,14 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import Badge from "@/components/common/Badge";
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
+import Dropdown from "@/components/common/Dropdown";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import EmptyState from "@/components/common/EmptyState";
 import Modal from "@/components/common/Modal";
 import Table from "@/components/common/Table";
 import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
-import SearchEmployeeDropDown from "@/components/modules/generic/SearchEmployeeDropDown";
+import EmployeeMultiSelect from "@/components/modules/generic/EmployeeMultiSelect";
 import { COLUMNTYPES } from "@/constants/column";
 import * as XLSX from "xlsx-js-style";
 import { useApiCall } from "@/hooks/api-call";
@@ -97,8 +98,7 @@ const PhysicalCountTableCard = ({
     const [physicalForm, setPhysicalForm] = useState({
         begin_date: today(),
         ending_date: today(),
-        counted_by: "",
-        counted_by_employee: null as any,
+        counted_by_employees: [] as any[],
         remarks: "",
         total_sales: 0,
         items: [] as any[],
@@ -137,8 +137,7 @@ const PhysicalCountTableCard = ({
         setPhysicalForm({
             begin_date: lastRecord?.ending_date ?? today(),
             ending_date:  today(),
-            counted_by: "",
-            counted_by_employee: null,
+            counted_by_employees: [],
             remarks: "",
             total_sales: 0,
             items: [],
@@ -197,7 +196,7 @@ const PhysicalCountTableCard = ({
             return;
         }
 
-        if(!physicalForm.counted_by){
+        if(!physicalForm.counted_by_employees.length){
             toast.error("Counted By required!")
             return;
         }
@@ -208,7 +207,7 @@ const PhysicalCountTableCard = ({
             const resp = await createPhysicalCount({
                 begin_date: physicalForm.begin_date,
                 ending_date: physicalForm.ending_date,
-                counted_by: physicalForm.counted_by,
+                counted_by_employee_ids: physicalForm.counted_by_employees.map((employee: any) => employee.id),
                 remarks: physicalForm.remarks,
                 items: physicalForm.items,
             });
@@ -470,6 +469,19 @@ const PhysicalCountTableCard = ({
         },
     ];
 
+    const beginDateOptions = Array.from(
+        new Map(
+            physicalCounts
+                .filter((pc: any) => pc.status !== "Cancelled" && pc.ending_date)
+                .map((pc: any) => [pc.ending_date, pc])
+        ).values()
+    )
+        .sort((a: any, b: any) => new Date(b.ending_date).getTime() - new Date(a.ending_date).getTime())
+        .map((pc: any) => ({
+            label: moment(pc.ending_date).format("MM/DD/YYYY"),
+            value: moment(pc.ending_date).format("YYYY-MM-DD"),
+        }));
+
     const filterColumns = [
         { columnHead: "Physical Count No.", path: "physical_count_no" },
         { columnHead: "Counted By", path: "counted_by" },
@@ -635,31 +647,25 @@ const PhysicalCountTableCard = ({
                 loading={formModal.loading}
                 onClose={() => {formModal.onClose(); setHasGeneratedData(false);  }}
             >
-                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-3">
-                    <Textfield label="Begin Date" type="date" value={physicalForm.begin_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, begin_date: e.target.value }))} required disabled />
-                    <Textfield label="Ending Date" type="date" value={physicalForm.ending_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, ending_date: e.target.value }))} required />
-                    <SearchEmployeeDropDown
-                        label="Counted By"
-                        placeholder="select employee"
-                        name="counted_by_employee"
-                        value={physicalForm.counted_by_employee}
-                        status="active"
+                <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2">
+                    <Dropdown
+                        label="Beginning Date"
+                        placeholder="select ending inventory date"
+                        name="begin_date"
+                        value={physicalForm.begin_date}
+                        onChange={(e: any) => setPhysicalForm(prev => ({ ...prev, begin_date: e.target.value }))}
+                        options={beginDateOptions}
                         required
-                        onChange={(event: any) => {
-                            const employee = event.target.value;
-                            const employeeName = employee?.proper_full_name
-                                ?? employee?.full_name
-                                ?? [employee?.first_name, employee?.middle_name, employee?.last_name]
-                                    .filter(Boolean)
-                                    .join(" ");
-
-                            setPhysicalForm(prev => ({
-                                ...prev,
-                                counted_by_employee: employee,
-                                counted_by: employeeName,
-                            }));
-                        }}
-                    />    
+                    />
+                    <Textfield label="Ending Date" type="date" value={physicalForm.ending_date} onChange={(e) => setPhysicalForm(prev => ({ ...prev, ending_date: e.target.value }))} required />
+                </div>
+                <div className="mt-1">
+                    <EmployeeMultiSelect
+                        label="Counted By"
+                        value={physicalForm.counted_by_employees}
+                        onChange={(employees) => setPhysicalForm(prev => ({ ...prev, counted_by_employees: employees }))}
+                        required
+                    />
                 </div>
                 <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-1">
                     <Textfield label="Remarks" value={physicalForm.remarks} onChange={(e: any) => setPhysicalForm(prev => ({ ...prev, remarks: e.target.value }))} />
