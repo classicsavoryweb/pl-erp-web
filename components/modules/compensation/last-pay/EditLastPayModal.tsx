@@ -1,3 +1,4 @@
+"use client";
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
 import Grid from "@/components/common/Grid";
@@ -9,12 +10,13 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import confirm from "@/components/common/Confirm";
 import LastPayDetails from "./LastPayDetails";
-import { editLastPayRecord } from "@/api/compensation/last-pay";
+import { previewLastPayComputation } from "@/api/compensation/last-pay";
+import { useEffect, useState } from "react";
 
 interface ModalInterface {
     modal: any;
     data: any;
-    onUpdated?: () => void;
+    onUpdated: () => void;
 }
 
 const EditLastPayModal = ({
@@ -38,6 +40,11 @@ const EditLastPayModal = ({
             year : 0,
             sss_loans: "No",
             sss_loans_details: [],
+            company_deductions: [],
+            government_deductions: [],
+            additional_fields: [],
+            reload_deductions: false,
+            save_changes: false
         },
         validationSchema: Yup.object().shape({
             payroll_hold: Yup.number().required("Payroll is required").min(0, "Amount cannot be negative"),
@@ -50,44 +57,59 @@ const EditLastPayModal = ({
         }),
         validateOnChange: false,
         onSubmit: async (values, {setSubmitting, setValues}) => {
-            const isConfirmed = await confirm({
-                title: "Last Pay",
-                message: "Are you sure you want to save changes?"
-            });
+            let isConfirmed = false;
+            if (values.save_changes) {
+                isConfirmed = await confirm({
+                    title: "Last Pay",
+                    message: "Are you sure you want to submit?"
+                });
+            } else {
+                isConfirmed = true;
+            }
 
             if (isConfirmed) {
                 setSubmitting(true);
-                editLastPayRecord(values, data.id)
-                .then((resp) => {
+                try {
+                    const resp = await previewLastPayComputation(data.employee?.employee_number, values);
                     if (!resp.error) {
-                        toast.success("Last pay updated successfully");
-                        setValues({
-                            incentives : resp.data.incentives,
-                            meal_allowance : resp.data.meal_allowance,
-                            payroll_hold : resp.data.payroll_hold,
-                            sales : resp.data.sales,
-                            sl_vl : resp.data.sl_vl,
-                            tax_refund : resp.data.tax_refund,
-                            thirteenth_month : resp.data.thirteenth_month,
-                            total_deductions : resp.data.total_deductions,
-                            last_pay : resp.data.last_pay,
-                            year : resp.data.year,
-                            sss_loans: resp.data.sss_loans ?? "No",
-                            sss_loans_details: formHandler.values.sss_loans_details ?? [],
+                        formHandler.setValues({
+                            ...resp.data,
+                            sss_loans: values.sss_loans
                         });
-                        onUpdated?.();
-                        modal.onClose();
+
+                        if (values.save_changes) {
+                            toast.success("Last pay successfully edited");
+                            onUpdated();
+                            formHandler.resetForm();
+                            modal.onClose();
+                        }
                     } else {
-                        toast.error(resp.data.message);
+                        toast.error("Computation error");
                     }
-                }).catch(() => {
+                } catch (error) {
                     toast.error("Error encountered");
-                }).finally(() => {
-                    setSubmitting(false);
-                });
+                }
             }
         }
     });
+
+    useEffect(() => {
+        if (modal.isShowing) {
+            const handleKeyDown = (e: any) => {
+                if (e.key === "Tab") {
+                    console.log("EDIT");
+                    formHandler.setFieldValue("save_changes", false);
+                    formHandler.submitForm();
+                }
+            };
+    
+            window.addEventListener("keydown", handleKeyDown);
+    
+            return () => {
+                window.removeEventListener("keydown", handleKeyDown);
+            };
+        }
+    }, [modal.isShowing]);
 
     return (
         <Modal
@@ -109,6 +131,7 @@ const EditLastPayModal = ({
                 employeeNumber={data.employee?.employee_number}
                 formHandler={formHandler}
                 isOpen={modal.isShowing}
+                isEdit={true}
             />
         </Modal>
     );

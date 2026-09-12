@@ -15,6 +15,8 @@ import EmployeeOffenseForm from "./EmployeeOffenseForm";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import confirm from "@/components/common/Confirm";
 import moment from "moment";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const EmployeeOffenseHistory = () => {
     const params = useParams();
@@ -25,6 +27,7 @@ const EmployeeOffenseHistory = () => {
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload } = useContext(EmployeeContext);
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -140,6 +143,9 @@ const EmployeeOffenseHistory = () => {
         {
             label: "Edit",
             onClick: (data:any) => {
+                if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                    return;
+                }
                 setAction("edit");
                 setData({
                     id: data.id,
@@ -211,6 +217,9 @@ const EmployeeOffenseHistory = () => {
                             {
                                 label: "Add",
                                 onClick: () => {
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                                        return;
+                                    }
                                     setAction("add");
                                     modal.onOpen();
                                 }

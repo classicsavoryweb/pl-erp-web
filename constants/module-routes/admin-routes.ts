@@ -47,6 +47,16 @@ export const adminRoutes: Route[] = [
                 permission: "view_roles_and_permissions"
             },
             {
+                name: "Tardiness Disabler",
+                pathname: "/administrators/tardiness-disabler",
+                permission: "view_tardiness_disabler"
+            },
+            {
+                name: "Schedule Timekeeping",
+                pathname: "/administrators/schedule-timekeeping",
+                permission: "view_scheduled_timekeeping"
+            },
+            {
                 name: "Activity Logs",
                 pathname: "/administrators/activity-logs",
                 permission: "view_activity_logs"
@@ -55,11 +65,6 @@ export const adminRoutes: Route[] = [
                 name: "Database Backups",
                 pathname: "/administrators/database-backups",
                 permission: "view_database_backups"
-            },
-            {
-                name: "Tardiness Disabler",
-                pathname: "/administrators/tardiness-disabler",
-                permission: "view_tardiness_disabler"
             },
         ]
     },

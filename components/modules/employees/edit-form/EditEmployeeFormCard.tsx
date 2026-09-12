@@ -18,9 +18,12 @@ import confirm from "@/components/common/Confirm";
 import { useRouter } from "next/navigation";
 import * as Yup from "yup";
 import EditScheduleDetails from "./EditScheduleDetails";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const EditEmployeeFormCard = () => {
 
+    const {permissions} = useContext(AuthContext);
     const {employee, loading, triggerReload} = useContext(EmployeeContext);
     const router = useRouter();
 
@@ -116,6 +119,9 @@ const EditEmployeeFormCard = () => {
             ),
         }),
         onSubmit:async (values, {setSubmitting}) => {
+            if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE",employee.employee_number, 0)) {
+                return;
+            }
             const isConfirmed = await confirm({
             title: "Edit Employee Details",
                 message: "Are you sure you want to save changes?"

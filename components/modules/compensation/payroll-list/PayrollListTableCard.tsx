@@ -23,7 +23,7 @@ import ActivityLogsModal from "../../generic/ActivityLogsModal";
 const PayrollListTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination(10);
-    const filter = useFilter();    
+    const filter = useFilter({status: "included"});    
     const [data, setData] = useState<any>(null);
     const createModal = useModal();
     const editModal = useModal();
@@ -108,6 +108,11 @@ const PayrollListTableCard = () => {
             }
         },
         {
+            columnHead: "Salary",
+            path: "salary_amount",
+            columnType: COLUMNTYPES.amount,
+        },
+        {
             columnHead: "Status",
             path: "employee.status",
             columnType: COLUMNTYPES.status,
@@ -133,7 +138,7 @@ const PayrollListTableCard = () => {
                         label={data.is_statutory_only === 1 ? "statutory only": "full payroll"}
                     />
             }
-        }
+        },
     ];
 
     const actionSettings = [
@@ -245,7 +250,6 @@ const PayrollListTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
-                
             />
             <Card>
                 <div className="flex justify-end gap-x-3">

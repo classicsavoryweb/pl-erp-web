@@ -48,11 +48,10 @@ export const exportAllEmployeeDeductions = async (payload?: {}) => {
     return resData;
 };
 
-export const getEmployeeDeduction = async (payload?: {}) => {
+export const getEmployeeDeduction = async (id: string | number) => {
     const resData = await axiosHelper({
-        func_path: '/get-employee-deduction',
+        func_path: `/get-employee-deduction/${id}`,
         method: 'GET',
-        payload: payload
     });
 
     return resData;
@@ -129,3 +128,33 @@ export const getATDAllowedDeductions = async () => {
 
     return resData;
 };
+
+export const getAllHealthcareForSalaryDeduction = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-all-healthcare-for-salary-deductions',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const createHealthCareForSalaryDeduction = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/create-healthcare-for-salary-deductions`,
+        method: 'POST',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getDeductionAmortizationHistory = async (payload: {}) => {
+    const resData = await axiosHelper({
+        func_path: `/get-employee-deduction-amortization-history`,
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+}

@@ -4,6 +4,7 @@ import { maintenanceRoutes } from "./module-routes/maintenance-routes";
 import { compensationRoutes } from "./module-routes/compensation-routes";
 import { transactionRoutes } from "./module-routes/transaction-routes";
 import { reportRoutes } from "./module-routes/report-routes";
+import { uniformRoutes } from "./module-routes/uniform-routes";
 import { pettyCashRoutes } from "./module-routes/petty-cash-routes";
 
 export interface SubLink {
@@ -47,6 +48,7 @@ export const routes: Route[] = [
     ...transactionRoutes,
     ...compensationRoutes,
     ...reportRoutes,
+    ...uniformRoutes,
     ...pettyCashRoutes,
     ...maintenanceRoutes,
     ...adminRoutes,

@@ -22,7 +22,7 @@ import moment from "moment";
 const UsersTableCard = () => {
 
     const users = useApiCall();
-    const paginator = usePagination(25);
+    const paginator = usePagination(10);
     const createUser = useModal();
     const editUser = useModal();
     const [data, setData] = useState<any>({});
@@ -70,8 +70,11 @@ const UsersTableCard = () => {
         },
         {
             columnHead: "Role",
-            path: "role.name",
-            columnType: COLUMNTYPES.string
+            path: "roles.name",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return (data.roles ?? []).map((role: any) => role.name).join(", ");
+            }
         },
         {
             columnHead: "Status",
@@ -98,7 +101,7 @@ const UsersTableCard = () => {
                     middle_name: data.middle_name ?? "",
                     last_name: data.last_name,
                     id: data.id,
-                    role_id: data.role_id,
+                    role_ids: (data.roles ?? []).map((role: any) => role.id),
                     employee_number: data.employee_number,
                     email: data.email,
                     password: "",
@@ -118,6 +121,7 @@ const UsersTableCard = () => {
                 hasExport
                 api={exportAllUsers}
                 exportFileName={`ADMINISTRATORS-USERS-${moment().format("YYYY-MM-DD")}.xls`}
+                defaultColumnSelected="full_name"
                 withStatus
                 callBack={() => {
                     paginator.setPage(1);

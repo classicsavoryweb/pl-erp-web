@@ -25,6 +25,7 @@ import ViewThirteenthMonthMonthlyAllocationModal from "./ViewThirteenthMonthMont
 import ActionDropDown from "@/components/common/ActionDropDown";
 import { AuthContext } from "@/context/AuthProvider";
 import Accordion from "@/components/common/Accordion";
+import EntryValidationModal from "../../compensation/entries/EntryValidationModal";
 
 const ThirteenthMonthTableCard = () => {
     const api = useApiCall();
@@ -38,6 +39,8 @@ const ThirteenthMonthTableCard = () => {
     const [selectedMonthPayId, setSelectedMonthPayId] = useState<string | null>(null);
     const [selectedMonthlyAllocationId, setSelectedMonthlyAllocationId] = useState<string | null>(null);
     const {permissions} = useContext(AuthContext);
+    const [validationResponse, setValidationResponse] = useState<any>({});
+    const validationModal = useModal();
 
     const typeOption = [
         {
@@ -137,12 +140,19 @@ const ThirteenthMonthTableCard = () => {
                             });
 
                             if (isConfirmed) {
-                                generateThirteenthMonthMonthlyAllocationEntries(data.id)
-                                .then((resp) => {
+                                generateThirteenthMonthMonthlyAllocationEntries(
+                                    {proceed: 'No'},
+                                    data.id
+                                ).then((resp) => {
                                     if (!resp.error) {
                                         toast.success(resp.data.message);
                                         api.triggerReload();
                                     } else {
+                                        if (resp.status === 409) {
+                                            setSelectedMonthlyAllocationId(data.id);
+                                            setValidationResponse(resp.data.data);
+                                            validationModal.onOpen();
+                                        }
                                         toast.error(resp.data.message);
                                     }
                                 }).catch(() => {
@@ -330,6 +340,14 @@ const ThirteenthMonthTableCard = () => {
             <YearSelectionModal
                 modal={yearSelectionModal}
                 onSubmitCallback={api.triggerReload}
+            />
+
+            <EntryValidationModal
+                modal={validationModal}
+                api={generateThirteenthMonthMonthlyAllocationEntries}
+                validationData={validationResponse}
+                allocation_id={Number(selectedMonthlyAllocationId)}
+                type="Allocation"
             />
         </>
     );

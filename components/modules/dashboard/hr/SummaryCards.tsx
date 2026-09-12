@@ -1,6 +1,6 @@
 "use client";
 import Grid from "@/components/common/Grid";
-import SummaryCardCount from "./SummaryCardCount";
+import SummaryCardCount from "../SummaryCardCount";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { getAllSummaryDetails } from "@/api/dashboard";

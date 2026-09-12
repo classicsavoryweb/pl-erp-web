@@ -76,6 +76,11 @@ const PayrollTableCard = () => {
             columnType: COLUMNTYPES.string,
         },
         {
+            columnHead: "Net Pay",
+            path: "net_pay",
+            columnType: COLUMNTYPES.amount,
+        },
+        {
             columnHead: "Status",
             path: "status",
             columnType: COLUMNTYPES.function,

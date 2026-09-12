@@ -14,7 +14,7 @@ const usePagination = ( perPage: number = 10) => {
     };
 
     const onClickSetPerPageNumber = (itemPerPage: number) => {
-        setPage(itemPerPage);
+        setPerPage(itemPerPage);
         setReload(prev => !prev);
     };
 

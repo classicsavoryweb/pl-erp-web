@@ -246,6 +246,7 @@ const CreatePayrollListForm = ({
                         onChange={(e) => {
                             if (e.target.checked) {
                                 createFormHandler.setFieldValue("is_hold", 1);
+                                createFormHandler.setFieldValue("is_bank", 0);
                             } else {
                                 createFormHandler.setFieldValue("is_hold", 0);
                             }

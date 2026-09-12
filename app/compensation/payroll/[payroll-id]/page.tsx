@@ -12,25 +12,28 @@ import PayrollDeductionTableCard from "@/components/modules/compensation/payroll
 import { useFormik } from "formik";
 import { PayrollContext } from "@/context/PayrollProvider";
 import { AuthContext } from "@/context/AuthProvider";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
 import { previewPayrollComputation } from "@/api/compensation/payroll";
 import * as Yup from "yup";
 import IncentivesCard from "@/components/modules/compensation/payroll/payroll-details/IncentivesCard";
 import TardinessHistoryCard from "@/components/modules/compensation/payroll/payroll-details/TardinessHistoryCard";
+import TardinessDetails from "@/components/modules/compensation/payroll/payroll-details/TardinessDetails";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const Page = () => {
     const params = useParams();
     const payrollId = params["payroll-id"];
     const { permissions } = useContext(AuthContext);
-    const {setPayrollDetails, payrollDetails } = useContext(PayrollContext);
+    const {setPayrollDetails, payrollDetails, cutOff } = useContext(PayrollContext);
 
     useEffect(() => {
         formHandler.setValues({
             regular_days: payrollDetails.details.regular_days ?? 0,
             special_leave: payrollDetails.details.special_leave ?? 0,
             cancelled_off: payrollDetails.details.cancelled_off ?? 0,
+            cancelled_off_overtime: payrollDetails.details.cancelled_off_overtime ?? 0,
             special_holiday: payrollDetails.details.special_holiday ?? 0,
             legal_holiday: payrollDetails.details.legal_holiday ?? 0,
             regular_overtime: payrollDetails.details.regular_overtime ?? 0,
@@ -52,12 +55,13 @@ const Page = () => {
             employee_philhealth: payrollDetails.employee_philhealth,
             employer_philhealth: payrollDetails.employer_philhealth,
             withholding_tax: payrollDetails.withholding_tax,
-            is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
-            is_complete_documents: payrollDetails.details.is_complete_documents,
-            is_on_maternity_leave: payrollDetails.details.is_on_maternity_leave,
-            is_hold: payrollDetails.details.is_hold,
+            is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry ?? 0,
+            is_complete_documents: payrollDetails.details.is_complete_documents ?? 0,
+            is_on_maternity_leave: payrollDetails.details.is_on_maternity_leave ?? 0,
+            is_hold: payrollDetails.details.is_hold ?? 0,
             save_changes: false,
             reload_deductions: false,
+            modify_deductions: formHandler.values.modify_deductions,
         });
     }, [payrollDetails]);
 
@@ -66,6 +70,7 @@ const Page = () => {
             regular_days: payrollDetails.details.regular_days ?? 0,
             special_leave: payrollDetails.details.special_leave ?? 0,
             cancelled_off: payrollDetails.details.cancelled_off ?? 0,
+            cancelled_off_overtime: payrollDetails.details.cancelled_off_overtime ?? 0,
             special_holiday: payrollDetails.details.special_holiday ?? 0,
             legal_holiday: payrollDetails.details.legal_holiday ?? 0,
             regular_overtime: payrollDetails.details.regular_overtime ?? 0,
@@ -86,33 +91,49 @@ const Page = () => {
             employee_philhealth: payrollDetails.employee_philhealth ?? 0,
             employer_philhealth: payrollDetails.employer_philhealth ?? 0,
             withholding_tax: payrollDetails.withholding_tax ?? 0,
-            is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry,
-            is_complete_documents: payrollDetails.details.is_complete_documents,
-            is_on_maternity_leave: payrollDetails.details.is_on_maternity_leave,
-            is_hold: payrollDetails.details.is_hold,
+            is_manual_statutory_entry: payrollDetails.details.is_manual_statutory_entry ?? 0,
+            is_complete_documents: payrollDetails.details.is_complete_documents ?? 0,
+            is_on_maternity_leave: payrollDetails.details.is_on_maternity_leave ?? 0,
+            is_hold: payrollDetails.details.is_hold ?? 0,
             remarks: payrollDetails.remarks,
             save_changes: false,
             reload_deductions: false,
+            modify_deductions: false,
         },
         validateOnChange: false,
-        onSubmit: async (values) => {
+        onSubmit: async (values, {setSubmitting}) => {
+            if (
+                !canEditRestrictedRecords(permissions, "PAYROLL", "EMPLOYEE", payrollDetails.employee.employee_number, 0) ||
+                !canEditRestrictedRecords(permissions, "PAYROLL", "BRANCH", "", payrollDetails.timekeeping_branch_id)
+            ) {
+                return;
+            }
+
             if (values.save_changes) {
+                setSubmitting(true);
                 const isConfirmed = await confirm({
                     message : "Are you sure you want to save changes",
                     title: "Payroll Details"
                 });
 
                 if (isConfirmed) {
-                    const resp = await previewPayrollComputation(Number(payrollId), values);
+                    try {
+                        const resp = await previewPayrollComputation(Number(payrollId), values);
 
-                    if (!resp.error) {
-                        setPayrollDetails(resp.data);
-                        toast.success("Payroll successfully updated");
-                    } else {
-                        toast.error(resp.data.message);
+                        if (!resp.error) {
+                            setPayrollDetails(resp.data);
+                            toast.success("Payroll successfully updated");
+                        } else {
+                            toast.error(resp.data.message);
+                        }
+                    } catch {
+                        toast.error("Error encountered")
+                    } finally {
+                        setSubmitting(false);
                     }
                 }
             } else {
+                setSubmitting(true);
                 try {
                     const resp = await previewPayrollComputation(Number(payrollId), values);
 
@@ -123,6 +144,8 @@ const Page = () => {
                     }
                 } catch {
                     toast.error("Error preview computation.");
+                } finally {
+                    setSubmitting(false);
                 }
             }
         }
@@ -131,6 +154,10 @@ const Page = () => {
     useEffect(() => {
         const handleKeyDown = (e: any) => {
             if (e.key === "Tab") {
+                if (payrollDetails.status == "final") {
+                    return;
+                }
+
                 e.preventDefault();
                 formHandler.setFieldValue("save_changes", false);
                 formHandler.setFieldValue("reload_deductions", false);
@@ -143,7 +170,7 @@ const Page = () => {
         return () => {
             window.removeEventListener("keydown", handleKeyDown);
         };
-    }, []);
+    }, [payrollDetails.status]);
 
 
     return (
@@ -154,7 +181,7 @@ const Page = () => {
                 <div className="w-8/12">
                     <EmployeeDetailCard
                         formHandler={formHandler}
-                    />
+                    />                                      
                     <div className="mt-[16px]">
                         <AdditionalWorkingHours
                             formHandler={formHandler}
@@ -180,9 +207,15 @@ const Page = () => {
                     {/* <div className="mt-[16px]">
                         <TardinessHistoryCard/>
                     </div> */}
-                    { (permissions.includes("perform_compensation_incentives")) &&
+                    { (permissions.includes("perform_compensation_incentives") && Number(cutOff.part) == 1 ) &&
                         <div className="mt-[16px]">
                             <IncentivesCard/>
+                        </div>
+                    }
+
+                    { Number(cutOff.part) == 2 &&
+                        <div className="mt-[16px]">
+                            <TardinessDetails/>
                         </div>
                     }
                 </div>

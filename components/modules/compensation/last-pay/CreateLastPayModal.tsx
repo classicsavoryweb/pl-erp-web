@@ -7,8 +7,9 @@ import LastPayDetails from "./LastPayDetails";
 import { useFormik } from "formik";
 import confirm from "@/components/common/Confirm";
 import * as Yup from "yup";
-import { createLastPayRecord } from "@/api/compensation/last-pay";
+import { createLastPayRecord, previewLastPayComputation } from "@/api/compensation/last-pay";
 import { toast } from "react-toastify";
+import EmployeeForLastPayDropDown from "../../generic/EmployeeForLastPayDropDown";
 
 interface ModalInterface {
     modal: any;
@@ -37,7 +38,11 @@ const CreateLastPayModal = ({
             last_pay : 0,
             year : 0,
             sss_loans: "No",
-            sss_loans_details: []
+            sss_loans_details: [],
+            company_deductions: [],
+            government_deductions: [],
+            additional_fields: [],
+            save_changes: false
         },
         validationSchema: Yup.object().shape({
             payroll_hold: Yup.number().required("Payroll is required").min(0, "Amount cannot be negative"),
@@ -50,47 +55,60 @@ const CreateLastPayModal = ({
         }),
         validateOnChange: false,
         onSubmit: async (values, {setSubmitting, setValues}) => {
-            const isConfirmed = await confirm({
-                title: "Last Pay",
-                message: "Are you sure you want to submit?"
-            });
+            let isConfirmed = false;
+            if (values.save_changes) {
+                isConfirmed = await confirm({
+                    title: "Last Pay",
+                    message: "Are you sure you want to submit?"
+                });
+            } else {
+                isConfirmed = true;
+            }
 
             if (isConfirmed) {
-                setSubmitting(true);
-                createLastPayRecord(values, selectedEmployee.employee_number)
-                .then((resp) => {
+                try {
+                    const resp = await previewLastPayComputation(selectedEmployee.employee_number, values);
                     if (!resp.error) {
-                        toast.success("Last pay created successfully");
-                        setValues({
-                            incentives : resp.data.incentives,
-                            meal_allowance : resp.data.meal_allowance,
-                            payroll_hold : resp.data.payroll_hold,
-                            sales : resp.data.sales,
-                            sl_vl : resp.data.sl_vl,
-                            tax_refund : resp.data.tax_refund,
-                            thirteenth_month : resp.data.thirteenth_month,
-                            total_deductions : resp.data.total_deductions,
-                            last_pay : resp.data.last_pay,
-                            year : resp.data.year,
-                            sss_loans: resp.data.sss_loans ?? "No",
-                            sss_loans_details: []
+                        formHandler.setValues({
+                            ...resp.data,
+                            sss_loans: values.sss_loans
                         });
-                        callBack();
-                        modal.onClose();
-                        setShowing(false);
-                        setSelectedEmployee({});
-                        formHandler.resetForm();
+
+                        if (values.save_changes) {
+                            toast.success("Last pay successfully created");
+                            callBack();
+                            formHandler.resetForm();
+                            setSelectedEmployee({});
+                            setShowing(false);
+                            modal.onClose();
+                        }
                     } else {
-                        toast.error(resp.data.message);
+                        toast.error("Computation error");
                     }
-                }).catch(() => {
+                } catch (error) {
                     toast.error("Error encountered");
-                }).finally(() => {
-                    setSubmitting(false);
-                });
+                }
             }
         }
     });
+
+    useEffect(() => {
+        if (modal.isShowing) {
+            const handleKeyDown = (e: any) => {
+                if (e.key === "Tab") {
+                    console.log("CREATE");
+                    formHandler.setFieldValue("save_changes", false);
+                    formHandler.submitForm();
+                }
+            };
+    
+            window.addEventListener("keydown", handleKeyDown);
+    
+            return () => {
+                window.removeEventListener("keydown", handleKeyDown);
+            };
+        }
+    }, [modal.isShowing]);
 
     return (
         <Modal
@@ -103,7 +121,7 @@ const CreateLastPayModal = ({
             }}
             size="md"
         >
-            <HoldedEmployeeDropDown
+            <EmployeeForLastPayDropDown
                 label = "Employee"
                 placeholder = "select employee"
                 name = "employee_id"

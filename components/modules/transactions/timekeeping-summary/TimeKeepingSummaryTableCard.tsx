@@ -27,6 +27,8 @@ import GenerateTimeKeepingModal from "./GenerateTimekeepingModal";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import AddTaxableAdjustmentModal from "./AddTaxableAdjustmentModal";
 import Accordion from "@/components/common/Accordion";
+import EditTimeKeepingSummaryModal from "./EditTimeKeepingSummaryModal";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -39,12 +41,13 @@ const TimeKeepingSummaryTableCard = ({
     hasExport = true,
     exportPermission = "export_all_transactions_time_keeping_summary",
 }: FilterInterface) => {
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const api = useApiCall();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>(null);
     const generateModal= useModal();
     const addAdjustmentModal = useModal();
+    const editModal = useModal();
     const [selectedSummary, setSelectedSummary] = useState<any>({});
     const canAddAdjustment = permissions.includes("perform_transactions_adjustments");
 
@@ -138,7 +141,7 @@ const TimeKeepingSummaryTableCard = ({
             columnType: COLUMNTYPES.timekeeping
         },
         {
-            columnHead: "Night Diff Overtime",
+            columnHead: "Night Diff OT",
             path: "night_differential_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
@@ -148,7 +151,7 @@ const TimeKeepingSummaryTableCard = ({
             columnType: COLUMNTYPES.timekeeping
         },
         {
-            columnHead: "Legal Holiday Overtime",
+            columnHead: "Legal Holiday OT",
             path: "legal_holiday_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
@@ -158,13 +161,18 @@ const TimeKeepingSummaryTableCard = ({
             columnType: COLUMNTYPES.timekeeping
         },
         {
-            columnHead: "Special Holiday Overtime",
+            columnHead: "Special Holiday OT",
             path: "special_holiday_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
         {
             columnHead: "Cancelled Off",
             path: "cancelled_off",
+            columnType: COLUMNTYPES.timekeeping
+        },
+        {
+            columnHead: "Cancelled Off OT",
+            path: "cancelled_off_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
         {
@@ -182,13 +190,27 @@ const TimeKeepingSummaryTableCard = ({
                         data={data}
                         actions={[
                             {
-                                label: "Add Taxable Adjustment",
-                                permission: "perform_transactions_adjustments",
-                                onClick: (row: any) => {
-                                    setSelectedSummary(row);
-                                    addAdjustmentModal.onOpen();
+                                label: "Edit",
+                                onClick: (data: any) => {
+                                    if (
+                                        !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                                        !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.branch_id)
+                                    ) {
+                                        return;
+                                    }
+
+                                    setSelectedSummary(data);
+                                    editModal.onOpen();
                                 }
-                            }
+                            },
+                            // {
+                            //     label: "Add Taxable Adjustment",
+                            //     permission: "perform_transactions_adjustments",
+                            //     onClick: (row: any) => {
+                            //         setSelectedSummary(row);
+                            //         addAdjustmentModal.onOpen();
+                            //     }
+                            // }
                         ]}
                     />
                 );
@@ -443,12 +465,10 @@ const TimeKeepingSummaryTableCard = ({
                 modal={generateModal}
             />
 
-            <AddTaxableAdjustmentModal
-                modal={addAdjustmentModal}
+            <EditTimeKeepingSummaryModal
+                modal={editModal}
                 data={selectedSummary}
-                onSubmitCallback={() => {
-                    api.triggerReload();
-                }}
+                onSubmitCallBack={api.triggerReload}
             />
         </>
     );

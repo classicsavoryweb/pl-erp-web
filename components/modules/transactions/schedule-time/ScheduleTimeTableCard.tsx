@@ -30,6 +30,9 @@ import FetchScheduleModal from "./FetchScheduleModal";
 // import TransferTimeKeepingBranchModal from "./TransferTimeKeepingBranchModal";
 import TransferTimeKeepingBranchAllModal from "./TransferTimeKeepingBranchAllModal";
 import Accordion from "@/components/common/Accordion";
+import EditScheduleTimeModal from "./EditScheduleTimeModal";
+import ActivityLogsModal from "../../generic/ActivityLogsModal";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -49,10 +52,13 @@ const ScheduleTimeTableCard = ({
     const fetchModal = useModal();
     // const transferModal = useModal();
     const transferAllModal = useModal();
-    const paginator = usePagination(20);
+    const editModal = useModal();
+    const activityLogsModal = useModal();
+    const paginator = usePagination(10);
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
     const filter = useFilter();
+    const [data, setData] = useState<any>({});
 
     const columnSettings = [
         {
@@ -143,6 +149,30 @@ const ScheduleTimeTableCard = ({
         },
     ];
 
+    const actions = [
+        {
+            label: "Edit",
+            onClick: (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.branch_id)
+                ) {
+                    return;
+                }
+
+                setData(data);
+                editModal.onOpen();
+            }
+        },
+        {
+            label: "Logs",
+            onClick: (data: any) => {
+                setData(data);
+                activityLogsModal.onOpen();
+            }
+        }
+    ]
+
     const formHandler = useFormik({
         initialValues: {
             key_word: "",
@@ -211,7 +241,7 @@ const ScheduleTimeTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch && branch.name ? branch.name : 'default-branch';
+                    const branchName = branch?.name ?? 'all-branches';
     
                     a.href = downloadUrl;
                     a.download = `${branchName.toUpperCase()}-SCHEDULE-TIME-${moment().format('YYYY-MM-DD')}.xls`;
@@ -344,6 +374,8 @@ const ScheduleTimeTableCard = ({
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
+                    withActions
+                    actions={actions}
                 />
             </Card>
 
@@ -364,14 +396,17 @@ const ScheduleTimeTableCard = ({
                     api.triggerReload();
                 }}
             />
-
-            {/* <TransferTimeKeepingBranchModal
-                modal={transferModal}
-                data={api.data}
-                onSubmitCallback={() => {
-                    api.triggerReload();
-                }}
-            /> */}
+            <EditScheduleTimeModal
+                modal={editModal}
+                data={data}
+                onSubmitCallBack={api.triggerReload}
+            />
+            <ActivityLogsModal
+                modal={activityLogsModal}
+                title="Schedule Time"
+                data={data}
+                logName="Schedule Time"
+            />
         </>
     );
 };

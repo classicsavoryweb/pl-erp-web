@@ -16,6 +16,7 @@ import confirm from "@/components/common/Confirm";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import moment from "moment";
 import Badge from "@/components/common/Badge";
+import { AuthContext } from "@/context/AuthProvider";
 
 const EmployeePromotionHistory = () => {
     const params = useParams();
@@ -26,6 +27,7 @@ const EmployeePromotionHistory = () => {
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload, employee } = useContext(EmployeeContext);
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);

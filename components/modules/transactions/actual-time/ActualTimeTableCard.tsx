@@ -34,6 +34,7 @@ import { getCurrentCutoff } from "@/helper/cutoff";
 import CutOffDropDown from "../../generic/CutOffDropDown";
 import FetchBiotimeLogsModal from "./FetchBiotimeLogs";
 import Accordion from "@/components/common/Accordion";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -58,7 +59,7 @@ const ActualTimeTableCard = ({
     const [selectedLog, setSelectedLog] = useState<string>("0");
     const [branch, setBranch] = useState<any>({});
     const { permissions } = useContext(AuthContext);
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const filter = useFilter();
 
     const columnSettings = [
@@ -73,9 +74,17 @@ const ActualTimeTableCard = ({
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Home Branch",
+            columnHead: "Current Branch",
             path: "employee.current_branch.short_name",
             columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Day",
+            path: "date",
+            columnType: COLUMNTYPES.function,
+            function: (data: any) => {
+                return moment(data.date).format('ddd').toUpperCase();
+            }
         },
         {
             columnHead: "Date",
@@ -141,6 +150,13 @@ const ActualTimeTableCard = ({
         {
             label: "Edit",
             onClick: (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
+
                 setSelectedLog(data.id);
                 setData(data.punches);
                 editModal.onOpen();
@@ -149,6 +165,12 @@ const ActualTimeTableCard = ({
         {
             label: "Delete",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: "Delete Log",
                     message: "Are you sure you want to delete this actual time log?"
@@ -247,7 +269,7 @@ const ActualTimeTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch && branch.name ? branch.name : 'default-branch';
+                    const branchName = branch?.name ?? 'all-branches';
                         
                     a.href = downloadUrl;
                     a.download = `${branchName.toUpperCase()}-ACTUAL-LOGS-${moment().format('YYYY-MM-DD')}.xls`;
@@ -290,7 +312,7 @@ const ActualTimeTableCard = ({
                         />
                         <BranchDropDown
                             placeholder="select branch"
-                            label="Home Branch"
+                            label="Current Branch"
                             name="branch_id"
                             value={formHandler.values.branch_id}
                             onChange={(e) => {

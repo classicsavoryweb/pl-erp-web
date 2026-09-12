@@ -15,6 +15,9 @@ import { useParams } from "next/navigation";
 import { toast } from "react-toastify";
 import AddRequirementAttachmentModal from "./AddRequirementAttachmentModal";
 import ViewRequirementsAttachmentModal from "./ViewRequirementAttachmentModal";
+import { AuthContext } from "@/context/AuthProvider";
+import { useContext } from "react";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const EmployeeRequirementsList = () => {
     const params = useParams();
@@ -22,6 +25,7 @@ const EmployeeRequirementsList = () => {
     const api = useApiCall();
     const createModal = useModal();
     const viewModal = useModal();
+    const { permissions } = useContext(AuthContext);
 
     const handler = useFormik({
         initialValues: {
@@ -46,6 +50,9 @@ const EmployeeRequirementsList = () => {
             occupational_permit: "No",
         },
         onSubmit:async (values, {setSubmitting}) => {
+            if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                return;
+            }
             const isConfirmed = await confirm({
                 title: "Requirements",
                 message: "Are you sure you want to save?"

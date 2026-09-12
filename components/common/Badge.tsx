@@ -1,5 +1,5 @@
 interface BadgeStatus {
-    status?: "danger" | "default" | "warning" | "success";
+    status?: "danger" | "default" | "warning" | "success" | "purpose";
     label: string | number;
 };
 
@@ -8,12 +8,14 @@ const Badge = ({
     label
 }: BadgeStatus) => {
     return (
-            <p
-                className={`inline-block px-2 py-1 m-[2px]
+        <div>
+            <span
+                className={`inline-block px-2 py-1
                     ${status === "default" && "bg-zinc-700"}
                     ${status === "danger" && "bg-red-800"}
                     ${status === "warning" && "bg-orange-600"}
                     ${status === "success" && "bg-green-800"}
+                    ${status === "purpose" && "bg-blue-600"}
                     text-slate-50
                     text-[10px]
                     rounded-full
@@ -21,7 +23,8 @@ const Badge = ({
                 `}
             >
                 {label}
-            </p>
+            </span>
+        </div>
     );
 };
 

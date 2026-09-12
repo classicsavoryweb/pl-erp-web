@@ -36,7 +36,7 @@ const SubDropDown = ({
                     rounded-md
                     py-[7px]
                     items-center
-                    text-[12px]
+                    text-[11px]
                     px-2
                     focus:outline-none
                     hover:cursor-pointer
@@ -93,7 +93,7 @@ const SubDropDown = ({
                                         py-[7px]
                                         items-center
                                         font-medium
-                                        text-[12px]
+                                        text-[11px]
                                         px-8
                                         focus:outline-none
                                         dark:text-slate-300

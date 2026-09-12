@@ -16,6 +16,7 @@ import Grid from "@/components/common/Grid";
 import RateCodeDropDown from "../../generic/RateCodeDropDown";
 import confirm from "@/components/common/Confirm";
 import RegionDropDown from "../../generic/RegionDropDown";
+import { useRatesStore } from "@/stores/useRateStore";
 
 interface FormModalInterface {
     modal: any;
@@ -34,6 +35,8 @@ const CreateBranchForm = ({
     modal,
     onSubmitCallback
 }: FormModalInterface) => {
+
+    const { rates } = useRatesStore();
 
     const createBranchFormHandler = useFormik({
         initialValues: {
@@ -124,6 +127,10 @@ const CreateBranchForm = ({
             }
         }
     });
+
+    const selectedMinimumRate = createBranchFormHandler.values.rate_code
+        ? rates.find((rate: any) => rate.code === createBranchFormHandler.values.rate_code)?.minimum ?? ""
+        : "";
 
     const getCurrentDate = () => {
         const currentDate = new Date();
@@ -240,6 +247,12 @@ const CreateBranchForm = ({
                         required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.rate_code}
+                    />
+                    <Textfield
+                        label="Minimum Rate"
+                        placeholder=""
+                        value={selectedMinimumRate}
+                        disabled
                     />
                 </Grid>
 

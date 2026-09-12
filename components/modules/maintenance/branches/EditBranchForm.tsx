@@ -19,7 +19,7 @@ import confirm from "@/components/common/Confirm";
 import { AuthContext } from "@/context/AuthProvider";
 import { useContext } from "react";
 import RegionDropDown from "../../generic/RegionDropDown";
-
+import { useRatesStore } from "@/stores/useRateStore";
 
 
 interface FormModalInterface {
@@ -42,7 +42,8 @@ const EditBranchForm = ({
     formValue
 }: FormModalInterface) => {
 
-    const { permissions } = useContext(AuthContext); 
+    const { permissions } = useContext(AuthContext);
+    const { rates } = useRatesStore();
     const canEditAllBranches = permissions.includes("edit_branches_all");
     const canEditBranchOic = canEditAllBranches || permissions.includes("edit_branches_oic");
     const oicEditableFields = [
@@ -143,6 +144,10 @@ const EditBranchForm = ({
             }
         }
     });
+
+    const selectedMinimumRate = editBranchFormHandler.values.rate_code
+        ? rates.find((rate: any) => rate.code === editBranchFormHandler.values.rate_code)?.minimum ?? ""
+        : "";
 
     useEffect(() => {
         if (modal.isShowing) {
@@ -306,6 +311,12 @@ const EditBranchForm = ({
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.rate_code}
                         disabled={!canEditAllBranches}
+                    />
+                    <Textfield
+                        label="Minimum Rate"
+                        placeholder=""
+                        value={selectedMinimumRate}
+                        disabled
                     />
                 </Grid>
                 <SectionDivider label="Branch OIC" />

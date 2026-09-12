@@ -148,6 +148,10 @@ const CutOffTableCard = () => {
             <ViewCutOffModal
                 modal={viewCutOffModal}
                 data={data}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    viewCutOffModal.onClose();
+                }}
             />
         </>
     );

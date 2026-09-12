@@ -2,6 +2,7 @@
 
 import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
+import Badge from "@/components/common/Badge";
 import Table from "@/components/common/Table";
 import { COLUMNTYPES } from "@/constants/column";
 import { useApiCall } from "@/hooks/api-call";
@@ -32,6 +33,8 @@ import ActivityLogsModal from "../../generic/ActivityLogsModal";
 import { formatNumber } from "@/helper/amount";
 import CountLabel from "@/components/common/CountLabel";
 import Accordion from "@/components/common/Accordion";
+import FetchSalaryDeductionForm from "./FetchSalaryDeductionForm";
+import ViewDeductionAmortizationModal from "./ViewDeductionAmortizationModal";
 
 interface EmployeeDeductionsInterface {
     hasExport?: boolean;
@@ -49,8 +52,10 @@ const EmployeeDeductionsTableCard = ({
     const createModal = useModal();
     const editModal = useModal();
     const viewModal = useModal();
+    const viewAmortizationModal = useModal();
     const editLoanModal = useModal();
     const importModal = useModal();
+    const salaryDeductionModal = useModal();
     const activityLogsModal = useModal();
     const [data, setData] = useState<any>({});
     const [employee, setEmployee] = useState<any>({});
@@ -81,6 +86,11 @@ const EmployeeDeductionsTableCard = ({
         {
             columnHead: "Deduction Type",
             path: "deduction.description",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Transaction Number",
+            path: "transaction_number",
             columnType: COLUMNTYPES.string
         },
         {
@@ -162,36 +172,38 @@ const EmployeeDeductionsTableCard = ({
             columnType: COLUMNTYPES.function,
             function: (data: any) => {
                 let actions = [];
-
-                actions.push({
-                    label: "Edit",
-                    onClick: () => {
-                        editModal.onOpen();
-                        setData({
-                            employee: data.employee,
-                            id: data.id,
-                            employee_id: data.employee_id,
-                            employee_number: data.employee.employee_number,
-                            deduction_id: data.deduction_id,
-                            months: data.months,
-                            amount: data.amount,
-                            start_date: data.start_date,
-                            end_date: data.end_date,
-                            monthly_amortization: data.monthly_amortization,
-                            balance: data.balance,
-                            remarks: data.remarks,
-                            branch_id: data.branch_id,
-                            block_payment: data.block_payment,
-                            created_by: data.created_by,
-                            deduction_type: data.deduction.description,
-                        });
-                    }
-                });
+                
+                if (permissions.includes("edit_compensation_deductions")) {
+                    actions.push({
+                        label: "Edit",
+                        onClick: () => {
+                            editModal.onOpen();
+                            setData({
+                                employee: data.employee,
+                                id: data.id,
+                                employee_id: data.employee_id,
+                                employee_number: data.employee.employee_number,
+                                deduction_id: data.deduction_id,
+                                months: data.months,
+                                amount: data.amount,
+                                start_date: data.start_date,
+                                end_date: data.end_date,
+                                monthly_amortization: data.monthly_amortization,
+                                balance: data.balance,
+                                remarks: data.remarks,
+                                branch_id: data.branch_id,
+                                block_payment: data.block_payment,
+                                created_by: data.created_by,
+                                deduction_type: data.deduction.description,
+                            });
+                        }
+                    });
+                }
 
                 const balance = parseFloat(data.balance);
                 const status = data.end_loan_status;
 
-                if (balance > 0  && status !== "Yes") {
+                if (balance > 0  && status !== "Yes" && permissions.includes("end_loan_compensation_deductions")) {
                     actions.push({
                             label: "End Loan Transaction",
                             onClick: () => {
@@ -207,17 +219,21 @@ const EmployeeDeductionsTableCard = ({
                     });
                 }
 
-                if (balance == 0  || status == "Yes") {
-                    actions = [
-                        {
-                            label: "View",
-                            onClick: () => {
-                                viewModal.onOpen();
-                                setData(data);
-                            }
-                        }
-                    ];
-                }
+                actions.push({
+                    label: "View",
+                    onClick: () => {
+                        viewModal.onOpen();
+                        setData(data);
+                    }
+                });
+
+                actions.push({
+                    label: "View Amortization",
+                    onClick: () => {
+                        viewAmortizationModal.onOpen();
+                        setData(data);
+                    }
+                });
                 
                 actions.push({
                     label: "View Logs",
@@ -255,6 +271,12 @@ const EmployeeDeductionsTableCard = ({
 
     const actionSettings = [
         {
+            label: "Fetch For Salary Deduction",
+            onClick: () => {
+                salaryDeductionModal.onOpen();
+            }
+        },
+        {
             label: "Create new deduction",
             onClick: () => {
                 createModal.onOpen();
@@ -274,7 +296,8 @@ const EmployeeDeductionsTableCard = ({
             column_type: "",
             employee_id: "",
             date_created_from: "", 
-            date_created_to: "", 
+            date_created_to: "",
+            status:"", 
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
@@ -389,6 +412,7 @@ const EmployeeDeductionsTableCard = ({
                                 paginator.setPage(1);
                                 setEmployee(selectedEmployee);
                                 formHandler.setFieldValue("employee_id", selectedEmployee.id);
+                                formHandler.setFieldValue("status", selectedEmployee.status);
                             }}
                             value={employee}
                             error={formHandler.errors.employee_id}
@@ -434,16 +458,28 @@ const EmployeeDeductionsTableCard = ({
                             onChange={formHandler.handleChange}
                         /> 
                     </Grid>
-                    <div className="flex flex-wrap items-center justify-between gap-4">
-                        <div className="flex flex-wrap items-end gap-1">
+                    <div className="flex items-end justify-between gap-4 max-h-[100px]">
+                        <div className="flex items-end gap-1">
                             <CountLabel
                                 label="Active Deductions"
                                 count={summary.deduction_count}
                             />
                             <CountLabel
-                                label="Remaing Balance"
+                                label="Remaining Balance"
                                 count={summary.total_balance}
                             />
+                            {formHandler.values.status && (
+                            <div className="flex flex-col gap-0">
+                                <p className="text-[10px] lead-4 font-medium text-slate-500 dark:text-slate-400">
+                                    Employee Status
+                                </p>
+
+                                <Badge
+                                    status={formHandler.values.status === "active" ? "success" : "danger"}
+                                    label={formHandler.values.status}
+                                />
+                            </div>
+                            )}
                         </div>
                         <div className="flex justify-end gap-x-1">
                             <div>
@@ -542,6 +578,19 @@ const EmployeeDeductionsTableCard = ({
                 modal={activityLogsModal}
                 data={data}
                 logName="Employee Deductions"
+            />
+
+            <FetchSalaryDeductionForm
+                modal={salaryDeductionModal}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    salaryDeductionModal.onClose();
+                }}
+            />
+
+            <ViewDeductionAmortizationModal
+                modal={viewAmortizationModal}
+                data={data}
             />
         </>
     );

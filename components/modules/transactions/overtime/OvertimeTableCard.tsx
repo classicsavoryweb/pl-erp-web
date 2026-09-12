@@ -37,6 +37,7 @@ import ViewTimeKeepingModal from "./ViewTimeKeepingModal";
 import ChooseTimeKeepingModal from "./ChooseTimeKeepingModal";
 import FetchOvertimeModal from "./FetchOvertimeModal";
 import Accordion from "@/components/common/Accordion";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -57,7 +58,7 @@ const OvertimeTableCard = ({
     const timekeepingModal = useModal();
     const { permissions } = useContext(AuthContext);
     const [branch, setBranch] = useState<any>({});
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const filter = useFilter();
     const [data, setData] = useState<any>({});
     const [dataSet, setDataSet] = useState<any[]>([]);
@@ -200,6 +201,12 @@ const OvertimeTableCard = ({
         {
             label: "Force Adjustment",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 setData(data);
                 const isConfirmed = await confirm({
                     title: "Force Adjustment",
@@ -229,6 +236,12 @@ const OvertimeTableCard = ({
         {
             label: "Void",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: "Void Overtime",
                     message: "Are you sure you want to void this overtime?",
@@ -372,7 +385,7 @@ const OvertimeTableCard = ({
                     });
                     const downloadUrl = window.URL.createObjectURL(blob);
                     const a = document.createElement('a');
-                    const branchName = branch ? branch.name : 'default-branch';
+                    const branchName = branch?.name ?? 'all-branches';
     
                     a.href = downloadUrl;
                     a.download = `${branchName.toUpperCase()}-OVERTIME-${moment().format('YYYY-MM-DD')}.xls`;

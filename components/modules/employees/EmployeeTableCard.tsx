@@ -17,7 +17,7 @@ import { AuthContext } from "@/context/AuthProvider";
 
 const EmployeeTableCard = () => {
     const api = useApiCall();
-    const paginator = usePagination(15);
+    const paginator = usePagination(10);
     const filter = useFilter();
     const [sort, setSort] = useState<any>({});
     const { permissions } = useContext(AuthContext);

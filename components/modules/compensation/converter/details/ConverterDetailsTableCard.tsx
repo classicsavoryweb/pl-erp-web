@@ -20,6 +20,7 @@ import Badge from "@/components/common/Badge";
 import FetchCSHubTransactionForm from "./FetchCSHubTransactionForm";
 import ImportConverterTransactionForm from "./ImportConverterTransactionForm";
 import moment from "moment";
+import ViewConverterDetailsModal from "./ViewConverterDetailsModal";
 
 const ConverterDetailsTableCard = () => {
     const api = useApiCall();
@@ -27,6 +28,7 @@ const ConverterDetailsTableCard = () => {
     const [data, setData] = useState<any>({});
     const createModal = useModal();
     const editModal = useModal();
+    const viewModal = useModal();
     const fetchModal = useModal();
     const importModal = useModal();
     const filterHandler = useFilter();
@@ -116,8 +118,12 @@ const ConverterDetailsTableCard = () => {
             function: (data: any) => {
                 var tableActions:any[] = [];
 
-                if (data.status === "Pending") {
+                if (data.status === "Pending") {1
                     tableActions = actions;
+                } else {
+                    tableActions = [
+                        actions[0]
+                    ];
                 }
 
                 return (
@@ -131,6 +137,14 @@ const ConverterDetailsTableCard = () => {
     ];
 
     const actions = [
+        {
+            label: "View",
+            onClick: (data: any) => {
+                setData(data);
+                viewModal.onOpen();
+                console.log(data);
+            }
+        },
         {
             label: "Edit",
             onClick: (data: any) => {
@@ -229,6 +243,10 @@ const ConverterDetailsTableCard = () => {
                     paginator={paginator}
                 />
             </Card>
+            <ViewConverterDetailsModal
+                data={data}
+                modal={viewModal}
+            />
             <CreateConverterDetailForm
                 modal={createModal}
                 onSubmitCallback={api.triggerReload}
@@ -240,7 +258,10 @@ const ConverterDetailsTableCard = () => {
             />
             <FetchCSHubTransactionForm
                 modal={fetchModal}
-                onSubmitCallback={api.triggerReload}
+                onSubmitCallback={() => {
+                    api.triggerReload();
+                    fetchModal.onClose();
+                }}   
             />
             <ImportConverterTransactionForm
                 modal={importModal}

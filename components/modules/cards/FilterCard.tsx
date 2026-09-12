@@ -12,7 +12,7 @@ import BranchDropDown from "../generic/BranchDropDown";
 import EmploymentStatusDropdown from "../generic/EmploymentStatusDropDown";
 import EmployeeTypeDropDown from "../generic/EmployeeTypeDropDown";
 import confirm from "@/components/common/Confirm";
-import { useContext, useEffect } from "react";
+import { ReactNode, useContext, useEffect } from "react";
 import { AuthContext } from "@/context/AuthProvider";
 import { useModal } from "@/hooks/modal";
 import Modal from "@/components/common/Modal";
@@ -53,6 +53,7 @@ interface FilterInterface {
     columnSort?: boolean;
     filterValues?: any;
     triggerSort?: boolean;
+    children?: ReactNode;
 };
 const FilterCard = ({
     isExpanded = false,
@@ -101,6 +102,7 @@ const FilterCard = ({
     exportOptions,
     columnSort = false,
     filterValues,
+    children,
 }: FilterInterface) => {
 
     const optionModal = useModal();
@@ -241,6 +243,9 @@ const FilterCard = ({
             }
         }
     }, [filterValues]);
+    const selectedFields = exportHandler.values.fields || []; 
+    const normalOptions = exportOptions?.filter(o => o.value !== "check_all") || []; 
+    const allSelected = normalOptions.length > 0 && selectedFields.length === normalOptions.length;
 
     return (
         <>
@@ -446,7 +451,7 @@ const FilterCard = ({
                         }
                     </Grid>
                     <div className="flex justify-between gap-x-2">
-                        <div></div>
+                        <div>{children}</div>
                         <div className="flex gap-x-1">
                             <div>
                                 <Button
@@ -512,6 +517,24 @@ const FilterCard = ({
                 onClose={optionModal.onClose}
                 size="lg"
             >
+               <div className="pb-2 flex justify-between items-center">
+                    <p className="text-xs font-semibold">
+                        Employee Details
+                    </p>
+
+                    <Checkbox
+                        label="Select All"
+                        value="check_all"
+                        checked={allSelected}
+                        onChange={(e) => {
+                            if (e.target.checked) {
+                                exportHandler.setFieldValue("fields", [...normalOptions]);
+                            } else {
+                                exportHandler.setFieldValue("fields", []);
+                            }
+                        }}
+                    />
+                </div>
                 <Grid cols={3}>
                     { exportOptions && exportOptions.map((option, key) => {
                         return (
@@ -528,11 +551,15 @@ const FilterCard = ({
                                         } else {
                                             exportHandler.setFieldValue(
                                                 "fields",
-                                                exportHandler.values.fields.filter((field) => field !== option)
+                                                exportHandler.values.fields.filter(
+                                                    (field: any) => field.value !== option.value
+                                                )
                                             );
                                         }
                                     }}
-                                    checked={option.checked ?? undefined}
+                                    checked={selectedFields.some(
+                                        (field: any) => field.value === option.value
+                                    )}
                                 />
                             </div>
                         );

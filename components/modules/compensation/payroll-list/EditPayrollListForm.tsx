@@ -6,13 +6,14 @@ import Textfield from "@/components/common/Textfield";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
-import { useEffect } from "react";
+import { useContext, useEffect } from "react";
 import confirm from "@/components/common/Confirm";
 import { editPayrollList } from "@/api/compensation/payroll-list";
 import Dropdown from "@/components/common/Dropdown";
 import TextArea from "@/components/common/TextArea";
 import Grid from "@/components/common/Grid";
 import Checkbox from "@/components/common/Checkbox";
+import { AuthContext } from "@/context/AuthProvider";
 
 interface FormModalInterface {
     modal: any;
@@ -26,6 +27,7 @@ const EditPayrollListForm = ({
     formValue,
 }: FormModalInterface) => {
 
+    const {permissions} = useContext(AuthContext);
     const editFormHandler = useFormik({
         initialValues: {
             employee: formValue.employee || {},
@@ -157,9 +159,11 @@ const EditPayrollListForm = ({
                     ]}
                 />
                 <Textfield
+                    required
                     label="Salary"
                     name="salary_amount"
                     value={editFormHandler.values.salary_amount ?? ""}
+                    disabled={!permissions.includes("perform_compensation_payroll_list_salary")}
                     onChange={(e) => {
                         const raw = String(e.target.value ?? "");
                         const cleaned = raw.replace(/[^0-9.]/g, "");
@@ -249,6 +253,7 @@ const EditPayrollListForm = ({
                         onChange={(e) => {
                             if (e.target.checked) {
                                 editFormHandler.setFieldValue("is_hold", 1);
+                                editFormHandler.setFieldValue("is_bank", 0);
                             } else {
                                 editFormHandler.setFieldValue("is_hold", 0);
                             }

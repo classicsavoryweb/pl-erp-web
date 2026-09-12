@@ -15,6 +15,8 @@ import ActionDropDown from "@/components/common/ActionDropDown";
 import confirm from "@/components/common/Confirm";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import moment from "moment";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const EmployeePositionHistory = () => {
     const params = useParams();
@@ -25,6 +27,7 @@ const EmployeePositionHistory = () => {
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload, employee } = useContext(EmployeeContext);
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -92,6 +95,9 @@ const EmployeePositionHistory = () => {
                                 {
                                     label: "Edit",
                                     onClick: () => {
+                                        if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                                            return;
+                                        }
                                         setAction("edit");
                                         modal.onOpen();
                                         setData({
@@ -131,6 +137,9 @@ const EmployeePositionHistory = () => {
                             {
                                 label: "Add",
                                 onClick: () => {
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                                        return;
+                                    }
                                     setData(api.dataSet[0]);
                                     setAction("add");
                                     modal.onOpen();

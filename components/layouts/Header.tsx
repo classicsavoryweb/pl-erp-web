@@ -247,6 +247,7 @@ const Header = () => {
                             await logout();
                             Cookies.remove('authToken');
                             Cookies.remove('userDetails');
+                            Cookies.remove('employeeDetails');
                             let index = 0;
                             while (Cookies.get(`permissions_${index}`)) {
                                 Cookies.remove(`permissions_${index}`);

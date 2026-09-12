@@ -21,6 +21,8 @@ import confirm from "@/components/common/Confirm";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import DeleteBranchForm from "./DeleteBranchForm";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const EmployeeBranchHistory = () => {
     const params = useParams();
@@ -33,6 +35,7 @@ const EmployeeBranchHistory = () => {
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload, employee } = useContext(EmployeeContext);
     const [id, setId] = useState<string>("0");
+    const { permissions } = useContext(AuthContext);
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -83,6 +86,9 @@ const EmployeeBranchHistory = () => {
                     {
                         label: "Edit",
                         onClick: () => {
+                            if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                                return;
+                            }
                             setAction("edit");
                             modal.onOpen();
                             setData({
@@ -96,6 +102,9 @@ const EmployeeBranchHistory = () => {
                     {
                         label: "Delete",
                         onClick: async () => {
+                            if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                                return;
+                            }
                             deleteModal.onOpen();
                             setId(data.id);
                         }
@@ -153,6 +162,9 @@ const EmployeeBranchHistory = () => {
                             {
                                 label: "Add",
                                 onClick: () => {
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                                        return;
+                                    }
                                     setAction("add");
                                     modal.onOpen();
                                     setData(api.dataSet[0]);

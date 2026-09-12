@@ -24,17 +24,20 @@ import CutOffDropDown from "../../generic/CutOffDropDown";
 import ActionDropDown from "@/components/common/ActionDropDown";
 import { approveAdjustments, getAdjustment, getAllAdjustments, unapproveAdjustments, voidAdjustments } from "@/api/transactions/adjustments";
 import CreateAdjustmentsModal from "./CreateAdjustmentsModal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import ViewAdjustmentModal from "./ViewAdjustmentModal";
 import Accordion from "@/components/common/Accordion";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 const AdjustmentsTableCard = () => {
     const api = useApiCall();
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const createAdjustments = useModal();
     const viewAdjustments = useModal();
     const filter = useFilter();
     const [id, setId] = useState<number|string>(0);
+    const {permissions} = useContext(AuthContext);
     const statusOption = [
         {
             label: "Approved",
@@ -70,6 +73,16 @@ const AdjustmentsTableCard = () => {
             columnHead: "Date",
             path: "date",
             columnType: COLUMNTYPES.date
+        },
+        {
+            columnHead: "Cutoff Adjusted",
+            path: "cut_off",
+            columnType: COLUMNTYPES.string
+        },
+        {
+            columnHead: "Days",
+            path: "days",
+            columnType: COLUMNTYPES.string
         },
         {
             columnHead: "Taxable Amount",
@@ -151,6 +164,13 @@ const AdjustmentsTableCard = () => {
         {
             label: "Approve",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
+
                 const isConfirmed = await confirm({
                     title: "Approve Adjustments",
                     message: "Are you sure you want to approve this adjustments?",
@@ -173,6 +193,12 @@ const AdjustmentsTableCard = () => {
         {
             label: "Unapprove",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: "Unapprove Adjustments",
                     message: "Are you sure you want to unapprove this adjustments?",
@@ -195,6 +221,12 @@ const AdjustmentsTableCard = () => {
         {
             label: "Void",
             onClick: async (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.employee.branch_id)
+                ) {
+                    return;
+                }
                 const isConfirmed = await confirm({
                     title: "Void Adjustments",
                     message: "Are you sure you want to void this adjustments?",

@@ -167,6 +167,24 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
                         value={formatNumber(payrollDetails.cancelled_off)}
                     />
                 </Grid>
+                <Grid
+                    cols={2}
+                    smallGap
+                >
+                    <Textfield
+                        label="Cancelled Off Overtime"
+                        name="cancelled_off_overtime"
+                        onChange={formHandler.handleChange}
+                        value={formHandler.values.cancelled_off_overtime}
+                        type="number"
+                        disabled={payrollDetails.status == "final"}
+                    />
+                    <Textfield
+                        disabled
+                        label="Amount"
+                        value={formatNumber(payrollDetails.cancelled_off_overtime_amount)}
+                    />
+                </Grid>
             </Grid>
         </Card>
     );

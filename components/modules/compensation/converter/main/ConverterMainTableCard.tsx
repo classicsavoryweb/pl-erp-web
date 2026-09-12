@@ -10,7 +10,15 @@ import usePagination from "@/hooks/pagination";;
 import { toast } from "react-toastify";
 import moment from "moment";
 import ActionDropDown from "@/components/common/ActionDropDown";
-import { exportConverterBatchTransactions, exportConverterDetails, generateConverter, getAllConverterMain, postBatchConverter, sendTransactionEmail, voidBatchConverter } from "@/api/compensation/converter";
+import {
+    exportConverterBatchTransactions,
+    exportConverterDetails,
+    generateConverter,
+    getAllConverterMain,
+    postBatchConverter,
+    sendTransactionEmail,
+    voidBatchConverter
+} from "@/api/compensation/converter";
 import CreateBatchModal from "./CreateBatchModal";
 import ViewBatchModal from "./ViewBatchModal";
 import Badge from "@/components/common/Badge";
@@ -21,6 +29,8 @@ import FilterCard from "@/components/modules/cards/FilterCard";
 import ResendBatchModalForm from "./ResendBatchModalForm";
 import ViewLogsModal from "./ViewLogsModal";
 import ViewExcludedTransactions from "./ViewExcludedTransactions";
+import CountLabel from "@/components/common/CountLabel";
+import SendConverterModal from "./SendConverterModal";
 
 const ConverterMainTableCard = () => {
     const api = useApiCall();
@@ -28,12 +38,20 @@ const ConverterMainTableCard = () => {
     const createModal = useModal();
     const resendModal = useModal();
     const viewModal = useModal();
+    const sendModal = useModal();
     const excludedTransactionModal = useModal();
     const exportModal = useModal();
     const logsModal = useModal();
+    const [data, setData] = useState<any>({});
     const [dataSet, setDataSet] = useState<any[]>([]);
     const filterHandler = useFilter();
     const [excludedTransactions, setExcludedTransactions] = useState<any[]>([]);
+    const [summary, setSummary] = useState({
+        total_count: 0,
+        total_amount: 0,
+        total_pending: 0,
+        total_generated: 0
+    });
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -46,9 +64,16 @@ const ConverterMainTableCard = () => {
             if (resp.error) {
                 toast.error("Error fetching converter details");
             } else {
-                api.setDataSet(resp.data.data);
-                paginator.setPage(resp.data.current_page);
-                paginator.setPaginationData(resp.data);
+                const converters = resp.data.converters ?? resp.data;
+                api.setDataSet(converters.data);
+                paginator.setPage(converters.current_page);
+                paginator.setPaginationData(converters);
+                setSummary({
+                    total_count: Number(resp.data.summary?.total_count ?? 0),
+                    total_amount: Number(resp.data.summary?.total_amount ?? 0),
+                    total_pending: Number(resp.data.summary?.total_pending ?? 0),
+                    total_generated: Number(resp.data.summary?.total_generated?? 0),
+                });      
             }
         })
         .catch(() => {
@@ -273,31 +298,18 @@ const ConverterMainTableCard = () => {
                         document.body.appendChild(a);
                         a.click();
                         a.remove();
+                    }).finally(() => {
+                        api.triggerReload();
                     });
+
                 }
             }
         },
         {
             label: "Send Email",
-            onClick: async (data: any) => {
-                const isConfirmed = await confirm({
-                    title: "Send Email",
-                    message: "Are you sure you want to send email?"
-                });
-
-                if (isConfirmed) {
-                    sendTransactionEmail(data.id)
-                    .then((resp) => {
-                        if (!resp.error) {
-                            toast.success("Emails sent successfully");
-                            api.triggerReload();
-                        } else {
-                            toast.error(resp.data.message);
-                        }
-                    }).catch(() => {
-                        toast.error("Error encountered");
-                    });
-                }
+            onClick: (data: any) => {
+                sendModal.onOpen();
+                setData(data);
             }
         },
         {
@@ -355,6 +367,7 @@ const ConverterMainTableCard = () => {
                 withBranch
                 withStatus
                 hasExport
+                defaultColumnSelected="batch_number"
                 exportFileName={`CONVERTER-TRANSACTIONS-LIST-${moment().format('YYYY-MM-DD')}.xls`}
                 api={exportConverterBatchTransactions}
                 statusOption={[
@@ -382,7 +395,26 @@ const ConverterMainTableCard = () => {
                 callBack={() => {
                     paginator.setPage(1);
                 }}
-            />
+            >
+                <div className="flex flex-wrap items-end gap-4">
+                    <CountLabel
+                        label="Total Count"
+                        count={summary.total_count}
+                    />
+                    <CountLabel
+                        label="Total Amount"
+                        count={summary.total_amount}
+                    />
+                     <CountLabel
+                        label="Total Pending"
+                        count={summary.total_pending}
+                    />
+                     <CountLabel
+                        label="Total Generated"
+                        count={summary.total_generated}
+                    />
+                </div>
+            </FilterCard>
             <Card>
                 <div className="flex justify-end">
                     <div>
@@ -427,6 +459,11 @@ const ConverterMainTableCard = () => {
                 onCloseCallBack={() => {
                     setExcludedTransactions([]);
                 }}
+            />
+            <SendConverterModal
+                data={data}
+                modal={sendModal}
+                onSubmitCallBack={api.triggerReload}
             />
         </>
     );

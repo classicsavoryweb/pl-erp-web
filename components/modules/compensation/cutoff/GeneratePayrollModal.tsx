@@ -11,7 +11,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import { useBranchStore } from "@/stores/useBranchStore";
 import { useState } from "react";
 import { useApiCall } from "@/hooks/api-call";
-import { generatePayroll } from "@/api/compensation/cut-off";
+import { generatePayroll, getBranchesToRegeneratePayroll } from "@/api/compensation/cut-off";
 
 interface FormModalInterface {
     modal: any;
@@ -23,14 +23,20 @@ const GeneratePayrollModal = ({
 
     const [filteredBranches, setFilteredBranches] = useState<any[]>([]);
     const {branches, loading, getBranches} = useBranchStore();
+    const [branchToReload, setBranchToReload] = useState<number[]>([]);
     const api = useApiCall();
 
-    useAsyncEffect(() => {    
+    useAsyncEffect(async () => {    
         if (modal.isShowing) {
             getBranches();
             if (branches.length > 0) {
                 api.setDataSet(branches);
                 setFilteredBranches(branches);
+            }
+            
+            const resp = await getBranchesToRegeneratePayroll();
+            if (!resp.error) {
+                setBranchToReload(resp.data.branches);
             }
         }    
     }, [modal.isShowing, branches.length]);
@@ -180,6 +186,7 @@ const GeneratePayrollModal = ({
                                     value={data.id}
                                     checked={formHandler.values.branch_id.includes(data.id)}
                                     onChange={(e) => handleCheckboxChange(e, data.id)}
+                                    required={branchToReload.includes(data.id)}
                                 />
                             ))}
                         </Grid>

@@ -76,6 +76,7 @@ export const axiosHelper = async ({
             Cookies.remove('authToken');
             Cookies.remove('permissions');
             Cookies.remove('userDetails');
+            Cookies.remove('employeeDetails');
             window.location.href = "/login";
         }
 

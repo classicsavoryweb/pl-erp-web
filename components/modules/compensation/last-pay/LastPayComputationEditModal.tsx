@@ -2,11 +2,12 @@
 
 import Modal from "@/components/common/Modal";
 import Textfield from "@/components/common/Textfield";
+import TextArea from "@/components/common/TextArea";
 import Grid from "@/components/common/Grid";
 import Button from "@/components/common/Button";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
-import { getInitialLastPay } from "@/api/compensation/last-pay";
+import { getLastPay, updateLastPayRemarks } from "@/api/compensation/last-pay";
 import { getEmployee } from "@/api/employee";
 import { toast } from "react-toastify";
 import { useContext, useEffect, useMemo, useState } from "react";
@@ -17,6 +18,7 @@ import LastPayComputationModal from "./LastPayComputationModal";
 interface LastPayComputationEditModalProps {
     modal: any;
     data: any;
+    onUpdated?: () => void;
 }
 
 type CustomLineItem = {
@@ -109,7 +111,8 @@ const computeDeductionSummary = (deductions: any[]): DeductionSummary => {
 
 const LastPayComputationEditModal = ({
     modal,
-    data
+    data,
+    onUpdated,
 }: LastPayComputationEditModalProps) => {
     const api = useApiCall();
     const previewModal = useModal();
@@ -136,6 +139,7 @@ const LastPayComputationEditModal = ({
         basic_salary: 0,
         daily_rate: 0,
         cola: 0,
+        remarks: "",
     });
     const [initializedKey, setInitializedKey] = useState<string | null>(null);
     const { userDetails } = useContext(AuthContext);
@@ -152,7 +156,7 @@ const LastPayComputationEditModal = ({
         api.setLoading(true);
 
         Promise.all([
-            getInitialLastPay(employeeNumber),
+            getLastPay(employeeNumber),
             getEmployee(employeeNumber),
             preparerEmployeeNumber && preparerEmployeeNumber !== employeeNumber
                 ? getEmployee(preparerEmployeeNumber)
@@ -216,15 +220,16 @@ const LastPayComputationEditModal = ({
             payroll_hold: data?.payroll_hold ?? details?.payroll_hold,
             thirteenth_month: data?.thirteenth_month ?? details?.thirteenth_month,
             incentives: data?.incentives ?? details?.incentives,
-            sl_vl: data?.sl_vl ?? details?.sl_vl,
-            meal_allowance: data?.meal_allowance ?? details?.meal_allowance ?? data?.meal,
+            sl_vl: details?.sl_vl ?? data?.sl_vl,
+            meal_allowance: details?.meal_allowance ?? data?.meal_allowance ?? details?.meal ?? data?.meal,
             tax_refund: data?.tax_refund ?? details?.tax_refund,
-            sales: data?.sales ?? details?.sales,
+            sales: details?.sales ?? data?.sales,
             total_deductions: data?.total_deductions ?? details?.total_deductions,
             last_pay: data?.last_pay ?? details?.last_pay,
             employee: details?.employee ?? data?.employee,
             prepared_by: preparedBy || data?.prepared_by || details?.prepared_by,
             prepared_by_title: preparedByTitle || data?.prepared_by_title || details?.prepared_by_title,
+            remarks: details?.remarks ?? data?.remarks ?? "",
         };
     }, [details, data, preparedBy, preparedByTitle]);
 
@@ -237,20 +242,30 @@ const LastPayComputationEditModal = ({
         setInitializedKey(key);
 
         const baseEmployee = baseData?.employee ?? {};
-        const baseBasicSalary = toNumber(
-            baseData?.basic_salary
-            ?? baseEmployee?.current_position?.salary?.basic_salary
-            ?? baseEmployee?.basic_salary
-            ?? 0
-        );
-        const baseDailyRate = toNumber(
-            baseData?.daily_rate
-            ?? baseData?.payrolls?.[0]?.daily_rate
-            ?? (baseBasicSalary ? baseBasicSalary / 26 : 0)
-        );
 
+        if (baseEmployee?.basic_salary === undefined || baseEmployee?.basic_salary === null) {
+            toast.error("Basic salary not found for this employee (employee.basic_salary is missing from the API response).");
+        }
+        const baseBasicSalary = toNumber(baseEmployee?.basic_salary ?? 0);
+
+        const rawDailyRate = baseData?.payrolls?.[0]?.daily_rate;
+        if (rawDailyRate === undefined || rawDailyRate === null) {
+            toast.error("Daily rate not found for this employee (payrolls[0].daily_rate is missing from the API response).");
+        }
+        const baseDailyRate = toNumber(rawDailyRate ?? 0);
+
+        const additionalFields : any = [];
+        if (details.additional_fields && details.additional_fields.length > 0) {
+            details.additional_fields.map((field: any) => {
+                additionalFields.push({
+                    id: field.id,
+                    amount: field.amount,
+                    label: field.description
+                });
+            });
+        }
+        setCustomAmounts(additionalFields);
         setDeductionSummary(computeDeductionSummary(baseData?.deductions ?? []));
-        setCustomAmounts([]);
         setCustomDeductions([]);
         setDraft({
             payroll_hold: toNumber(baseData?.payroll_hold),
@@ -268,6 +283,7 @@ const LastPayComputationEditModal = ({
             basic_salary: baseBasicSalary,
             daily_rate: baseDailyRate,
             cola: toNumber(baseData?.cola ?? baseEmployee?.cola ?? 0),
+            remarks: baseData?.remarks ?? "",
         });
     }, [
         modal.isShowing,
@@ -348,6 +364,7 @@ const LastPayComputationEditModal = ({
             basic_salary: toNumber(draft.basic_salary),
             daily_rate: toNumber(draft.daily_rate),
             cola: toNumber(draft.cola),
+            remarks: draft.remarks,
             deduction_summary_override: deductionSummary,
             computation_items_override: customAmounts,
             deduction_items_override: customDeductions,
@@ -370,6 +387,33 @@ const LastPayComputationEditModal = ({
             ...prev,
             [field]: e.target.value,
         }));
+    };
+
+    const handleSaveRemarks = async () => {
+        const lastPayId = baseData?.id ?? data?.id;
+        if (!lastPayId) return;
+
+        api.setLoading(true);
+        try {
+            const resp = await updateLastPayRemarks(lastPayId, {
+                remarks: draft.remarks,
+            });
+
+            if (!resp.error) {
+                toast.success("Remarks updated successfully");
+                setDetails((prev: any) => ({
+                    ...prev,
+                    remarks: draft.remarks,
+                }));
+                onUpdated?.();
+            } else {
+                toast.error(resp.data?.message ?? "Error updating remarks");
+            }
+        } catch {
+            toast.error("Error encountered");
+        } finally {
+            api.setLoading(false);
+        }
     };
 
     const handleDeductionChange = (field: keyof DeductionSummary) => (e: any) => {
@@ -441,7 +485,7 @@ const LastPayComputationEditModal = ({
                 loading={api.loading}
             >
                 <p className="text-sm text-slate-500 mb-2">
-                   Note: Changes here only affect the PDF preview/print and will not update the employee record.
+                   Note: Amount and signatory changes only affect the PDF preview/print. Remarks are saved to the record.
                 </p>
 
                 <p className="font-semibold mt-2">Computation Amounts</p>
@@ -696,7 +740,22 @@ const LastPayComputationEditModal = ({
                     />
                 </Grid>
 
+                <div className="mt-4">
+                    <TextArea
+                        label="Remarks"
+                        value={draft.remarks}
+                        onChange={handleDraftTextChange("remarks")}
+                    />
+                </div>
+
                 <div className="flex justify-end gap-2 mt-4">
+                    <div className="w-40">
+                        <Button
+                            label="Save Remarks"
+                            variant="success"
+                            onClick={handleSaveRemarks}
+                        />
+                    </div>
                     <div className="w-40">
                         <Button
                             label="Preview PDF"

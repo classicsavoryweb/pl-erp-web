@@ -136,3 +136,13 @@ export const generateTimeKeepingPerEmployee = async (payload?: {}) => {
 
     return resData;
 };
+
+export const updateTimeKeepingSummary = async (payload: {}, id: number) => {
+    const resData = await axiosHelper({
+        func_path: `/update-timekeeping/${id}`,
+        method: "POST",
+        payload: payload
+    });
+
+    return resData;
+};

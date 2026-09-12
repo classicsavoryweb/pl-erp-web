@@ -18,6 +18,8 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import confirm from "@/components/common/Confirm";
 import moment from "moment";
 import { voidEmployeeContract } from "@/api/employee";
+import { AuthContext } from "@/context/AuthProvider";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 
 const EmployeeContractHistory = () => {
@@ -30,6 +32,7 @@ const EmployeeContractHistory = () => {
     const modal = useModal();
     const [action, setAction] = useState<"add" | "edit">("add");
     const { triggerReload } = useContext(EmployeeContext);
+    const { permissions } = useContext(AuthContext);
 
     const [id, setId] = useState<number>(0);
     const initialContractModal = useModal();
@@ -99,6 +102,9 @@ const EmployeeContractHistory = () => {
                     {
                         label: "Edit",
                         onClick: () => {
+                            if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                                return;
+                            }
                             setAction("edit");
                             modal.onOpen();
                             setData({
@@ -241,6 +247,9 @@ const EmployeeContractHistory = () => {
                             {
                                 label: "Add",
                                 onClick: () => {
+                                    if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", String(employeeNumber), 0)) {
+                                        return;
+                                    }
                                     setAction("add");
                                     setData(api.dataSet[0]);
                                     modal.onOpen();

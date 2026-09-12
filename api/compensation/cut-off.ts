@@ -48,19 +48,20 @@ export const editCutOff = async (payload: {}, id: number | string) => {
     return resData;
 };
 
-export const initializeCutOff = async (id: number | string) => {
+export const finalizeCutOff = async (id: number | string) => {
     const resData = await axiosHelper({
-        func_path: `/initialize-cut-off/${id}`,
+        func_path: `/finalize-cut-off/${id}`,
         method: 'GET',
     });
 
     return resData;
 };
 
-export const finalizeCutOff = async (id: number | string) => {
+export const initializePayroll = async (payload: {}) => {
     const resData = await axiosHelper({
-        func_path: `/finalize-cut-off/${id}`,
-        method: 'GET',
+        func_path: '/initialize-payroll',
+        method: 'POST',
+        payload: payload
     });
 
     return resData;
@@ -84,3 +85,13 @@ export const reComputeIncentives = async (id: number | string) => {
 
     return resData;
 };
+
+export const getBranchesToRegeneratePayroll = async () => {
+    const resData = await axiosHelper({
+        func_path: `/get-branches-to-regenerate-payroll`,
+        method: 'GET',
+    });
+
+    return resData;
+};
+

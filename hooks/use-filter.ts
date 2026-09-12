@@ -1,7 +1,7 @@
 import { useState } from "react";
 
-export const useFilter = () => {
-    const [filters, setFilters] = useState<any>({});
+export const useFilter = (filter?:{}) => {
+    const [filters, setFilters] = useState<any>(filter);
     const [reload, setReload] = useState<boolean>(false);
 
     const onReload = () => {

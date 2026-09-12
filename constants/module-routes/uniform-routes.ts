@@ -1,0 +1,75 @@
+interface SubLink {
+    name: string;
+    pathname: string;
+    permission: string;
+    break?: boolean;
+    isDropDown?: boolean;
+    subLinks?: SubLink[];
+}
+
+interface BaseRoute {
+    name: string;
+    icon: string;
+    type: "link" | "dropdown";
+    permission: string;
+}
+
+interface LinkRoute extends BaseRoute {
+    type: "link";
+    pathname: string;
+}
+
+export interface DropdownRoute extends BaseRoute {
+    basepath: string;
+    type: "dropdown";
+    subLinks: SubLink[];
+}
+
+export type Route = LinkRoute | DropdownRoute;
+
+export const uniformRoutes: Route[] = [
+    {
+        name: "Uniform",
+        icon: "CheckroomOutlined",
+        type: "dropdown",
+        permission: "view_uniform_module",
+        basepath: "/uniform",
+        subLinks: [
+            {
+                name: "Item Masterlist",
+                pathname: "/uniform/item-masterlist",
+                permission: "view_uniform_item_masterlist"
+            },
+            {
+                name: "Request and Issuance",
+                pathname: "/uniform/request-and-issuance",
+                permission: "view_uniform_request_and_issuance"
+            },
+            {
+                name: "Replenishment Request",
+                pathname: "/uniform/replenishment-request",
+                permission: "view_uniform_replenishment_request"
+            },
+            {
+                name: "Receiving of Stocks",
+                pathname: "/uniform/receiving-stocks",
+                permission: "view_uniform_receiving_stocks"
+            },
+            {
+                name: "Weighted Average",
+                pathname: "/uniform/weighted-average",
+                permission: "view_uniform_weighted_average"
+            },
+            {
+                name: "Physical Count",
+                pathname: "/uniform/physical-count",
+                permission: "view_uniform_physical_count"
+            },
+            {
+                name: "Variance Report",
+                pathname: "/uniform/variance-report",
+                permission: "view_uniform_variance_report"
+            },
+        ]
+    }
+];

@@ -24,6 +24,7 @@ import { getCurrentCutoff } from "@/helper/cutoff";
 import { useModal } from "@/hooks/modal";
 import EditUndertimeModal from "./EditUndertimeModal";
 import Accordion from "@/components/common/Accordion";
+import { canEditRestrictedRecords } from "@/helper/restriction";
 
 interface FilterInterface {
     hasExport?: boolean;
@@ -36,7 +37,7 @@ const TimeKeepingTableCard = ({
     hasExport = true,
     exportPermission = "export_all_transactions_time_keeping",
 }: FilterInterface) => {
-    const paginator = usePagination(20);
+    const paginator = usePagination(10);
     const api = useApiCall();
     const editModal = useModal();
     const { permissions } = useContext(AuthContext);
@@ -130,7 +131,7 @@ const TimeKeepingTableCard = ({
             }
         },
         {
-            columnHead: "Computed Overtime",
+            columnHead: "Computed OT",
             path: "regular_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
@@ -140,7 +141,7 @@ const TimeKeepingTableCard = ({
             columnType: COLUMNTYPES.timekeeping
         },
         {
-            columnHead: "Night Diff Overtime",
+            columnHead: "Night Diff OT",
             path: "night_diff_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
@@ -150,7 +151,7 @@ const TimeKeepingTableCard = ({
             columnType: COLUMNTYPES.timekeeping
         },
         {
-            columnHead: "Legal Holiday Overtime",
+            columnHead: "Legal Holiday OT",
             path: "legal_holiday_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
@@ -160,13 +161,18 @@ const TimeKeepingTableCard = ({
             columnType: COLUMNTYPES.timekeeping
         },
         {
-            columnHead: "Special Holiday Overtime",
+            columnHead: "Special Holiday OT",
             path: "special_holiday_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
         {
             columnHead: "Cancelled Off",
             path: "cancelled_off_hours",
+            columnType: COLUMNTYPES.timekeeping
+        },
+                {
+            columnHead: "Cancelled Off OT",
+            path: "cancelled_off_overtime",
             columnType: COLUMNTYPES.timekeeping
         },
         {
@@ -233,6 +239,13 @@ const TimeKeepingTableCard = ({
         {
             label: "Edit",
             onClick: (data: any) => {
+                if (
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "EMPLOYEE", data.employee.employee_number, 0) ||
+                    !canEditRestrictedRecords(permissions, "TIME_KEEPING", "BRANCH", "", data.branch_id)
+                ) {
+                    return;
+                }
+
                 setSelectedTimekeeping(data);
                 editModal.onOpen();
             }

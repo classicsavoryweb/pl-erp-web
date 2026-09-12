@@ -6,6 +6,7 @@ import { Metadata } from "next";
 // import { CookiesProvider } from "react-cookie"
 import { ThemeProvider } from "next-themes"
 import { ToastContainer } from "react-toastify";
+import ToastProvider from "@/components/layouts/ToastProvider";
 
 export const metadata: Metadata = {
   	description: "A web-based entity resource planning application for classic savory",
@@ -32,10 +33,10 @@ export default function RootLayout({
 						easing="linear"
 						showSpinner
 					/>
-						<ToastContainer/>
-						<AuthProvider>
-							{children}
-						</AuthProvider>
+					<ToastProvider/>
+					<AuthProvider>
+						{children}
+					</AuthProvider>
 				</ThemeProvider>
 			</body>
 		</html>

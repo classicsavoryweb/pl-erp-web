@@ -4,12 +4,13 @@ import { useParams, usePathname } from "next/navigation";
 import Cookies from "js-cookie";
 import { toast } from "react-toastify";
 import { useAsyncEffect } from "@/hooks/async-effect";
-import { Incentives, PayrollDetails } from "@/constants/interfaces/interface";
+import { CutOff, Incentives, PayrollDetails } from "@/constants/interfaces/interface";
 import { getPayroll } from "@/api/compensation/payroll";
 
 interface PayrollContextType {
     payrollDetails: PayrollDetails;
     incentivesDetails: Incentives;
+    cutOff: CutOff;
     loading: boolean;
     triggerReload: () => void;
     setPayrollDetails: Dispatch<SetStateAction<PayrollDetails>>;
@@ -43,6 +44,7 @@ const defaultPayrollDetails: PayrollDetails = {
     taxable_adjustment: "",
     non_taxable_adjustment: "",
     cancelled_off: "",
+    cancelled_off_overtime_amount: "",
     gross_pay: "",
     employee_sss: "",
     employer_sss: "",
@@ -93,9 +95,20 @@ const defaultIncentivesDetails: Incentives = {
     worked_days: 0
 };
 
+const defaultCutOff: CutOff = {
+    id: 0,
+    cut_off: "",
+    start_date: "",
+    end_date: "",
+    pay_date: "",
+    status: "",
+    part: "1",
+};
+
 export const PayrollContext = createContext<PayrollContextType>({
     payrollDetails: defaultPayrollDetails,
     incentivesDetails: defaultIncentivesDetails,
+    cutOff: defaultCutOff,
     loading: true,
     triggerReload: () => {},
     setPayrollDetails: () => {},
@@ -107,6 +120,7 @@ const PayrollProvider = ({
     children
 }: {children: React.ReactNode}) => {
     const [payrollDetails, setPayrollDetails] = useState<PayrollDetails>(defaultPayrollDetails);
+    const [cutOff, setCutOff] = useState<CutOff>(defaultCutOff);
     const [incentivesDetails, setIncentivesDetails] = useState<Incentives>(defaultIncentivesDetails);
     const [loading, setLoading] = useState<boolean>(true);
     const [reload, setReload] = useState<boolean>(true);
@@ -125,6 +139,7 @@ const PayrollProvider = ({
             .then((resp) => {
                 if (!resp.error) {
                     setPayrollDetails(resp.data);
+                    setCutOff(resp.data.cut_off);
                     setIncentivesDetails({ 
                         ...resp.data.incentives, 
                         days: resp.data.days, 
@@ -146,6 +161,7 @@ const PayrollProvider = ({
     return (
         <PayrollContext.Provider value={{
             payrollDetails,
+            cutOff,
             setPayrollDetails,
             incentivesDetails,
             setIncentivesDetails,

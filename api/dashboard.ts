@@ -29,3 +29,63 @@ export const getEmployeeExpiringContracts = async (payload?: {}) => {
 
     return resData;
 };
+
+export const getUniformSummaryDetails = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-uniform-summary-details',
+        method: 'GET',
+        payload:payload
+    });
+
+    return resData;
+}
+
+export const getEmployeeAnniversary = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-employees-anniversary',
+        method:'GET',
+        payload:payload
+    })
+
+    return resData;
+}
+
+export const getItemCriticalLevel = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-nearly-out-of-stocks',
+        method:'GET',
+        payload:payload
+    })
+
+    return resData;
+}
+
+export const getPayrollSummaryDetails = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-payroll-summary-details',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getEmployeesForLastPay = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-employees-for-last-pay',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};
+
+export const getAllBranchesWithMissingAccounts = async (payload?: {}) => {
+    const resData = await axiosHelper({
+        func_path: '/get-all-branches-with-missing-accounts',
+        method: 'GET',
+        payload: payload
+    });
+
+    return resData;
+};

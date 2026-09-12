@@ -10,6 +10,7 @@ import { useEffect, useState } from "react";
 import Accordion from "@/components/common/Accordion";
 import Timeline from "../../generic/Timeline";
 import moment from "moment";
+import TextArea from "@/components/common/TextArea";
 
 interface FormModalInterface {
     modal: any;
@@ -27,25 +28,23 @@ const AddTaxableAdjustmentModal = ({
 
     const formHandler = useFormik<{
         amount: string;
+        remarks: string;
     }>({
         initialValues: {
-            amount: ""
+            amount: "",
+            remarks: "",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             amount: Yup.number()
                 .typeError("Amount is required.")
                 .required("Amount is required."),
+            remarks: Yup.string().required("Remarks is required")
         }),
         onSubmit: async (values, { setSubmitting, resetForm }) => {
-            if (!data?.id) {
-                toast.error("Timekeeping summary not selected.");
-                return;
-            }
-
             const isConfirm = await confirm({
-                title: "Add Taxable Adjustment",
-                message: "Are you sure you want to add taxable adjustment?"
+                title: "Taxable Adjustment",
+                message: "Are you sure you want to save changes?"
             });
 
             if (!isConfirm) {
@@ -56,7 +55,8 @@ const AddTaxableAdjustmentModal = ({
             try {
                 const resp = await addTimeKeepingSummaryAdjustment({
                     timekeeping_summary_id: data.id,
-                    amount: values.amount
+                    amount: values.amount,
+                    remarks: values.remarks
                 });
 
                 if (!resp.error) {
@@ -115,18 +115,11 @@ const AddTaxableAdjustmentModal = ({
             return;
         }
 
-        const rawAmount =
-            data?.adjustment_amount ??
-            data?.taxable_adjustment ??
-            data?.taxable_adjustment_amount ??
-            "";
-        const numericAmount = Number(rawAmount);
-        const nextAmount = Number.isFinite(numericAmount) && numericAmount !== 0
-            ? String(numericAmount)
-            : "";
-
-        formHandler.setFieldValue("amount", nextAmount, false);
-    }, [modal.isShowing, data?.id]);
+        formHandler.setValues({
+            amount: data.adjustment_amount,
+            remarks: data.remarks
+        });
+    }, [modal.isShowing]);
 
     return (
         <Modal
@@ -136,7 +129,7 @@ const AddTaxableAdjustmentModal = ({
                 modal.onClose();
                 formHandler.resetForm();
             }}
-            size="sm"
+            size="md"
         >
             <form onSubmit={formHandler.handleSubmit}>
                 <Textfield
@@ -147,6 +140,16 @@ const AddTaxableAdjustmentModal = ({
                     value={formHandler.values.amount}
                     onChange={formHandler.handleChange}
                     error={formHandler.errors.amount}
+                    required
+                />
+
+                <TextArea
+                    label="Remarks"
+                    name="remarks"
+                    placeholder="enter remarks"
+                    value={formHandler.values.remarks}
+                    onChange={formHandler.handleChange}
+                    error={formHandler.errors.remarks}
                     required
                 />
 
