@@ -28,7 +28,7 @@ const formatAmount = (value: any) =>
         ? Number(value).toLocaleString("en-PH", { style: "currency", currency: "PHP" })
         : "—";
 
-// baliktad ipapakita, kabaligtaran ng raw value sa db (same sa cash issuance)
+// For Display Purposes
 const renderOverUnder = (value: any) => {
     if (value == null || value === "") return <span className="text-gray-400">—</span>;
     const val = Number(value);
@@ -127,119 +127,119 @@ const ViewReplenishmentModal = ({ modal, replenishmentId, showPostAction = false
 
     return (
         <>
-        <Modal
-            isShowing={modal.isShowing}
-            title={`View Replenishment${replenishment?.replenishment_id ? ` — ${replenishment.replenishment_id}` : ""}`}
-            onClose={modal.onClose}
-            size="xxl"
-        >
-            <div className="grid grid-cols-3 gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-5 text-sm">
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Replenishment ID</p>
-                    <p className="font-medium">{replenishment?.replenishment_id ?? "—"}</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Transaction Date</p>
-                    <p className="font-medium">{replenishment?.date ?? "—"}</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Status</p>
-                    <p className="font-medium">{replenishment?.status ?? "—"}</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Cash Issuance Amount</p>
-                    <p className="font-medium">{formatAmount(replenishment?.total_cash_issuance_amount)}</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Over/Under Amount</p>
-                    <p className="font-medium">{renderOverUnder(replenishment?.total_overunder_amount)}</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Replenishment</p>
-                    <p className="font-medium">{formatAmount(replenishment?.total_replenishment_amount)}</p>
-                </div>
-                <div className="col-span-3">
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Branches</p>
-                    <p className="font-medium">{replenishment?.branches_summary ?? "—"}</p>
-                </div>
-                {replenishment?.status === "Voided" && (
-                    <div className="col-span-3">
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Void Reason</p>
-                        <p className="font-medium">{replenishment?.void_reason ?? "—"}</p>
+            <Modal
+                isShowing={modal.isShowing}
+                title={`View Replenishment${replenishment?.replenishment_id ? ` — ${replenishment.replenishment_id}` : ""}`}
+                onClose={modal.onClose}
+                size="xxl"
+            >
+                <div className="grid grid-cols-3 gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-5 text-sm">
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Replenishment ID</p>
+                        <p className="font-medium">{replenishment?.replenishment_id ?? "—"}</p>
                     </div>
-                )}
-            </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Transaction Date</p>
+                        <p className="font-medium">{replenishment?.date ?? "—"}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Status</p>
+                        <p className="font-medium">{replenishment?.status ?? "—"}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Cash Issuance Amount</p>
+                        <p className="font-medium">{formatAmount(replenishment?.total_cash_issuance_amount)}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Over/Under Amount</p>
+                        <p className="font-medium">{renderOverUnder(replenishment?.total_overunder_amount)}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Replenishment</p>
+                        <p className="font-medium">{formatAmount(replenishment?.total_replenishment_amount)}</p>
+                    </div>
+                    <div className="col-span-3">
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Branches</p>
+                        <p className="font-medium">{replenishment?.branches_summary ?? "—"}</p>
+                    </div>
+                    {replenishment?.status === "Voided" && (
+                        <div className="col-span-3">
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Void Reason</p>
+                            <p className="font-medium">{replenishment?.void_reason ?? "—"}</p>
+                        </div>
+                    )}
+                </div>
 
-            <p className="font-semibold text-sm mb-2">Included Transactions</p>
+                <p className="font-semibold text-sm mb-2">Included Transactions</p>
 
-            <div className="overflow-x-auto border dark:border-neutral-600 rounded min-h-[220px]">
-                <table className="w-full text-sm">
-                    <thead className="bg-gray-100 dark:bg-neutral-800">
-                        <tr>
-                            <th className="text-left px-3 py-2 whitespace-nowrap">PCV Number</th>
-                            <th className="text-left px-3 py-2 whitespace-nowrap">Date</th>
-                            <th className="text-left px-3 py-2 whitespace-nowrap">Branch</th>
-                            <th className="text-left px-3 py-2 whitespace-nowrap">Requested By</th>
-                            <th className="text-right px-3 py-2 whitespace-nowrap">Cash Issuance Amount</th>
-                            <th className="text-right px-3 py-2 whitespace-nowrap">Unliquidated Amount</th>
-                            <th className="text-right px-3 py-2 whitespace-nowrap">Over/Under Amount</th>
-                            <th className="text-left px-3 py-2 whitespace-nowrap">Status</th>
-                            <th className="text-left px-3 py-2 whitespace-nowrap">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {loading ? (
+                <div className="overflow-x-auto border dark:border-neutral-600 rounded min-h-[220px]">
+                    <table className="w-full text-sm">
+                        <thead className="bg-gray-100 dark:bg-neutral-800">
                             <tr>
-                                <td colSpan={9} className="text-center py-6 text-gray-400">Loading...</td>
+                                <th className="text-left px-3 py-2 whitespace-nowrap">PCV Number</th>
+                                <th className="text-left px-3 py-2 whitespace-nowrap">Date</th>
+                                <th className="text-left px-3 py-2 whitespace-nowrap">Branch</th>
+                                <th className="text-left px-3 py-2 whitespace-nowrap">Requested By</th>
+                                <th className="text-right px-3 py-2 whitespace-nowrap">Cash Issuance Amount</th>
+                                <th className="text-right px-3 py-2 whitespace-nowrap">Unliquidated Amount</th>
+                                <th className="text-right px-3 py-2 whitespace-nowrap">Over/Under Amount</th>
+                                <th className="text-left px-3 py-2 whitespace-nowrap">Status</th>
+                                <th className="text-left px-3 py-2 whitespace-nowrap">Action</th>
                             </tr>
-                        ) : snapshots.length === 0 ? (
-                            <tr>
-                                <td colSpan={9} className="text-center py-6 text-gray-400">No transactions found.</td>
-                            </tr>
-                        ) : (
-                            snapshots.map((row: any) => (
-                                <tr key={row.id} className="border-t dark:border-neutral-600">
-                                    <td className="px-3 py-2 whitespace-nowrap font-mono text-xs">{formatPCV(row.pcv_number, row.cshub_trans_no)}</td>
-                                    <td className="px-3 py-2 whitespace-nowrap">{row.transaction_date}</td>
-                                    <td className="px-3 py-2 whitespace-nowrap">{row.branch_name}</td>
-                                    <td className="px-3 py-2 whitespace-nowrap">{row.requested_by_name}</td>
-                                    <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(row.amount)}</td>
-                                    <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(row.unliquidated_amount)}</td>
-                                    <td className="px-3 py-2 text-right whitespace-nowrap">{renderOverUnder(row.overunder_amount)}</td>
-                                    <td className="px-3 py-2 whitespace-nowrap">{row.status_at_snapshot}</td>
-                                    <td className="px-3 py-2">
-                                        <ActionDropDown
-                                            data={row}
-                                            actions={[
-                                                { label: "View", onClick: () => handleViewTransaction(row) },
-                                            ]}
-                                        />
-                                    </td>
+                        </thead>
+                        <tbody>
+                            {loading ? (
+                                <tr>
+                                    <td colSpan={9} className="text-center py-6 text-gray-400">Loading...</td>
                                 </tr>
-                            ))
-                        )}
-                    </tbody>
-                </table>
-            </div>
+                            ) : snapshots.length === 0 ? (
+                                <tr>
+                                    <td colSpan={9} className="text-center py-6 text-gray-400">No transactions found.</td>
+                                </tr>
+                            ) : (
+                                snapshots.map((row: any) => (
+                                    <tr key={row.id} className="border-t dark:border-neutral-600">
+                                        <td className="px-3 py-2 whitespace-nowrap font-mono text-xs">{formatPCV(row.pcv_number, row.cshub_trans_no)}</td>
+                                        <td className="px-3 py-2 whitespace-nowrap">{row.transaction_date}</td>
+                                        <td className="px-3 py-2 whitespace-nowrap">{row.branch_name}</td>
+                                        <td className="px-3 py-2 whitespace-nowrap">{row.requested_by_name}</td>
+                                        <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(row.amount)}</td>
+                                        <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(row.unliquidated_amount)}</td>
+                                        <td className="px-3 py-2 text-right whitespace-nowrap">{renderOverUnder(row.overunder_amount)}</td>
+                                        <td className="px-3 py-2 whitespace-nowrap">{row.status_at_snapshot}</td>
+                                        <td className="px-3 py-2 relative">
+                                            <ActionDropDown
+                                                data={row}
+                                                actions={[
+                                                    { label: "View", onClick: () => handleViewTransaction(row) },
+                                                ]}
+                                            />
+                                        </td>
+                                    </tr>
+                                ))
+                            )}
+                        </tbody>
+                    </table>
+                </div>
 
-            <hr className="mt-5 mb-3 border-slate-200 dark:border-neutral-700" />
-            <div className="flex justify-end gap-x-2">
-                <Button label="Close" variant="secondary" onClick={modal.onClose} />
-                {showPostAction && replenishment?.status === "Pending" && (
-                    <Button label="Post" loading={posting} onClick={handlePost} />
-                )}
-            </div>
-        </Modal>
+                <hr className="mt-5 mb-3 border-slate-200 dark:border-neutral-700" />
+                <div className="flex justify-end gap-x-2">
+                    <Button label="Close" variant="secondary" onClick={modal.onClose} />
+                    {showPostAction && replenishment?.status === "Pending" && (
+                        <Button label="Post" loading={posting} onClick={handlePost} />
+                    )}
+                </div>
+            </Modal>
 
-        <ViewCashIssuanceForm
-            modal={viewIssuanceModal}
-            formValue={selectedIssuance}
-        />
-        <LiquidateModal
-            modal={liquidateIssuanceModal}
-            issuance={selectedIssuance}
-            viewOnly
-        />
+            <ViewCashIssuanceForm
+                modal={viewIssuanceModal}
+                formValue={selectedIssuance}
+            />
+            <LiquidateModal
+                modal={liquidateIssuanceModal}
+                issuance={selectedIssuance}
+                viewOnly
+            />
         </>
     );
 };
