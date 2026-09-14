@@ -96,6 +96,11 @@ const formatDate = (value?: string | null) =>
 interface StockReplenishmentWorkspaceProps {
     module: StockModule;
     performPermission: string;
+    createPermission?: string;
+    exportPermission?: string;
+    cancelPermission?: string;
+    closePermission?: string;
+    replaceSupplierPermission?: string;
     reviewPermission?: string;
     postPermission?: string;
 }
@@ -103,11 +108,16 @@ interface StockReplenishmentWorkspaceProps {
 const StockReplenishmentWorkspace = ({
     module,
     performPermission,
+    createPermission = performPermission,
+    exportPermission = performPermission,
+    cancelPermission = performPermission,
+    closePermission = performPermission,
+    replaceSupplierPermission = performPermission,
     reviewPermission = performPermission,
     postPermission = performPermission,
 }: StockReplenishmentWorkspaceProps) => {
     const { permissions } = useContext(AuthContext);
-    const canPerform = permissions.includes(performPermission);
+    const canCreate = permissions.includes(createPermission);
     const api = useApiCall();
     const filter = useFilter();
     const paginator = usePagination();
@@ -682,13 +692,14 @@ const StockReplenishmentWorkspace = ({
                     },
                 }, {
                     label: "Detailed Export",
+                    permission: exportPermission,
                     onClick: () => downloadDetailedExport(record, "requests"),
                 }];
 
                 if (record.status === "Unposted") {
                     actions.push({
                         label: "Review",
-                        permission: performPermission,
+                        permission: reviewPermission,
                         onClick: () => {
                             setIsReview(true);
                             setIsPost(false);
@@ -713,7 +724,7 @@ const StockReplenishmentWorkspace = ({
                 if (record.status === "Reviewed") {
                     actions.push({
                         label: "Post",
-                        permission: performPermission,
+                        permission: postPermission,
                          onClick: () => {
                             setDetail(record);
                             setDetailType("requests");
@@ -721,7 +732,7 @@ const StockReplenishmentWorkspace = ({
                             setIsPost(true);
                             setIsReviewReceive(false);
                             setIsPostReceive(false);
-                            
+
                         }
                     });
                 }
@@ -729,7 +740,7 @@ const StockReplenishmentWorkspace = ({
                 if (["Unposted", "Reviewed"].includes(record.status)) {
                     actions.push({
                         label: "Replace Supplier",
-                        permission: performPermission,
+                        permission: replaceSupplierPermission,
                         onClick: () => {
                             setReplaceTarget(record);
                             setReplacementSupplierId("");
@@ -737,7 +748,7 @@ const StockReplenishmentWorkspace = ({
                     });
                     actions.push({
                         label: "Cancel",
-                        permission: performPermission,
+                        permission: cancelPermission,
                         onClick: () => setCancelTarget({ kind: "requests", record }),
                     });
                 }
@@ -745,7 +756,7 @@ const StockReplenishmentWorkspace = ({
                 if (["Posted", "Partially Received"].includes(record.status)) {
                     actions.push({
                         label: "Close Record",
-                        permission: performPermission,
+                        permission: closePermission,
                         onClick: () => setCloseTarget(record),
                     });
                 }
@@ -784,6 +795,7 @@ const StockReplenishmentWorkspace = ({
                     },
                 }, {
                     label: "Detailed Export",
+                    permission: exportPermission,
                     onClick: () => downloadDetailedExport(record, "receiving"),
                 }];
 
@@ -846,7 +858,7 @@ const StockReplenishmentWorkspace = ({
                 if (["Unposted", "Reviewed"].includes(record.status)) {
                     actions.push({
                         label: "Cancel",
-                        permission: performPermission,
+                        permission: cancelPermission,
                         onClick: () => setCancelTarget({ kind: "receiving", record }),
                     });
                 }
@@ -917,7 +929,7 @@ const StockReplenishmentWorkspace = ({
                     ]}
             />
             <Card>
-                {canPerform && (
+                {canCreate && (
                     <div className="flex justify-end gap-x-3">
                         <DropDownButtons actions={[{
                             label: module === "requests"
