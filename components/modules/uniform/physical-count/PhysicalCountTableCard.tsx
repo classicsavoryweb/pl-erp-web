@@ -176,15 +176,8 @@ const PhysicalCountTableCard = ({
     useAsyncEffect(fetchRecords, [paginator.reload, api.reload, filter.reload]);
 
     const openCreate = () => {
-        const lastRecord = api.dataSet?.filter((record:any)=> record.status ==="Updated")
-         ?.sort(
-            (a: any, b: any) =>
-                new Date(b.begin_date).getTime() -
-                new Date(a.begin_date).getTime()
-        )[0];
-
         physicalCountForm.setValues({
-            begin_date: lastRecord?.ending_date ?? today(),
+            begin_date: beginDateOptions[0].value,
             ending_date: today(),
             counted_by_employees: [],
             remarks: "",
