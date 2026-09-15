@@ -78,6 +78,7 @@ const WeightedAverageForm = ({
         const additionalChargeModal = useModal();
         const changeUnitPriceModal = useModal();
         const passwordModal = useModal();
+        const [itemsLoading, setItemsLoading] = useState(false);
         const [changePriceItems , setChangePriceItems] = useState<any[]>([]);
         
         const [chargeDraft, setChargeDraft] = useState({
@@ -277,74 +278,82 @@ const WeightedAverageForm = ({
         }, [modal.isShowing, formValue, mode]);
     
         const generateItems = async () => {
-            const dateFrom = moment(createFormHandler.values.date_from);
-            const dateTo = moment(createFormHandler.values.date_to);
-            const today = moment();
-            if (
-                moment(createFormHandler.values.date_from).isAfter(
-                    moment(createFormHandler.values.date_to),
-                    "day"
-                )
-            ) {
-                toast.error("Date From cannot be later than Date To.");
-                return;
-            }
-            if (
-                dateFrom.month() !== dateTo.month() ||
-                dateFrom.year() !== dateTo.year()
-            ) {
-                toast.error("Date From and Date To must be within the same month.");
-                return;
-            }
-
-                if (dateTo.isAfter(today, "day")) {
-                toast.error("Date To cannot be later than today.");
-                return;
-            }
-            if(!createFormHandler.values.tag ){
-                toast.error("Need a Tag Selection");
-                return;
-            }
-            try {
-                const resp = await getWeightAverageItems({
-                    date_from: createFormHandler.values.date_from,
-                    date_to: createFormHandler.values.date_to,
-                    tag: createFormHandler.values.tag,
-                });
-                const rows = resp?.data ?? [];
-
-                if (!Array.isArray(rows) || rows.length === 0) {
-                    toast.info("No data found");
-                    createFormHandler.setFieldValue("items", []);
+            setItemsLoading(true);
+            try{
+                const dateFrom = moment(createFormHandler.values.date_from);
+                const dateTo = moment(createFormHandler.values.date_to);
+                const today = moment();
+                if (
+                    moment(createFormHandler.values.date_from).isAfter(
+                        moment(createFormHandler.values.date_to),
+                        "day"
+                    )
+                ) {
+                    toast.error("Date From cannot be later than Date To.");
+                    return;
+                }
+                if (
+                    dateFrom.month() !== dateTo.month() ||
+                    dateFrom.year() !== dateTo.year()
+                ) {
+                    toast.error("Date From and Date To must be within the same month.");
                     return;
                 }
 
-                if (!Array.isArray(rows)) {
-                    console.error("Invalid rows format:", rows);
-                    toast.error("Invalid response format");
+                    if (dateTo.isAfter(today, "day")) {
+                    toast.error("Date To cannot be later than today.");
                     return;
                 }
+                if(!createFormHandler.values.tag ){
+                    toast.error("Need a Tag Selection");
+                    return;
+                }
+                try {
+                    const resp = await getWeightAverageItems({
+                        date_from: createFormHandler.values.date_from,
+                        date_to: createFormHandler.values.date_to,
+                        tag: createFormHandler.values.tag,
+                    });
+                    const rows = resp?.data ?? [];
 
-                const mapped = rows.map((row: any) => ({
-                    item_no: row.item_no,
-                    uniform_item_no: row.uniform_item_no,
-                    description: row.description,
-                    standard_uom: row.standard_uom,
-                    current_price: row.current_price,
-                    total_quantity: row.total_quantity,
-                    standard_uom_two: row.standard_uom_two,
-                    total_amount: row.total_amount,
-                    new_standard_price: row.new_standard_price,
-                    other_charges: row.other_charges,
-                    standard_difference: row.standard_difference,
-                    reason: row.reason,
-                }));
+                    if (!Array.isArray(rows) || rows.length === 0) {
+                        toast.info("No data found");
+                        createFormHandler.setFieldValue("items", []);
+                        return;
+                    }
 
-                createFormHandler.setFieldValue("items", mapped);
-                toast.success("Items loaded successfully");
-            } catch (err) {
-                console.error(err);
-                toast.error("Failed to load items");
+                    if (!Array.isArray(rows)) {
+                        console.error("Invalid rows format:", rows);
+                        toast.error("Invalid response format");
+                        return;
+                    }
+
+                    const mapped = rows.map((row: any) => ({
+                        item_no: row.item_no,
+                        uniform_item_no: row.uniform_item_no,
+                        description: row.description,
+                        standard_uom: row.standard_uom,
+                        current_price: row.current_price,
+                        total_quantity: row.total_quantity,
+                        standard_uom_two: row.standard_uom_two,
+                        total_amount: row.total_amount,
+                        new_standard_price: row.new_standard_price,
+                        other_charges: row.other_charges,
+                        standard_difference: row.standard_difference,
+                        reason: row.reason,
+                    }));
+
+                    createFormHandler.setFieldValue("items", mapped);
+                    toast.success("Items loaded successfully");
+                } catch (err) {
+                    console.error(err);
+                    toast.error("Failed to load items");
+                }
+            }
+            catch (error) {
+                toast.error("Failed to load items.");
+            } finally {
+                setItemsLoading(false);
             }
         };
 
@@ -700,6 +709,7 @@ const WeightedAverageForm = ({
                         withActions
                         actions={tableActions}
                         fixed
+                        loading={itemsLoading}
                     />
                      
                 </div>
