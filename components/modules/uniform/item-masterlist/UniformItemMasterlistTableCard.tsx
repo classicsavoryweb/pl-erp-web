@@ -1,6 +1,7 @@
 "use client";
 
 import { exportAllUniformItems, getAllUniformItems } from "@/api/uniform/item-masterlist";
+import ActionDropDown from "@/components/common/ActionDropDown";
 import Card from "@/components/common/Card";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import Table from "@/components/common/Table";
@@ -21,6 +22,7 @@ const UniformItemMasterlistTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const editModal = useModal();
+    const viewModal = useModal();
     const paginator = usePagination();
     const filter = useFilter();
     const [data, setData] = useState<any>({});
@@ -49,6 +51,25 @@ const UniformItemMasterlistTableCard = () => {
             .finally(() => api.setLoading(false));
     }, [paginator.reload, api.reload, filter.reload]);
 
+    const tableActions = (item: any) => [
+        {
+            label: "View",
+            onClick: () => {
+                setData(item);
+                viewModal.onOpen();
+            },
+        },
+        ...(canEdit
+            ? [{
+                label: "Edit",
+                onClick: () => {
+                    setData(item);
+                    editModal.onOpen();
+                },
+            }]
+            : []),
+    ];
+
     const columnSettings = [
         { columnHead: "#", path: "row_number", columnType: COLUMNTYPES.string },
         { columnHead: "Item Code", path: "item_no", columnType: COLUMNTYPES.string },
@@ -69,6 +90,12 @@ const UniformItemMasterlistTableCard = () => {
             path: "made_to_order",
             columnType: COLUMNTYPES.function,
             function: (item: any) => item.made_to_order ? "Yes" : "No",
+        },
+        {
+            columnHead: "Action",
+            path: "id",
+            columnType: COLUMNTYPES.function,
+            function: (item: any) => <ActionDropDown data={item} actions={tableActions(item)} />,
         },
     ];
 
@@ -111,16 +138,6 @@ const UniformItemMasterlistTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    withActions={canEdit}
-                    actions={[
-                        {
-                            label: "Edit",
-                            onClick: (item: any) => {
-                                setData(item);
-                                editModal.onOpen();
-                            },
-                        },
-                    ]}
                 />
             </Card>
 
@@ -132,6 +149,12 @@ const UniformItemMasterlistTableCard = () => {
             <UniformItemForm
                 modal={editModal}
                 mode="edit"
+                formValue={data}
+                onSubmitCallback={api.triggerReload}
+            />
+            <UniformItemForm
+                modal={viewModal}
+                mode="view"
                 formValue={data}
                 onSubmitCallback={api.triggerReload}
             />
