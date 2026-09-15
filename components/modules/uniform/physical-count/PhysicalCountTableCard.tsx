@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    cancelPhysicalCount,
     createPhysicalCount,
     exportPhysicalCountDetails,
     exportPhysicalCounts,
@@ -104,7 +103,7 @@ const PhysicalCountTableCard = ({
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
     const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
     const [physicalCounts, setPhysicalCounts] = useState<any[]>([]);
-    const [cancelReason, setCancelReason] = useState("");
+    const [isLoadingPreview, setIsLoadingPreview] = useState(false);
     const [password , setPassword] = useState("");
     const [changeQuantityItems , setChangeQuantityItems] = useState<any[]>([]);
     const physicalCountForm = useFormik({
@@ -184,15 +183,13 @@ const PhysicalCountTableCard = ({
                 new Date(a.begin_date).getTime()
         )[0];
 
-        physicalCountForm.resetForm({
-            values: {
-                begin_date: lastRecord?.ending_date ?? today(),
-                ending_date: today(),
-                counted_by_employees: [],
-                remarks: "",
-                total_sales: 0,
-                items: [],
-            },
+        physicalCountForm.setValues({
+            begin_date: lastRecord?.ending_date ?? today(),
+            ending_date: today(),
+            counted_by_employees: [],
+            remarks: "",
+            total_sales: 0,
+            items: [],
         });
 
         formModal.onOpen();
@@ -201,8 +198,10 @@ const PhysicalCountTableCard = ({
     const loadPreview = async () => {
         if (physicalCountForm.values.begin_date > physicalCountForm.values.ending_date) {
             toast.error("Begin date cannot be later than ending date");
-            return;
+            return false;
         }
+
+        setIsLoadingPreview(true);
 
         physicalCountForm.setValues(prev => ({
             ...prev,
@@ -219,7 +218,7 @@ const PhysicalCountTableCard = ({
 
             if (resp?.error || resp?.errors) {
                 toast.error(responseMessage(resp));
-                return;
+                return false;
             }
 
             const previewItems = resp?.items?.items ?? [];
@@ -232,13 +231,17 @@ const PhysicalCountTableCard = ({
 
             if (previewItems.length === 0) {
                 toast.info("No data found");
-                return;
+                return false;
             }
 
             toast.success("Physical count preview loaded successfully");
+            return true;
 
         } catch {
             toast.error("Error encountered");
+            return false;
+        } finally {
+            setIsLoadingPreview(false);
         }
     };
 
@@ -411,7 +414,6 @@ const PhysicalCountTableCard = ({
             permission: cancelPermission,
             onClick: () => {
                 setSelected(record);
-                setCancelReason("");
                 cancelModal.onOpen();
             },
         },
@@ -519,11 +521,14 @@ const PhysicalCountTableCard = ({
 
     const actionbutton = [
         {
-            label : "Generate Data",
-            onClick : async () => {
-                await loadPreview();
-                setHasGeneratedData(true);
-            }
+            label: "Generate Data",
+            onClick: async () => {
+                const success = await loadPreview();
+
+                if (success) {
+                    setHasGeneratedData(true);
+                }
+            },
         },
         {
             label: "Download Template",
@@ -693,7 +698,11 @@ const PhysicalCountTableCard = ({
                     </div>
                 </div>
 
-                <PhysicalCountItemsTable items={physicalCountForm.values.items} editable onChange={updatePhysicalItem} />
+                <PhysicalCountItemsTable 
+                items={physicalCountForm.values.items} 
+                editable 
+                loading={isLoadingPreview} 
+                onChange={updatePhysicalItem} />
 
                 <div className="flex justify-end gap-x-2 mt-3">
                     <div className="w-[120px]">
@@ -739,10 +748,12 @@ const PhysicalCountTableCard = ({
 const PhysicalCountItemsTable = ({
     items,
     editable = false,
+    loading=false,
     onChange,
 }: {
     items: any[];
     editable?: boolean;
+    loading?:boolean;
     onChange?: (index: number, key: string, value: any) => void;
 }) => (
     <div>
@@ -757,15 +768,27 @@ const PhysicalCountItemsTable = ({
                 </thead>
                 
                 <tbody>
-                    {items.length === 0 && (
+                    
+                     {loading ? (
                         <tr>
-                            <td colSpan={10} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
+                            <td colSpan={10} className="p-8 text-center">
+                                <div className="flex flex-col items-center justify-center gap-2">
+                                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-red-800" />
+                                    <span className="text-sm text-gray-500">
+                                        Generating data...
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    ) : items.length === 0 ? (
+                        <tr>
+                            <td colSpan={10} className="border-1 border-slate-300 dark:border-neutral-700 p-2 text-center">
                                 <EmptyState />
                                 <p>No data available...</p>
                             </td>
                         </tr>
-                    )}
-                    {items.map((item, index) => (
+                    ) : (
+                    items.map((item, index) => (
                         <tr key={item.uniform_item_id ?? index}>
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{item.description}</td>
@@ -796,7 +819,7 @@ const PhysicalCountItemsTable = ({
                                 ) : item.item_remarks ?? "-"}
                             </td>
                         </tr>
-                    ))}
+                    )))}
                 </tbody>
             </table>
         </div>

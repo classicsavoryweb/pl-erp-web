@@ -12,6 +12,8 @@ import PayrollSummaryCards from "@/components/modules/dashboard/payroll/PayrollS
 import UserInformationCard from "@/components/modules/dashboard/UserInformationCard";
 import { AuthContext } from "@/context/AuthProvider";
 import { useContext } from "react";
+import EmployeeForLastPayTableCard from "@/components/modules/dashboard/payroll/EmployeeForLastPayTableCard";
+import BranchesWithMissingAccountsTableCard from "@/components/modules/dashboard/payroll/BranchesWithMissingAccountsTableCard";
 
 export default function Home() {
 
@@ -55,6 +57,12 @@ export default function Home() {
 			{ permissions.includes("has_analytic_dashboard_payroll") &&
 				<>
 					<PayrollSummaryCards/>
+					<Grid cols={3}>
+						<div className="col-span-2">
+							<EmployeeForLastPayTableCard/>
+						</div>
+						<BranchesWithMissingAccountsTableCard/>
+					</Grid>
 				</>
 			}
 		</Authenticated>
