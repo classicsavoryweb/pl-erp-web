@@ -33,7 +33,7 @@ import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import { useFormik } from "formik";
 import moment from "moment";
-import { useState, useRef , useEffect, useContext } from "react";
+import { useState, useRef , useContext } from "react";
 import { toast } from "react-toastify";
 import PasswordForm from "./PasswordForm";
 import ChangeQuanityForm from "./PhysicalChangeQuantityForm";
@@ -241,22 +241,6 @@ const PhysicalCountTableCard = ({
             toast.error("Error encountered");
         }
     };
-
-    useEffect(() => {
-    if (physicalCounts.length > 0) {
-        const latestPosted = physicalCounts
-            .filter((pc: any) => pc.status === "Posted")
-            .sort(
-                (a: any, b: any) =>
-                    new Date(b.begin_date).getTime() -
-                    new Date(a.begin_date).getTime()
-            )[0];
-
-        if (latestPosted) {
-            physicalCountForm.setFieldValue("begin_date", latestPosted.begin_date);
-        }
-    }
-    }, [physicalCounts]);
 
     const downloadDetailedExport = async (record: any) => {
         const resp = await exportPhysicalCountDetails(record.id);
