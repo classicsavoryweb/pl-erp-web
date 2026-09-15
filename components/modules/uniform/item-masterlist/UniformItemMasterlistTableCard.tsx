@@ -25,7 +25,9 @@ const UniformItemMasterlistTableCard = () => {
     const filter = useFilter();
     const [data, setData] = useState<any>({});
     const { permissions } = useContext(AuthContext);
-    const canPerform = permissions.includes("perform_uniform_item_masterlist");
+    const canCreate = permissions.includes("perform_uniform_item_masterlist_create");
+    const canEdit = permissions.includes("perform_uniform_item_masterlist_edit");
+    const canExport = permissions.includes("perform_uniform_item_masterlist_export");
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -84,6 +86,7 @@ const UniformItemMasterlistTableCard = () => {
                 ]}
                 filterHandler={filter}
                 hasExport
+                exportPermission="perform_uniform_item_masterlist_export"
                 api={exportAllUniformItems}
                 exportFileName={`UNIFORM-ITEM-MASTERLIST-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="description"
@@ -91,7 +94,7 @@ const UniformItemMasterlistTableCard = () => {
                 withStatus
             />
             <Card>
-                {canPerform && (
+                {canCreate && (
                     <div className="flex justify-end gap-x-3">
                         <DropDownButtons
                             actions={[
@@ -108,7 +111,7 @@ const UniformItemMasterlistTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    withActions={canPerform}
+                    withActions={canEdit}
                     actions={[
                         {
                             label: "Edit",

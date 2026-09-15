@@ -23,6 +23,7 @@ import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import EmployeeMultiSelect from "@/components/modules/generic/EmployeeMultiSelect";
 import { COLUMNTYPES } from "@/constants/column";
+import { AuthContext } from "@/context/AuthProvider";
 import * as XLSX from "xlsx-js-style";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
@@ -31,13 +32,17 @@ import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import { useFormik } from "formik";
 import moment from "moment";
-import { useState, useRef , useEffect } from "react";
+import { useState, useRef , useEffect, useContext } from "react";
 import { toast } from "react-toastify";
 import PasswordForm from "./PasswordForm";
 import ChangeQuanityForm from "./PhysicalChangeQuantityForm";
 
 interface TableCardProps {
     performPermission: string;
+    createPermission?: string;
+    exportPermission?: string;
+    cancelPermission?: string;
+    updateQuantityPermission?: string;
     reviewPermission?: string;
     postPermission?: string;
 }
@@ -75,9 +80,15 @@ const getStatusBadge = (status: string): "success" | "warning" | "danger" | "pur
 
 const PhysicalCountTableCard = ({
     performPermission,
+    createPermission = performPermission,
+    exportPermission = performPermission,
+    cancelPermission = performPermission,
+    updateQuantityPermission = performPermission,
     reviewPermission = performPermission,
     postPermission = performPermission,
 }: TableCardProps) => {
+    const { permissions } = useContext(AuthContext);
+    const canCreate = permissions.includes(createPermission);
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
@@ -394,6 +405,7 @@ const PhysicalCountTableCard = ({
         },
         {
             label: "Detailed Export",
+            permission: exportPermission,
             onClick: () => downloadDetailedExport(record),
         },
         record.status === "Unposted" && {
@@ -416,7 +428,7 @@ const PhysicalCountTableCard = ({
         },
         ["Unposted", "Reviewed"].includes(record.status) && {
             label: "Cancel",
-            permission: performPermission,
+            permission: cancelPermission,
             onClick: () => {
                 setSelected(record);
                 cancelModal.onOpen();
@@ -424,7 +436,7 @@ const PhysicalCountTableCard = ({
         },
         record.status === "Posted" && {
             label : "Update to Masterlist",
-            permission: performPermission,
+            permission: updateQuantityPermission,
             onClick: () => {
                 setSelected(record);
                 passwordModal.onOpen();
@@ -628,14 +640,17 @@ const PhysicalCountTableCard = ({
                 dateLabel="Physical Count Date"
                 defaultColumnSelected="physical_count_no"
                 hasExport
+                exportPermission={exportPermission}
                 api={exportPhysicalCounts}
                 exportFileName={`PHYSICAL-COUNT-${moment().format("YYYY-MM-DD")}.xls`}
                 callBack={() => paginator.setPage(1)}
             />
             <Card>
-                <div className="flex justify-end gap-x-3">
-                    <DropDownButtons actions={[{ label: `Generate ${title}`, onClick: openCreate }]} />
-                </div>
+                {canCreate && (
+                    <div className="flex justify-end gap-x-3">
+                        <DropDownButtons actions={[{ label: `Generate ${title}`, onClick: openCreate }]} />
+                    </div>
+                )}
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columns}

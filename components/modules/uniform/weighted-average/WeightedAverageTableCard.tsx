@@ -10,7 +10,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import usePagination from "@/hooks/pagination";
 import { toast } from "react-toastify";
 import { useModal } from "@/hooks/modal";
-import { useState } from "react";
+import { useContext, useState } from "react";
 import { getWeightedAverage , exportAllWeightAverage , exportWeightAverageDetails} from "@/api/uniform/weighted-average";
 import FilterCard from "../../cards/FilterCard";
 import { useFilter } from "@/hooks/use-filter";
@@ -20,6 +20,7 @@ import DropDownButtons from "@/components/common/DropDownButtons";
 import  WeightedAverageForm  from "./WeightAverageForm";
 import VarianceReportCancelForm from "./WeightedAverageCancelForm";
 import ActionDropDown from "@/components/common/ActionDropDown";
+import { AuthContext } from "@/context/AuthProvider";
 
 const WeightedAverageTable = () => {
     const api = useApiCall();
@@ -31,6 +32,11 @@ const WeightedAverageTable = () => {
     const paginator = usePagination();
     const filter = useFilter();
     const cancelModal = useModal();
+    const { permissions } = useContext(AuthContext);
+    const canCreate = permissions.includes("perform_uniform_weighted_average_create");
+    const canExport = permissions.includes("perform_uniform_weighted_average_export");
+    const canCancel = permissions.includes("perform_uniform_weighted_average_cancel");
+    const canUpdateStatus = permissions.includes("perform_uniform_weighted_average_update_status");
 
      useAsyncEffect(() => {
         api.setLoading(true);
@@ -60,25 +66,25 @@ const WeightedAverageTable = () => {
                     viewModal.onOpen();
                 },
             },
-            {
+            canExport && {
                 label: "Detailed Export",
                 onClick: () => downloadDetailedExport(item),
             },
-            item.status === "Unposted" && {
+            item.status === "Unposted" && canUpdateStatus && {
                 label: "Review",
                 onClick:  () => {
                    setData(item)
                     reviewModal.onOpen();
                 },
             },
-            ["Reviewed", "Reviewing"].includes(item.status) && {
+            ["Reviewed", "Reviewing"].includes(item.status) && canUpdateStatus && {
                 label: "Post",
                 onClick: async () => {
                    setData(item);
-                   postModal.onOpen();  
+                   postModal.onOpen();
                 },
             },
-           ["Unposted", "Reviewed", "Reviewing"].includes(item.status) && {
+           ["Unposted", "Reviewed", "Reviewing"].includes(item.status) && canCancel && {
                 label: "Cancel",
                 onClick: () => {
                     setData(item);
@@ -195,6 +201,7 @@ const WeightedAverageTable = () => {
                 exportFileName={`WeightAverage-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="status"
                 hasExport
+                exportPermission="perform_uniform_weighted_average_export"
                 hasDateRange
                 dateLabel="Weighted Count Date"
                 api={exportAllWeightAverage}
@@ -203,11 +210,13 @@ const WeightedAverageTable = () => {
                 }}
             />
             <Card>
-                <div className="flex justify-end gap-x-3">
-                    <DropDownButtons
-                        actions={actionSettings}
-                    />
-                </div>
+                {canCreate && (
+                    <div className="flex justify-end gap-x-3">
+                        <DropDownButtons
+                            actions={actionSettings}
+                        />
+                    </div>
+                )}
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
