@@ -197,8 +197,19 @@ const VarianceReportTableCard = ({
             return;
         }
 
-        if (!varianceForm.remarks.trim()) {
-            toast.error("Please fill up Overall Remarks.");
+        const invalidItem = varianceForm.items.find(
+            (item: any) =>
+                (
+                    Number(item.final_variance ?? 0) !== 0 ||
+                    Number(item.total_variance_cost ?? 0) !== 0
+                ) &&
+                !item.reason_of_adjustment?.trim()
+        );
+
+        if (invalidItem) {
+            toast.error(
+                `Reason is required for ${invalidItem.description}.`
+            );
             return;
         }
 
