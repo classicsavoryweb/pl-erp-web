@@ -32,7 +32,7 @@ import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import { useFormik } from "formik";
 import moment from "moment";
-import { useState, useRef , useEffect, useContext } from "react";
+import { useState, useRef , useContext } from "react";
 import { toast } from "react-toastify";
 import PasswordForm from "./PasswordForm";
 import ChangeQuanityForm from "./PhysicalChangeQuantityForm";
@@ -176,15 +176,8 @@ const PhysicalCountTableCard = ({
     useAsyncEffect(fetchRecords, [paginator.reload, api.reload, filter.reload]);
 
     const openCreate = () => {
-        const lastRecord = api.dataSet?.filter((record:any)=> record.status ==="Updated")
-         ?.sort(
-            (a: any, b: any) =>
-                new Date(b.begin_date).getTime() -
-                new Date(a.begin_date).getTime()
-        )[0];
-
         physicalCountForm.setValues({
-            begin_date: lastRecord?.ending_date ?? today(),
+            begin_date: beginDateOptions[0].value,
             ending_date: today(),
             counted_by_employees: [],
             remarks: "",
@@ -244,23 +237,6 @@ const PhysicalCountTableCard = ({
             setIsLoadingPreview(false);
         }
     };
-
-
-    useEffect(() => {
-    if (physicalCounts.length > 0) {
-        const latestPosted = physicalCounts
-            .filter((pc: any) => pc.status === "Posted")
-            .sort(
-                (a: any, b: any) =>
-                    new Date(b.begin_date).getTime() -
-                    new Date(a.begin_date).getTime()
-            )[0];
-
-        if (latestPosted) {
-            physicalCountForm.setFieldValue("begin_date", latestPosted.begin_date);
-        }
-    }
-    }, [physicalCounts]);
 
     const downloadDetailedExport = async (record: any) => {
         const resp = await exportPhysicalCountDetails(record.id);

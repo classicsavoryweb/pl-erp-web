@@ -18,7 +18,7 @@ import ActiveInactiveDropDown from "../../generic/ActiveInactiveDropDown";
 
 interface UniformItemFormProps {
     modal: any;
-    mode: "create" | "edit";
+    mode: "create" | "edit" | "view";
     formValue?: any;
     onSubmitCallback: () => void;
 }
@@ -145,7 +145,7 @@ const UniformItemForm = ({
     useEffect(() => {
         if (!modal.isShowing) return;
 
-        if (mode === "edit" && formValue) {
+        if ((mode === "edit" || mode === "view") && formValue) {
             formHandler.setValues({
                 description: formValue.description ?? "",
                 uniform_size_id: String(formValue.uniform_size_id ?? ""),
@@ -218,7 +218,7 @@ const UniformItemForm = ({
     return (
         <Modal
             isShowing={modal.isShowing}
-            title={mode === "create" ? "Create Uniform Item" : "Edit Uniform Item"}
+            title={mode === "create" ? "Create Uniform Item" : mode === "edit" ? "Edit Uniform Item" : "View Uniform Item"}
             onClose={() => {
                 modal.onClose();
                 formHandler.resetForm();
@@ -227,7 +227,7 @@ const UniformItemForm = ({
             size="lg"
         >
             <form onSubmit={formHandler.handleSubmit}>
-                {mode === "edit" && (
+                {mode !== "create" && (
                     <Textfield
                         label="Item Code"
                         name="item_no"
@@ -243,6 +243,7 @@ const UniformItemForm = ({
                     required
                     onChange={formHandler.handleChange}
                     error={formHandler.errors.description}
+                    disabled={mode === "view"}
                 />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3">
                     <Dropdown
@@ -254,6 +255,7 @@ const UniformItemForm = ({
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.uniform_size_id}
                         options={sizes.map((size) => ({ label: size.description, value: size.id }))}
+                        disabled={mode === "view"}
                     />
                     <Dropdown
                         label="Gender"
@@ -264,6 +266,7 @@ const UniformItemForm = ({
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.uniform_gender_id}
                         options={genders.map((gender) => ({ label: gender.description, value: gender.id }))}
+                        disabled={mode === "view"}
                     />
                     <ActiveInactiveDropDown
                         label="Status"
@@ -273,6 +276,7 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.status}
+                        disabled={mode === "view"}
                     />
                     <Dropdown
                         label="Applicable for Free Uniform"
@@ -283,6 +287,7 @@ const UniformItemForm = ({
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.free_uniform}
                         options={yesNoOptions}
+                        disabled={mode === "view"}
                     />
                     <Dropdown
                         label="Made to Order"
@@ -293,6 +298,7 @@ const UniformItemForm = ({
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.made_to_order}
                         options={yesNoOptions}
+                        disabled={mode === "view"}
                     />
                     <Textfield
                         label="Standard Price"
@@ -302,6 +308,7 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.standard_unit_price}
+                        disabled={mode === "view"}
                     />
                     <Textfield
                         label="Stock on Hand"
@@ -311,6 +318,7 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.stock_on_hand}
+                        disabled={mode === "view"}
                     />
                     <Textfield
                         label="Standard Packaging Qty"
@@ -320,6 +328,7 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.standard_qty}
+                        disabled={mode === "view"}
                     />
                     <Dropdown
                         label="Standard Packaging Unit"
@@ -329,6 +338,7 @@ const UniformItemForm = ({
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.standard_unit}
                         options={unitOptions}
+                        disabled={mode === "view"}
                     />
                     <Textfield
                         label="Minimum Order"
@@ -338,6 +348,7 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.min_order}
+                        disabled={mode === "view"}
                     />
                     <Textfield
                         label="Ordering Limit"
@@ -347,6 +358,7 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.order_limit}
+                        disabled={mode === "view"}
                     />
                     <Textfield
                         label="Critical Level"
@@ -356,6 +368,7 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.crit_level}
+                        disabled={mode === "view"}
                     />
                     <Textfield
                         label="Minimum Replenishment"
@@ -365,62 +378,69 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.minimum_rpl}
+                        disabled={mode === "view"}
                     />
                 </div>
 
                 <div className="flex font-semibold border-b border-slate-300 items-center justify-between pb-2">
                     <span>Suppliers</span>
 
-                    <div>
-                        <Button
-                            type="button"
-                            variant="success"
-                            label="Add Request"
-                            onClick={addSupplier}
+                    {mode !== "view" && (
+                        <div>
+                            <Button
+                                type="button"
+                                variant="success"
+                                label="Add Request"
+                                onClick={addSupplier}
+                            />
+                        </div>
+                    )}
+                </div>
+                {mode !== "view" && (
+                    <>
+                        <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 items-end">
+                            <SearchableDropDown
+                                label="Supplier"
+                                placeholder="select supplier"
+                                name="vendor_no"
+                                value={supplierDraft.vendor_no}
+                                onChange={(e: any) => setSupplierDraft({
+                                    ...supplierDraft,
+                                    vendor_no: e.target.value,
+                                    vendor_name: e.target.obj?.vendor_name ?? e.target.value,
+                                })}
+                                options={suppliers.map((supplier) => ({
+                                    label: supplier.vendor_name,
+                                    value: supplier.vendor_number,
+                                    obj: supplier,
+                                }))}
+                            />
+                            <Textfield
+                                label="Unit Price"
+                                name="unit_price"
+                                type="number"
+                                value={supplierDraft.unit_price}
+                                onChange={(e: any) => setSupplierDraft({ ...supplierDraft, unit_price: e.target.value })}
+                            />
+                            <Textfield
+                                label="Packaging Unit"
+                                name="packaging_unit"
+                                value={supplierDraft.packaging_unit}
+                                onChange={(e: any) => setSupplierDraft({ ...supplierDraft, packaging_unit: e.target.value })}
+                            />
+                        </div>
+                        <Textfield
+                            label="Supplier Remarks"
+                            name="remarks"
+                            value={supplierDraft.remarks}
+                            onChange={(e: any) => setSupplierDraft({ ...supplierDraft, remarks: e.target.value })}
                         />
-                    </div>
-                </div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 items-end">
-                    <SearchableDropDown
-                        label="Supplier"
-                        placeholder="select supplier"
-                        name="vendor_no"
-                        value={supplierDraft.vendor_no}
-                        onChange={(e: any) => setSupplierDraft({
-                            ...supplierDraft,
-                            vendor_no: e.target.value,
-                            vendor_name: e.target.obj?.vendor_name ?? e.target.value,
-                        })}
-                        options={suppliers.map((supplier) => ({
-                            label: supplier.vendor_name,
-                            value: supplier.vendor_number,
-                            obj: supplier,
-                        }))}
-                    />
-                    <Textfield
-                        label="Unit Price"
-                        name="unit_price"
-                        type="number"
-                        value={supplierDraft.unit_price}
-                        onChange={(e: any) => setSupplierDraft({ ...supplierDraft, unit_price: e.target.value })}
-                    />
-                    <Textfield
-                        label="Packaging Unit"
-                        name="packaging_unit"
-                        value={supplierDraft.packaging_unit}
-                        onChange={(e: any) => setSupplierDraft({ ...supplierDraft, packaging_unit: e.target.value })}
-                    />
-                </div>
-                <Textfield
-                    label="Supplier Remarks"
-                    name="remarks"
-                    value={supplierDraft.remarks}
-                    onChange={(e: any) => setSupplierDraft({ ...supplierDraft, remarks: e.target.value })}
-                />
+                    </>
+                )}
                 <Table
                     dataSet={formHandler.values.suppliers}
                     columnSettings={supplierColumns}
-                    withActions
+                    withActions={mode !== "view"}
                     actions={[{ label: "Remove", onClick: removeSupplier }]}
                     smallText
                     dataKey="vendor_no"
@@ -434,20 +454,33 @@ const UniformItemForm = ({
                 <hr className="mt-6 pb-2 text-slate-300" />
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">
-                        <Button
-                            label="Cancel"
-                            variant="secondary"
-                            onClick={() => {
-                                modal.onClose();
-                                formHandler.resetForm();
-                            }}
-                        />
-                        <Button
-                            type="submit"
-                            label="Submit"
-                            loading={formHandler.isSubmitting}
-                            onClick={() => {}}
-                        />
+                        {mode === "view" ? (
+                            <Button
+                                label="Close"
+                                variant="secondary"
+                                onClick={() => {
+                                    modal.onClose();
+                                    formHandler.resetForm();
+                                }}
+                            />
+                        ) : (
+                            <>
+                                <Button
+                                    label="Cancel"
+                                    variant="secondary"
+                                    onClick={() => {
+                                        modal.onClose();
+                                        formHandler.resetForm();
+                                    }}
+                                />
+                                <Button
+                                    type="submit"
+                                    label="Submit"
+                                    loading={formHandler.isSubmitting}
+                                    onClick={() => {}}
+                                />
+                            </>
+                        )}
                     </div>
                 </div>
             </form>
