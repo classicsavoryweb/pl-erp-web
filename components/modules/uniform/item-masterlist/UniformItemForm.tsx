@@ -390,7 +390,7 @@ const UniformItemForm = ({
                             <Button
                                 type="button"
                                 variant="success"
-                                label="Add Request"
+                                label="Add Supplier"
                                 onClick={addSupplier}
                             />
                         </div>
