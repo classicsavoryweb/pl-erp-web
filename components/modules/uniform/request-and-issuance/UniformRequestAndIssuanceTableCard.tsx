@@ -203,6 +203,9 @@ const UniformRequestAndIssuanceTableCard = () => {
                     case "ATD Acknowledged":
                         status = "warning";
                         break;
+                    case "Item(s) Received":
+                        status = "success";
+                        break;
                     case "ATD Created":
                         status = "default";
                         break;
