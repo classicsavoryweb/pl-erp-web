@@ -34,6 +34,20 @@ export const exportAllATDs = async (payload?: {}) => {
     return resData;
 };
 
+export const exportDeductionsAmortization = async (payload? :{}) => {
+    const resData = await axiosHelper({
+        func_path: '/export-deduction-amortization-history',
+        method: 'GET',
+        payload: payload,
+        responseType: "blob",
+        additionalHeaders:{
+            Accept: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+        }
+    });
+
+    return resData;
+}
+
 export const exportAllEmployeeDeductions = async (payload?: {}) => {
     const resData = await axiosHelper({
         func_path: '/export-all-employee-deductions',
