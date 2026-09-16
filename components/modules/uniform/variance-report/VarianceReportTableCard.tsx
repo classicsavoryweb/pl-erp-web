@@ -642,7 +642,7 @@ const VarianceItemsTable = ({
                     <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
                         <thead className="sticky top-0 z-20 text-xs">
                             <tr>
-                                {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason", "Action"].map(header => (
+                                {["Item Code", "Description", "Beginning", "Purchases", "Made To Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason", "Action"].map(header => (
                                     <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
                                 ))}
                             </tr>

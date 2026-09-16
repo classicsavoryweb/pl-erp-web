@@ -109,7 +109,7 @@ const PhysicalCountTableCard = ({
     const physicalCountForm = useFormik({
         initialValues: {
             begin_date: today(),
-            ending_date: today(),
+            ending_date: "",
             counted_by_employees: [] as any[],
             remarks: "",
             total_sales: 0,
@@ -178,7 +178,7 @@ const PhysicalCountTableCard = ({
     const openCreate = () => {
         physicalCountForm.setValues({
             begin_date: beginDateOptions[0].value,
-            ending_date: today(),
+            ending_date: "",
             counted_by_employees: [],
             remarks: "",
             total_sales: 0,
@@ -189,6 +189,11 @@ const PhysicalCountTableCard = ({
     };
 
     const loadPreview = async () => {
+        if (!physicalCountForm.values.ending_date) {
+            toast.error("Please select an Ending Date.");
+            return false;
+        }
+
         if (physicalCountForm.values.begin_date > physicalCountForm.values.ending_date) {
             toast.error("Begin date cannot be later than ending date");
             return false;
