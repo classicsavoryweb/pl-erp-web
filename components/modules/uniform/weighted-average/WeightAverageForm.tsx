@@ -30,8 +30,8 @@ interface WeightAverageFormProps{
 
 const tagSelectionDropDown = [
     {label:"Items with Purchases" , value:"Items with Purchases"},
-    {label:"Items without Purchases" , value:"Items without Purchases"},
-    {label:"Check All" , value:"Check All"}
+    // {label:"Items without Purchases" , value:"Items without Purchases"},
+    // {label:"Check All" , value:"Check All"}
 ]
 
 const defaultValues = () => {
@@ -80,6 +80,9 @@ const WeightedAverageForm = ({
         const passwordModal = useModal();
         const [itemsLoading, setItemsLoading] = useState(false);
         const [changePriceItems , setChangePriceItems] = useState<any[]>([]);
+        const [updatePriceLoading, setUpdatePriceLoading] = useState(false);
+        
+
         
         const [chargeDraft, setChargeDraft] = useState({
             index: -1,
@@ -457,6 +460,7 @@ const WeightedAverageForm = ({
             const items = createFormHandler.values.items;
 
             if (!items || items.length === 0) return;
+            setUpdatePriceLoading(true);
             try{
                 await updateUnitPrice({
                     weighted_average_id: createFormHandler.values.weighted_id,
@@ -477,6 +481,8 @@ const WeightedAverageForm = ({
             catch(error){
                 toast.error("Failed to update item prices.");
                 console.error(error);
+            }finally{
+                setUpdatePriceLoading(false);
             }
         };
 
@@ -885,6 +891,7 @@ const WeightedAverageForm = ({
             items={changePriceItems}
             onExport={exportChangePriceItems}
             onUpdate={saveChangeUnitPrice}
+            updateLoading={updatePriceLoading}
         />
     </>
        
