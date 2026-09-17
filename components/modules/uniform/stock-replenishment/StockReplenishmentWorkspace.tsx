@@ -892,7 +892,6 @@ const StockReplenishmentWorkspace = ({
         }
 
     ];
-    console.log(detailItems,"asdsadsad")
     return (
         <>
             <FilterCard
