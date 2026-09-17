@@ -892,7 +892,6 @@ const StockReplenishmentWorkspace = ({
         }
 
     ];
-
     return (
         <>
             <FilterCard
@@ -1502,8 +1501,22 @@ const StockReplenishmentWorkspace = ({
                             path: detailType === "requests" ? "approved_qty" : "quantity",
                             columnType: COLUMNTYPES.amount,
                         },
+                        
                         ...(detailType === "requests" ? [{
-                            columnHead: "Remaining", path: "remaining_qty", columnType: COLUMNTYPES.amount,
+                            columnHead: "Total Received", path:"received_qty", columnType: COLUMNTYPES.amount
+                        }] : []),
+                        ...(detailType === "requests" ? [{
+                            columnHead: "Remaining", path: "", columnType: COLUMNTYPES.function,
+                                function : (item:any) =>{
+                                    const receive_quantity = Number(item.received_qty ?? 0);
+                                    const total_received = Number(item.requested_qty ?? 0);
+                                    const remaining = total_received - receive_quantity;
+                                    return ( 
+                                        <span>
+                                            {Number(remaining ?? 0).toFixed(2)}
+                                        </span>
+                                    );    
+                                } 
                         }] : []),
                         { columnHead: "Unit Price", path: "unit_price", columnType: COLUMNTYPES.amount },
                         { columnHead: "Remarks", path: "remarks", columnType: COLUMNTYPES.string },
@@ -1519,6 +1532,7 @@ const StockReplenishmentWorkspace = ({
                             Total Amount:
                         </span>
                         <span className="ml-2 font-semibold text-sm text-gray-400">
+                            
                             {detailItems
                                 .reduce(
                                     (sum: number, item: any) =>
