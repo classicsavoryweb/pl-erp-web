@@ -12,13 +12,15 @@ interface ChangeUnitPriceProps{
     items:any[];
     onExport:()=>void;
     onUpdate:()=>void;
+    updateLoading: boolean;
 }
 
 const ChangeUnitPriceForm = ({
     modal,
     items,
     onExport,
-    onUpdate
+    onUpdate,
+    updateLoading
 }:ChangeUnitPriceProps) =>{
 
      const filteredChangePriceItems = items.filter(
@@ -78,6 +80,7 @@ const ChangeUnitPriceForm = ({
                                 type="button"
                                 label="Update"
                                 onClick={onUpdate}
+                                loading={updateLoading}
                             />
                         </div>
                     </div>

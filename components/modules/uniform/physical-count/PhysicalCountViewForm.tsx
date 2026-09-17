@@ -12,6 +12,7 @@ import {COLUMNTYPES} from "@/constants/column";
 import { reviewPhysicalCount , postPhysicalCount} from "@/api/uniform/physical-count";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
+import {useState} from "react";
 
 
 interface PhysicalCountViewFormProps {
@@ -30,6 +31,7 @@ const PhysicalCountViewForm = ({
     selected,
     onReload,
 }: PhysicalCountViewFormProps) => {
+    const [loading, setLoading] = useState(false);
 
     const numberValue = (value: any) => Number(value || 0);
 
@@ -87,24 +89,29 @@ const PhysicalCountViewForm = ({
     ];
 
     const runAction = async (record: any, action: "review" | "post") => {
-        const isConfirmed = await confirm({
-            title,
-            message: `Are you sure you want to ${action} this physical count?`,
-        });
-        if (!isConfirmed) return;
+        setLoading(true);
+        try{
+            const isConfirmed = await confirm({
+                title,
+                message: `Are you sure you want to ${action} this physical count?`,
+            });
+            if (!isConfirmed) return;
 
-        const resp = action === "review"
-            ? await reviewPhysicalCount(record.id)
-            : await postPhysicalCount(record.id);
+            const resp = action === "review"
+                ? await reviewPhysicalCount(record.id)
+                : await postPhysicalCount(record.id);
 
-        if (resp?.error || resp?.errors) {
-            toast.error(responseMessage(resp));
-            return;
+            if (resp?.error || resp?.errors) {
+                toast.error(responseMessage(resp));
+                return;
+            }
+
+            toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
+            await onReload?.();
+            modal.onClose();
+        }finally{
+            setLoading(false);
         }
-
-        toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
-        await onReload?.();
-        modal.onClose();
     };
 
     return (
@@ -166,8 +173,10 @@ const PhysicalCountViewForm = ({
                             <Textfield label="Date & Time" value={formatAuditDate(selected.created_at)} disabled />
                             <Textfield label="Reviewed By:" value={selected.reviewed_by ?? ""} disabled />
                             <Textfield label="Date & Time" value={formatAuditDate(selected.reviewed_at)} disabled />
-                            <Textfield label="Posted By:" value={selected.posted_by ?? ""} disabled />                                                                                          
-                            <Textfield label="Date  & Time" value={formatAuditDate(selected.posted_at)} disabled />
+                            <Textfield label="Posted By:" value={selected.posted_by ?? ""} disabled />  
+                            <Textfield label="Date  & Time" value={formatAuditDate(selected.posted_at)} disabled /> 
+                            <Textfield label="Updated By:" value={selected.quantity_updated_by ?? ""} disabled />
+                            <Textfield label="Date & Time" value={formatAuditDate(selected.quantity_updated_at)} disabled />                                                                                       
                             <Textfield label="Cancelled By:" value={selected.cancelled_by ?? ""} disabled />
                             <Textfield label="Date & Time" value={formatAuditDate(selected.cancelled_at)} disabled />
                         </div>
@@ -186,12 +195,14 @@ const PhysicalCountViewForm = ({
                                     label={modalType === "Post" ? "Post" : "Review"}
                                     onClick={() => {
                                         if (modalType === "Review") {
+                                            
                                             runAction(selected, "review");
                                         }
                                         if (modalType === "Post") {
                                             runAction(selected, "post");
                                         }
                                     }}
+                                    loading={loading}
                                 />
                             </div>
                         </div>
