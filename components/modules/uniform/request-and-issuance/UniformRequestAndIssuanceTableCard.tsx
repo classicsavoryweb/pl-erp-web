@@ -266,7 +266,7 @@ const UniformRequestAndIssuanceTableCard = () => {
                         path: "request_number",
                         columnType:COLUMNTYPES.string
                     }
-                    
+
                 ]}
                 defaultColumnSelected="employee_name"
                 hasExport
@@ -275,6 +275,9 @@ const UniformRequestAndIssuanceTableCard = () => {
                 exportFileName={`Request-and-Issuance-${moment().format("YYYY-MM-DD")}.xls`}
                 withBranch
                 withStatus
+                withAtdStatus
+                hasDateRange
+                dateLabel="Date Requested"
                 isExpanded
                 statusOption={[
                     {
