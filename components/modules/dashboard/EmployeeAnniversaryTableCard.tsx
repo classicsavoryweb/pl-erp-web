@@ -49,11 +49,6 @@ const EmployeeAnniversary = () => {
             columnType: COLUMNTYPES.string
         },
         {
-            columnHead: "Position",
-            path: "current_position.description",
-            columnType: COLUMNTYPES.string
-        },
-        {
             columnHead: "Anniversary Date",
             path: "date_hired",
             columnType: COLUMNTYPES.function,

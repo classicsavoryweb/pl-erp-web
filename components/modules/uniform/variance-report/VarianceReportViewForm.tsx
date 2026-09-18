@@ -42,6 +42,7 @@ const VarianceReportViewForm = ({
 }: Props) => {
     const viewVarianceItemModal = useModal();
     const [selectedItem , setSelectedItem] = useState<any>(null);
+    const [loadingButton, setLoadingButton] = useState(false);
     const [editableItems, setEditableItems] = useState<any[]>([]);
     const isEditableReview = modalType === "Review";
 
@@ -249,25 +250,30 @@ const VarianceReportViewForm = ({
             message: `Are you sure you want to ${action} this variance report?`,
         });
         if (!isConfirmed) return;
-
-        const resp = action === "review"
-            ? await reviewVariance(record.id, {
+        setLoadingButton(true);
+        try{
+            const resp = action === "review"
+                ? await reviewVariance(record.id, {
                 items: editableItems.map((item: any) => ({
                     uniform_item_id: item.uniform_item_id,
                     adjustment: Number(item.adjustment || 0),
                     reason_of_adjustment: item.reason_of_adjustment ?? null,
                 })),
             })
-            : await postVariance(record.id);
+                : await postVariance(record.id);
 
-        if (resp?.error || resp?.errors) {
-            toast.error(responseMessage(resp));
-            return;
+            if (resp?.error || resp?.errors) {
+                toast.error(responseMessage(resp));
+                return;
+            }
+
+            toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
+            modal.onClose();
+        }finally{
+            await onReload?.();
+            setLoadingButton(false);
         }
-
-        toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
-        modal.onClose();
-        await onReload?.();
+        
     };
 
     return (
@@ -481,6 +487,7 @@ const VarianceReportViewForm = ({
                                                 : "review"
                                             )
                                         }}
+                                        loading={loadingButton}
                                     />
                                 </div>
                             </div>

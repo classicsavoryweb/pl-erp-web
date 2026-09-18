@@ -119,6 +119,17 @@ const UniformItemMasterlistTableCard = () => {
                 defaultColumnSelected="description"
                 callBack={() => paginator.setPage(1)}
                 withStatus
+                statusOption={[
+                    {
+                        label: "Active",
+                        value: "active"
+                    },
+                    {
+                        label: "Inactive",
+                        value: "inactive"
+                    },
+                  
+                ]}
                 isExpanded
             />
             <Card>

@@ -51,7 +51,6 @@ const SummaryCardUniform = () => {
                 toast.error("Error fetching summary details");
             } else {
                 setData(resp.data);
-                console.log(resp.data);
             }
         })
         .catch(() => {

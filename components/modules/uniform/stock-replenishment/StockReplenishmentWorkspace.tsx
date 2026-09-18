@@ -205,6 +205,8 @@ const StockReplenishmentWorkspace = ({
 
         if (!accepted) return;
 
+        setSubmitting(true);
+        try{
         const response = await action();
 
         if (response.error) {
@@ -221,8 +223,10 @@ const StockReplenishmentWorkspace = ({
         setIsReviewReceive(false);
         setReceivingOpen(false); 
         setReceiveId(null); 
-        
-        api.triggerReload();
+        }finally{
+            api.triggerReload();
+            setSubmitting(false);
+        }
     };
 
     const closeCancelModal = () => {
@@ -1662,6 +1666,7 @@ const StockReplenishmentWorkspace = ({
                                         runAction("Post Receiving", () => postReceiving(detail.id));
                                     } 
                                 }}
+                                loading={submitting}
                             />
                         )}
                     </div>
