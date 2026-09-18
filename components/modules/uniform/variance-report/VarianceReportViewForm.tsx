@@ -42,6 +42,7 @@ const VarianceReportViewForm = ({
 }: Props) => {
     const viewVarianceItemModal = useModal();
     const [selectedItem , setSelectedItem] = useState<any>(null);
+    const [loadingButton, setLoadingButton] = useState(false);
 
     const filteredItems = (selected?.items ?? []).filter((item: any) => {
         const search = itemSearch.toLowerCase().trim();
@@ -186,19 +187,24 @@ const VarianceReportViewForm = ({
             message: `Are you sure you want to ${action} this variance report?`,
         });
         if (!isConfirmed) return;
+        setLoadingButton(true);
+        try{
+            const resp = action === "review"
+                ? await reviewVariance(record.id)
+                : await postVariance(record.id);
 
-        const resp = action === "review"
-            ? await reviewVariance(record.id)
-            : await postVariance(record.id);
+            if (resp?.error || resp?.errors) {
+                toast.error(responseMessage(resp));
+                return;
+            }
 
-        if (resp?.error || resp?.errors) {
-            toast.error(responseMessage(resp));
-            return;
+            toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
+            modal.onClose();
+        }finally{
+            await onReload?.();
+            setLoadingButton(false);
         }
-
-        toast.success(`${title} ${action === "review" ? "reviewed" : "posted"}`);
-        modal.onClose();
-        await onReload?.();
+        
     };
 
     return (
@@ -412,6 +418,7 @@ const VarianceReportViewForm = ({
                                                 : "review"
                                             )
                                         }}
+                                        loading={loadingButton}
                                     />
                                 </div>
                             </div>
