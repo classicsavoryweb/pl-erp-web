@@ -142,7 +142,6 @@ const ConverterDetailsTableCard = () => {
             onClick: (data: any) => {
                 setData(data);
                 viewModal.onOpen();
-                console.log(data);
             }
         },
         {
