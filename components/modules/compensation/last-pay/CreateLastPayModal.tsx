@@ -96,7 +96,6 @@ const CreateLastPayModal = ({
         if (modal.isShowing) {
             const handleKeyDown = (e: any) => {
                 if (e.key === "Tab") {
-                    console.log("CREATE");
                     formHandler.setFieldValue("save_changes", false);
                     formHandler.submitForm();
                 }

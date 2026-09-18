@@ -10,13 +10,15 @@ interface ChangeQuanityForm{
     items:any[];
     onExport:()=>void;
     onUpdate:()=>void;
+    loading:boolean;
 }
 
 const  ChangeQuanityForm= ({
     modal,
     items,
     onExport,
-    onUpdate
+    onUpdate,
+    loading
 }:ChangeQuanityForm) =>{
 
      const filteredChangeQuantityItems = items.filter(
@@ -78,6 +80,7 @@ const  ChangeQuanityForm= ({
                         type="button"
                         label="Update"
                         onClick={onUpdate}
+                        loading={loading}
                     />
                 </div>
             </div>

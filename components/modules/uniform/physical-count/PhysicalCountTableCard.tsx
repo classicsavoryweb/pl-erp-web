@@ -101,6 +101,7 @@ const PhysicalCountTableCard = ({
     const importInputRef = useRef<HTMLInputElement | null>(null);
     const [selected, setSelected] = useState<any>(null);
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
+    const [loadingChangeUnit , setLoadingChangeUnit] = useState(false);
     const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
     const [physicalCounts, setPhysicalCounts] = useState<any[]>([]);
     const [isLoadingPreview, setIsLoadingPreview] = useState(false);
@@ -544,6 +545,7 @@ const PhysicalCountTableCard = ({
             toast.error("No items to update."); 
             return; 
         } 
+        setLoadingChangeUnit(true);
         try { 
             await updateQuantity({ 
                 physical_count_id: selected?.physical_count_no, 
@@ -560,7 +562,9 @@ const PhysicalCountTableCard = ({
         catch (error) { 
             console.error(error); 
             toast.error("Failed to update quantities."); 
-        } 
+        }finally{
+            setLoadingChangeUnit(false)
+        }
     };
     
     const exportChangeQuantityItems = () => {
@@ -737,6 +741,7 @@ const PhysicalCountTableCard = ({
                 items={changeQuantityItems}
                 onExport={exportChangeQuantityItems}
                 onUpdate={saveChangeQuantity}
+                loading={loadingChangeUnit}
             />
 
         </>
