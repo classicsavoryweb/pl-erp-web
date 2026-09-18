@@ -12,7 +12,7 @@ import moment from "moment";
 import {COLUMNTYPES} from "@/constants/column";
 import {getVarianceById ,reviewVariance ,postVariance} from "@/api/uniform/variance-report";
 import { useModal } from "@/hooks/modal";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
 
@@ -43,8 +43,35 @@ const VarianceReportViewForm = ({
     const viewVarianceItemModal = useModal();
     const [selectedItem , setSelectedItem] = useState<any>(null);
     const [loadingButton, setLoadingButton] = useState(false);
+    const [editableItems, setEditableItems] = useState<any[]>([]);
+    const isEditableReview = modalType === "Review";
 
-    const filteredItems = (selected?.items ?? []).filter((item: any) => {
+    useEffect(() => {
+        if (modal.isShowing && modalType === "Review") {
+            setEditableItems(selected?.items ?? []);
+        }
+    }, [modal.isShowing, modalType, selected]);
+
+    const updateEditableItem = (uniformItemId: any, key: string, value: any) => {
+        setEditableItems((prev) =>
+            prev.map((item) => {
+                if (item.uniform_item_id !== uniformItemId) return item;
+
+                const next = { ...item, [key]: value };
+                const variance = Number(next.variance || 0);
+                const adjustment = Number(next.adjustment || 0);
+                const finalVariance = variance + adjustment;
+
+                return {
+                    ...next,
+                    final_variance: finalVariance,
+                    total_variance_cost: finalVariance * Number(next.standard_cost || 0),
+                };
+            })
+        );
+    };
+
+    const filteredItems = (isEditableReview ? editableItems : (selected?.items ?? [])).filter((item: any) => {
         const search = itemSearch.toLowerCase().trim();
 
         const matchesSearch =
@@ -114,7 +141,21 @@ const VarianceReportViewForm = ({
         { columnHead: "Should Be", path: "should_be_inventory", columnType: COLUMNTYPES.amount },
         { columnHead: "Physical", path: "physical_count", columnType: COLUMNTYPES.amount },
         { columnHead: "Variance", path: "variance", columnType: COLUMNTYPES.amount },
-        { columnHead: "Adjustment", path: "adjustment", columnType: COLUMNTYPES.amount },
+        { columnHead: "Adjustment", path: "adjustment", columnType: COLUMNTYPES.function,
+            function: (item: any) => isEditableReview ? (
+                <input
+                    type="number"
+                    className="w-24 rounded-md border-2 border-slate-300 bg-transparent p-1 text-right focus:border-slate-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800"
+                    value={item.adjustment ?? 0}
+                    onChange={(e) => updateEditableItem(item.uniform_item_id, "adjustment", e.target.value)}
+                />
+            ) : (
+                Number(item.adjustment ?? 0).toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2,
+                })
+            )
+        },
         { columnHead: "Final Variance", path: "final_variance", columnType: COLUMNTYPES.function,
             function: (item: any) => {
                 const final_variance = Number(item.final_variance || 0);
@@ -167,7 +208,16 @@ const VarianceReportViewForm = ({
                 )
             }
          },
-        { columnHead: "Reason", path: "reason_of_adjustment", columnType: COLUMNTYPES.string },
+        { columnHead: "Reason", path: "reason_of_adjustment", columnType: COLUMNTYPES.function,
+            function: (item: any) => isEditableReview ? (
+                <input
+                    type="text"
+                    className="w-full rounded-md border-2 border-slate-300 bg-transparent p-1 focus:border-slate-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800"
+                    value={item.reason_of_adjustment ?? ""}
+                    onChange={(e) => updateEditableItem(item.uniform_item_id, "reason_of_adjustment", e.target.value)}
+                />
+            ) : (item.reason_of_adjustment ?? "-")
+        },
         {
             columnHead: "Action",
             path: "",
@@ -182,6 +232,19 @@ const VarianceReportViewForm = ({
     ];
 
     const runAction = async (record: any, action: "review" | "post") => {
+        if (action === "review") {
+            const invalidItem = editableItems.find(
+                (item: any) =>
+                    (Number(item.final_variance ?? 0) !== 0 ||
+                        Number(item.total_variance_cost ?? 0) !== 0) &&
+                    !item.reason_of_adjustment?.trim()
+            );
+            if (invalidItem) {
+                toast.error(`Reason is required for ${invalidItem.description}.`);
+                return;
+            }
+        }
+
         const isConfirmed = await confirm({
             title,
             message: `Are you sure you want to ${action} this variance report?`,
@@ -190,7 +253,13 @@ const VarianceReportViewForm = ({
         setLoadingButton(true);
         try{
             const resp = action === "review"
-                ? await reviewVariance(record.id)
+                ? await reviewVariance(record.id, {
+                items: editableItems.map((item: any) => ({
+                    uniform_item_id: item.uniform_item_id,
+                    adjustment: Number(item.adjustment || 0),
+                    reason_of_adjustment: item.reason_of_adjustment ?? null,
+                })),
+            })
                 : await postVariance(record.id);
 
             if (resp?.error || resp?.errors) {

@@ -350,7 +350,7 @@ const StockReplenishmentWorkspace = ({
 
         setReplaceSubmitting(true);
         try {
-            const response = await replaceReplenishmentSupplier(replaceTarget.id, {supplierId:replacementSupplierId});
+            const response = await replaceReplenishmentSupplier(replaceTarget.id, {supplier_id:replacementSupplierId});
             if (response.error) {
                 toast.error(messageOf(response));
                 return;
@@ -885,17 +885,31 @@ const StockReplenishmentWorkspace = ({
         0
     );
     
-    const replenishmentbutton = [ 
+    const replenishmentbutton = [
         {
             label: "Generate List",
             onClick: handleGenerateList
         },
         {
             label: "Import Supplier/Item list",
-            onClick : () => importInputRef.current?.click()    
+            onClick : () => importInputRef.current?.click()
         }
 
     ];
+
+    const eligibleReplacementVendorNos: Set<string> | null = (() => {
+        const lines = replaceTarget?.items ?? [];
+        if (lines.length === 0) return null;
+
+        return lines.reduce((common: Set<string> | null, line: any) => {
+            const vendorNos = new Set(
+                (line.item?.suppliers ?? []).map((supplier: any) => supplier.vendor_no)
+            );
+            if (common === null) return vendorNos;
+            return new Set([...common].filter((vendorNo) => vendorNos.has(vendorNo)));
+        }, null as Set<string> | null);
+    })();
+
     return (
         <>
             <FilterCard
@@ -1071,6 +1085,8 @@ const StockReplenishmentWorkspace = ({
                         onChange={(event) => setReplacementSupplierId(event.target.value)}
                         options={suppliers
                             .filter((supplier) => String(supplier.id) !== String(replaceTarget?.supplier_id))
+                            .filter((supplier) => eligibleReplacementVendorNos === null
+                                || eligibleReplacementVendorNos.has(supplier.vendor_number))
                             .map((supplier) => ({
                                 label: supplier.vendor_name,
                                 value: String(supplier.id),

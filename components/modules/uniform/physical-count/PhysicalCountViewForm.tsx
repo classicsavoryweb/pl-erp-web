@@ -12,7 +12,7 @@ import {COLUMNTYPES} from "@/constants/column";
 import { reviewPhysicalCount , postPhysicalCount} from "@/api/uniform/physical-count";
 import confirm from "@/components/common/Confirm";
 import { toast } from "react-toastify";
-import {useState} from "react";
+import {useState, useEffect} from "react";
 
 
 interface PhysicalCountViewFormProps {
@@ -32,6 +32,21 @@ const PhysicalCountViewForm = ({
     onReload,
 }: PhysicalCountViewFormProps) => {
     const [loading, setLoading] = useState(false);
+    const [editableItems, setEditableItems] = useState<any[]>([]);
+
+    useEffect(() => {
+        if (modal.isShowing && modalType === "Review") {
+            setEditableItems(selected?.items ?? []);
+        }
+    }, [modal.isShowing, modalType, selected]);
+
+    const updateEditableItem = (uniformItemId: any, key: string, value: any) => {
+        setEditableItems((prev) =>
+            prev.map((item) =>
+                item.uniform_item_id === uniformItemId ? { ...item, [key]: value } : item
+            )
+        );
+    };
 
     const numberValue = (value: any) => Number(value || 0);
 
@@ -64,7 +79,8 @@ const PhysicalCountViewForm = ({
     maximumFractionDigits: 2,
     });
 
-    const viewItems = selected?.items ?? [];
+    const isEditableReview = modalType === "Review";
+    const viewItems = isEditableReview ? editableItems : (selected?.items ?? []);
     const physicalViewColumns = [
         { columnHead: "Item Code", path: "item_no", columnType: COLUMNTYPES.string },
         { columnHead: "Description", path: "description", columnType: COLUMNTYPES.string },
@@ -77,6 +93,18 @@ const PhysicalCountViewForm = ({
             function:(item : any) => {
                 const physical_count = Number(item.physical_count || 0);
                 const should_be = Number(item.should_be_inventory || 0);
+
+                if (isEditableReview) {
+                    return (
+                        <input
+                            type="number"
+                            className="w-24 rounded-md border-2 border-slate-300 bg-transparent p-1 text-right focus:border-slate-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800"
+                            value={item.physical_count ?? 0}
+                            onChange={(e) => updateEditableItem(item.uniform_item_id, "physical_count", e.target.value)}
+                        />
+                    );
+                }
+
                 return(
                     <span className = {physical_count < should_be ? "text-red-500" : ""}>
                         {item.physical_count}
@@ -85,7 +113,16 @@ const PhysicalCountViewForm = ({
             }
          },
         { columnHead: "Total Amount", path: "total_amount", columnType: COLUMNTYPES.amount},
-        { columnHead: "Remarks", path: "item_remarks", columnType: COLUMNTYPES.string },
+        { columnHead: "Remarks", path: "item_remarks", columnType: COLUMNTYPES.function,
+            function: (item: any) => isEditableReview ? (
+                <input
+                    type="text"
+                    className="w-full rounded-md border-2 border-slate-300 bg-transparent p-1 focus:border-slate-400 focus:outline-none dark:border-neutral-700 dark:bg-neutral-800"
+                    value={item.item_remarks ?? ""}
+                    onChange={(e) => updateEditableItem(item.uniform_item_id, "item_remarks", e.target.value)}
+                />
+            ) : (item.item_remarks ?? "-")
+        },
     ];
 
     const runAction = async (record: any, action: "review" | "post") => {
@@ -98,7 +135,13 @@ const PhysicalCountViewForm = ({
             if (!isConfirmed) return;
 
             const resp = action === "review"
-                ? await reviewPhysicalCount(record.id)
+                ? await reviewPhysicalCount(record.id, {
+                    items: editableItems.map((item: any) => ({
+                        uniform_item_id: item.uniform_item_id,
+                        physical_count: numberValue(item.physical_count),
+                        item_remarks: item.item_remarks ?? null,
+                    })),
+                })
                 : await postPhysicalCount(record.id);
 
             if (resp?.error || resp?.errors) {
