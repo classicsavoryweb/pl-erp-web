@@ -61,14 +61,14 @@ const ImportLiquidationFromCSHubModal = ({ modal, issuance, onImported }: Import
     const importableTransactions = transactions.filter((t) => t.importable);
     const allSelected = importableTransactions.length > 0 && selectedIds.length === importableTransactions.length;
 
-    const toggleOne = (cshubId: any) => {
+    const toggleOne = (selectionKey: any) => {
         setSelectedIds((prev) =>
-            prev.includes(cshubId) ? prev.filter((id) => id !== cshubId) : [...prev, cshubId]
+            prev.includes(selectionKey) ? prev.filter((key) => key !== selectionKey) : [...prev, selectionKey]
         );
     };
 
     const toggleAll = () => {
-        setSelectedIds(allSelected ? [] : importableTransactions.map((t) => t.cshub_id));
+        setSelectedIds(allSelected ? [] : importableTransactions.map((t) => t.selection_key));
     };
 
     const handleSearch = () => {
@@ -86,7 +86,7 @@ const ImportLiquidationFromCSHubModal = ({ modal, issuance, onImported }: Import
 
         isImportingRef.current = true;
         setImporting(true);
-        importCSHubLiquidations(issuance.id, { cshub_ids: selectedIds, ...dateRange })
+        importCSHubLiquidations(issuance.id, { selection_keys: selectedIds, ...dateRange })
             .then((resp) => {
                 if (!resp.error) {
                     const results = resp.data.results ?? [];
@@ -151,7 +151,9 @@ const ImportLiquidationFromCSHubModal = ({ modal, issuance, onImported }: Import
                             <th className="text-left px-3 py-2 whitespace-nowrap"></th>
                             <th className="text-left px-3 py-2 whitespace-nowrap">Trans No.</th>
                             <th className="text-left px-3 py-2 whitespace-nowrap">Liquidation Date</th>
-                            <th className="text-right px-3 py-2 whitespace-nowrap">Actual Amount Spent</th>
+                            <th className="text-left px-3 py-2 whitespace-nowrap">Expense Type</th>
+                            <th className="text-left px-3 py-2 whitespace-nowrap">Supplier</th>
+                            <th className="text-right px-3 py-2 whitespace-nowrap">Amount</th>
                             <th className="text-left px-3 py-2">Remarks</th>
                             <th className="text-left px-3 py-2 whitespace-nowrap">Attachments</th>
                         </tr>
@@ -159,23 +161,23 @@ const ImportLiquidationFromCSHubModal = ({ modal, issuance, onImported }: Import
                     <tbody>
                         {loading ? (
                             <tr>
-                                <td colSpan={6} className="text-center py-6 text-gray-400">Loading...</td>
+                                <td colSpan={8} className="text-center py-6 text-gray-400">Loading...</td>
                             </tr>
                         ) : transactions.length === 0 ? (
                             <tr>
-                                <td colSpan={6} className="text-center py-6 text-gray-400">
+                                <td colSpan={8} className="text-center py-6 text-gray-400">
                                     No liquidation found on CS Hub for this cash issuance yet.
                                 </td>
                             </tr>
                         ) : (
                             transactions.map((t) => (
-                                <tr key={t.cshub_id} className="border-t dark:border-neutral-600">
+                                <tr key={t.selection_key} className="border-t dark:border-neutral-600">
                                     <td className="px-3 py-2">
                                         {t.importable ? (
                                             <Checkbox
-                                                value={t.cshub_id}
-                                                checked={selectedIds.includes(t.cshub_id)}
-                                                onChange={() => toggleOne(t.cshub_id)}
+                                                value={t.selection_key}
+                                                checked={selectedIds.includes(t.selection_key)}
+                                                onChange={() => toggleOne(t.selection_key)}
                                             />
                                         ) : (
                                             <span className="text-gray-300">—</span>
@@ -183,8 +185,10 @@ const ImportLiquidationFromCSHubModal = ({ modal, issuance, onImported }: Import
                                     </td>
                                     <td className="px-3 py-2 whitespace-nowrap font-mono text-xs">{t.trans_no ?? "—"}</td>
                                     <td className="px-3 py-2 whitespace-nowrap">{t.liquidation_date_filed ?? "—"}</td>
-                                    <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(t.actual_amount_spent)}</td>
-                                    <td className="px-3 py-2">{t.liquidation_remarks}</td>
+                                    <td className="px-3 py-2 whitespace-nowrap">{t.expense_type ?? "—"}</td>
+                                    <td className="px-3 py-2 whitespace-nowrap">{t.supplier ?? "—"}</td>
+                                    <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(t.amount)}</td>
+                                    <td className="px-3 py-2">{t.remarks}</td>
                                     <td className="px-3 py-2 whitespace-nowrap">
                                         {t.attachment_count} file(s)
                                         {t.already_imported && (
