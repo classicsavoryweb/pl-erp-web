@@ -37,6 +37,9 @@ const UniformRequestAndIssuanceTableCard = () => {
     const { permissions } = useContext(AuthContext);
     const canReview = permissions.includes("perform_uniform_request_and_issuance_review");
     const canPost = permissions.includes("perform_uniform_request_and_issuance_post");
+    const canCreate = permissions.includes("perform_uniform_request_and_issuance_create");
+    const canExport = permissions.includes("perform_uniform_request_and_issuance_export");
+    const canCancel = permissions.includes("perform_uniform_request_and_issuance_cancel");
 
 
      useAsyncEffect(() => {
@@ -67,7 +70,7 @@ const UniformRequestAndIssuanceTableCard = () => {
                 viewModal.onOpen();
             },
         },
-        {
+        canExport && {
             label: "Detailed Export",
             onClick: () => downloadDetailedExport(item),
         },
@@ -85,7 +88,7 @@ const UniformRequestAndIssuanceTableCard = () => {
                 postModal.onOpen();
             }
         },
-        ["Unposted", "Reviewed"].includes(item.status) && {
+        ["Unposted", "Reviewed"].includes(item.status) && canCancel && {
             label: "Cancel",
             onClick: () => {
                 setData(item);
@@ -200,6 +203,9 @@ const UniformRequestAndIssuanceTableCard = () => {
                     case "ATD Acknowledged":
                         status = "warning";
                         break;
+                    case "Item(s) Received":
+                        status = "warning";
+                        break;
                     case "ATD Created":
                         status = "default";
                         break;
@@ -260,14 +266,18 @@ const UniformRequestAndIssuanceTableCard = () => {
                         path: "request_number",
                         columnType:COLUMNTYPES.string
                     }
-                    
+
                 ]}
                 defaultColumnSelected="employee_name"
                 hasExport
+                exportPermission="perform_uniform_request_and_issuance_export"
                 api={exportAllRequestAndIssuance}
                 exportFileName={`Request-and-Issuance-${moment().format("YYYY-MM-DD")}.xls`}
                 withBranch
                 withStatus
+                withAtdStatus
+                hasDateRange
+                dateLabel="Date Requested"
                 isExpanded
                 statusOption={[
                     {
@@ -293,11 +303,13 @@ const UniformRequestAndIssuanceTableCard = () => {
               
             />
             <Card>
-                <div className="flex justify-end gap-x-3">
-                    <DropDownButtons
-                        actions={actionSettings}
-                    />
-                </div>
+                {canCreate && (
+                    <div className="flex justify-end gap-x-3">
+                        <DropDownButtons
+                            actions={actionSettings}
+                        />
+                    </div>
+                )}
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}

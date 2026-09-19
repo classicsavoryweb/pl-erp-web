@@ -30,6 +30,8 @@ export const updateUnitPrice = async (payload?: {}) => {
         method: "POST",
         payload,
     })
+
+    return resData;
 }
 
 export const exportWeightAverageDetails = async (id: number) => {

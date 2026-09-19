@@ -1,7 +1,6 @@
 "use client";
 
 import {
-    cancelPhysicalCount,
     createPhysicalCount,
     exportPhysicalCountDetails,
     exportPhysicalCounts,
@@ -24,6 +23,7 @@ import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import EmployeeMultiSelect from "@/components/modules/generic/EmployeeMultiSelect";
 import { COLUMNTYPES } from "@/constants/column";
+import { AuthContext } from "@/context/AuthProvider";
 import * as XLSX from "xlsx-js-style";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
@@ -32,13 +32,17 @@ import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import { useFormik } from "formik";
 import moment from "moment";
-import { useState, useRef , useEffect } from "react";
+import { useState, useRef , useContext } from "react";
 import { toast } from "react-toastify";
 import PasswordForm from "./PasswordForm";
 import ChangeQuanityForm from "./PhysicalChangeQuantityForm";
 
 interface TableCardProps {
     performPermission: string;
+    createPermission?: string;
+    exportPermission?: string;
+    cancelPermission?: string;
+    updateQuantityPermission?: string;
     reviewPermission?: string;
     postPermission?: string;
 }
@@ -76,9 +80,15 @@ const getStatusBadge = (status: string): "success" | "warning" | "danger" | "pur
 
 const PhysicalCountTableCard = ({
     performPermission,
+    createPermission = performPermission,
+    exportPermission = performPermission,
+    cancelPermission = performPermission,
+    updateQuantityPermission = performPermission,
     reviewPermission = performPermission,
     postPermission = performPermission,
 }: TableCardProps) => {
+    const { permissions } = useContext(AuthContext);
+    const canCreate = permissions.includes(createPermission);
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
@@ -91,15 +101,16 @@ const PhysicalCountTableCard = ({
     const importInputRef = useRef<HTMLInputElement | null>(null);
     const [selected, setSelected] = useState<any>(null);
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
+    const [loadingChangeUnit , setLoadingChangeUnit] = useState(false);
     const [modalType, setModalType] = useState<"View" | "Review" | "Post">("View");
     const [physicalCounts, setPhysicalCounts] = useState<any[]>([]);
-    const [cancelReason, setCancelReason] = useState("");
+    const [isLoadingPreview, setIsLoadingPreview] = useState(false);
     const [password , setPassword] = useState("");
     const [changeQuantityItems , setChangeQuantityItems] = useState<any[]>([]);
     const physicalCountForm = useFormik({
         initialValues: {
             begin_date: today(),
-            ending_date: today(),
+            ending_date: "",
             counted_by_employees: [] as any[],
             remarks: "",
             total_sales: 0,
@@ -166,32 +177,30 @@ const PhysicalCountTableCard = ({
     useAsyncEffect(fetchRecords, [paginator.reload, api.reload, filter.reload]);
 
     const openCreate = () => {
-        const lastRecord = api.dataSet?.filter((record:any)=> record.status ==="Updated")
-         ?.sort(
-            (a: any, b: any) =>
-                new Date(b.begin_date).getTime() -
-                new Date(a.begin_date).getTime()
-        )[0];
-
-        physicalCountForm.resetForm({
-            values: {
-                begin_date: lastRecord?.ending_date ?? today(),
-                ending_date: today(),
-                counted_by_employees: [],
-                remarks: "",
-                total_sales: 0,
-                items: [],
-            },
+        physicalCountForm.setValues({
+            begin_date: beginDateOptions[0].value,
+            ending_date: "",
+            counted_by_employees: [],
+            remarks: "",
+            total_sales: 0,
+            items: [],
         });
 
         formModal.onOpen();
     };
 
     const loadPreview = async () => {
+        if (!physicalCountForm.values.ending_date) {
+            toast.error("Please select an Ending Date.");
+            return false;
+        }
+
         if (physicalCountForm.values.begin_date > physicalCountForm.values.ending_date) {
             toast.error("Begin date cannot be later than ending date");
-            return;
+            return false;
         }
+
+        setIsLoadingPreview(true);
 
         physicalCountForm.setValues(prev => ({
             ...prev,
@@ -208,7 +217,7 @@ const PhysicalCountTableCard = ({
 
             if (resp?.error || resp?.errors) {
                 toast.error(responseMessage(resp));
-                return;
+                return false;
             }
 
             const previewItems = resp?.items?.items ?? [];
@@ -221,31 +230,19 @@ const PhysicalCountTableCard = ({
 
             if (previewItems.length === 0) {
                 toast.info("No data found");
-                return;
+                return false;
             }
 
             toast.success("Physical count preview loaded successfully");
+            return true;
 
         } catch {
             toast.error("Error encountered");
+            return false;
+        } finally {
+            setIsLoadingPreview(false);
         }
     };
-
-    useEffect(() => {
-    if (physicalCounts.length > 0) {
-        const latestPosted = physicalCounts
-            .filter((pc: any) => pc.status === "Posted")
-            .sort(
-                (a: any, b: any) =>
-                    new Date(b.begin_date).getTime() -
-                    new Date(a.begin_date).getTime()
-            )[0];
-
-        if (latestPosted) {
-            physicalCountForm.setFieldValue("begin_date", latestPosted.begin_date);
-        }
-    }
-    }, [physicalCounts]);
 
     const downloadDetailedExport = async (record: any) => {
         const resp = await exportPhysicalCountDetails(record.id);
@@ -390,6 +387,7 @@ const PhysicalCountTableCard = ({
         },
         {
             label: "Detailed Export",
+            permission: exportPermission,
             onClick: () => downloadDetailedExport(record),
         },
         record.status === "Unposted" && {
@@ -412,16 +410,15 @@ const PhysicalCountTableCard = ({
         },
         ["Unposted", "Reviewed"].includes(record.status) && {
             label: "Cancel",
-            permission: performPermission,
+            permission: cancelPermission,
             onClick: () => {
                 setSelected(record);
-                setCancelReason("");
                 cancelModal.onOpen();
             },
         },
         record.status === "Posted" && {
             label : "Update to Masterlist",
-            permission: performPermission,
+            permission: updateQuantityPermission,
             onClick: () => {
                 setSelected(record);
                 passwordModal.onOpen();
@@ -523,11 +520,14 @@ const PhysicalCountTableCard = ({
 
     const actionbutton = [
         {
-            label : "Generate Data",
-            onClick : async () => {
-                await loadPreview();
-                setHasGeneratedData(true);
-            }
+            label: "Generate Data",
+            onClick: async () => {
+                const success = await loadPreview();
+
+                if (success) {
+                    setHasGeneratedData(true);
+                }
+            },
         },
         {
             label: "Download Template",
@@ -545,6 +545,7 @@ const PhysicalCountTableCard = ({
             toast.error("No items to update."); 
             return; 
         } 
+        setLoadingChangeUnit(true);
         try { 
             await updateQuantity({ 
                 physical_count_id: selected?.physical_count_no, 
@@ -561,7 +562,9 @@ const PhysicalCountTableCard = ({
         catch (error) { 
             console.error(error); 
             toast.error("Failed to update quantities."); 
-        } 
+        }finally{
+            setLoadingChangeUnit(false)
+        }
     };
     
     const exportChangeQuantityItems = () => {
@@ -622,14 +625,17 @@ const PhysicalCountTableCard = ({
                 dateLabel="Physical Count Date"
                 defaultColumnSelected="physical_count_no"
                 hasExport
+                exportPermission={exportPermission}
                 api={exportPhysicalCounts}
                 exportFileName={`PHYSICAL-COUNT-${moment().format("YYYY-MM-DD")}.xls`}
                 callBack={() => paginator.setPage(1)}
             />
             <Card>
-                <div className="flex justify-end gap-x-3">
-                    <DropDownButtons actions={[{ label: `Generate ${title}`, onClick: openCreate }]} />
-                </div>
+                {canCreate && (
+                    <div className="flex justify-end gap-x-3">
+                        <DropDownButtons actions={[{ label: `Generate ${title}`, onClick: openCreate }]} />
+                    </div>
+                )}
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columns}
@@ -694,7 +700,11 @@ const PhysicalCountTableCard = ({
                     </div>
                 </div>
 
-                <PhysicalCountItemsTable items={physicalCountForm.values.items} editable onChange={updatePhysicalItem} />
+                <PhysicalCountItemsTable 
+                items={physicalCountForm.values.items} 
+                editable 
+                loading={isLoadingPreview} 
+                onChange={updatePhysicalItem} />
 
                 <div className="flex justify-end gap-x-2 mt-3">
                     <div className="w-[120px]">
@@ -731,6 +741,7 @@ const PhysicalCountTableCard = ({
                 items={changeQuantityItems}
                 onExport={exportChangeQuantityItems}
                 onUpdate={saveChangeQuantity}
+                loading={loadingChangeUnit}
             />
 
         </>
@@ -740,10 +751,12 @@ const PhysicalCountTableCard = ({
 const PhysicalCountItemsTable = ({
     items,
     editable = false,
+    loading=false,
     onChange,
 }: {
     items: any[];
     editable?: boolean;
+    loading?:boolean;
     onChange?: (index: number, key: string, value: any) => void;
 }) => (
     <div>
@@ -758,15 +771,27 @@ const PhysicalCountItemsTable = ({
                 </thead>
                 
                 <tbody>
-                    {items.length === 0 && (
+                    
+                     {loading ? (
                         <tr>
-                            <td colSpan={10} className="w- border-1 border-slate-300 dark:border-neutral-700` p-2 text-center">
+                            <td colSpan={10} className="p-8 text-center">
+                                <div className="flex flex-col items-center justify-center gap-2">
+                                    <div className="h-8 w-8 animate-spin rounded-full border-4 border-slate-300 border-t-red-800" />
+                                    <span className="text-sm text-gray-500">
+                                        Generating data...
+                                    </span>
+                                </div>
+                            </td>
+                        </tr>
+                    ) : items.length === 0 ? (
+                        <tr>
+                            <td colSpan={10} className="border-1 border-slate-300 dark:border-neutral-700 p-2 text-center">
                                 <EmptyState />
                                 <p>No data available...</p>
                             </td>
                         </tr>
-                    )}
-                    {items.map((item, index) => (
+                    ) : (
+                    items.map((item, index) => (
                         <tr key={item.uniform_item_id ?? index}>
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700 ">{item.item_no}</td>
                             <td className="py-[10px] px-2 border-1 border-slate-300 dark:border-neutral-700">{item.description}</td>
@@ -797,7 +822,7 @@ const PhysicalCountItemsTable = ({
                                 ) : item.item_remarks ?? "-"}
                             </td>
                         </tr>
-                    ))}
+                    )))}
                 </tbody>
             </table>
         </div>

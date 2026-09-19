@@ -55,7 +55,7 @@ export const cancelReplenishment = (id: number, payload:{reason: string}) => axi
     payload,
 });
 
-export const replaceReplenishmentSupplier = (id: number, payload:{supplierId: string | number}) => axiosHelper({
+export const replaceReplenishmentSupplier = (id: number, payload:{supplier_id: string | number}) => axiosHelper({
     func_path: `/uniform-replenishments/${id}/replace-supplier`,
     method: "POST",
     payload

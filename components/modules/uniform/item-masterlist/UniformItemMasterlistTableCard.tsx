@@ -1,6 +1,7 @@
 "use client";
 
 import { exportAllUniformItems, getAllUniformItems } from "@/api/uniform/item-masterlist";
+import ActionDropDown from "@/components/common/ActionDropDown";
 import Card from "@/components/common/Card";
 import DropDownButtons from "@/components/common/DropDownButtons";
 import Table from "@/components/common/Table";
@@ -21,11 +22,14 @@ const UniformItemMasterlistTableCard = () => {
     const api = useApiCall();
     const createModal = useModal();
     const editModal = useModal();
-    const paginator = usePagination();
-    const filter = useFilter();
+    const viewModal = useModal();
+    const paginator = usePagination(100);
+    const filter = useFilter({ status: "active" });
     const [data, setData] = useState<any>({});
     const { permissions } = useContext(AuthContext);
-    const canPerform = permissions.includes("perform_uniform_item_masterlist");
+    const canCreate = permissions.includes("perform_uniform_item_masterlist_create");
+    const canEdit = permissions.includes("perform_uniform_item_masterlist_edit");
+    const canExport = permissions.includes("perform_uniform_item_masterlist_export");
 
     useAsyncEffect(() => {
         api.setLoading(true);
@@ -46,6 +50,25 @@ const UniformItemMasterlistTableCard = () => {
             .catch(() => toast.error("Error encountered"))
             .finally(() => api.setLoading(false));
     }, [paginator.reload, api.reload, filter.reload]);
+
+    const tableActions = (item: any) => [
+        {
+            label: "View",
+            onClick: () => {
+                setData(item);
+                viewModal.onOpen();
+            },
+        },
+        ...(canEdit
+            ? [{
+                label: "Edit",
+                onClick: () => {
+                    setData(item);
+                    editModal.onOpen();
+                },
+            }]
+            : []),
+    ];
 
     const columnSettings = [
         { columnHead: "#", path: "row_number", columnType: COLUMNTYPES.string },
@@ -68,6 +91,12 @@ const UniformItemMasterlistTableCard = () => {
             columnType: COLUMNTYPES.function,
             function: (item: any) => item.made_to_order ? "Yes" : "No",
         },
+        {
+            columnHead: "Action",
+            path: "id",
+            columnType: COLUMNTYPES.function,
+            function: (item: any) => <ActionDropDown data={item} actions={tableActions(item)} />,
+        },
     ];
 
     const dataSetWithIndex = (api.dataSet ?? []).map((item: any, index: number) => ({
@@ -84,14 +113,27 @@ const UniformItemMasterlistTableCard = () => {
                 ]}
                 filterHandler={filter}
                 hasExport
+                exportPermission="perform_uniform_item_masterlist_export"
                 api={exportAllUniformItems}
                 exportFileName={`UNIFORM-ITEM-MASTERLIST-${moment().format("YYYY-MM-DD")}.xls`}
                 defaultColumnSelected="description"
                 callBack={() => paginator.setPage(1)}
                 withStatus
+                statusOption={[
+                    {
+                        label: "Active",
+                        value: "active"
+                    },
+                    {
+                        label: "Inactive",
+                        value: "inactive"
+                    },
+                  
+                ]}
+                isExpanded
             />
             <Card>
-                {canPerform && (
+                {canCreate && (
                     <div className="flex justify-end gap-x-3">
                         <DropDownButtons
                             actions={[
@@ -108,16 +150,6 @@ const UniformItemMasterlistTableCard = () => {
                     columnSettings={columnSettings}
                     loading={api.loading}
                     paginator={paginator}
-                    withActions={canPerform}
-                    actions={[
-                        {
-                            label: "Edit",
-                            onClick: (item: any) => {
-                                setData(item);
-                                editModal.onOpen();
-                            },
-                        },
-                    ]}
                 />
             </Card>
 
@@ -129,6 +161,12 @@ const UniformItemMasterlistTableCard = () => {
             <UniformItemForm
                 modal={editModal}
                 mode="edit"
+                formValue={data}
+                onSubmitCallback={api.triggerReload}
+            />
+            <UniformItemForm
+                modal={viewModal}
+                mode="view"
                 formValue={data}
                 onSubmitCallback={api.triggerReload}
             />

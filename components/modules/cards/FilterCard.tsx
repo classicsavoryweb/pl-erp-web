@@ -26,6 +26,7 @@ import RateCodeDropDown from "../generic/RateCodeDropDown";
 interface FilterInterface {
     hasDateRange?: boolean;
     withStatus?: boolean;
+    withAtdStatus?: boolean;
     withEmployeeStatus?: boolean;
     withHolidayType?: boolean;
     columnSettings?: any;
@@ -43,6 +44,7 @@ interface FilterInterface {
     api?: (values: any) => any;
     exportFileName?: string;
     statusOption?: {label: string, value: string}[];
+    atdStatusOption?: {label: string, value: string}[];
     holidayTypeOption?: {label: string, value: string}[];
     exportPermission?: string;
     callBack?: () => void;
@@ -61,6 +63,7 @@ const FilterCard = ({
     columnSettings,
     filterHandler,
     withStatus = false,
+    withAtdStatus = false,
     withEmployeeStatus = false,
     withHolidayType = false,
     withBranch = false,
@@ -82,6 +85,20 @@ const FilterCard = ({
         {
             label: "Inactive",
             value: "inactive"
+        }
+    ],
+    atdStatusOption = [
+        {
+            label: "ATD Created",
+            value: "ATD Created"
+        },
+        {
+            label: "ATD Generated",
+            value: "ATD Generated"
+        },
+        {
+            label: "ATD Acknowledged",
+            value: "ATD Acknowledged"
         }
     ],
     holidayTypeOption = [
@@ -114,6 +131,7 @@ const FilterCard = ({
             date_from: '',
             date_to: '',
             status: "",
+            atd_status: "",
             employee_status: "",
             holiday_type: "",
             branch_id: "",
@@ -142,6 +160,7 @@ const FilterCard = ({
                     : schema.notRequired()
             ),
             status: Yup.string(),
+            atd_status: Yup.string(),
             employee_status: Yup.string(),
             holiday_type: Yup.string()
         }),
@@ -159,6 +178,7 @@ const FilterCard = ({
             date_from: '',
             date_to: '',
             status: "",
+            atd_status: "",
             employee_status: "",
             holiday_type: "",
             branch_id: "",
@@ -314,6 +334,16 @@ const FilterCard = ({
                                 value={formHandler.values.status}
                                 onChange={formHandler.handleChange}
                                 options={statusOption}
+                            />
+                        }
+                        { withAtdStatus &&
+                            <Dropdown
+                                placeholder="select ATD status"
+                                label="ATD Status"
+                                name="atd_status"
+                                value={formHandler.values.atd_status}
+                                onChange={formHandler.handleChange}
+                                options={atdStatusOption}
                             />
                         }
                         { withRateCode &&

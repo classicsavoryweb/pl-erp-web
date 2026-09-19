@@ -137,38 +137,65 @@ const CreateRolesAndPermissionsForm = ({
                 </Grid>
 
                 <div className="max-h-[600px] overflow-y-auto">
-                    <Grid
-                        cols={4}
-                    >
-                        {filteredPermissions.map((permission: any, key:number) => {
-                            const isChecked = createRole.values.permissions.includes(permission.name);
+                    {(() => {
+                        const togglePermission = (permissionName: string, isChecked: boolean) => {
+                            const selectedPermissions = createRole.values.permissions;
 
-                            return (
-                                <div key={key} className={` ${ String(permission.name).includes("module") ? "col-span-4 pt-[10px]" : ""}`}>
-                                    <Checkbox
-                                        highlight={String(permission.name).includes("module")}
-                                        label={permission.name}
-                                        value={permission.name}
-                                        checked={isChecked}
-                                        onChange={(e: any) => {
-                                            if (e.target.checked) {
-                                                createRole.setFieldValue("permissions", [
-                                                    ...createRole.values.permissions,
-                                                    e.target.value
-                                                ]);
-                                            } else {
-                                                const updatedPermissions = createRole.values.permissions.filter(
-                                                    (permission) => permission !== e.target.value
-                                                );
-                                                createRole.setFieldValue("permissions", updatedPermissions);
-                                            }
-                                        }}
-                                    />
-                                </div>
-                            );
-                        })}
-                    </Grid>
-                </div>          
+                            if (isChecked) {
+                                createRole.setFieldValue("permissions", [...selectedPermissions, permissionName]);
+                            } else {
+                                createRole.setFieldValue(
+                                    "permissions",
+                                    selectedPermissions.filter((permission) => permission !== permissionName)
+                                );
+                            }
+                        };
+
+                        const groups: { module: string; submodules: { submodule: string; permissions: any[] }[] }[] = [];
+                        filteredPermissions.forEach((permission: any) => {
+                            const moduleName = permission.module || "Other";
+                            const submoduleName = permission.submodule || "general";
+                            let group = groups.find((g) => g.module === moduleName);
+                            if (!group) {
+                                group = { module: moduleName, submodules: [] };
+                                groups.push(group);
+                            }
+                            let sub = group.submodules.find((s) => s.submodule === submoduleName);
+                            if (!sub) {
+                                sub = { submodule: submoduleName, permissions: [] };
+                                group.submodules.push(sub);
+                            }
+                            sub.permissions.push(permission);
+                        });
+
+                        return groups.map((group) => (
+                            <div key={group.module} className="mb-4 border-b border-slate-300 pb-3 dark:border-neutral-700">
+                                <p className="mb-2 text-base font-bold capitalize text-slate-700 dark:text-slate-200">
+                                    {group.module.replace(/_/g, " ")}
+                                </p>
+                                {group.submodules.map((sub) => (
+                                    <div key={sub.submodule} className="mb-2 pl-2">
+                                        <p className="mb-1 text-xs font-semibold uppercase tracking-wide text-slate-500 dark:text-slate-400">
+                                            {sub.submodule.replace(/_/g, " ")}
+                                        </p>
+                                        <Grid cols={4}>
+                                            {sub.permissions.map((permission: any) => (
+                                                <Checkbox
+                                                    key={permission.name}
+                                                    highlight={String(permission.name).includes("module")}
+                                                    label={permission.name}
+                                                    value={permission.name}
+                                                    checked={createRole.values.permissions.includes(permission.name)}
+                                                    onChange={(e: any) => togglePermission(permission.name, e.target.checked)}
+                                                />
+                                            ))}
+                                        </Grid>
+                                    </div>
+                                ))}
+                            </div>
+                        ));
+                    })()}
+                </div>
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end gap-x-2">

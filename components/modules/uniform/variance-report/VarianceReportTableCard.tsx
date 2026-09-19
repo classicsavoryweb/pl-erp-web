@@ -23,17 +23,21 @@ import Table from "@/components/common/Table";
 import Textfield from "@/components/common/Textfield";
 import FilterCard from "@/components/modules/cards/FilterCard";
 import { COLUMNTYPES } from "@/constants/column";
+import { AuthContext } from "@/context/AuthProvider";
 import { useApiCall } from "@/hooks/api-call";
 import { useAsyncEffect } from "@/hooks/async-effect";
 import { useFilter } from "@/hooks/use-filter";
 import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import moment from "moment";
-import { useState , useEffect} from "react";
+import { useState , useEffect, useContext} from "react";
 import { toast } from "react-toastify";
 import VarianceReportCancelForm from "./VarianceReportCancelForm";
 interface TableCardProps {
     performPermission: string;
+    createPermission?: string;
+    exportPermission?: string;
+    cancelPermission?: string;
     reviewPermission?: string;
     postPermission?: string;
 }
@@ -71,9 +75,14 @@ const getStatusBadge = (status: string): "success" | "warning" | "danger" | "def
 
 const VarianceReportTableCard = ({
     performPermission,
+    createPermission = performPermission,
+    exportPermission = performPermission,
+    cancelPermission = performPermission,
     reviewPermission = performPermission,
     postPermission = performPermission,
 }: TableCardProps) => {
+    const { permissions } = useContext(AuthContext);
+    const canCreate = permissions.includes(createPermission);
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
@@ -188,8 +197,19 @@ const VarianceReportTableCard = ({
             return;
         }
 
-        if (!varianceForm.remarks.trim()) {
-            toast.error("Please fill up Overall Remarks.");
+        const invalidItem = varianceForm.items.find(
+            (item: any) =>
+                (
+                    Number(item.final_variance ?? 0) !== 0 ||
+                    Number(item.total_variance_cost ?? 0) !== 0
+                ) &&
+                !item.reason_of_adjustment?.trim()
+        );
+
+        if (invalidItem) {
+            toast.error(
+                `Reason is required for ${invalidItem.description}.`
+            );
             return;
         }
 
@@ -267,6 +287,7 @@ const VarianceReportTableCard = ({
         },
         {
             label: "Detailed Export",
+            permission: exportPermission,
             onClick: () => downloadDetailedExport(record),
         },
         record.status === "Unposted" && {
@@ -292,7 +313,7 @@ const VarianceReportTableCard = ({
         },
         ["Unposted", "Reviewed"].includes(record.status) && {
             label: "Cancel",
-            permission: performPermission,
+            permission: cancelPermission,
             onClick: () => {
                 setSelected(record);
                 setCancelReason("");
@@ -431,23 +452,26 @@ const VarianceReportTableCard = ({
                 dateLabel="Variance Date"
                 defaultColumnSelected="variance_no"
                 hasExport
+                exportPermission={exportPermission}
                 api={exportVariances}
                 exportFileName={`VARIANCE-REPORT-${moment().format("YYYY-MM-DD")}.xls`}
                 callBack={() => paginator.setPage(1)}
             />
             <Card>
-                <div className="flex justify-end gap-x-3">
-                    <DropDownButtons actions={[
-                        {
-                            label: `Generate ${title}`,
-                            onClick: () => {
-                                openCreate();
-                                setItemSearch("");
+                {canCreate && (
+                    <div className="flex justify-end gap-x-3">
+                        <DropDownButtons actions={[
+                            {
+                                label: `Generate ${title}`,
+                                onClick: () => {
+                                    openCreate();
+                                    setItemSearch("");
+                                }
                             }
-                        }
-                    ]}
-                    />
-                </div>
+                        ]}
+                        />
+                    </div>
+                )}
 
                 <Table
                     dataSet={api.dataSet}
@@ -629,7 +653,7 @@ const VarianceItemsTable = ({
                     <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
                         <thead className="sticky top-0 z-20 text-xs">
                             <tr>
-                                {["Item Code", "Description", "Beginning", "Purch Dept", "Made Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason", "Action"].map(header => (
+                                {["Item Code", "Description", "Beginning", "Purchases", "Made To Order", "ATD", "Free", "Should Be", "Physical", "Variance", "Adjustment", "Final Variance", "Standard Cost", "Variance Cost", "Reason", "Action"].map(header => (
                                     <th key={header} className="p-3 bg-red-800 text-left text-zinc-100">{header}</th>
                                 ))}
                             </tr>
