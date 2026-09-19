@@ -67,7 +67,7 @@ const Button = ({
                     w-full
                     `
                 }
-                disabled={loading}
+                disabled={isDisabled}
                 onClick={onClick}
             >
                 <div className="flex justify-center gap-x-1 items-center">

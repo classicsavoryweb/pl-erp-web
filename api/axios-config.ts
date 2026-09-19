@@ -35,7 +35,7 @@ export const axiosHelper = async ({
             ...headers,
             ...additionalHeaders
         };
-    } else {
+    } else if (!(payload instanceof FormData)) {
         headers = {
             ...headers,
             "Content-Type": "application/json"
@@ -53,7 +53,7 @@ export const axiosHelper = async ({
     let newPayload;
 
     if (payload) {
-        newPayload = cleanPayload(payload);
+        newPayload = payload instanceof FormData ? payload : cleanPayload(payload);
     }
 
     const axiosConfig = {
