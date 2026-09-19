@@ -24,8 +24,12 @@ const DropdownLink = ({
     const { permissions } = useContext(AuthContext);
     const pathName = usePathname();
 
+    const hasVisibleSubLink = route.subLinks.some(
+        (link) => link.permission === "" || permissions.includes(link.permission)
+    );
+
     return (
-        (route.permission === "" || permissions.includes(route.permission)) &&
+        (route.permission === "" || permissions.includes(route.permission) || hasVisibleSubLink) &&
         <div className={`relative ${toggle && "bg-red-200/20" } rounded-md overflow-hidden mt-1`}>
             <button
                 className={`
