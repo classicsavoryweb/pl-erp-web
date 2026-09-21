@@ -10,7 +10,8 @@ import { toast } from "react-toastify";
 import { getItemCriticalLevel } from "@/api/dashboard";
 import moment from "moment";
 
-const ItemCriticalLevel = () => {
+const 
+ItemCriticalLevel = () => {
     const api = useApiCall();
     const paginator = usePagination();
 
@@ -64,7 +65,7 @@ const ItemCriticalLevel = () => {
     return (
         <>
             <Card>
-                <p>Items need to replenish</p>
+                <p>Items need to replenished</p>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}
