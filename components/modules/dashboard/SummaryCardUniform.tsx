@@ -269,7 +269,7 @@ const SummaryCardUniform = () => {
                 cols={6}
             >
                  <SummaryCardCount
-                    title="Items to be Replenish"
+                    title="Items to be Replenished"
                     displayReport={data.item_need_replenish || 0}
                     loading={loading}
                 />
