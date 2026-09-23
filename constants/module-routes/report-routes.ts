@@ -92,6 +92,11 @@ export const reportRoutes: Route[] = [
                         pathname: "/reports/timekeeping/summary-list",
                         permission: "view_reports_timekeeping_summary_report"
                     },
+                    {
+                        name: "Prooflist",
+                        pathname: "/reports/timekeeping/proof-list",
+                        permission: "view_reports_timekeeping_summary_report"
+                    }
                 ]
             },
             {
