@@ -21,7 +21,7 @@ export const getPCVNumber = async (payload: { branch_id: number | string }) => {
 };
 
 export const getBranchEmployees = async (payload: { branch_id: number | string }) => {
-    return await axiosHelper({ func_path: '/get-branch-employees', method: 'GET', payload });
+    return await axiosHelper({ func_path: '/get-petty-cash-branch-employees', method: 'GET', payload });
 };
 
 export const getMyEmployees = async () => {
