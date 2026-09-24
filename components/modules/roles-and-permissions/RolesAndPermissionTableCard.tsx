@@ -15,6 +15,9 @@ import EditRolesAndPermissionsForm from "./EditRolesAndPermissionsForm";
 import { useState } from "react";
 import confirm from "@/components/common/Confirm";
 import DropDownButtons from "@/components/common/DropDownButtons";
+import FilterCard from "@/components/modules/cards/FilterCard";
+import { useFilter } from "@/hooks/use-filter";
+
 
 const RolesAndPermissionTableCard = () => {
     const roles = useApiCall();
@@ -22,12 +25,14 @@ const RolesAndPermissionTableCard = () => {
     const [data, setData] = useState<any>({});
     const editModal = useModal();
     const paginator = usePagination(10);
+    const filter = useFilter();
 
     useAsyncEffect(() => {
         roles.setLoading(true);
         getAllRolesAndPermissions({
             page: paginator.page,
-            per_page: paginator.per_page
+            per_page: paginator.per_page,
+            ...filter.filters,
         })
         .then((resp) => {
             if (resp.error) {
@@ -44,7 +49,7 @@ const RolesAndPermissionTableCard = () => {
         .finally(() => {
             roles.setLoading(false);
         });
-    }, [paginator.reload, roles.reload]);
+    }, [paginator.reload, roles.reload, filter.reload]);
 
     const columnSettings = [
         {
@@ -120,7 +125,20 @@ const RolesAndPermissionTableCard = () => {
     ];
 
     return (
-        <>
+        <>  
+            <FilterCard 
+                columnSettings = {[
+                    {
+                        columnHead:"Role",
+                        path:"name",
+                        columnType:COLUMNTYPES.string
+                    }
+                  
+                ]}
+                filterHandler = {filter}
+                defaultColumnSelected="name"
+                callBack={ () =>paginator.setPage}
+            />
             <Card>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
