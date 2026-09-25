@@ -23,7 +23,7 @@ const UniformItemMasterlistTableCard = () => {
     const createModal = useModal();
     const editModal = useModal();
     const viewModal = useModal();
-    const paginator = usePagination(100);
+    const paginator = usePagination(10);
     const filter = useFilter({ status: "active" });
     const [data, setData] = useState<any>({});
     const { permissions } = useContext(AuthContext);
