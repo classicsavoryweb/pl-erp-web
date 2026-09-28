@@ -1,15 +1,16 @@
 "use client";
 
-import { createUniformItem, editUniformItem, getUniformItemOptions } from "@/api/uniform/item-masterlist";
+import { createUniformItem, editUniformItem } from "@/api/uniform/item-masterlist";
 import Button from "@/components/common/Button";
 import confirm from "@/components/common/Confirm";
 import Dropdown from "@/components/common/Dropdown";
 import Modal from "@/components/common/Modal";
-import SearchableDropDown from "@/components/common/SearchableDropDown";
+import UniformSizesDropdown from "@/components/modules/generic/UniformSizesDropdown";
+import UniformSupplierDropdown from "@/components/modules/generic/UniformSuppliersDropdown";
+import UniformGenderDropdown from "@/components/modules/generic/UniformGenderDropdown";
 import Table from "@/components/common/Table";
 import Textfield from "@/components/common/Textfield";
 import { COLUMNTYPES } from "@/constants/column";
-import { useAsyncEffect } from "@/hooks/async-effect";
 import { useFormik } from "formik";
 import { useEffect, useState } from "react";
 import { toast } from "react-toastify";
@@ -59,9 +60,6 @@ const UniformItemForm = ({
     formValue,
     onSubmitCallback,
 }: UniformItemFormProps) => {
-    const [sizes, setSizes] = useState<any[]>([]);
-    const [genders, setGenders] = useState<any[]>([]);
-    const [suppliers, setSuppliers] = useState<any[]>([]);
     const [supplierDraft, setSupplierDraft] = useState({
         vendor_no: "",
         vendor_name: "",
@@ -69,23 +67,6 @@ const UniformItemForm = ({
         packaging_unit: "",
         remarks: "",
     });
-
-    useAsyncEffect(() => {
-        if (!modal.isShowing) return;
-
-        getUniformItemOptions()
-            .then((resp) => {
-                if (resp.error) {
-                    toast.error("Error fetching uniform options");
-                    return;
-                }
-
-                setSizes(resp.data.sizes ?? []);
-                setGenders(resp.data.genders ?? []);
-                setSuppliers(resp.data.suppliers ?? []);
-            })
-            .catch(() => toast.error("Error encountered"));
-    }, [modal.isShowing]);
 
     const formHandler = useFormik({
         initialValues: defaultValues,
@@ -246,18 +227,17 @@ const UniformItemForm = ({
                     disabled={mode === "view"}
                 />
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-x-3">
-                    <Dropdown
-                        label="Size"
+                    <UniformSizesDropdown
+                       label="Size"
                         placeholder="select size"
                         name="uniform_size_id"
                         value={formHandler.values.uniform_size_id}
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.uniform_size_id}
-                        options={sizes.map((size) => ({ label: size.description, value: size.id }))}
-                        disabled={mode === "view"}
+                        disabled={mode === "view"} 
                     />
-                    <Dropdown
+                    <UniformGenderDropdown 
                         label="Gender"
                         placeholder="select gender"
                         name="uniform_gender_id"
@@ -265,8 +245,7 @@ const UniformItemForm = ({
                         required
                         onChange={formHandler.handleChange}
                         error={formHandler.errors.uniform_gender_id}
-                        options={genders.map((gender) => ({ label: gender.description, value: gender.id }))}
-                        disabled={mode === "view"}
+                        disabled={mode === "view"}       
                     />
                     <ActiveInactiveDropDown
                         label="Status"
@@ -399,7 +378,7 @@ const UniformItemForm = ({
                 {mode !== "view" && (
                     <>
                         <div className="grid grid-cols-1 md:grid-cols-3 gap-x-3 items-end">
-                            <SearchableDropDown
+                            <UniformSupplierDropdown 
                                 label="Supplier"
                                 placeholder="select supplier"
                                 name="vendor_no"
@@ -409,11 +388,6 @@ const UniformItemForm = ({
                                     vendor_no: e.target.value,
                                     vendor_name: e.target.obj?.vendor_name ?? e.target.value,
                                 })}
-                                options={suppliers.map((supplier) => ({
-                                    label: supplier.vendor_name,
-                                    value: supplier.vendor_number,
-                                    obj: supplier,
-                                }))}
                             />
                             <Textfield
                                 label="Unit Price"
