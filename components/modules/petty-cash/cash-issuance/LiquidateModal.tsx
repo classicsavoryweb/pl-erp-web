@@ -168,7 +168,7 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
             amount: Yup.number()
                 .typeError("Amount must be a number.")
                 .required("Amount is required.")
-                .min(0.01, "Amount must be greater than 0."),
+                .min(0, "Amount must be atleast 0."),
             supplier_vendor: Yup.string()
                 .required("Supplier/Vendor is required.")
                 .max(150, "Max 150 characters."),
