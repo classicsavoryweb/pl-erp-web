@@ -477,6 +477,7 @@ const UniformRequestAndIssuanceForm = ({
         >
             <form onSubmit={createFormHandler.handleSubmit}>
                 <div className="grid grid-cols-4 gap-1 items-end">
+                    {mode === "create" && (
                     <div className="col-span-3">
                         <EmployeeDropDown
                             label="Name"
@@ -525,6 +526,19 @@ const UniformRequestAndIssuanceForm = ({
                             }}
                         />
                     </div>
+                    )}
+                    {mode !== "create" && (
+                    <div className="col-span-3">
+                        <Textfield
+                            label="Name"
+                            placeholder="branch"
+                            name="employee_branch"
+                            value={createFormHandler.values.employee_name ?? ""}
+                            error={createFormHandler.errors.employee_name}
+                            disabled
+                        />
+                    </div>
+                    )}
                      {mode !== "create"  &&  ( 
                    <div className="col-span-1 w-full flex justify-center">
                         <div className="scale-170 -translate-y-3">
@@ -537,44 +551,59 @@ const UniformRequestAndIssuanceForm = ({
                     )}
                 </div>
                 <div className="grid grid-cols-1 gap-x-3 md:grid-cols-2">
-                    
-                    <Dropdown
-                        label="Issuance Type"
-                        placeholder="select option"
-                        name="issuance_type"
-                        value={createFormHandler.values.issuance_type}
-                        required
-                        onChange={async (e: any) => {
-                            const newValue = e.target.value;
-                            if (createFormHandler.values.items.length > 0) {
-                                const confirmed = await confirm({
-                                    title: "Change Issuance Type",
-                                    message: "Changing the issuance type will remove all added request items. Continue?",
-                                });
+                    { mode === "create" && (
+                    <div>
+                        <Dropdown
+                            label="Issuance Type"
+                            placeholder="select option"
+                            name="issuance_type"
+                            value={createFormHandler.values.issuance_type}
+                            required
+                            onChange={async (e: any) => {
+                                const newValue = e.target.value;
+                                if (createFormHandler.values.items.length > 0) {
+                                    const confirmed = await confirm({
+                                        title: "Change Issuance Type",
+                                        message: "Changing the issuance type will remove all added request items. Continue?",
+                                    });
 
-                                if (!confirmed) return;
-                            }
-                             createFormHandler.setFieldValue("issuance_type", newValue);
-                            createFormHandler.setFieldValue("items", []);
-                            setitemdraft({
-                                item_no: "",
-                                description: "",
-                                size: "",
-                                gender: "",
-                                stock_on_hand: "",
-                                requested_quantity: 0,
-                                remaining_quantity: 0,
-                                standard_unit: "",
-                                standard_unit_price: "",
-                                total_amount: 0,
-                                item_remarks: "",
-                                uniform_item_no: "",
-                            });
-                        }}
-                        error={createFormHandler.errors.issuance_type}
-                        options={freeOrATD}
-                        disabled={isView || isPost || isReview || !createFormHandler.values.employee_id }
-                    />
+                                    if (!confirmed) return;
+                                }
+                                createFormHandler.setFieldValue("issuance_type", newValue);
+                                createFormHandler.setFieldValue("items", []);
+                                setitemdraft({
+                                    item_no: "",
+                                    description: "",
+                                    size: "",
+                                    gender: "",
+                                    stock_on_hand: "",
+                                    requested_quantity: 0,
+                                    remaining_quantity: 0,
+                                    standard_unit: "",
+                                    standard_unit_price: "",
+                                    total_amount: 0,
+                                    item_remarks: "",
+                                    uniform_item_no: "",
+                                });
+                            }}
+                            error={createFormHandler.errors.issuance_type}
+                            options={freeOrATD}
+                            disabled={isView || isPost || isReview || !createFormHandler.values.employee_id }
+                        />
+                    </div>
+                    )}
+                    {mode !== "create" && (
+                    <div>
+                        <Textfield
+                            label="Issuance Type"
+                            placeholder="branch"
+                            name="employee_branch"
+                            value={createFormHandler.values.issuance_type ?? ""}
+                            error={createFormHandler.errors.issuance_type}
+                            disabled
+                        />
+                    </div>
+                    )}
                     <Textfield
                         label="Branch"
                         placeholder="branch"
@@ -734,40 +763,41 @@ const UniformRequestAndIssuanceForm = ({
                         <span>Request Items</span>
                     </div>
                     <div className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-6 items-end">
-                        <div className="lg:col-span-5">
-                            <SearchableDropDown
-                                label="Description"
-                                placeholder="select description"
-                                name="vendor_no"
-                                value={itemdraft.item_no}
-                                disabled={
-                                    isView ||
-                                    !createFormHandler.values.employee_id ||
-                                    !createFormHandler.values.issuance_type
-                                }
-                                onChange={(e: any) => {
-                                    const selected = e.target.obj;
-                                    const stockOnHand = getReviewAvailableStock(selected);
+                            <div className="lg:col-span-5">
+                                <SearchableDropDown
+                                    label="Description"
+                                    placeholder="select description"
+                                    name="vendor_no"
+                                    value={itemdraft.item_no}
+                                    disabled={
+                                        isView ||
+                                        !createFormHandler.values.employee_id ||
+                                        !createFormHandler.values.issuance_type
+                                    }
+                                    onChange={(e: any) => {
+                                        const selected = e.target.obj;
+                                        const stockOnHand = getReviewAvailableStock(selected);
 
-                                    setitemdraft({
-                                        ...itemdraft,
-                                        item_no: selected?.item_no ?? "",
-                                        uniform_item_no: selected?.item_no ?? "",
-                                        description: selected?.description ?? "",
-                                        gender: selected?.gender?.code ?? "",
-                                        stock_on_hand: String(stockOnHand),
-                                        size: selected?.size?.description ?? "",
-                                        standard_unit: selected?.standard_unit ?? "",
-                                        standard_unit_price: selected?.standard_unit_price ?? "",
-                                    });
-                                }}
-                                options={filteredItems.map((item) => ({
-                                    label: `${item.description}-(${item.gender?.code})-${item.size?.description}`,
-                                    value: item.item_no,
-                                    obj: item,
-                                }))}
-                            />
-                        </div>
+                                        setitemdraft({
+                                            ...itemdraft,
+                                            item_no: selected?.item_no ?? "",
+                                            uniform_item_no: selected?.item_no ?? "",
+                                            description: selected?.description ?? "",
+                                            gender: selected?.gender?.code ?? "",
+                                            stock_on_hand: String(stockOnHand),
+                                            size: selected?.size?.description ?? "",
+                                            standard_unit: selected?.standard_unit ?? "",
+                                            standard_unit_price: selected?.standard_unit_price ?? "",
+                                        });
+                                    }}
+                                    options={filteredItems.map((item) => ({
+                                        label: `${item.description}-(${item.gender?.code})-${item.size?.description}`,
+                                        value: item.item_no,
+                                        obj: item,
+                                    }))}
+                                />
+                            </div>
+                    
                         <div className="lg:col-span-1 flex items-end h-full pb-2">
                             <label className="flex items-center gap-2 text-sm font-medium text-gray-500 cursor-pointer hover:text-red-600">
                                 <input
@@ -859,21 +889,23 @@ const UniformRequestAndIssuanceForm = ({
                     />
                 </div>
                 )}
-                 {mode === "view" ? null : (
+                 {(mode === "create" || mode === "review") &&(
                 <div  className="grid grid-cols-1 gap-x-3 sm:grid-cols-2 lg:grid-cols-4">
                    
-                    <div className = "lg:col-span-3">
-                        <Textfield
+                    <div className = "lg:col-span-4">
+                        <TextArea
                             label="Item Remarks"
                             name="item_remarks"
-                            type="text"
+
                             value={itemdraft.item_remarks}
                             disabled = {isPost}
                             onChange={(e: any) => setitemdraft({ ...itemdraft, item_remarks: e.target.value })}
                         />
                     </div>
+                </div>
+                 )}
                     {mode === "post" ? null : (
-                    <div className="lg:col-span-1 mt-3">
+                    <div className="lg:col-span-1 w-fit ml-auto">
                         <Button
                             type="button"
                             variant="success"
@@ -882,10 +914,8 @@ const UniformRequestAndIssuanceForm = ({
                         />
                     </div>
                     )}
-                </div>
-                 )}
                                                                                                                                                   
-                {mode === "view" ? null : (
+                {mode !== "view" && (
                 <Table
                     dataSet={createFormHandler.values.items}
                     columnSettings={requestItemsColumns}
@@ -893,23 +923,25 @@ const UniformRequestAndIssuanceForm = ({
                     dataKey="item_no"
                 />
                 )}
-               <div className="flex justify-between items-center text-sm">
-                    <div className="text-xs text-gray-400">
-                        {(createFormHandler.values.items?.length ?? 0)}{" "}
-                        {(createFormHandler.values.items?.length ?? 0) === 1 ? "item" : "items"}
-                    </div>
+                {mode !== "view" && (
+                <div className="flex justify-between items-center text-sm">
+                        <div className="text-xs text-gray-400">
+                            {(createFormHandler.values.items?.length ?? 0)}{" "}
+                            {(createFormHandler.values.items?.length ?? 0) === 1 ? "item" : "items"}
+                        </div>
 
-                    <div className="flex items-center gap-2">
-                        <span className="text-gray-400 text-xs">Total Amount:</span>
-                        <span className="font-semibold text-sm">
-                            {totalAmount.toLocaleString("en-US", {
-                                minimumFractionDigits: 2,
-                                maximumFractionDigits: 2,
-                            })}
-                        </span>
+                        <div className="flex items-center gap-2">
+                            <span className="text-gray-400 text-xs">Total Amount:</span>
+                            <span className="font-semibold text-sm">
+                                {totalAmount.toLocaleString("en-US", {
+                                    minimumFractionDigits: 2,
+                                    maximumFractionDigits: 2,
+                                })}
+                            </span>
+                        </div>
                     </div>
-                </div>
-                {mode === "view" ? null : (
+                ) }
+                {mode !== "view" && (
                     <>
                     <hr className="mt-6 pb-2 text-slate-300" />
                     <div className="flex justify-end">
