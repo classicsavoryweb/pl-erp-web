@@ -21,7 +21,7 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import { getAllReplenishmentsForAudit } from "@/api/petty-cash/audit";
 import { getAllPettyCashCustodians } from "@/api/maintenance/petty-cash-custodian";
-import ViewReplenishmentModal from "../replenishment/ViewReplenishmentModal";
+import AuditReviewModal from "./AuditReviewModal";
 
 const formatAmount = (value: any) =>
     value != null && value !== ""
@@ -43,8 +43,9 @@ const PettyCashAuditTableCard = () => {
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
-    const viewModal = useModal();
+    const auditReviewModal = useModal();
     const [selectedId, setSelectedId] = useState<number | null>(null);
+    const [viewOnlyMode, setViewOnlyMode] = useState(false);
 
     const [custodianOptions, setCustodianOptions] = useState<any[]>([]);
 
@@ -148,9 +149,30 @@ const PettyCashAuditTableCard = () => {
                             label: "View",
                             onClick: () => {
                                 setSelectedId(row.id);
-                                viewModal.onOpen();
+                                setViewOnlyMode(true);
+                                auditReviewModal.onOpen();
                             },
                         },
+                        ...(row.status === "Posted"
+                            ? [{
+                                label: "Review",
+                                onClick: () => {
+                                    setSelectedId(row.id);
+                                    setViewOnlyMode(false);
+                                    auditReviewModal.onOpen();
+                                },
+                            }]
+                            : []),
+                        ...(row.status === "Reviewed"
+                            ? [{
+                                label: "Post",
+                                onClick: () => {
+                                    setSelectedId(row.id);
+                                    setViewOnlyMode(false);
+                                    auditReviewModal.onOpen();
+                                },
+                            }]
+                            : []),
                     ]}
                 />
             ),
@@ -261,10 +283,11 @@ const PettyCashAuditTableCard = () => {
                 />
             </Card>
 
-            <ViewReplenishmentModal
-                modal={viewModal}
+            <AuditReviewModal
+                modal={auditReviewModal}
                 replenishmentId={selectedId}
-                showPostAction={false}
+                viewOnly={viewOnlyMode}
+                onActionSuccess={api.triggerReload}
             />
         </>
     );

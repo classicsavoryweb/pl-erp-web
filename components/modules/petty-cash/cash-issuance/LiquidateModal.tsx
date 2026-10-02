@@ -40,7 +40,7 @@ interface LiquidateModalProps {
     onPostSuccess?: () => void;
 }
 
-type Attachment = {
+export type Attachment = {
     id?: number;
     file?: File;
     file_name: string;
@@ -52,7 +52,7 @@ type AttachmentViewerProps = {
     att: Attachment;
 };
 
-const AttachmentViewer = ({ att }: AttachmentViewerProps) => {
+export const AttachmentViewer = ({ att }: AttachmentViewerProps) => {
     const modal = useModal();
     const [src, setSrc] = useState("");
     const [loading, setLoading] = useState(false);
