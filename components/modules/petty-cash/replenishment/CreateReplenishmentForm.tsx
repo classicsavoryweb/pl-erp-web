@@ -70,7 +70,7 @@ const CreateReplenishmentForm = ({ modal, custodianBranches, onSubmitCallback }:
         try {
             const isConfirmed = await confirm({
                 title: "Add Replenishment",
-                message: `Are you sure you want to create a replenishment for ${issuances.length} transaction(s)? This will mark all liquidated transactions as fully liquidated.`,
+                message: `Are you sure you want to create a replenishment for ${issuances.length} transaction(s)?`,
             });
 
             if (!isConfirmed) return;

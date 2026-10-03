@@ -17,8 +17,9 @@ import { useModal } from "@/hooks/modal";
 import usePagination from "@/hooks/pagination";
 import { useFilter } from "@/hooks/use-filter";
 import { toast } from "react-toastify";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import moment from "moment";
+import { AuthContext } from "@/context/AuthProvider";
 import { getAllReplenishmentsForAudit } from "@/api/petty-cash/audit";
 import { getAllPettyCashCustodians } from "@/api/maintenance/petty-cash-custodian";
 import AuditReviewModal from "./AuditReviewModal";
@@ -40,6 +41,8 @@ const renderOverUnder = (value: any) => {
 };
 
 const PettyCashAuditTableCard = () => {
+    const { permissions } = useContext(AuthContext);
+    const canPerformAudit = permissions.includes("perform_pettycash_audit_module");
     const api = useApiCall();
     const paginator = usePagination();
     const filter = useFilter();
@@ -153,7 +156,7 @@ const PettyCashAuditTableCard = () => {
                                 auditReviewModal.onOpen();
                             },
                         },
-                        ...(row.status === "Posted"
+                        ...(canPerformAudit && row.status === "Posted"
                             ? [{
                                 label: "Review",
                                 onClick: () => {
@@ -163,7 +166,7 @@ const PettyCashAuditTableCard = () => {
                                 },
                             }]
                             : []),
-                        ...(row.status === "Reviewed"
+                        ...(canPerformAudit && row.status === "Reviewed"
                             ? [{
                                 label: "Post",
                                 onClick: () => {

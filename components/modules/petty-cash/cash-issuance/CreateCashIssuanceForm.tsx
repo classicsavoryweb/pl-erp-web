@@ -9,7 +9,7 @@ import { useFormik } from "formik";
 import * as Yup from "yup";
 import { toast } from "react-toastify";
 import confirm from "@/components/common/Confirm";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import moment from "moment";
 import { getPCVNumber, getBranchEmployees, getBranchApprovers, createCashIssuance } from "@/api/petty-cash/cash-issuance";
 
@@ -25,6 +25,7 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
     const [employeesLoading, setEmployeesLoading] = useState(false);
     const [approvers, setApprovers] = useState<any[]>([]);
     const [approversLoading, setApproversLoading] = useState(false);
+    const latestBranchIdRef = useRef<string>("");
 
     const formHandler = useFormik({
         initialValues: {
@@ -94,21 +95,30 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
 
         if (!branchId || !amount || amount <= 0) return;
 
+        let isStale = false;
+
         const timer = setTimeout(() => {
             setApproversLoading(true);
             getBranchApprovers({ branch_id: branchId, amount })
                 .then((resp) => {
+                    if (isStale) return;
                     if (!resp.error) setApprovers(resp.data?.approvers ?? []);
                 })
                 .catch(() => {})
-                .finally(() => setApproversLoading(false));
+                .finally(() => {
+                    if (!isStale) setApproversLoading(false);
+                });
         }, 600);
 
-        return () => clearTimeout(timer);
+        return () => {
+            isStale = true;
+            clearTimeout(timer);
+        };
     }, [formHandler.values.branch_id, formHandler.values.amount]);
 
     const handleBranchChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         const branchId = e.target.value;
+        latestBranchIdRef.current = branchId;
         formHandler.setFieldValue("branch_id", branchId);
         formHandler.setFieldValue("requested_by_employee_number", "");
         formHandler.setFieldValue("received_by_employee_number", "");
@@ -125,6 +135,10 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
             getBranchEmployees({ branch_id: branchId }),
         ])
             .then(([pcvResp, empResp]) => {
+                // baka may napiling ibang branch habang naka-pending pa 'to - wag
+                // ikapit ang stale response sa kasalukuyang napiling branch
+                if (latestBranchIdRef.current !== branchId) return;
+
                 if (!pcvResp.error) {
                     formHandler.setFieldValue("pcv_number", pcvResp.data?.pcv_number ?? "");
                 } else {
@@ -136,8 +150,12 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
                     toast.error(empResp.data?.message || "Error loading employees");
                 }
             })
-            .catch(() => toast.error("Error loading branch data"))
-            .finally(() => setEmployeesLoading(false));
+            .catch(() => {
+                if (latestBranchIdRef.current === branchId) toast.error("Error loading branch data");
+            })
+            .finally(() => {
+                if (latestBranchIdRef.current === branchId) setEmployeesLoading(false);
+            });
     };
 
     const handleClose = () => {

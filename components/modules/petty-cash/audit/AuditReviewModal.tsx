@@ -1,9 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
+import { useContext, useRef, useState } from "react";
 import { useFormik } from "formik";
 import * as Yup from "yup";
 import moment from "moment";
+import { AuthContext } from "@/context/AuthProvider";
 import Modal from "@/components/common/Modal";
 import Button from "@/components/common/Button";
 import Grid from "@/components/common/Grid";
@@ -58,9 +59,12 @@ const formatPCV = (pcvNumber: any, cshubTransNo: any) =>
     cshubTransNo ? `${pcvNumber} (${cshubTransNo})` : pcvNumber;
 
 const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSuccess }: AuditReviewModalProps) => {
+    const { permissions } = useContext(AuthContext);
+    const canPerformAudit = permissions.includes("perform_pettycash_audit_module");
     const [loading, setLoading] = useState(false);
     const [replenishment, setReplenishment] = useState<any>(null);
     const [liquidations, setLiquidations] = useState<any[]>([]);
+    const [unliquidatedIssuances, setUnliquidatedIssuances] = useState<any[]>([]);
     const [tableLoading, setTableLoading] = useState(false);
     const [expenseTypes, setExpenseTypes] = useState<any[]>([]);
     const [auditActionLoading, setAuditActionLoading] = useState(false);
@@ -68,6 +72,7 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
     const [formViewOnly, setFormViewOnly] = useState(false);
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [removedIds, setRemovedIds] = useState<number[]>([]);
+    const [latestAuditLog, setLatestAuditLog] = useState<any>(null);
     const isAuditActionRef = useRef(false);
     const isSubmittingRef = useRef(false);
     const fileInputRef = useRef<HTMLInputElement>(null);
@@ -90,8 +95,12 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
         setTableLoading(true);
         getLiquidationsForReplenishment(replenishmentId)
             .then((resp) => {
-                if (!resp.error) setLiquidations(resp.data?.liquidations ?? []);
-                else toast.error(resp.data?.message || "Error loading liquidations");
+                if (!resp.error) {
+                    setLiquidations(resp.data?.liquidations ?? []);
+                    setUnliquidatedIssuances(resp.data?.unliquidated_issuances ?? []);
+                } else {
+                    toast.error(resp.data?.message || "Error loading liquidations");
+                }
             })
             .catch(() => toast.error("Error encountered"))
             .finally(() => setTableLoading(false));
@@ -117,6 +126,7 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
         setFormViewOnly(false);
         setAttachments([]);
         setRemovedIds([]);
+        setLatestAuditLog(null);
     };
 
     const formHandler = useFormik({
@@ -259,6 +269,7 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
         }));
         setAttachments(existing);
         setRemovedIds([]);
+        setLatestAuditLog(row.latest_audit_log ?? null);
         formModal.onOpen();
     };
 
@@ -352,10 +363,19 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
             });
     };
 
-    const issuanceOptions = (replenishment?.snapshots ?? []).map((s: any) => ({
-        label: formatPCV(s.pcv_number, s.cshub_trans_no),
-        value: String(s.petty_cash_issuance_id),
-    }));
+    // Liquidated-at-snapshot lang - kapareho ng scope rule sa backend
+    // (resolveReplenishmentForAuditEdit), kung Unliquidated pa noong snapshot
+    // hindi talaga papasa sa audit-create-liquidation kaya wag na ipalista
+    const issuanceOptions = (replenishment?.snapshots ?? [])
+        .filter((s: any) => s.status_at_snapshot === 'Liquidated')
+        .map((s: any) => ({
+            label: formatPCV(s.pcv_number, s.cshub_trans_no),
+            value: String(s.petty_cash_issuance_id),
+        }));
+
+    const selectedSnapshot = (replenishment?.snapshots ?? []).find(
+        (s: any) => String(s.petty_cash_issuance_id) === String(formHandler.values.petty_cash_issuance_id)
+    );
 
     const expenseTypeOptions = expenseTypes.map((e: any) => ({
         label: e.description,
@@ -365,7 +385,7 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
     const isEdit = editingId !== null;
     // editing ay allowed lang sa Review step (Posted -> Reviewed); ang Post step
     // (Reviewed -> Audited) ay final look na lang, walang add/edit
-    const canEdit = !viewOnly && replenishment?.status === "Posted";
+    const canEdit = canPerformAudit && !viewOnly && replenishment?.status === "Posted";
 
     return (
         <>
@@ -429,22 +449,24 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                                 <th className="text-left px-3 py-2 whitespace-nowrap">Liquidation Date</th>
                                 <th className="text-left px-3 py-2 whitespace-nowrap">Ref Doc No.</th>
                                 <th className="text-left px-3 py-2">Description</th>
-                                <th className="text-right px-3 py-2 whitespace-nowrap">Amount</th>
+                                <th className="text-right px-3 py-2 whitespace-nowrap">Liquidated Amount</th>
                                 <th className="text-left px-3 py-2 whitespace-nowrap">Expense Type</th>
+                                <th className="text-left px-3 py-2 whitespace-nowrap">Current Status</th>
                                 <th className="text-left px-3 py-2 whitespace-nowrap sticky right-0 z-20 bg-gray-100 dark:bg-neutral-800">Action</th>
                             </tr>
                         </thead>
                         <tbody>
                             {(loading || tableLoading) ? (
                                 <tr>
-                                    <td colSpan={14} className="text-center py-6 text-gray-400">Loading...</td>
+                                    <td colSpan={15} className="text-center py-6 text-gray-400">Loading...</td>
                                 </tr>
-                            ) : liquidations.length === 0 ? (
+                            ) : liquidations.length === 0 && unliquidatedIssuances.length === 0 ? (
                                 <tr>
-                                    <td colSpan={14} className="text-center py-6 text-gray-400">No liquidation records found.</td>
+                                    <td colSpan={15} className="text-center py-6 text-gray-400">No liquidation records found.</td>
                                 </tr>
                             ) : (
-                                liquidations.map((row: any) => {
+                                <>
+                                {liquidations.map((row: any) => {
                                     const issuance = row.issuance ?? {};
                                     const employeeName = (emp: any) => emp ? `${emp.last_name}, ${emp.first_name}` : "—";
                                     return (
@@ -464,6 +486,7 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                                                 {Number(row.amount).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                                             </td>
                                             <td className="px-3 py-2 whitespace-nowrap">{row.expense_type?.description ?? "—"}</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">{issuance.status ?? "—"}</td>
                                             <td className="px-3 py-2 whitespace-nowrap sticky right-0 z-20 bg-zinc-50 dark:bg-neutral-700">
                                                 <button
                                                     type="button"
@@ -475,7 +498,31 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                                             </td>
                                         </tr>
                                     );
-                                })
+                                })}
+                                {unliquidatedIssuances.map((row: any) => {
+                                    const issuance = row.issuance ?? {};
+                                    const employeeName = (emp: any) => emp ? `${emp.last_name}, ${emp.first_name}` : "—";
+                                    return (
+                                        <tr key={`unliquidated-${row.petty_cash_issuance_id}`} className="border-t dark:border-neutral-600 text-gray-400">
+                                            <td className="px-3 py-2 whitespace-nowrap">—</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">{issuance.date ?? "—"}</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.requested_by)}</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.received_by)}</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.approved_by)}</td>
+                                            <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(issuance.amount)}</td>
+                                            <td className="px-3 py-2 text-right whitespace-nowrap">—</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">{issuance.source ?? "—"}</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">—</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">—</td>
+                                            <td className="px-3 py-2">—</td>
+                                            <td className="px-3 py-2 text-right whitespace-nowrap">—</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">—</td>
+                                            <td className="px-3 py-2 whitespace-nowrap">{row.current_status ?? "—"}</td>
+                                            <td className="px-3 py-2 whitespace-nowrap sticky right-0 z-20 bg-zinc-50 dark:bg-neutral-700"></td>
+                                        </tr>
+                                    );
+                                })}
+                                </>
                             )}
                         </tbody>
                     </table>
@@ -484,10 +531,10 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                 <hr className="mt-5 mb-3 border-slate-200 dark:border-neutral-700" />
                 <div className="flex justify-end gap-x-2">
                     <Button label="Close" variant="secondary" onClick={modal.onClose} />
-                    {!viewOnly && replenishment?.status === "Posted" && (
+                    {canPerformAudit && !viewOnly && replenishment?.status === "Posted" && (
                         <Button label="Mark as Reviewed" loading={auditActionLoading} onClick={handleMarkReviewed} />
                     )}
-                    {!viewOnly && replenishment?.status === "Reviewed" && (
+                    {canPerformAudit && !viewOnly && replenishment?.status === "Reviewed" && (
                         <Button label="Mark as Audited" loading={auditActionLoading} onClick={handleMarkAudited} />
                     )}
                 </div>
@@ -499,6 +546,17 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                 onClose={handleCancelForm}
                 size="xxl"
             >
+                {latestAuditLog && (
+                    <div className="mb-4 rounded border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700 px-3 py-2 text-xs">
+                        <p className="font-semibold text-amber-700 dark:text-amber-400">
+                            {latestAuditLog.action === "created" ? "Added by Audit" : "Edited by Audit"}
+                            {latestAuditLog.performed_by?.full_name ? ` — ${latestAuditLog.performed_by.full_name}` : ""}
+                            {latestAuditLog.created_at ? ` (${moment(latestAuditLog.created_at).format("MMM DD, YYYY hh:mm A")})` : ""}
+                        </p>
+                        <p className="text-amber-700 dark:text-amber-400 mt-1">Reason: {latestAuditLog.reason}</p>
+                    </div>
+                )}
+
                 <div className="flex gap-x-6">
                     <div className="flex-1 min-w-0">
                         <form onSubmit={formHandler.handleSubmit}>
@@ -522,6 +580,13 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                                         options={issuanceOptions}
                                     />
                                 )}
+                                <Textfield
+                                    label="Cash Issuance Amount"
+                                    name="cash_issuance_amount_display"
+                                    value={selectedSnapshot ? formatAmount(selectedSnapshot.amount) : "—"}
+                                    disabled
+                                    onChange={() => { }}
+                                />
                                 <Dropdown
                                     label="Liquidation Type"
                                     placeholder="select type"
@@ -576,8 +641,8 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                                     error={formHandler.errors.supplier_vendor}
                                 />
                                 <Textfield
-                                    label="Amount"
-                                    placeholder="enter amount"
+                                    label="Liquidation Amount"
+                                    placeholder="enter liquidation amount"
                                     name="amount"
                                     type="number"
                                     value={formHandler.values.amount}

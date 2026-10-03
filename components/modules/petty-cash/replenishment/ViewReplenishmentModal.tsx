@@ -100,7 +100,7 @@ const ViewReplenishmentModal = ({ modal, replenishmentId, showPostAction = false
 
         const isConfirmed = await confirm({
             title: "Post Replenishment",
-            message: `Are you sure you want to post ${replenishment.replenishment_id}? This will mark the included Liquidated transactions as Fully Liquidated and cannot be voided afterwards.`,
+            message: `Are you sure you want to post ${replenishment.replenishment_id}? This cannot be voided afterwards.`,
         });
         if (!isConfirmed) return;
 
