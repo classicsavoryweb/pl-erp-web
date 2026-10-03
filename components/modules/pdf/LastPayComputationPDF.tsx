@@ -53,6 +53,9 @@ const styles = StyleSheet.create({
     infoSection: {
         marginTop: 6,
         marginBottom: 16,
+        flexDirection: "row",
+        justifyContent: "space-between",
+        width: "100%",
     },
     infoRow: {
         flexDirection: "row",
@@ -163,6 +166,10 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginBottom: 4,
     },
+    infoColumn: {
+    width: "48%",
+    },
+
 });
 
 const formatAmount = (value: any) => {
@@ -353,7 +360,24 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
     const notedBy = data?.noted_by ?? "CLARITA P. CRUZ";
     const notedByTitle = data?.noted_by_title ?? "Payroll Manager";
     const receivedBy = data?.employee_name ?? employee?.full_name ?? "";
-
+    const groupedCustomAmountItems = Object.values(
+        customAmountItems.reduce((groups: Record<string, any>, item: any) => {
+            const transactionTypeId = item?.transaction_type_id;
+            const label = String(item?.label ?? "CUSTOM AMOUNT")
+                .trim()
+                .toUpperCase();
+            const key = `${transactionTypeId}-${label}`;
+            if (!groups[key]) {
+                groups[key] = {
+                    transaction_type_id: transactionTypeId,
+                    label: label,
+                    amount: 0,
+                };
+            }
+            groups[key].amount += Number(item?.amount ?? 0);
+            return groups;
+        }, {})
+    );
     return (
         <Document>
             <Page size="LETTER" style={styles.page}>
@@ -368,35 +392,35 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
                 </View>
 
                 <View style={styles.infoSection}>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>NAME:</Text>
-                        <Text style={styles.infoValue}>{receivedBy}</Text>
+                    <View style={styles.infoColumn}>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>EMPLOYEE ID NO:</Text>
+                            <Text style={styles.infoValue}>{employee?.employee_number ?? ""}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>DATE HIRED:</Text>
+                            <Text style={styles.infoValue}>
+                                {employee?.date_hired ? moment(employee.date_hired).format("MM/DD/YYYY") : ""}
+                            </Text>
+                        </View>
+                         <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>POSITION:</Text>
+                            <Text style={styles.infoValue}>{employee?.current_position?.description ?? ""}</Text>
+                        </View>
                     </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>EMPLOYEE ID NO:</Text>
-                        <Text style={styles.infoValue}>{employee?.employee_number ?? ""}</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>DATE HIRED:</Text>
-                        <Text style={styles.infoValue}>
-                            {employee?.date_hired ? moment(employee.date_hired).format("MM/DD/YYYY") : ""}
-                        </Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>POSITION:</Text>
-                        <Text style={styles.infoValue}>{employee?.current_position?.description ?? ""}</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>BASIC SALARY:</Text>
-                        <Text style={styles.infoValue}>{formatAmount(basicSalary)}</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>PER DAY:</Text>
-                        <Text style={styles.infoValue}>{formatAmount(dailyRate)}</Text>
-                    </View>
-                    <View style={styles.infoRow}>
-                        <Text style={styles.infoLabel}>COLA:</Text>
-                        <Text style={styles.infoValue}>{formatAmount(cola)}</Text>
+                    <View style={styles.infoColumn}>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>NAME:</Text>
+                            <Text style={styles.infoValue}>{receivedBy}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>BASIC SALARY:</Text>
+                            <Text style={styles.infoValue}>{formatAmount(basicSalary)}</Text>
+                        </View>
+                        <View style={styles.infoRow}>
+                            <Text style={styles.infoLabel}>PER DAY:</Text>
+                            <Text style={styles.infoValue}>{formatAmount(dailyRate)}</Text>
+                        </View>
                     </View>
                 </View>
 
@@ -436,24 +460,22 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
                             <Text style={styles.payValue}>{formatAmount(payLeave)}</Text>
                         </View>
                         <View style={styles.payRow}>
-                            <Text style={styles.payLabel}>SALES INCENTIVE:</Text>
-                            <Text style={styles.payValue}>{formatAmount(salesIncentives)}</Text>
-                        </View>
-                        <View style={styles.payRow}>
-                            <Text style={styles.payLabel}>MEAL ALLOWANCE:</Text>
-                            <Text style={styles.payValue}>{formatAmount(mealAllowance)}</Text>
-                        </View>
-                        <View style={styles.payRow}>
                             <Text style={styles.payLabel}>SALARY:</Text>
                             <Text style={styles.payValue}>{formatAmount(salary)}</Text>
                         </View>
-                        {customAmountItems.map((item: any, index: number) => (
-                            <View style={styles.payRow} key={`custom-amount-${index}`}>
-                                <Text style={styles.payLabel}>{String(item?.label ?? "CUSTOM AMOUNT").toUpperCase()}:</Text>
-                                <Text style={styles.payValue}>{formatAmount(item?.amount ?? 0)}</Text>
+                        {groupedCustomAmountItems.map((item: any, index: number) => (
+                            <View
+                                style={styles.payRow}
+                                key={`custom-amount-${item.transaction_type_id}-${index}`}
+                            >
+                                <Text style={styles.payLabel}>
+                                    {item.label}:
+                                </Text>
+                                <Text style={styles.payValue}>
+                                    {formatAmount(item.amount)}
+                                </Text>
                             </View>
                         ))}
-
                         <View style={styles.subtotalRow}>
                             <Text style={styles.bold}>SUB TOTAL AMOUNT:</Text>
                             <Text style={styles.bold}>{formatAmount(subTotal)}</Text>

@@ -485,26 +485,26 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
                 <div className="flex items-center justify-between mb-2">
                     <p className="font-semibold text-sm">Liquidation Records</p>
                     {!viewOnly && (
-                    <DropDownButtons
-                        actions={[
-                            ...(liquidations.length > 0
-                                ? [{ label: "Post Liquidation", onClick: handlePostLiquidation, disabled: tableLoading }]
-                                : []
-                            ),
-                            {
-                                label: "Add Liquidation",
-                                onClick: () => {
-                                    formHandler.resetForm();
-                                    resetFormState();
-                                    formModal.onOpen();
+                        <DropDownButtons
+                            actions={[
+                                ...(liquidations.length > 0
+                                    ? [{ label: "Post Liquidation", onClick: handlePostLiquidation, disabled: tableLoading }]
+                                    : []
+                                ),
+                                {
+                                    label: "Add Liquidation",
+                                    onClick: () => {
+                                        formHandler.resetForm();
+                                        resetFormState();
+                                        formModal.onOpen();
+                                    },
                                 },
-                            },
-                            ...(issuance?.cshub_trans_no
-                                ? [{ label: "Import Liquidation from CSHUB", onClick: () => importLiquidationModal.onOpen() }]
-                                : []
-                            ),
-                        ]}
-                    />
+                                ...(issuance?.cshub_trans_no
+                                    ? [{ label: "Import Liquidation from CSHUB", onClick: () => importLiquidationModal.onOpen() }]
+                                    : []
+                                ),
+                            ]}
+                        />
                     )}
                 </div>
 
