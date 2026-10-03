@@ -363,9 +363,7 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
             });
     };
 
-    // Liquidated-at-snapshot lang - kapareho ng scope rule sa backend
-    // (resolveReplenishmentForAuditEdit), kung Unliquidated pa noong snapshot
-    // hindi talaga papasa sa audit-create-liquidation kaya wag na ipalista
+    // Liquidated-at-snapshot lang, kapareho ng scope rule sa backend
     const issuanceOptions = (replenishment?.snapshots ?? [])
         .filter((s: any) => s.status_at_snapshot === 'Liquidated')
         .map((s: any) => ({
@@ -383,8 +381,7 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
     }));
 
     const isEdit = editingId !== null;
-    // editing ay allowed lang sa Review step (Posted -> Reviewed); ang Post step
-    // (Reviewed -> Audited) ay final look na lang, walang add/edit
+    // editing lang allowed sa Review step, Post step ay final look na lang
     const canEdit = canPerformAudit && !viewOnly && replenishment?.status === "Posted";
 
     return (

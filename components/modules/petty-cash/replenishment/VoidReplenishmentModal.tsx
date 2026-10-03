@@ -67,9 +67,6 @@ const VoidReplenishmentModal = ({ modal, replenishment, onSuccess }: VoidRepleni
             onClose={handleClose}
             size="md"
         >
-            {/* <p className="text-sm text-gray-600 dark:text-neutral-300 mb-3">
-                Voiding will mark this replenishment as Voided so you can create a corrected one. Included cash issuances are not affected since their status only changes once a replenishment is posted.
-            </p> */}
             <TextArea
                 label="Reason for Voiding"
                 name="reason"

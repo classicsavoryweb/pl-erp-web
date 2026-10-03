@@ -85,7 +85,6 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
         },
     });
 
-    // Refetch eligible approvers whenever branch or amount changes
     useEffect(() => {
         const branchId = formHandler.values.branch_id;
         const amount = Number(formHandler.values.amount);
@@ -135,8 +134,7 @@ const CreateCashIssuanceForm = ({ modal, onSubmitCallback, onRefreshCustodian, c
             getBranchEmployees({ branch_id: branchId }),
         ])
             .then(([pcvResp, empResp]) => {
-                // baka may napiling ibang branch habang naka-pending pa 'to - wag
-                // ikapit ang stale response sa kasalukuyang napiling branch
+                // wag ikapit kung nakalipat na ng branch bago pa dumating 'to
                 if (latestBranchIdRef.current !== branchId) return;
 
                 if (!pcvResp.error) {
