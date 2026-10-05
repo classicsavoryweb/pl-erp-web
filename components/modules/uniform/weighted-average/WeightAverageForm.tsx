@@ -98,15 +98,6 @@ const WeightedAverageForm = ({
 
         const createFormHandler = useFormik({  
             initialValues  :defaultValues(),
-               validate: (values) => {
-                    if (!values.items || values.items.length === 0) {
-                        toast.error("Load data first.");
-                        return {
-                            items: "Load data first.",
-                        };
-                    }
-                    return {};
-                },
             validateOnChange: false,
             validationSchema: Yup.object().shape({
                 tag:Yup.string().required("Tag is Required."),
@@ -164,7 +155,6 @@ const WeightedAverageForm = ({
                     ),
                 overall_remarks:Yup.string().nullable(),
                 items:Yup.array()
-                    .min(1,"At least one item is required")
                     .of(Yup.object({
                         uniform_item_no: Yup.string().required(),
                         item_remarks : Yup.string().nullable(),
@@ -174,10 +164,6 @@ const WeightedAverageForm = ({
             }),
 
             onSubmit: async (values , {resetForm, setSubmitting}) =>{
-                if (!values.items || values.items.length === 0) {
-                    toast.error("Load data first.");
-                    return;
-                }
                 const isConfirmed = await confirm({
                     title: isReview 
                         ? "Review Weighted Average"
@@ -459,7 +445,7 @@ const WeightedAverageForm = ({
         const saveChangeUnitPrice = async () => {
             const items = createFormHandler.values.items;
 
-            if (!items || items.length === 0) return;
+           
             setUpdatePriceLoading(true);
             try{
                 await updateUnitPrice({
