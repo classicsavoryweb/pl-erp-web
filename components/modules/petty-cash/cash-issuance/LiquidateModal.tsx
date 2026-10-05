@@ -40,7 +40,7 @@ interface LiquidateModalProps {
     onPostSuccess?: () => void;
 }
 
-type Attachment = {
+export type Attachment = {
     id?: number;
     file?: File;
     file_name: string;
@@ -52,7 +52,7 @@ type AttachmentViewerProps = {
     att: Attachment;
 };
 
-const AttachmentViewer = ({ att }: AttachmentViewerProps) => {
+export const AttachmentViewer = ({ att }: AttachmentViewerProps) => {
     const modal = useModal();
     const [src, setSrc] = useState("");
     const [loading, setLoading] = useState(false);
@@ -125,6 +125,7 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
     const [reload, setReload] = useState(0);
     const [attachments, setAttachments] = useState<Attachment[]>([]);
     const [removedIds, setRemovedIds] = useState<number[]>([]);
+    const [latestAuditLog, setLatestAuditLog] = useState<any>(null);
     const [changeAmount, setChangeAmount] = useState(0);
     const [postLoading, setPostLoading] = useState(false);
     const [formViewOnly, setFormViewOnly] = useState(false);
@@ -140,6 +141,7 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
         setEditingId(null);
         setAttachments([]);
         setRemovedIds([]);
+        setLatestAuditLog(null);
         setFormViewOnly(false);
     };
 
@@ -168,7 +170,7 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
             amount: Yup.number()
                 .typeError("Amount must be a number.")
                 .required("Amount is required.")
-                .min(0, "Amount must be atleast 0."),
+                .min(0, "Amount cannot be negative."),
             supplier_vendor: Yup.string()
                 .required("Supplier/Vendor is required.")
                 .max(150, "Max 150 characters."),
@@ -294,6 +296,7 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
         }));
         setAttachments(existing);
         setRemovedIds([]);
+        setLatestAuditLog(row.latest_audit_log ?? null);
         formModal.onOpen();
     };
 
@@ -316,6 +319,7 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
         }));
         setAttachments(existing);
         setRemovedIds([]);
+        setLatestAuditLog(row.latest_audit_log ?? null);
         formModal.onOpen();
     };
 
@@ -481,26 +485,26 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
                 <div className="flex items-center justify-between mb-2">
                     <p className="font-semibold text-sm">Liquidation Records</p>
                     {!viewOnly && (
-                    <DropDownButtons
-                        actions={[
-                            ...(liquidations.length > 0
-                                ? [{ label: "Post Liquidation", onClick: handlePostLiquidation, disabled: tableLoading }]
-                                : []
-                            ),
-                            {
-                                label: "Add Liquidation",
-                                onClick: () => {
-                                    formHandler.resetForm();
-                                    resetFormState();
-                                    formModal.onOpen();
+                        <DropDownButtons
+                            actions={[
+                                ...(liquidations.length > 0
+                                    ? [{ label: "Post Liquidation", onClick: handlePostLiquidation, disabled: tableLoading }]
+                                    : []
+                                ),
+                                {
+                                    label: "Add Liquidation",
+                                    onClick: () => {
+                                        formHandler.resetForm();
+                                        resetFormState();
+                                        formModal.onOpen();
+                                    },
                                 },
-                            },
-                            ...(issuance?.cshub_trans_no
-                                ? [{ label: "Import Liquidation from CSHUB", onClick: () => importLiquidationModal.onOpen() }]
-                                : []
-                            ),
-                        ]}
-                    />
+                                ...(issuance?.cshub_trans_no
+                                    ? [{ label: "Import Liquidation from CSHUB", onClick: () => importLiquidationModal.onOpen() }]
+                                    : []
+                                ),
+                            ]}
+                        />
                     )}
                 </div>
 
@@ -595,6 +599,17 @@ const LiquidateModal = ({ modal, issuance, viewOnly = false, onRefreshCustodian,
                 onClose={handleCancelForm}
                 size="xxl"
             >
+                {latestAuditLog && (
+                    <div className="mb-4 rounded border border-amber-300 bg-amber-50 dark:bg-amber-900/20 dark:border-amber-700 px-3 py-2 text-xs">
+                        <p className="font-semibold text-amber-700 dark:text-amber-400">
+                            {latestAuditLog.action === "created" ? "Added by Audit" : "Edited by Audit"}
+                            {latestAuditLog.performed_by?.full_name ? ` — ${latestAuditLog.performed_by.full_name}` : ""}
+                            {latestAuditLog.created_at ? ` (${moment(latestAuditLog.created_at).format("MMM DD, YYYY hh:mm A")})` : ""}
+                        </p>
+                        <p className="text-amber-700 dark:text-amber-400 mt-1">Reason: {latestAuditLog.reason}</p>
+                    </div>
+                )}
+
                 <div className="flex gap-x-6">
                     <div className="flex-1 min-w-0">
                         <form onSubmit={formHandler.handleSubmit}>
