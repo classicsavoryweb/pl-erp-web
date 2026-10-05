@@ -16,7 +16,7 @@ import { COLUMNTYPES } from "@/constants/column";
 
 import { useFormik } from "formik";
 import * as XLSX from "xlsx-js-style";
-import { useRef, useState } from "react";
+import { useRef, useState , useEffect} from "react";
 import { toast } from "react-toastify";
 
 interface PhysicalCountCreateModalProps {
@@ -60,7 +60,7 @@ const PhysicalCountCreateForm = ({
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
     const form = useFormik({
         initialValues: {
-        begin_date: beginDateOptions?.[0]?.value ?? today(),
+        begin_date: "",
         ending_date: "",
         counted_by_employees: [] as any[],
         remarks: "",
@@ -112,6 +112,15 @@ const PhysicalCountCreateForm = ({
             }
         },
     });
+
+    useEffect(() => {
+        if (modal.isOpen && beginDateOptions?.length > 0) {
+            form.setFieldValue(
+                "begin_date",
+                beginDateOptions[0].value
+            );
+        }
+    }, [modal.isOpen, beginDateOptions]);
 
     const resetForm = () => {
         form.resetForm({
