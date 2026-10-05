@@ -60,7 +60,7 @@ const PhysicalCountCreateForm = ({
     const [hasGeneratedData, setHasGeneratedData] = useState(false);
     const form = useFormik({
         initialValues: {
-        begin_date: "",
+        begin_date: beginDateOptions?.[0]?.value,
         ending_date: "",
         counted_by_employees: [] as any[],
         remarks: "",
@@ -125,7 +125,7 @@ const PhysicalCountCreateForm = ({
     const resetForm = () => {
         form.resetForm({
         values: {
-            begin_date: beginDateOptions?.[0]?.value ?? today(),
+            begin_date: beginDateOptions?.[0]?.value,
             ending_date: "",
             counted_by_employees: [],
             remarks: "",
