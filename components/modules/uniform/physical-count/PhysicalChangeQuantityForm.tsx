@@ -47,10 +47,7 @@ const ChangeQuanityForm = ({
     );
 
     const saveChangeQuantity = async () => {
-        if (!filteredChangeQuantityItems.length) {
-        toast.info("There are no quantities to update.");
-        return;
-        }
+
 
         if (!selected?.id) {
         toast.error("Physical count record not found.");
