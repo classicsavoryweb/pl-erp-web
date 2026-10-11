@@ -20,7 +20,7 @@ import { toast } from "react-toastify";
 import { useContext, useEffect, useState } from "react";
 import moment from "moment";
 import { AuthContext } from "@/context/AuthProvider";
-import { getAllReplenishmentsForAudit } from "@/api/petty-cash/audit";
+import { getAllReplenishmentsForAudit, exportAllReplenishmentsForAudit } from "@/api/petty-cash/audit";
 import { getAllPettyCashCustodians } from "@/api/maintenance/petty-cash-custodian";
 import AuditReviewModal from "./AuditReviewModal";
 
@@ -113,6 +113,24 @@ const PettyCashAuditTableCard = () => {
         filter.setFilters(defaults);
         filter.onReload();
         paginator.setPage(1);
+    };
+
+    const handleExport = () => {
+        exportAllReplenishmentsForAudit(filter.filters)
+            .then((resp: any) => {
+                const payload = resp?.data ?? resp;
+                if (resp?.error || !(payload instanceof Blob)) {
+                    toast.error("Export failed");
+                    return;
+                }
+                const url = window.URL.createObjectURL(payload);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `PETTY-CASH-AUDIT-LIQUIDATIONS-${moment().format("YYYY-MM-DD")}.xls`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            })
+            .catch(() => toast.error("Error encountered"));
     };
 
     const columnSettings = [
@@ -263,6 +281,14 @@ const PettyCashAuditTableCard = () => {
                                 onClick={() => { }}
                                 isIcon
                                 iconType="search"
+                            />
+                            <Button
+                                label="Export"
+                                type="button"
+                                onClick={handleExport}
+                                variant="success"
+                                isIcon
+                                iconType="export"
                             />
                             <Button
                                 label="Reset"

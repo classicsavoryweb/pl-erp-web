@@ -166,6 +166,12 @@ const ReplenishmentTableCard = () => {
             function: (row: any) => renderOverUnder(row.total_overunder_amount),
         },
         {
+            columnHead: "Total Unliquidated Amount",
+            path: "total_unliquidated_amount",
+            columnType: COLUMNTYPES.function,
+            function: (row: any) => formatAmount(row.total_unliquidated_amount),
+        },
+        {
             columnHead: "Total Replenishment",
             path: "total_replenishment_amount",
             columnType: COLUMNTYPES.function,
