@@ -43,6 +43,7 @@ const CreateReplenishmentForm = ({ modal, custodianBranches, onSubmitCallback }:
     const [issuances, setIssuances] = useState<any[]>([]);
     const [totalCashIssuanceAmount, setTotalCashIssuanceAmount] = useState(0);
     const [totalOverunderAmount, setTotalOverunderAmount] = useState(0);
+    const [totalUnliquidatedAmount, setTotalUnliquidatedAmount] = useState(0);
     const [totalReplenishmentAmount, setTotalReplenishmentAmount] = useState(0);
     const isSubmittingRef = useRef(false);
 
@@ -55,6 +56,7 @@ const CreateReplenishmentForm = ({ modal, custodianBranches, onSubmitCallback }:
                     setIssuances(resp.data.issuances ?? []);
                     setTotalCashIssuanceAmount(resp.data.total_cash_issuance_amount ?? 0);
                     setTotalOverunderAmount(resp.data.total_overunder_amount ?? 0);
+                    setTotalUnliquidatedAmount(resp.data.total_unliquidated_amount ?? 0);
                     setTotalReplenishmentAmount(resp.data.total_replenishment_amount ?? 0);
                 } else {
                     toast.error(resp.data?.message || "Error loading pending transactions");
@@ -102,32 +104,40 @@ const CreateReplenishmentForm = ({ modal, custodianBranches, onSubmitCallback }:
             onClose={modal.onClose}
             size="xxl"
         >
-            <div className="grid grid-cols-3 gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-4 text-sm">
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Replenishment ID</p>
-                    <p className="font-medium">—</p>
+            <div className="flex flex-col gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-4 text-sm">
+                <div className="grid grid-cols-4 gap-4">
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Replenishment ID</p>
+                        <p className="font-medium">—</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Transaction Date</p>
+                        <p className="font-medium">{moment().format("YYYY-MM-DD")}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Status</p>
+                        <p className="font-medium">Pending</p>
+                    </div>
+                </div>
+                <div className="grid grid-cols-4 gap-4">
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Cash Issuance Amount</p>
+                        <p className="font-medium">{formatAmount(totalCashIssuanceAmount)}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Over/Under Amount</p>
+                        <p className="font-medium">{renderOverUnder(totalOverunderAmount)}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Unliquidated Amount</p>
+                        <p className="font-medium">{formatAmount(totalUnliquidatedAmount)}</p>
+                    </div>
+                    <div>
+                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Replenishment</p>
+                        <p className="font-medium">{formatAmount(totalReplenishmentAmount)}</p>
+                    </div>
                 </div>
                 <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Transaction Date</p>
-                    <p className="font-medium">{moment().format("YYYY-MM-DD")}</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Status</p>
-                    <p className="font-medium">Pending</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Cash Issuance Amount</p>
-                    <p className="font-medium">{formatAmount(totalCashIssuanceAmount)}</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Over/Under Amount</p>
-                    <p className="font-medium">{renderOverUnder(totalOverunderAmount)}</p>
-                </div>
-                <div>
-                    <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Replenishment</p>
-                    <p className="font-medium">{formatAmount(totalReplenishmentAmount)}</p>
-                </div>
-                <div className="col-span-3">
                     <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Branches</p>
                     <p className="font-medium">{branchNames || "—"}</p>
                 </div>

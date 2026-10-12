@@ -132,37 +132,45 @@ const ViewReplenishmentModal = ({ modal, replenishmentId, showPostAction = false
                 onClose={modal.onClose}
                 size="xxl"
             >
-                <div className="grid grid-cols-3 gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-5 text-sm">
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Replenishment ID</p>
-                        <p className="font-medium">{replenishment?.replenishment_id ?? "—"}</p>
+                <div className="flex flex-col gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-5 text-sm">
+                    <div className="grid grid-cols-4 gap-4">
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Replenishment ID</p>
+                            <p className="font-medium">{replenishment?.replenishment_id ?? "—"}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Transaction Date</p>
+                            <p className="font-medium">{replenishment?.date ?? "—"}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Status</p>
+                            <p className="font-medium">{replenishment?.status ?? "—"}</p>
+                        </div>
+                    </div>
+                    <div className="grid grid-cols-4 gap-4">
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Cash Issuance Amount</p>
+                            <p className="font-medium">{formatAmount(replenishment?.total_cash_issuance_amount)}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Over/Under Amount</p>
+                            <p className="font-medium">{renderOverUnder(replenishment?.total_overunder_amount)}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Unliquidated Amount</p>
+                            <p className="font-medium">{formatAmount(replenishment?.total_unliquidated_amount)}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Replenishment</p>
+                            <p className="font-medium">{formatAmount(replenishment?.total_replenishment_amount)}</p>
+                        </div>
                     </div>
                     <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Transaction Date</p>
-                        <p className="font-medium">{replenishment?.date ?? "—"}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Status</p>
-                        <p className="font-medium">{replenishment?.status ?? "—"}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Cash Issuance Amount</p>
-                        <p className="font-medium">{formatAmount(replenishment?.total_cash_issuance_amount)}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Over/Under Amount</p>
-                        <p className="font-medium">{renderOverUnder(replenishment?.total_overunder_amount)}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Replenishment</p>
-                        <p className="font-medium">{formatAmount(replenishment?.total_replenishment_amount)}</p>
-                    </div>
-                    <div className="col-span-3">
                         <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Branches</p>
                         <p className="font-medium">{replenishment?.branches_summary ?? "—"}</p>
                     </div>
                     {replenishment?.status === "Voided" && (
-                        <div className="col-span-3">
+                        <div>
                             <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Void Reason</p>
                             <p className="font-medium">{replenishment?.void_reason ?? "—"}</p>
                         </div>

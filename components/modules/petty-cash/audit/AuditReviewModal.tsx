@@ -392,30 +392,40 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                 onClose={modal.onClose}
                 size="entireScreen"
             >
-                <div className="grid grid-cols-3 gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-5 text-sm">
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Replenishment ID</p>
-                        <p className="font-medium">{replenishment?.replenishment_id ?? "—"}</p>
+                <div className="flex flex-col gap-4 bg-gray-100 dark:bg-neutral-800 rounded p-3 mb-5 text-sm">
+                    <div className="grid grid-cols-4 gap-4">
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Replenishment ID</p>
+                            <p className="font-medium">{replenishment?.replenishment_id ?? "—"}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Status</p>
+                            <p className="font-medium">{replenishment?.status ?? "—"}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Status</p>
-                        <p className="font-medium">{replenishment?.status ?? "—"}</p>
+                    <div className="grid grid-cols-4 gap-4">
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Cash Issuance Amount</p>
+                            <p className="font-medium">{formatAmount(replenishment?.total_cash_issuance_amount)}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Over/Under Amount</p>
+                            <p className="font-medium">{renderOverUnder(replenishment?.total_overunder_amount)}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Unliquidated Amount</p>
+                            <p className="font-medium">{formatAmount(replenishment?.total_unliquidated_amount)}</p>
+                        </div>
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Replenishment</p>
+                            <p className="font-medium">{formatAmount(replenishment?.total_replenishment_amount)}</p>
+                        </div>
                     </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Branches</p>
-                        <p className="font-medium">{replenishment?.branches_summary ?? "—"}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Cash Issuance Amount</p>
-                        <p className="font-medium">{formatAmount(replenishment?.total_cash_issuance_amount)}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Over/Under Amount</p>
-                        <p className="font-medium">{renderOverUnder(replenishment?.total_overunder_amount)}</p>
-                    </div>
-                    <div>
-                        <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Total Replenishment</p>
-                        <p className="font-medium">{formatAmount(replenishment?.total_replenishment_amount)}</p>
+                    <div className="grid grid-cols-1 gap-4">
+                        <div>
+                            <p className="text-gray-500 dark:text-neutral-400 font-semibold text-xs mb-1">Branches</p>
+                            <p className="font-medium">{replenishment?.branches_summary ?? "—"}</p>
+                        </div>
                     </div>
                 </div>
 
@@ -463,62 +473,62 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                                 </tr>
                             ) : (
                                 <>
-                                {liquidations.map((row: any) => {
-                                    const issuance = row.issuance ?? {};
-                                    const employeeName = (emp: any) => emp ? `${emp.last_name}, ${emp.first_name}` : "—";
-                                    return (
-                                        <tr key={row.id} className="border-t dark:border-neutral-600">
-                                            <td className="px-3 py-2 whitespace-nowrap font-mono text-xs">{row.liquidation_id}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{issuance.date ?? "—"}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.requested_by)}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.received_by)}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.approved_by)}</td>
-                                            <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(issuance.amount)}</td>
-                                            <td className="px-3 py-2 text-right whitespace-nowrap">{renderOverUnder(issuance.overunder_amount)}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{issuance.source ?? "—"}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{row.date}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{row.reference_document_number}</td>
-                                            <td className="px-3 py-2 max-w-[220px] truncate" title={row.description}>{row.description}</td>
-                                            <td className="px-3 py-2 text-right whitespace-nowrap">
-                                                {Number(row.amount).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                                            </td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{row.expense_type?.description ?? "—"}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{issuance.status ?? "—"}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap sticky right-0 z-20 bg-zinc-50 dark:bg-neutral-700">
-                                                <button
-                                                    type="button"
-                                                    onClick={() => handleView(row)}
-                                                    className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
-                                                >
-                                                    View
-                                                </button>
-                                            </td>
-                                        </tr>
-                                    );
-                                })}
-                                {unliquidatedIssuances.map((row: any) => {
-                                    const issuance = row.issuance ?? {};
-                                    const employeeName = (emp: any) => emp ? `${emp.last_name}, ${emp.first_name}` : "—";
-                                    return (
-                                        <tr key={`unliquidated-${row.petty_cash_issuance_id}`} className="border-t dark:border-neutral-600 text-gray-400">
-                                            <td className="px-3 py-2 whitespace-nowrap">—</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{issuance.date ?? "—"}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.requested_by)}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.received_by)}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.approved_by)}</td>
-                                            <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(issuance.amount)}</td>
-                                            <td className="px-3 py-2 text-right whitespace-nowrap">—</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{issuance.source ?? "—"}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">—</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">—</td>
-                                            <td className="px-3 py-2">—</td>
-                                            <td className="px-3 py-2 text-right whitespace-nowrap">—</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">—</td>
-                                            <td className="px-3 py-2 whitespace-nowrap">{row.current_status ?? "—"}</td>
-                                            <td className="px-3 py-2 whitespace-nowrap sticky right-0 z-20 bg-zinc-50 dark:bg-neutral-700"></td>
-                                        </tr>
-                                    );
-                                })}
+                                    {liquidations.map((row: any) => {
+                                        const issuance = row.issuance ?? {};
+                                        const employeeName = (emp: any) => emp ? `${emp.last_name}, ${emp.first_name}` : "—";
+                                        return (
+                                            <tr key={row.id} className="border-t dark:border-neutral-600">
+                                                <td className="px-3 py-2 whitespace-nowrap font-mono text-xs">{row.liquidation_id}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{issuance.date ?? "—"}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.requested_by)}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.received_by)}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.approved_by)}</td>
+                                                <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(issuance.amount)}</td>
+                                                <td className="px-3 py-2 text-right whitespace-nowrap">{renderOverUnder(issuance.overunder_amount)}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{issuance.source ?? "—"}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{row.date}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{row.reference_document_number}</td>
+                                                <td className="px-3 py-2 max-w-[220px] truncate" title={row.description}>{row.description}</td>
+                                                <td className="px-3 py-2 text-right whitespace-nowrap">
+                                                    {Number(row.amount).toLocaleString("en-PH", { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                                                </td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{row.expense_type?.description ?? "—"}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{issuance.status ?? "—"}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap sticky right-0 z-20 bg-zinc-50 dark:bg-neutral-700">
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleView(row)}
+                                                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                                                    >
+                                                        View
+                                                    </button>
+                                                </td>
+                                            </tr>
+                                        );
+                                    })}
+                                    {unliquidatedIssuances.map((row: any) => {
+                                        const issuance = row.issuance ?? {};
+                                        const employeeName = (emp: any) => emp ? `${emp.last_name}, ${emp.first_name}` : "—";
+                                        return (
+                                            <tr key={`unliquidated-${row.petty_cash_issuance_id}`} className="border-t dark:border-neutral-600 text-gray-400">
+                                                <td className="px-3 py-2 whitespace-nowrap">—</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{issuance.date ?? "—"}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.requested_by)}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.received_by)}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{employeeName(issuance.approved_by)}</td>
+                                                <td className="px-3 py-2 text-right whitespace-nowrap">{formatAmount(issuance.amount)}</td>
+                                                <td className="px-3 py-2 text-right whitespace-nowrap">—</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{issuance.source ?? "—"}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">—</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">—</td>
+                                                <td className="px-3 py-2">—</td>
+                                                <td className="px-3 py-2 text-right whitespace-nowrap">—</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">—</td>
+                                                <td className="px-3 py-2 whitespace-nowrap">{row.current_status ?? "—"}</td>
+                                                <td className="px-3 py-2 whitespace-nowrap sticky right-0 z-20 bg-zinc-50 dark:bg-neutral-700"></td>
+                                            </tr>
+                                        );
+                                    })}
                                 </>
                             )}
                         </tbody>
