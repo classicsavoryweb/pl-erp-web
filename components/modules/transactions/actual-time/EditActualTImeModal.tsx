@@ -19,6 +19,7 @@ interface FormModalInterface {
     modal: any;
     data: any[];
     selectedLog: string;
+    employee : any;
     allowRemoveExisting: boolean;
     onSubmitCallBack: () => void;
 }
@@ -34,6 +35,7 @@ const EditActualTimeModal = ({
     modal,
     data = [],
     selectedLog,
+    employee,
     allowRemoveExisting,
     onSubmitCallBack
 }: FormModalInterface) => {
@@ -113,7 +115,7 @@ const EditActualTimeModal = ({
                 toast.error("You can only submit 2 or 4 number of punches");
                 return;
             }
-
+            
             const isConfirmed = await confirm({
                 title: "Edit Biotime Punches",
                 message: "Are you sure you want to save changes?"
@@ -227,6 +229,12 @@ const EditActualTimeModal = ({
             loading={modal.loading}
             size="lg"
         >
+            <Textfield
+                label="Employee Name"
+                name="employee_name"
+                value={employee?.full_name ?? ""}
+                disabled
+            />
             <Textfield
                 type="date"
                 label="Date"

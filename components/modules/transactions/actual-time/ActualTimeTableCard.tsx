@@ -56,6 +56,7 @@ const ActualTimeTableCard = ({
     const editModal = useModal();
     const importModal = useModal();
     const [data, setData] = useState<any[]>([]);
+    const [selectedLogData, setSelectedLogData] = useState<any>(null);
     const [selectedLog, setSelectedLog] = useState<string>("0");
     const [branch, setBranch] = useState<any>({});
     const { permissions } = useContext(AuthContext);
@@ -143,6 +144,7 @@ const ActualTimeTableCard = ({
             label: "View",
             onClick: (data: any) => {
                 setSelectedLog(data.id);
+                setSelectedLogData(data);
                 setData(data.punches);
                 viewModal.onOpen();
             }
@@ -156,7 +158,7 @@ const ActualTimeTableCard = ({
                 ) {
                     return;
                 }
-
+                setSelectedLogData(data);
                 setSelectedLog(data.id);
                 setData(data.punches);
                 editModal.onOpen();
@@ -423,11 +425,13 @@ const ActualTimeTableCard = ({
             <ActualTimeModal
                 modal={viewModal}
                 data={data}
+                employee={selectedLogData?.employee}
             />
 
             <EditActualTimeModal
                 modal={editModal}
                 data={data}
+                employee={selectedLogData?.employee}
                 selectedLog={selectedLog}
                 allowRemoveExisting={true}
                 onSubmitCallBack={() => {

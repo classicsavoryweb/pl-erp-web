@@ -86,6 +86,12 @@ const EditScheduleTimeModal = ({
         >
             <form onSubmit={formHandler.handleSubmit}>
                 <Textfield
+                    label="Employee Name"
+                    name="date"
+                    value={data?.employee?.full_name ?? ""}
+                    disabled
+                />
+                <Textfield
                     type="date"
                     label="Date"
                     name="date"
