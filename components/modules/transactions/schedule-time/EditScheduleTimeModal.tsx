@@ -31,7 +31,6 @@ const EditScheduleTimeModal = ({
 
     const formHandler = useFormik({
         initialValues: {
-            name:"",
             date: "",
             id: "",
             timetable: "",
@@ -68,14 +67,13 @@ const EditScheduleTimeModal = ({
     useEffect(() => {
         if (modal.isShowing) {
             formHandler.setValues({
-                name:data.employee.full_name,
                 date: data.date,
                 id: data.id,
                 timetable: data.timetable
             })
         }
     }, [modal.isShowing]);
-    
+
     return (
         <Modal
             isShowing={modal.isShowing}
@@ -90,8 +88,7 @@ const EditScheduleTimeModal = ({
                 <Textfield
                     label="Employee Name"
                     name="date"
-                    value={formHandler.values.name || ""}
-                    error={formHandler.errors.name}
+                    value={data?.employee?.full_name ?? ""}
                     disabled
                 />
                 <Textfield

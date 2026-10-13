@@ -13,7 +13,7 @@ interface FormModalInterface {
 const ActualTimeModal = ({
     modal,
     data = [],
-    employee = []
+    employee,
 }: FormModalInterface) => {
 
     return (
