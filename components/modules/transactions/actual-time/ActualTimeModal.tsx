@@ -7,11 +7,13 @@ import Textfield from "@/components/common/Textfield";
 interface FormModalInterface {
     modal: any;
     data: any[];
+    employee : any;
 };
 
 const ActualTimeModal = ({
     modal,
-    data = []
+    data = [],
+    employee = []
 }: FormModalInterface) => {
 
     return (
@@ -24,6 +26,12 @@ const ActualTimeModal = ({
             loading={modal.loading}
             size="lg"
         >
+            <Textfield
+                label="Employee Name"
+                name="employee_name"
+                value={employee?.full_name ?? ""}
+                disabled
+            />
             { data.map((log, key) => {
                 return (
                     <Textfield
