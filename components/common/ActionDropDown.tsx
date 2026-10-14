@@ -56,11 +56,11 @@ const ActionDropDown = ({
     }, []);
 
     return (
-        <div ref={dropdownRef} className={containerClassName ?? "w-[115px]"}>
+        <div ref={dropdownRef} className={`${containerClassName ?? "w-[115px]"} relative shrink-0`}>
             <button
                 type="button"
                 className={`
-                    bg-gray-200 w-full py-1 px-2 flex justify-between items-center gap-x-1 dark:bg-neutral-900 dark:text-slate-300
+                    bg-gray-200 w-full py-1 px-2 flex justify-between items-center gap-x-1 dark:bg-neutral-900 dark:text-slate-300 whitespace-nowrap
                     ${isDisabled ? "opacity-50 cursor-not-allowed" : "hover:cursor-pointer"}
                 `}
                 onClick={() => {
