@@ -9,19 +9,15 @@ const LoginPage = () => {
             <title>Classic Savory ERP</title>
             <div className="w-[400px]">
                 <Card>
-                    <div className="w-full flex justify-center pt-7">
+                    <div className="w-full flex justify-center py-10">
                         <Image
-                            src="/images/classic-savory.png"
-                            width={200}
+                            src="/images/photoline.png"
+                            width={300}
                             height={100}
-                            alt="classic savory logo"
+                            alt="photoline logo"
                             className="dark:invert dark:brightness-0"
                         />
                     </div>
-
-                    <p className="text-[16px] font-semibold text-red-800 text-center mt-[-20px] pb-10 dark:text-slate-100">
-                        {process.env.NEXT_PUBLIC_COMPANY}
-                    </p>
 
                     <hr className="text-slate-300"/>
 

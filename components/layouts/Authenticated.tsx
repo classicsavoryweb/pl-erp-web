@@ -10,10 +10,10 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
             <div className="w-full bg-red-900 border-b border-slate-400/30 h-[8vh] max-h-[8vh] px-5 flex items-center justify-between shadow">
                 <div className="flex justify-start items-center gap-x-3">
                     <Image
-                        alt="classic savory logo"
-                        src="/images/classic-savory.png"
-                        width="130"
-                        height="100"
+                        src="/images/photoline.png"
+                        width={300}
+                        height={100}
+                        alt="photoline logo"
                         className="invert brightness-0"
                     />
                     <p className="text-zinc-50 font-semibold text-md tracking-wider">{process.env.NEXT_PUBLIC_COMPANY}</p>

@@ -382,7 +382,7 @@ const LastPayComputationPDF = ({ data }: LastPayComputationPDFProps) => {
         <Document>
             <Page size="LETTER" style={styles.page}>
                 <View style={styles.headerRow}>
-                    <Image style={styles.logo} src="/images/classic-savory.png" />
+                    <Image style={styles.logo} src="/images/photoline.png" />
                     <View style={styles.headerText}>
                         <Text style={styles.headerCompany}>
                             {(process.env.NEXT_PUBLIC_COMPANY ?? "Savory Fastfood Incorporated").toUpperCase()}
