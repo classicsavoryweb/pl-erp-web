@@ -25,7 +25,7 @@ const DropdownLink = ({
     const pathName = usePathname();
 
     const hasVisibleSubLink = route.subLinks.some(
-        (link) => link.permission === "" || permissions.includes(link.permission)
+        (link) => (link.permission === "" && !link.isDropDown ) || permissions.includes(link.permission)
     );
 
     return (
