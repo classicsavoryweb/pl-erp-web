@@ -18,7 +18,7 @@ const EditScheduleDetails = ({
             loading={loading}
             size='medium'
         >
-            <p className="text-md font-semibold text-red-800 dark:text-red-500">Schedule Details</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Schedule Details</p>
             <ScheduleTypeDropDown
                 label="Schedule Type"
                 name="schedule_type"

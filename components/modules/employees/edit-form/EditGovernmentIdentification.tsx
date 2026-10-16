@@ -16,7 +16,7 @@ const EditGovernmentIdentification = ({
         <Card
             loading={loading}
         >
-            <p className="text-md font-semibold text-red-800 dark:text-red-500">Government Identification</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Government Identification</p>
 
             <Textfield
                 onChange={formHandler.handleChange}

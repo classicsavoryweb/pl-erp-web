@@ -20,7 +20,7 @@ const EmployeeDetailCard = ({formHandler}: {formHandler: any}) => {
             loading={loading}
         >
             <div className="flex justify-between items-center">
-                <p className="font-semibold text-red-800 dark:text-red-500">Employee Details</p>
+                <p className="font-semibold text-blue-950 dark:text-red-500">Employee Details</p>
                 <p>Last Update: {moment(payrollDetails.updated_at).format("MMM D, YYYY hh:mm:ss A")}</p>
             </div>
             <Grid cols={3}> 

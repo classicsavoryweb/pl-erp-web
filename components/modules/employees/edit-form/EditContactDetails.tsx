@@ -17,7 +17,7 @@ const EditContactDetails = ({
         <Card
             loading={loading}
         >
-            <p className="text-md font-semibold text-red-800 dark:text-red-500">Contact Details</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Contact Details</p>
             <Grid cols={2}>
                 <Textfield
                     onChange={formHandler.handleChange}

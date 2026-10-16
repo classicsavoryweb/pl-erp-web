@@ -130,7 +130,7 @@ const OffensesTableCard = () => {
                 }}
             />
             <Card>
-                <p className="text-red-800 dark:text-red-500 font-semibold">Offenses</p>
+                <p className="text-blue-950 dark:text-red-500 font-semibold">Offenses</p>
                 <div className="flex justify-end gap-x-3">
                     <DropDownButtons
                         actions={actionSettings}

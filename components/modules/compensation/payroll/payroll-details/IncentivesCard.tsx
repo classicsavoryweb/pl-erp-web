@@ -101,7 +101,7 @@ const IncentivesCard = () => {
             loading={loading}
         >
             <form onSubmit={incentivesformHandler.handleSubmit}>
-                <p className="font-semibold text-red-800 dark:text-red-500">Incentives</p>
+                <p className="font-semibold text-blue-950 dark:text-red-500">Incentives</p>
                 <Grid cols={4}>
                     <div className="col-span-2">
                         <Grid cols={2}>

@@ -498,7 +498,7 @@ const AuditReviewModal = ({ modal, replenishmentId, viewOnly = false, onActionSu
                                                     <button
                                                         type="button"
                                                         onClick={() => handleView(row)}
-                                                        className="text-xs text-blue-600 dark:text-blue-400 hover:underline"
+                                                        className="text-xs text-blue-950 dark:text-blue-400 hover:underline"
                                                     >
                                                         View
                                                     </button>

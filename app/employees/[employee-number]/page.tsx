@@ -27,7 +27,7 @@ const Page = () => {
             <div className="w-11/12">
                 <EmployeeDetailsCard/>
             </div>
-            <p className="pt-5 font-semibold text-red-800 dark:text-red-500">Employee History Logs</p>
+            <p className="pt-5 font-semibold text-blue-950 dark:text-gray-300">Employee History Logs</p>
             { permissions.includes("view_employee_position") &&
                 <div className="w-full">
                     <Accordion

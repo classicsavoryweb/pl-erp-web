@@ -236,7 +236,7 @@ const LastPayDetails = ({
                 <div className="mt-3 flex items-center justify-between">
                     <p>Additional Fields</p>
                     <p
-                        className="hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                        className="hover:text-blue-950 dark:text-red-500 hover:cursor-pointer"
                         onClick={() => {
                             const additionalFields = formHandler.values.additional_fields ?? [];
                             
@@ -258,7 +258,7 @@ const LastPayDetails = ({
                             <div className="mt-2" key={idx}>
                                 <div className="flex justify-end mb-[-10px]">
                                     <p
-                                        className="hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                        className="hover:text-blue-950 dark:text-red-500 hover:cursor-pointer"
                                         onClick={() => {
                                             const additionalFields = [...formHandler.values.additional_fields];
                                             additionalFields.splice(idx, 1);

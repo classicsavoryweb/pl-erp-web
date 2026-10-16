@@ -15,7 +15,7 @@ const Badge = ({
                     ${status === "danger" && "bg-red-800"}
                     ${status === "warning" && "bg-orange-600"}
                     ${status === "success" && "bg-green-800"}
-                    ${status === "purpose" && "bg-blue-600"}
+                    ${status === "purpose" && "bg-blue-950"}
                     text-slate-50
                     text-[10px]
                     rounded-full

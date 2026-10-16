@@ -12,7 +12,7 @@ const GovernmentIdentificationCard = () => {
             size="medium"
             loading={loading}
         >
-            <p className="font-semibold text-red-800 dark:text-red-500">Government Identification</p>
+            <p className="font-semibold text-blue-950 dark:text-red-500">Government Identification</p>
             <Textfield
                 disabled
                 label="SSS"

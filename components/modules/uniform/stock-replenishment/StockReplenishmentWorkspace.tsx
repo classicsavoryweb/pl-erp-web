@@ -1705,16 +1705,16 @@ const LineEditor = ({ items, mode, isReviewReceive, onChange, onRemove }: any) =
         <table className="table-auto w-full border-collapse dark:text-slate-200 dark:bg-neutral-800">
             <thead className="sticky top-0 z-20">
                 <tr>
-                    <th className="p-3 bg-red-800 text-left text-zinc-100">Item</th>
-                    <th className="p-3 bg-red-800 text-left text-zinc-100">Stock on hand</th>
-                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
-                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Approved</th>}
-                    {mode === "receiving" && !isReviewReceive &&  <th className="p-3 bg-red-800 text-left text-zinc-100">Requested Quantity</th>}
-                    {mode === "receiving" && <th className="p-3 bg-red-800 text-left text-zinc-100">Receiving Now</th>}
-                    <th className="p-3 bg-red-800 text-left text-zinc-100">Unit Price</th>
-                    <th className="p-3 bg-red-800 text-left text-zinc-100">Total Amount</th>
-                    <th className="p-3 bg-red-800 text-left text-zinc-100">Remarks</th>
-                    {mode === "request" && <th className="p-3 bg-red-800 text-left text-zinc-100">Action</th>}
+                    <th className="p-3 bg-blue-950 text-left text-zinc-100">Item</th>
+                    <th className="p-3 bg-blue-950 text-left text-zinc-100">Stock on hand</th>
+                    {mode === "request" && <th className="p-3 bg-blue-950 text-left text-zinc-100">Requested Quantity</th>}
+                    {mode === "request" && <th className="p-3 bg-blue-950 text-left text-zinc-100">Approved</th>}
+                    {mode === "receiving" && !isReviewReceive &&  <th className="p-3 bg-blue-950 text-left text-zinc-100">Requested Quantity</th>}
+                    {mode === "receiving" && <th className="p-3 bg-blue-950 text-left text-zinc-100">Receiving Now</th>}
+                    <th className="p-3 bg-blue-950 text-left text-zinc-100">Unit Price</th>
+                    <th className="p-3 bg-blue-950 text-left text-zinc-100">Total Amount</th>
+                    <th className="p-3 bg-blue-950 text-left text-zinc-100">Remarks</th>
+                    {mode === "request" && <th className="p-3 bg-blue-950 text-left text-zinc-100">Action</th>}
                 </tr>
             </thead>
             <tbody className="text-xs">

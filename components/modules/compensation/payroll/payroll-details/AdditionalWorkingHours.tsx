@@ -14,7 +14,7 @@ const AdditionalWorkingHours = ({ formHandler } : { formHandler: any }) => {
             size="small"
             loading={loading}
         >
-            <p className="font-semibold text-red-800 dark:text-red-500">Additional Working Hours</p>
+            <p className="font-semibold text-blue-950 dark:text-red-500">Additional Working Hours</p>
             <Grid cols={3}>
                 <Grid
                     cols={2}

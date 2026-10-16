@@ -14,7 +14,7 @@ const SummaryCardCount = ({
     type = "number"
 }: CardInterface ) => {
     return (
-        <div className="bg-zinc-50 w-full my-2 p-3 rounded-md border-l-5 border-red-700 dark:bg-neutral-900 dark:text-slate-300">
+        <div className="bg-zinc-50 w-full my-2 p-3 rounded-md border-l-5 border-blue-950 dark:bg-neutral-900 dark:text-slate-300">
             { loading ?
                 <>
                     <div className="animate-pulse duration-500 space-y-2">

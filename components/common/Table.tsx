@@ -93,7 +93,7 @@ const Table = ({
         <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-[13px]"}`}>
         <div className={fixed ? "" : "overflow-x-auto"}>
             <table className="table-auto w-full rounded-md dark:text-slate-200 dark:bg-neutral-800">
-                <thead className={`bg-red-800 ${fixed ? "sticky top-0 z-30" : ""}`}>
+                <thead className={`bg-blue-950 ${fixed ? "sticky top-0 z-30" : ""}`}>
                     <tr>
                         {withCheckBox && (
                             <th
@@ -319,7 +319,7 @@ const Table = ({
                     <div className="flex gap-x-1 justify-end items-center">
                         {currentPage > 1 && (
                             <button
-                                className="px-2 text-gray-600  bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"
+                                className="px-2 text-gray-600  bg-red-200 hover:bg-blue-950 hover:text-slate-50 hover:cursor-pointer"
                                 onClick={() => paginator.onClickSetPageNumber(currentPage - 1)}
                             >
                                 Previous
@@ -337,7 +337,7 @@ const Table = ({
                                     className={`
                                         px-2
                                         
-                                        ${paginator.paginationData.current_page === item ? "bg-red-800 text-slate-50" : "bg-red-200 text-gray-600 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer"}
+                                        ${paginator.paginationData.current_page === item ? "bg-blue-950 text-slate-50" : "bg-red-200 text-gray-600 hover:bg-blue-950 hover:text-slate-50 hover:cursor-pointer"}
                                     `}
                                     onClick={() => paginator.paginationData.current_page !== item && paginator.onClickSetPageNumber(Number(item))}
                                 >
@@ -348,7 +348,7 @@ const Table = ({
 
                         {currentPage < totalPages && (
                             <button
-                                className="px-2  bg-red-200 hover:bg-red-800 hover:text-slate-50 hover:cursor-pointer text-gray-600"
+                                className="px-2  bg-red-200 hover:bg-blue-950 hover:text-slate-50 hover:cursor-pointer text-gray-600"
                                 onClick={() => paginator.onClickSetPageNumber(currentPage + 1)}
                             >
                                 Next

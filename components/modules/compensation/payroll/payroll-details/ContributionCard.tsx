@@ -23,7 +23,7 @@ const ContributionCard = ({formHandler} : {formHandler: any}) => {
             loading={loading}
         >
             <div className="flex justify-between">
-                <p className="font-semibold text-red-800 dark:text-red-500">Contributions</p>
+                <p className="font-semibold text-blue-950 dark:text-red-500">Contributions</p>
                 <div className="flex justify-end gap-x-2">
                     <Checkbox
                         label="Complete Documents"

@@ -28,7 +28,7 @@ const Sidebar = () => {
                                 w-full
                                 flex
                                 gap-2
-                                ${isActive ? "bg-red-800 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
+                                ${isActive ? "bg-blue-950 text-slate-50 hover:cursor-default" : "hover:bg-blue-300/20"}
                                 rounded-md
                                 px-2
                                 py-[10px]

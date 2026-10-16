@@ -18,7 +18,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
             size="small"
             loading={loading}
         >
-            <p className="font-semibold text-red-800 dark:text-red-500">Salary Details</p>
+            <p className="font-semibold text-blue-950 dark:text-red-500">Salary Details</p>
             <Grid cols={2}>
                 <Textfield
                     disabled
@@ -63,7 +63,7 @@ const SalaryDetailCard = ({ formHandler } : { formHandler: any }) => {
                 />
             </Grid>
 
-            <p className="font-semibold text-red-800 dark:text-red-500 mt-3">Other Adjustments</p>
+            <p className="font-semibold text-blue-950 dark:text-red-500 mt-3">Other Adjustments</p>
             <Grid cols={2}>
                 <Textfield
                     disabled = {payrollDetails.status == "final" || !permissions.includes("perform_compensation_payroll")}

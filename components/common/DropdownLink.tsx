@@ -35,7 +35,7 @@ const DropdownLink = ({
                 className={`
                     w-full
                     flex
-                    ${isActive ? "bg-red-800 text-slate-50 hover:cursor-default" : "hover:bg-red-300/20"}
+                    ${isActive ? "bg-blue-950 text-slate-50 hover:cursor-default" : "hover:bg-blue-300/20"}
                     rounded-md
                     px-2
                     py-[10px]
@@ -91,7 +91,7 @@ const DropdownLink = ({
                                         className={`
                                             w-full
                                             flex
-                                            hover:bg-red-300/20
+                                            hover:bg-blue-300/20
                                             dark:text-slate-300
                                             rounded-md
                                             py-[7px]
@@ -100,7 +100,7 @@ const DropdownLink = ({
                                             text-[11px]
                                             px-2
                                             focus:outline-none
-                                            ${active ? "text-red-800" : "text-gray-500"}
+                                            ${active ? "text-blue-950" : "text-gray-500"}
                                         `}
                                     >
                                             <svg

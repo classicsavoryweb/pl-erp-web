@@ -148,7 +148,7 @@ const TardinessHistoryCard = () => {
                 size="medium"
                 loading={loading}
             >
-                <p className="font-semibold text-red-800 dark:text-red-500">Tardiness History</p>
+                <p className="font-semibold text-blue-950 dark:text-red-500">Tardiness History</p>
                 <Table
                     dataSet={payrollDetails.tardiness_offenses}
                     columnSettings={columnSettings}

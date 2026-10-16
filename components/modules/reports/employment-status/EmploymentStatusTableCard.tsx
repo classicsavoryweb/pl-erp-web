@@ -196,7 +196,7 @@ const EmploymentStatusTableCard = () => {
                 </form>
             </Accordion>
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Employees</p>
+                <p className=" font-semibold text-blue-950 dark:text-red-500">Employees</p>
                 <Table
                     dataSet={dataSet}
                     columnSettings={columnSettings}

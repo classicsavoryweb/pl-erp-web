@@ -22,7 +22,7 @@ const Accordion = ({
     return (
         <Card>
             <div
-                className={`w-full flex justify-between items-center hover:cursor-pointer ${toggle ? "text-red-800 dark:text-red-500" : ""}`}
+                className={`w-full flex justify-between items-center hover:cursor-pointer ${toggle ? "text-blue-950 dark:text-red-500" : ""}`}
                 onClick={() => setToggle(prev => !prev)}
             >
                 <p

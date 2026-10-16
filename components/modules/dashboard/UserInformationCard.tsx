@@ -19,7 +19,7 @@ const UserInformationCard = () => {
                         alt="profile picture"
                     />
                     <div>
-                        <p className="text-2xl font-semibold text-red-700 pb-3">{userDetails.full_name || "—"}</p>
+                        <p className="text-2xl font-semibold text-blue-950 dark:text-gray-300 pb-3">{userDetails.full_name || "—"}</p>
                         
                         <div className="flex gap-x-10">
                             <div>

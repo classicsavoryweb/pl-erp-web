@@ -7,7 +7,7 @@ import Sidebar from "./Sidebar"
 const Authenticated = ({ children }: { children: React.ReactNode }) => {
     return (
         <div className="w-full h-screen">
-            <div className="w-full bg-red-900 border-b border-slate-400/30 h-[8vh] max-h-[8vh] px-5 flex items-center justify-between shadow">
+            <div className="w-full bg-blue-950 border-b border-slate-400/30 h-[8vh] max-h-[8vh] px-5 flex items-center justify-between shadow">
                 <div className="flex justify-start items-center gap-x-3">
                     <Image
                         src="/images/photoline.png"
@@ -16,7 +16,6 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                         alt="photoline logo"
                         className="invert brightness-0"
                     />
-                    <p className="text-zinc-50 font-semibold text-md tracking-wider">{process.env.NEXT_PUBLIC_COMPANY}</p>
                 </div>
                 <Header />
             </div>

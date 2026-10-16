@@ -352,7 +352,7 @@ const EntriesReviewTableCard = ({
     return (
         <>
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+                <p className=" font-semibold text-blue-950 dark:text-red-500">Filters</p>
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -474,7 +474,7 @@ const EntriesReviewTableCard = ({
             </Card>
             <Card>
                 <div className="flex items-center justify-between gap-x-3">
-                    <p className="font-semibold text-red-800 dark:text-red-500">{title}</p>
+                    <p className="font-semibold text-blue-950 dark:text-red-500">{title}</p>
                     {canGenerate &&
                         <DropDownButtons
                             actions={actionSettings}

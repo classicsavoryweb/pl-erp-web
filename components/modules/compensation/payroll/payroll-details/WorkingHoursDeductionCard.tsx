@@ -39,7 +39,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
             size="small"
             loading={loading}
         >
-            <p className="font-semibold text-red-800 dark:text-red-500">Working Hours Deductions</p>
+            <p className="font-semibold text-blue-950 dark:text-red-500">Working Hours Deductions</p>
             <div className="flex justify-between items-center">
                 <p className="mt-3">Tardiness</p>
                 { payrollDetails.status == "initial" &&
@@ -84,7 +84,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                         { payrollDetails.status == "initial" &&
                                             <div className="flex justify-end">
                                                 <p
-                                                    className="z-1 mb-[-30px] hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                                    className="z-1 mb-[-30px] hover:text-blue-950 dark:text-red-500 hover:cursor-pointer"
                                                     onClick={() => {
                                                         const minutes = [...formHandler.values.tardiness_minutes];
                                                         minutes.splice(idx, 1)
@@ -164,7 +164,7 @@ const WorkingHoursDeductionCard = ({ formHandler } : { formHandler: any }) => {
                                         { payrollDetails.status == "initial" &&
                                             <div className="flex justify-end">
                                                 <p
-                                                    className="z-1 mb-[-30px] hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                                    className="z-1 mb-[-30px] hover:text-blue-950 dark:text-red-500 hover:cursor-pointer"
                                                     onClick={() => {
                                                         const minutes = [...formHandler.values.undertime_minutes];
                                                         minutes.splice(idx, 1)

@@ -266,7 +266,7 @@ const CreateLogModal = ({
 
                                 { key !== 0 &&
                                     <p
-                                        className=" text-red-500 hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                                        className=" text-red-500 hover:text-blue-950 dark:text-red-500 hover:cursor-pointer"
                                         onClick={() => {
                                             const updatedLogs = [...formHandler.values.time_keeping];
                                             updatedLogs.splice(key, 1)
@@ -330,7 +330,7 @@ const CreateLogModal = ({
                                         {index >= 0 && (
                                             <div className="flex justify-end text-red-500">
                                                 <p
-                                                    className="z-1 pt-3 mb-[-22px] hover:text-red-800 dark:text-red-500  hover:cursor-pointer"
+                                                    className="z-1 pt-3 mb-[-22px] hover:text-blue-950 dark:text-red-500  hover:cursor-pointer"
                                                     onClick={() => {
                                                         const updatedLogs = [...formHandler.values.time_keeping];
                                                         updatedLogs[key].punches.splice(index, 1)

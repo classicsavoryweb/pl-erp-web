@@ -59,7 +59,7 @@ const TimeKeepingSummaryTableCard = ({
             function: (data: any) => {
                 return (
                     <p
-                        className = {`${data.employee.current_position.timekeeping_type === "Monthly" ? "text-blue-600" : ""}`}
+                        className = {`${data.employee.current_position.timekeeping_type === "Monthly" ? "text-blue-950" : ""}`}
                     >
                         {data.employee.full_name}
                     </p>

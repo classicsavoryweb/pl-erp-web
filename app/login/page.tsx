@@ -22,7 +22,7 @@ const LoginPage = () => {
                     <hr className="text-slate-300"/>
 
                     <div className="py-5">
-                        <p className="text-[15px] font-semibold text-red-800 dark:text-slate-100">Welcome!</p>
+                        <p className="text-[15px] font-semibold text-blue-950 dark:text-slate-100">Welcome!</p>
                         <p className="mt-[-5px] ">Please sign in to continue.</p>
                     </div>
 

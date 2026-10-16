@@ -183,7 +183,7 @@ const EntriesFinalTableCard = ({
     return (
         <>
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Filters</p>
+                <p className=" font-semibold text-blue-950 dark:text-red-500">Filters</p>
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <Dropdown
@@ -263,7 +263,7 @@ const EntriesFinalTableCard = ({
                 </form>
             </Card>
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">{title}</p>
+                <p className=" font-semibold text-blue-950 dark:text-red-500">{title}</p>
                 <Table
                     dataSet={api.dataSet}
                     columnSettings={columnSettings}

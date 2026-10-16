@@ -264,7 +264,7 @@ const EditActualTimeModal = ({
                         {(punch.newPunch || (allowRemoveExisting && punch.id)) && (
                             <div className="flex justify-end text-red-500">
                                 <p
-                                    className="z-1 pt-3 mb-[-22px] hover:text-red-800 dark:text-red-500  hover:cursor-pointer"
+                                    className="z-1 pt-3 mb-[-22px] hover:text-blue-950 dark:text-red-500  hover:cursor-pointer"
                                     onClick={() => {
                                         const updatedPunches = [...formHandler.values.punches];
                                         const removed = updatedPunches.splice(index, 1)[0];

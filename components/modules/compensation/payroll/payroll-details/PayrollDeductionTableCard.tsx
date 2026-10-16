@@ -109,10 +109,10 @@ const PayrollDeductionTableCard = ({ formHandler } : {formHandler : any}) => {
                 loading={loading}
             >
                 <div className="flex justify-between">
-                    <p className="font-semibold text-red-800 dark:text-red-500">Company Deductions</p>
+                    <p className="font-semibold text-blue-950 dark:text-red-500">Company Deductions</p>
                     { payrollDetails.status == "initial" &&
                         <p
-                            className="hover:text-red-800 dark:text-red-500 hover:cursor-pointer"
+                            className="hover:text-blue-950 dark:text-red-500 hover:cursor-pointer"
                             onClick={() => {
                                 formHandler.setFieldValue("save_changes", false);
                                 formHandler.setFieldValue("reload_deductions", true);

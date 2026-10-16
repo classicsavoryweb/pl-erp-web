@@ -52,7 +52,7 @@ const TimeKeepingTableCard = ({
             function: (data: any) => {
                 return (
                     <p
-                        className = {`${data.employee.current_position.timekeeping_type === "Monthly" ? "text-blue-600" : ""}`}
+                        className = {`${data.employee.current_position.timekeeping_type === "Monthly" ? "text-blue-950" : ""}`}
                     >
                         {data.employee.full_name}
                     </p>
@@ -423,7 +423,7 @@ const TimeKeepingTableCard = ({
                 </form>
             </Accordion>
             <Card>
-                <p className=" font-semibold text-red-800 dark:text-red-500">Timekeeping</p>
+                <p className=" font-semibold text-blue-950 dark:text-red-500">Timekeeping</p>
                 <Table
                     smallText
                     dataSet={api.dataSet}
