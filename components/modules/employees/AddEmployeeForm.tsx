@@ -21,7 +21,7 @@ const AddEmployeeForm = () => {
 
     const addEmployeeHandler = useFormik({
         initialValues: {
-            type: "",
+            type: "Direct",
             agency_id: "",
             first_name: "",
             middle_name: "",
@@ -36,12 +36,12 @@ const AddEmployeeForm = () => {
             contact_number: "",
             contract_duration: "",
             flexible_schedule: "No",
-            schedule_type: "",
+            schedule_type: "Normal Schedule",
             incentive_leave: "No",
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            type: Yup.string().required("Type is required"),
+            // type: Yup.string().required("Type is required"),
             first_name: Yup.string().required("First name is required"),
             last_name: Yup.string().required("Last name is required"),
             gender: Yup.string().required("Gender is required"),
@@ -54,22 +54,22 @@ const AddEmployeeForm = () => {
             contact_number: Yup.string().required("Contact number is required")
                 .min(11, "Minimum of 11 characters")
                 .max(13, "Maximum of 13 characters"),
-            agency_id: Yup.string().when('type', (type, schema) =>
-                String(type) === "Agency"
-                    ? schema.required('Agency is required')
-                    : schema.notRequired()),
-            flexible_schedule: Yup.string().when('type', (type, schema) =>
-                String(type) === "Direct"
-                    ? schema.required('Flexible schedule is required')
-                    : schema.notRequired()),
-            schedule_type: Yup.string().when('type', (type, schema) =>
-                String(type) === "Direct"
-                    ? schema.required('Schedule type is required')
-                    : schema.notRequired()),
-            incentive_leave: Yup.string().when('type', (type, schema) =>
-                String(type) === "Direct"
-                    ? schema.required('Incentive leave is required')
-                    : schema.notRequired()),
+            // agency_id: Yup.string().when('type', (type, schema) =>
+            //     String(type) === "Agency"
+            //         ? schema.required('Agency is required')
+            //         : schema.notRequired()),
+            // flexible_schedule: Yup.string().when('type', (type, schema) =>
+            //     String(type) === "Direct"
+            //         ? schema.required('Flexible schedule is required')
+            //         : schema.notRequired()),
+            // schedule_type: Yup.string().when('type', (type, schema) =>
+            //     String(type) === "Direct"
+            //         ? schema.required('Schedule type is required')
+            //         : schema.notRequired()),
+            // incentive_leave: Yup.string().when('type', (type, schema) =>
+            //     String(type) === "Direct"
+            //         ? schema.required('Incentive leave is required')
+            //         : schema.notRequired()),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -161,7 +161,7 @@ const AddEmployeeForm = () => {
                     />
                 </Grid>
                 <p className="mt-3">Employment Details</p>
-                <Grid
+                {/* <Grid
                     cols={2}
                 >
                     <EmployeeTypeDropDown
@@ -179,6 +179,7 @@ const AddEmployeeForm = () => {
                         error={addEmployeeHandler.errors.type}
                         required
                     />
+                 
                     { addEmployeeHandler.values.type === "Agency" &&
                         <AgencyDropDown
                             label="Agency"
@@ -191,7 +192,7 @@ const AddEmployeeForm = () => {
                         />
                     }
                     
-                </Grid>
+                </Grid> */}
                 <Grid
                     cols={2}
                 >
@@ -268,8 +269,8 @@ const AddEmployeeForm = () => {
                         ]}
                         required
                     />
-                    { addEmployeeHandler.values.type === "Direct" &&
-                        <>
+                
+                        {/* <>
                             <ScheduleTypeDropDown
                                 label="Schedule Type"
                                 name="schedule_type"
@@ -305,8 +306,8 @@ const AddEmployeeForm = () => {
                                 ]}
                                 required
                             />
-                        </>
-                    }
+                        </> */}
+                    
                 </Grid>
                 <Grid
                     cols={2}
