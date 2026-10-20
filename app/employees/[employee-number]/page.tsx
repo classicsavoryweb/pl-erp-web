@@ -108,7 +108,7 @@ const Page = () => {
                 </div>
             }
 
-            { permissions.includes("view_employee_vaccination") &&
+            {/* { permissions.includes("view_employee_vaccination") &&
                 <div className="w-full">
                     <Accordion
                         title="Vaccination"
@@ -116,7 +116,7 @@ const Page = () => {
                         <EmployeeVaccinationHistory/>
                     </Accordion>
                 </div>
-            }
+            } */}
 
             { permissions.includes("view_employee_audit_logs") &&
                 <div className="w-full">
