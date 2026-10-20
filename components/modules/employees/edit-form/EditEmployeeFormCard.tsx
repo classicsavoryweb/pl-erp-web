@@ -179,10 +179,10 @@ const EditEmployeeFormCard = () => {
                         />
                     </div>
                     <div className="w-5/12">
-                        <EditScheduleDetails
+                        {/* <EditScheduleDetails
                             loading={loading}
                             formHandler={editEmployeeForm}
-                        />
+                        /> */}
                         <div className="py-[2px]"/>
                         <EditGovernmentIdentification
                             loading={loading}

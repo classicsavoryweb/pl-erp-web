@@ -421,7 +421,7 @@ const EmployeeDetailsCard = () => {
                         </Card>
                     </>
                 }
-                { employee.schedule &&
+                {/* { employee.schedule &&
                     <>
                         <div className="py-[2px]"/>
                         <Card
@@ -445,7 +445,7 @@ const EmployeeDetailsCard = () => {
                             />
                         </Card>
                     </>
-                }
+                } */}
                     <div className="py-[2px]"/>
                     <Card
                         loading={loading}
