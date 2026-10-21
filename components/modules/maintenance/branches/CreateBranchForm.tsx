@@ -53,12 +53,12 @@ const CreateBranchForm = ({
             company : "" ,
             branch_head_employee_number: "",
             branch_head_date_appointed: "",
-            group_head_employee_number: "",
+            area_head_employee_number: "",
             rate_code: "",
-            kitchen_oic_employee_number: "",
-            kitchen_oic_date_appointed: "",
-            kitchen_oic_2_employee_number: "",
-            kitchen_oic_2_date_appointed: "",
+            lab_head_employee_number: "",
+            lab_head_date_appointed: "",
+            lab_head_2_employee_number: "",
+            lab_head_2_date_appointed: "",
             mancom_employee_number: "",
             expense_debit: "",
             expense_credit: "",
@@ -256,11 +256,11 @@ const CreateBranchForm = ({
                     />
                 </Grid>
 
-                <SectionDivider label="Branch OIC" />
+                <SectionDivider label="Branch" />
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
-                        label="Branch OIC"
-                        placeholder="select branch oic"
+                        label="Branch Head"
+                        placeholder="select branch head"
                         name="branch_head_employee_number"
                         value={createBranchFormHandler.values.branch_head_employee_number}
                         onChange={(e: any) => handleOicChange(
@@ -285,64 +285,64 @@ const CreateBranchForm = ({
 
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
-                        label="Kitchen OIC"
-                        placeholder="select kitchen oic"
-                        name="kitchen_oic_employee_number"
-                        value={createBranchFormHandler.values.kitchen_oic_employee_number}
+                        label="Lab Head"
+                        placeholder="select lab head"
+                        name="lab_head_employee_number"
+                        value={createBranchFormHandler.values.lab_head_employee_number}
                         onChange={(e: any) => handleOicChange(
                             e,
-                            "kitchen_oic_employee_number",
-                            "kitchen_oic_date_appointed"
+                            "lab_head_employee_number",
+                            "lab_head_date_appointed"
                         )}
-                        error={createBranchFormHandler.errors.kitchen_oic_employee_number}
+                        error={createBranchFormHandler.errors.lab_head_employee_number}
                         allowClear
                     />
                     <Textfield
                         label="Date Appointed"
                         placeholder="date appointed"
-                        name="kitchen_oic_date_appointed"
+                        name="lab_head_date_appointed"
                         type="date"
-                        value={createBranchFormHandler.values.kitchen_oic_date_appointed || ""}
+                        value={createBranchFormHandler.values.lab_head_date_appointed || ""}
                         onChange={createBranchFormHandler.handleChange}
-                        error={createBranchFormHandler.errors.kitchen_oic_date_appointed}
-                        disabled={!createBranchFormHandler.values.kitchen_oic_employee_number}
+                        error={createBranchFormHandler.errors.lab_head_date_appointed}
+                        disabled={!createBranchFormHandler.values.lab_head_employee_number}
                     />
                 </Grid>
 
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
-                        label="Kitchen OIC 2"
+                        label="Lab Head 2"
                         placeholder="select kitchen oic 2"
-                        name="kitchen_oic_2_employee_number"
-                        value={createBranchFormHandler.values.kitchen_oic_2_employee_number}
+                        name="lab_head_2_employee_number"
+                        value={createBranchFormHandler.values.lab_head_2_employee_number}
                         onChange={(e: any) => handleOicChange(
                             e,
-                            "kitchen_oic_2_employee_number",
-                            "kitchen_oic_2_date_appointed"
+                            "lab_head_2_employee_number",
+                            "lab_head_2_date_appointed"
                         )}
-                        error={createBranchFormHandler.errors.kitchen_oic_2_employee_number}
+                        error={createBranchFormHandler.errors.lab_head_2_employee_number}
                         allowClear
                     />
                     <Textfield
                         label="Date Appointed"
                         placeholder="date appointed"
-                        name="kitchen_oic_2_date_appointed"
+                        name="lab_head_2_date_appointed"
                         type="date"
-                        value={createBranchFormHandler.values.kitchen_oic_2_date_appointed || ""}
+                        value={createBranchFormHandler.values.lab_head_2_date_appointed || ""}
                         onChange={createBranchFormHandler.handleChange}
-                        error={createBranchFormHandler.errors.kitchen_oic_2_date_appointed}
-                        disabled={!createBranchFormHandler.values.kitchen_oic_2_employee_number}
+                        error={createBranchFormHandler.errors.lab_head_2_date_appointed}
+                        disabled={!createBranchFormHandler.values.lab_head_2_employee_number}
                     />
                 </Grid>
 
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
-                        label="Group Head"
-                        placeholder="select group head"
-                        name="group_head_employee_number"
-                        value={createBranchFormHandler.values.group_head_employee_number}
+                        label="Area Head"
+                        placeholder="select area head"
+                        name="area_head_employee_number"
+                        value={createBranchFormHandler.values.area_head_employee_number}
                         onChange={createBranchFormHandler.handleChange}
-                        error={createBranchFormHandler.errors.group_head_employee_number}
+                        error={createBranchFormHandler.errors.area_head_employee_number}
                         allowClear
                     />
                 </Grid>
@@ -382,7 +382,7 @@ const CreateBranchForm = ({
                     />
                 </Grid>
 
-                <p className="mt-3">Accounts</p>
+                {/* <p className="mt-3">Accounts</p>
                 <Grid cols={2}>
                     <AccountDropDown
                         label="Expense Debit"
@@ -508,7 +508,7 @@ const CreateBranchForm = ({
                         required
                     />
                 </Grid>
-
+                    */}
                 <Grid cols={2}>
                     <Dropdown
                         label="Type"
@@ -538,7 +538,7 @@ const CreateBranchForm = ({
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.status}
                     />
-                </Grid>
+                </Grid> 
 
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
