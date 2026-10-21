@@ -90,7 +90,7 @@ const Table = ({
 
     return (
 
-        <div className={fixed ? "" : "w-full min-w-0 overflow-x-auto md:overflow-x-visible"}>
+        <div className={`w-full min-w-0 ${fixed ? "" : "overflow-x-auto"} ${smallText ? "text-[9px]" : "text-[11px]"}`}>
         <div className={fixed ? "" : "md:min-w-0"}>
             <table className="table-auto w-full rounded-md dark:text-slate-200 dark:bg-neutral-800">
                 <thead className={`bg-blue-950 ${fixed ? "sticky top-0 z-30" : ""}`}>
