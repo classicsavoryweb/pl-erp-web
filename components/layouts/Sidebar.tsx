@@ -44,7 +44,7 @@ const Sidebar = () => {
                             `}
                         >
                             <IconComponent
-                                style={{ width: '19px', height: '19px' }}
+                                style={{ width: '15px', height: '15px' }}
                             />
                             {route.name}
                         </Link>
