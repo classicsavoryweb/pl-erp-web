@@ -109,7 +109,7 @@ const Header = () => {
                         <div className="absolute right-0 mt-2 w-80 bg-zinc-50 dark:bg-neutral-800 dark:text-slate-200 rounded-2xl shadow-lg py-2 z-50 overflow-hidden">
                             <div className="flex items-center justify-between px-4 py-2 border-b border-zinc-200/60 dark:border-neutral-700">
                                 <div className="flex items-center gap-1">
-                                    <p className="text-sm font-semibold">Notifications</p>
+                                    <p className="font-semibold">Notifications</p>
                                     <button
                                         type="button"
                                         className="p-1 rounded hover:bg-zinc-100 dark:hover:bg-neutral-700 disabled:opacity-60"
@@ -137,7 +137,7 @@ const Header = () => {
                             </div>
                             <div className="max-h-80 overflow-auto">
                                 {notifications.length === 0 && (
-                                    <p className="px-4 py-6 text-sm text-center text-slate-500">No notifications</p>
+                                    <p className="px-4 py-6 text-center text-slate-500">No notifications</p>
                                 )}
                                 {notifications.map((notification) => (
                                     <button
@@ -218,7 +218,7 @@ const Header = () => {
                         Change Password
                     </p>
                     <p
-                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer text-sm dark:hover:text-gray-600"
+                        className="px-4 py-2 flex items-center hover:bg-gray-100 cursor-pointer dark:hover:text-gray-600"
                         onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
                     >
                         { theme === "dark"

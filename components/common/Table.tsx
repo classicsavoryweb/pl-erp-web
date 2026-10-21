@@ -90,8 +90,8 @@ const Table = ({
 
     return (
 
-        <div className={`relative my-1 w-full ${smallText ? "text-[12px]" : "text-[13px]"}`}>
-        <div className={fixed ? "" : "overflow-x-auto"}>
+        <div className={fixed ? "" : "w-full min-w-0 overflow-x-auto md:overflow-x-visible"}>
+        <div className={fixed ? "" : "md:min-w-0"}>
             <table className="table-auto w-full rounded-md dark:text-slate-200 dark:bg-neutral-800">
                 <thead className={`bg-blue-950 ${fixed ? "sticky top-0 z-30" : ""}`}>
                     <tr>
@@ -270,7 +270,7 @@ const Table = ({
     
                                         { withActions && actions &&
                                             <td
-                                                className="px-2 border-1 border-slate-300 dark:border-neutral-700 "
+                                                className="px-2 border-1 border-slate-300 dark:border-neutral-700 whitespace-nowrap"
                                             >
                                                 <ActionDropDown
                                                     data={data}

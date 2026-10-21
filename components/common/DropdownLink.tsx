@@ -46,7 +46,7 @@ const DropdownLink = ({
                     text-gray-500
                     dark:text-slate-200
                     focus:outline-none
-                    text-[11px]
+                    text-[10px]
                 `}
 
                 onClick={() => {
@@ -55,7 +55,7 @@ const DropdownLink = ({
             >
                 <div className="flex gap-2">
                     <IconComponent
-                        style={{ width: '19px', height: '19px' }}
+                        style={{ width: '15px', height: '15px' }}
                     />
                     {route.name}
                 </div>
@@ -63,11 +63,11 @@ const DropdownLink = ({
                 { toggle
                     ?
                     <ExpandLessOutlinedIcon
-                        style={{ width: '19px', height: '19px' }}
+                        style={{ width: '15px', height: '15px' }}
                     />
                     :
                     <ExpandMoreOutlinedIcon
-                        style={{ width: '19px', height: '19px' }}
+                        style={{ width: '15px', height: '15px' }}
                     />
                 }
             </button>
@@ -97,15 +97,15 @@ const DropdownLink = ({
                                             py-[7px]
                                             items-center
                                             font-medium
-                                            text-[11px]
+                                            text-[10px]
                                             px-2
                                             focus:outline-none
                                             ${active ? "text-blue-950" : "text-gray-500"}
                                         `}
                                     >
                                             <svg
-                                                width="25"
-                                                height="25"
+                                                width="20"
+                                                height="20"
                                                 viewBox="0 0 25 25"
                                                 fill="none"
                                                 xmlns="http://www.w3.org/2000/svg"

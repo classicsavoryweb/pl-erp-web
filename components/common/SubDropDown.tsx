@@ -36,7 +36,7 @@ const SubDropDown = ({
                     rounded-md
                     py-[7px]
                     items-center
-                    text-[11px]
+                    text-[10px]
                     px-2
                     focus:outline-none
                     hover:cursor-pointer
@@ -49,8 +49,8 @@ const SubDropDown = ({
                 }}
             >
                 <svg
-                    width="25"
-                    height="25"
+                    width="20"
+                    height="20"
                     viewBox="0 0 25 25"
                     fill="none"
                     xmlns="http://www.w3.org/2000/svg"
@@ -93,7 +93,7 @@ const SubDropDown = ({
                                         py-[7px]
                                         items-center
                                         font-medium
-                                        text-[11px]
+                                        text-[10px]
                                         px-8
                                         focus:outline-none
                                         dark:text-slate-300
@@ -101,8 +101,8 @@ const SubDropDown = ({
                                     `}
                                 >
                                         <svg
-                                            width="22"
-                                            height="22"
+                                            width="18"
+                                            height="18"
                                             viewBox="0 0 25 25"
                                             fill="none"
                                             xmlns="http://www.w3.org/2000/svg"
