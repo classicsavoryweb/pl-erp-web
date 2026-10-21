@@ -59,11 +59,11 @@ export const hrRoutes: Route[] = [
         permission: "view_all_records_module",
         basepath: "/all-records",
         subLinks: [
-            {
-                name: "Employment Status Report",
-                pathname: "/all-records/employment-status",
-                permission: "view_all_records_employment_status",
-            },
+            // {
+            //     name: "Employment Status Report",
+            //     pathname: "/all-records/employment-status",
+            //     permission: "view_all_records_employment_status",
+            // },
             {
                 name: "Tardiness",
                 pathname: "/all-records/tardiness",
@@ -79,11 +79,11 @@ export const hrRoutes: Route[] = [
                 pathname: "/all-records/employee-offenses",
                 permission: "view_all_records_offenses"
             },
-            {
-                name: "Vaccination",
-                pathname: "/all-records/vaccination",
-                permission: "view_all_records_vaccination"
-            },
+            // {
+            //     name: "Vaccination",
+            //     pathname: "/all-records/vaccination",
+            //     permission: "view_all_records_vaccination"
+            // },
             // {
             //     name: "Health and Safety",
             //     pathname: "/all-records/health-and-safety",

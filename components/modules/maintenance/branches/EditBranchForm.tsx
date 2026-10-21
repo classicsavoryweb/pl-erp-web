@@ -49,14 +49,14 @@ const EditBranchForm = ({
     const oicEditableFields = [
         "branch_head_employee_number",
         "branch_head_date_appointed",
-        "kitchen_oic_employee_number",
-        "kitchen_oic_date_appointed",
-        "kitchen_oic_2_employee_number",
-        "kitchen_oic_2_date_appointed",
-        "group_head_employee_number",
+        "lab_head_employee_number",
+        "lab_head_date_appointed",
+        "lab_head_2_employee_number",
+        "lab_head_2_date_appointed",
+        "area_head_employee_number",
         "mancom_employee_number",
     ];
-
+    console.log(formValue,"asdasd");
     const editBranchFormHandler = useFormik({
         initialValues: {
             name : "" ,
@@ -73,12 +73,12 @@ const EditBranchForm = ({
             company : "" ,
             branch_head_employee_number: "",
             branch_head_date_appointed: "",
-            group_head_employee_number: "",
+            area_head_employee_number: "",
             rate_code: "",
-            kitchen_oic_employee_number: "",
-            kitchen_oic_date_appointed: "",
-            kitchen_oic_2_employee_number: "",
-            kitchen_oic_2_date_appointed: "",
+            lab_head_employee_number: "",
+            lab_head_date_appointed: "",
+            lab_head_2_employee_number: "",
+            lab_head_2_date_appointed: "",
             mancom_employee_number: "",
             expense_debit: "",
             expense_credit: "",
@@ -319,11 +319,11 @@ const EditBranchForm = ({
                         disabled
                     />
                 </Grid>
-                <SectionDivider label="Branch OIC" />
+                <SectionDivider label="Branch" />
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
-                        label="Branch OIC"
-                        placeholder="select branch oic"
+                        label="Branch Head"
+                        placeholder="select branch head"
                         name="branch_head_employee_number"
                         value={editBranchFormHandler.values.branch_head_employee_number || ""}
                         onChange={(e: any) => handleOicChange(
@@ -353,74 +353,74 @@ const EditBranchForm = ({
                 </Grid>
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
-                        label="Kitchen OIC"
-                        placeholder="select kitchen oic"
-                        name="kitchen_oic_employee_number"
-                        value={editBranchFormHandler.values.kitchen_oic_employee_number || ""}
+                        label="Lab Head"
+                        placeholder="select lab head"
+                        name="lab_head_employee_number"
+                        value={editBranchFormHandler.values.lab_head_employee_number || ""}
                         onChange={(e: any) => handleOicChange(
                             e,
-                            "kitchen_oic_employee_number",
-                            "kitchen_oic_date_appointed",
-                            formValue?.kitchen_oic_employee_number,
-                            formValue?.kitchen_oic_date_appointed
+                            "lab_head_employee_number",
+                            "lab_head_date_appointed",
+                            formValue?.lab_head_employee_number,
+                            formValue?.lab_head_date_appointed
                         )}
-                        error={editBranchFormHandler.errors.kitchen_oic_employee_number}
+                        error={editBranchFormHandler.errors.lab_head_employee_number}
                         disabled={!canEditBranchOic}
                         allowClear
                     />
                     <Textfield
                         label="Date Appointed"
                         placeholder="date appointed"
-                        name="kitchen_oic_date_appointed"
+                        name="lab_head_date_appointed"
                         type="date"
-                        value={editBranchFormHandler.values.kitchen_oic_date_appointed || ""}
+                        value={editBranchFormHandler.values.lab_head_date_appointed || ""}
                         onChange={editBranchFormHandler.handleChange}
-                        error={editBranchFormHandler.errors.kitchen_oic_date_appointed}
+                        error={editBranchFormHandler.errors.lab_head_date_appointed}
                         disabled={
                             !canEditBranchOic
-                            || !editBranchFormHandler.values.kitchen_oic_employee_number
+                            || !editBranchFormHandler.values.lab_head_employee_number
                         }
                     />
                 </Grid>
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
-                        label="Kitchen OIC 2"
-                        placeholder="select kitchen oic 2"
-                        name="kitchen_oic_2_employee_number"
-                        value={editBranchFormHandler.values.kitchen_oic_2_employee_number || ""}
+                        label="Lab Head 2"
+                        placeholder="select lab head 2"
+                        name="lab_head_2_employee_number"
+                        value={editBranchFormHandler.values.lab_head_2_employee_number || ""}
                         onChange={(e: any) => handleOicChange(
                             e,
-                            "kitchen_oic_2_employee_number",
-                            "kitchen_oic_2_date_appointed",
-                            formValue?.kitchen_oic_2_employee_number,
-                            formValue?.kitchen_oic_2_date_appointed
+                            "lab_head_2_employee_number",
+                            "lab_head_2_date_appointed",
+                            formValue?.lab_head_2_employee_number,
+                            formValue?.lab_head_2_date_appointed
                         )}
-                        error={editBranchFormHandler.errors.kitchen_oic_2_employee_number}
+                        error={editBranchFormHandler.errors.lab_head_2_employee_number}
                         disabled={!canEditBranchOic}
                         allowClear
                     />
                     <Textfield
                         label="Date Appointed"
                         placeholder="date appointed"
-                        name="kitchen_oic_2_date_appointed"
+                        name="lab_head_2_date_appointed"
                         type="date"
-                        value={editBranchFormHandler.values.kitchen_oic_2_date_appointed || ""}
+                        value={editBranchFormHandler.values.lab_head_2_date_appointed || ""}
                         onChange={editBranchFormHandler.handleChange}
-                        error={editBranchFormHandler.errors.kitchen_oic_2_date_appointed}
+                        error={editBranchFormHandler.errors.lab_head_2_date_appointed}
                         disabled={
                             !canEditBranchOic
-                            || !editBranchFormHandler.values.kitchen_oic_2_employee_number
+                            || !editBranchFormHandler.values.lab_head_2_employee_number
                         }
                     />
                 </Grid>
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
-                        label="Group Head"
-                        placeholder="select group head"
-                        name="group_head_employee_number"
-                        value={editBranchFormHandler.values.group_head_employee_number || ""}
+                        label="Area Head"
+                        placeholder="select area head"
+                        name="area_head_employee_number"
+                        value={editBranchFormHandler.values.area_head_employee_number || ""}
                         onChange={editBranchFormHandler.handleChange}
-                        error={editBranchFormHandler.errors.group_head_employee_number}
+                        error={editBranchFormHandler.errors.area_head_employee_number}
                         disabled={!canEditBranchOic}
                         allowClear
                     />
@@ -462,7 +462,7 @@ const EditBranchForm = ({
                     />
                 </Grid>
 
-                <SectionDivider label="Accounts" />
+                {/* <SectionDivider label="Accounts" />
                 <Grid cols={2}>
                     <AccountDropDown
                         label="Expense Debit"
@@ -572,7 +572,7 @@ const EditBranchForm = ({
                         required
                         disabled={!canEditAllBranches}
                     />
-                </Grid>
+                </Grid> */}
 
                 <Grid cols={2}>
                     <AccountDropDown

@@ -56,16 +56,16 @@ export const maintenanceRoutes: Route[] = [
                         pathname: "/maintenance/organization/positions",
                         permission: "view_positions"
                     },
-                    {
-                        name: "Stations",
-                        pathname: "/maintenance/organization/stations",
-                        permission: "view_stations",
-                    },
-                    {
-                        name: "Agencies",
-                        pathname: "/maintenance/organization/agencies",
-                        permission: "view_agencies"
-                    },
+                    // {
+                    //     name: "Stations",
+                    //     pathname: "/maintenance/organization/stations",
+                    //     permission: "view_stations",
+                    // },
+                    // {
+                    //     name: "Agencies",
+                    //     pathname: "/maintenance/organization/agencies",
+                    //     permission: "view_agencies"
+                    // },
                 ]
             },
             {
@@ -89,16 +89,16 @@ export const maintenanceRoutes: Route[] = [
                         pathname: "/maintenance/employee/training-titles",
                         permission: "view_training_titles",
                     },
-                    {
-                        name: "Vaccine Brand",
-                        pathname: "/maintenance/employee/vaccine-brand",
-                        permission: "view_vaccine_brand",
-                    },
-                    {
-                        name: "Diagnosis",
-                        pathname: "/maintenance/employee/diagnosis",
-                        permission: "view_diagnosis",
-                    },
+                    // {
+                    //     name: "Vaccine Brand",
+                    //     pathname: "/maintenance/employee/vaccine-brand",
+                    //     permission: "view_vaccine_brand",
+                    // },
+                    // {
+                    //     name: "Diagnosis",
+                    //     pathname: "/maintenance/employee/diagnosis",
+                    //     permission: "view_diagnosis",
+                    // },
                     {
                         name: "Bank Account Types",
                         pathname: "/maintenance/employee/bank-account-types",
