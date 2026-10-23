@@ -50,7 +50,7 @@ const CreateBranchForm = ({
             address : "" ,
             location : "" ,
             date_open : "" ,
-            company : "" ,
+            company : "Photoline" ,
             branch_head_employee_number: "",
             branch_head_date_appointed: "",
             area_head_employee_number: "",
@@ -85,7 +85,7 @@ const CreateBranchForm = ({
             address: Yup.string().required("Address is required."),
             location: Yup.string().required("Region is required."),
             date_open: Yup.string().required("Date opened is required."),
-            company: Yup.string().required("Company is required."),
+            // company: Yup.string().required("Company is required."),
             rate_code: Yup.string().required("Rate code is required."),
             // expense_debit: Yup.string().required("Expense debit is required."),
             // expense_credit: Yup.string().required("Expense credit is required."),
@@ -219,7 +219,7 @@ const CreateBranchForm = ({
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.date_open}
                     />
-                    <CompanyDropDown
+                    {/* <CompanyDropDown
                         label="Company"
                         placeholder="select company"
                         name="company"
@@ -227,7 +227,7 @@ const CreateBranchForm = ({
                         required
                         onChange={createBranchFormHandler.handleChange}
                         error={createBranchFormHandler.errors.company}
-                    />
+                    /> */}
                 </Grid>
                 <Grid cols={2}>
                     <Textfield

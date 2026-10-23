@@ -56,7 +56,6 @@ const EditBranchForm = ({
         "area_head_employee_number",
         "mancom_employee_number",
     ];
-    console.log(formValue,"asdasd");
     const editBranchFormHandler = useFormik({
         initialValues: {
             name : "" ,
@@ -279,7 +278,7 @@ const EditBranchForm = ({
                     />
                 </Grid>
                 <Grid cols={2}>
-                    <CompanyDropDown
+                    {/* <CompanyDropDown
                         label="Company"
                         placeholder="select company"
                         name="company"
@@ -289,7 +288,8 @@ const EditBranchForm = ({
                         error={editBranchFormHandler.errors.company}
                         disabled={!canEditAllBranches}
                         
-                    />
+                    /> */}
+                    
                     <Textfield
                         label="Branch Email"
                         placeholder="enter branch email"
