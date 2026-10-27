@@ -322,7 +322,6 @@ const EmployeeTableCard = () => {
                 withStatus
                 filterHandler={filter}
                 withFilterBranch
-                withEmployeeType
                 withEmploymentStatus
                 withPosition
                 isExpanded
