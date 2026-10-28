@@ -34,7 +34,7 @@ const BranchEmployeeDropDown = ({
 
     useAsyncEffect(() => {
         getBranchEmployees();
-        if (employees.length > 0) {
+        if (employees && employees.length > 0) {
             const newDataset = employees.map((employee: any) => ({
                 label: employee.full_name,
                 value: employee.employee_number,

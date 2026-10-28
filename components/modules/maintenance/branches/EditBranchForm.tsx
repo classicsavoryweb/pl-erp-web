@@ -96,7 +96,7 @@ const EditBranchForm = ({
         validationSchema: Yup.object().shape(canEditAllBranches ? {
             name: Yup.string().required("Branch name is required."),
             branch_number: Yup.string().required("Branch number is required."),
-            branch_email: Yup.string().required("Branch email is required."),
+            // branch_email: Yup.string().required("Branch email is required."),
             status: Yup.string().required("Status is required."),
             short_name: Yup.string().required("Short name is required."),
             type: Yup.string().required("Type is required."),
@@ -294,7 +294,7 @@ const EditBranchForm = ({
                         label="Branch Email"
                         placeholder="enter branch email"
                         name="branch_email"
-                        value={editBranchFormHandler.values.branch_email}
+                        value={editBranchFormHandler.values.branch_email ?? ""}
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_email}
@@ -306,7 +306,7 @@ const EditBranchForm = ({
                         label="Rate Code"
                         placeholder="select rate code"
                         name="rate_code"
-                        value={editBranchFormHandler.values.rate_code}
+                        value={editBranchFormHandler.values.rate_code ?? ""}
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.rate_code}
@@ -315,7 +315,7 @@ const EditBranchForm = ({
                     <Textfield
                         label="Minimum Rate"
                         placeholder=""
-                        value={selectedMinimumRate}
+                        value={selectedMinimumRate ?? ""}
                         disabled
                     />
                 </Grid>
@@ -325,7 +325,7 @@ const EditBranchForm = ({
                         label="Branch Head"
                         placeholder="select branch head"
                         name="branch_head_employee_number"
-                        value={editBranchFormHandler.values.branch_head_employee_number || ""}
+                        value={editBranchFormHandler.values.branch_head_employee_number ?? ""}
                         onChange={(e: any) => handleOicChange(
                             e,
                             "branch_head_employee_number",
@@ -342,7 +342,7 @@ const EditBranchForm = ({
                         placeholder="date appointed"
                         name="branch_head_date_appointed"
                         type="date"
-                        value={editBranchFormHandler.values.branch_head_date_appointed || ""}
+                        value={editBranchFormHandler.values.branch_head_date_appointed ?? ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.branch_head_date_appointed}
                         disabled={
@@ -356,7 +356,7 @@ const EditBranchForm = ({
                         label="Lab Head"
                         placeholder="select lab head"
                         name="lab_head_employee_number"
-                        value={editBranchFormHandler.values.lab_head_employee_number || ""}
+                        value={editBranchFormHandler.values.lab_head_employee_number ?? ""}
                         onChange={(e: any) => handleOicChange(
                             e,
                             "lab_head_employee_number",
@@ -373,7 +373,7 @@ const EditBranchForm = ({
                         placeholder="date appointed"
                         name="lab_head_date_appointed"
                         type="date"
-                        value={editBranchFormHandler.values.lab_head_date_appointed || ""}
+                        value={editBranchFormHandler.values.lab_head_date_appointed ?? ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.lab_head_date_appointed}
                         disabled={
@@ -382,12 +382,12 @@ const EditBranchForm = ({
                         }
                     />
                 </Grid>
-                <Grid cols={2}>
+                {/* <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Lab Head 2"
                         placeholder="select lab head 2"
                         name="lab_head_2_employee_number"
-                        value={editBranchFormHandler.values.lab_head_2_employee_number || ""}
+                        value={editBranchFormHandler.values.lab_head_2_employee_number ?? ""}
                         onChange={(e: any) => handleOicChange(
                             e,
                             "lab_head_2_employee_number",
@@ -404,7 +404,7 @@ const EditBranchForm = ({
                         placeholder="date appointed"
                         name="lab_head_2_date_appointed"
                         type="date"
-                        value={editBranchFormHandler.values.lab_head_2_date_appointed || ""}
+                        value={editBranchFormHandler.values.lab_head_2_date_appointed ?? ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.lab_head_2_date_appointed}
                         disabled={
@@ -412,25 +412,23 @@ const EditBranchForm = ({
                             || !editBranchFormHandler.values.lab_head_2_employee_number
                         }
                     />
-                </Grid>
+                </Grid> */}
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Area Head"
                         placeholder="select area head"
                         name="area_head_employee_number"
-                        value={editBranchFormHandler.values.area_head_employee_number || ""}
+                        value={editBranchFormHandler.values.area_head_employee_number ?? ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.area_head_employee_number}
                         disabled={!canEditBranchOic}
                         allowClear
                     />
-                </Grid>
-                <Grid cols={2}>
-                    <BranchEmployeeDropDown
+                      <BranchEmployeeDropDown
                         label="Mancom"
                         placeholder="select mancom"
                         name="mancom_employee_number"
-                        value={editBranchFormHandler.values.mancom_employee_number || ""}
+                        value={editBranchFormHandler.values.mancom_employee_number ?? ""}
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.mancom_employee_number}
                         disabled={!canEditBranchOic}
@@ -574,7 +572,7 @@ const EditBranchForm = ({
                     />
                 </Grid> */}
 
-                <Grid cols={2}>
+                {/* <Grid cols={2}>
                     <AccountDropDown
                         label="Statutory Allocation (Branch/HO) Debit"
                         placeholder="select debit account"
@@ -595,7 +593,7 @@ const EditBranchForm = ({
                         required
                         disabled={!canEditAllBranches}
                     />
-                </Grid>
+                </Grid> */}
 
                 <Grid cols={2}>
                     <Dropdown

@@ -127,7 +127,7 @@ const CreateActingCapacityForm = ({
                                 formHandler.setFieldValue("employee_number", e.target.value.employee_number);
                                 const station = String(e.target.value.current_position.station.name).toLowerCase();
                                 const oicEmpNumber = (station == "back of the house")
-                                    ? e.target.value.current_branch.kitchen_oic_employee_number
+                                    ? e.target.value.current_branch.lab_head_employee_number
                                     : e.target.value.current_branch.branch_head_employee_number;
                                 
                                 formHandler.setFieldValue("oic_employee_number", oicEmpNumber);
@@ -177,7 +177,7 @@ const CreateActingCapacityForm = ({
                             name="branch_assignment_id"
                             placeholder="select branch"
                             onChange={formHandler.handleChange}
-                            value={Number(formHandler.values.branch_assignment_id)}
+                            value={Number(formHandler.values.branch_assignment_id) ?? ""}
                             error={formHandler.errors.branch_assignment_id}
                             required
                         />
@@ -224,27 +224,27 @@ const CreateActingCapacityForm = ({
                         <Grid cols={2}>
                             <Textfield
                                 label="Full Name"
-                                value={employee.full_name}
+                                value={employee.full_name ?? ""}
                                 disabled
                             />
                             <Textfield
                                 label="Status"
-                                value={employee.employee_status.description}
+                                value={employee.employee_status.description ?? ""}
                                 disabled
                             />
                             <Textfield
                                 label="Employee Number"
-                                value={employee.employee_number}
+                                value={employee.employee_number ?? ""}
                                 disabled
                             />
                             <Textfield
                                 label="Current Position"
-                                value={employee.current_position.description}
+                                value={employee.current_position.description ?? ""}
                                 disabled
                             />
                             <Textfield
                                 label="Branch"
-                                value={employee.current_branch.name}
+                                value={employee.current_branch.name ?? ""}
                                 disabled
                             />
                         </Grid>
