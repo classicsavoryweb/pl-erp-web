@@ -41,7 +41,7 @@ const LoginForm = () => {
                         // } = user;
 
                         const permissions = resp.data.permissions || [];
-                        const chunkSize = 100;
+                        const chunkSize = 50;
                         const partitionedPermissions = [];
 
                         for (let i = 0; i < permissions.length; i += chunkSize) {
