@@ -58,26 +58,26 @@ const PositionsTableCard = () => {
             path: "description",
             columnType: COLUMNTYPES.string
         },
-        {
-            columnHead: "Rank",
-            path: "rank",
-            columnType: COLUMNTYPES.string
-        },
-        {
-            columnHead: "Station",
-            path: "station.name",
-            columnType: COLUMNTYPES.string
-        },
-        {
-            columnHead: "Schedule Type",
-            path: "schedule_type",
-            columnType: COLUMNTYPES.string
-        },
-        {
-            columnHead: "Timekeeping Type",
-            path: "timekeeping_type",
-            columnType: COLUMNTYPES.string
-        },
+        // {
+        //     columnHead: "Rank",
+        //     path: "rank",
+        //     columnType: COLUMNTYPES.string
+        // },
+        // {
+        //     columnHead: "Station",
+        //     path: "station.name",
+        //     columnType: COLUMNTYPES.string
+        // },
+        // {
+        //     columnHead: "Schedule Type",
+        //     path: "schedule_type",
+        //     columnType: COLUMNTYPES.string
+        // },
+        // {
+        //     columnHead: "Timekeeping Type",
+        //     path: "timekeeping_type",
+        //     columnType: COLUMNTYPES.string
+        // },
         {
             columnHead: "Status",
             path: "status",
@@ -121,26 +121,26 @@ const PositionsTableCard = () => {
                         path: "description",
                         columnType: COLUMNTYPES.string
                     },
-                    {
-                        columnHead: "Rank",
-                        path: "rank",
-                        columnType: COLUMNTYPES.string
-                    },
-                    {
-                        columnHead: "Station",
-                        path: "station.name",
-                        columnType: COLUMNTYPES.string
-                    },
-                    {
-                        columnHead: "Schedule Type",
-                        path: "schedule_type",
-                        columnType: COLUMNTYPES.string
-                    },
-                    {
-                        columnHead: "Timekeeping Type",
-                        path: "timekeeping_type",
-                        columnType: COLUMNTYPES.string
-                    },
+                    // {
+                    //     columnHead: "Rank",
+                    //     path: "rank",
+                    //     columnType: COLUMNTYPES.string
+                    // },
+                    // {
+                    //     columnHead: "Station",
+                    //     path: "station.name",
+                    //     columnType: COLUMNTYPES.string
+                    // },
+                    // {
+                    //     columnHead: "Schedule Type",
+                    //     path: "schedule_type",
+                    //     columnType: COLUMNTYPES.string
+                    // },
+                    // {
+                    //     columnHead: "Timekeeping Type",
+                    //     path: "timekeeping_type",
+                    //     columnType: COLUMNTYPES.string
+                    // },
                 ]}
                 filterHandler={filter}
                 withStatus

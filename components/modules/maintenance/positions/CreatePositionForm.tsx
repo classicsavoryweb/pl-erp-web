@@ -28,19 +28,19 @@ const CreatePositionForm = ({
         initialValues: {
             station_id: "",
             description: "",
-            rank: "",
-            schedule_type: "",
-            timekeeping_type: "",
+            rank: "1",
+            schedule_type: "Normal Schedule",
+            timekeeping_type: "Daily",
             status: "active"
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
-            station_id: Yup.string().required("Station is required."),
+            // station_id: Yup.string().required("Station is required."),
             description: Yup.string().required("Description is required."),
-            rank: Yup.string().required("Rank is required."),
-            status: Yup.string().required("Status is required."),
-            schedule_type: Yup.string().required("Schedule type is required."),
-            timekeeping_type: Yup.string().required("Timekeeping type is required."),
+            // rank: Yup.string().required("Rank is required."),
+            // status: Yup.string().required("Status is required."),
+            // schedule_type: Yup.string().required("Schedule type is required."),
+            // timekeeping_type: Yup.string().required("Timekeeping type is required."),
         }),
         onSubmit: async (values, {resetForm, setSubmitting}) => {
             const isConfirmed = await confirm({
@@ -100,7 +100,7 @@ const CreatePositionForm = ({
                     onChange={createPositionFormHandler.handleChange}
                     error={createPositionFormHandler.errors.status}
                 />
-                <RankDropDown
+                {/* <RankDropDown
                     label="Rank"
                     placeholder="select rank"
                     name="rank"
@@ -145,7 +145,7 @@ const CreatePositionForm = ({
                             value: "Monthly"
                         }
                     ]}
-                />
+                /> */}
                 <hr className="mt-6 pb-2 text-slate-300"/>
                 <div className="flex justify-end">
                     <div className="w-1/2 flex justify-end items-center gap-x-2">

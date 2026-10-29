@@ -308,8 +308,7 @@ const CreateBranchForm = ({
                         disabled={!createBranchFormHandler.values.lab_head_employee_number}
                     />
                 </Grid>
-
-                <Grid cols={2}>
+                {/* <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Lab Head 2"
                         placeholder="select kitchen oic 2"
@@ -333,8 +332,7 @@ const CreateBranchForm = ({
                         error={createBranchFormHandler.errors.lab_head_2_date_appointed}
                         disabled={!createBranchFormHandler.values.lab_head_2_employee_number}
                     />
-                </Grid>
-
+                </Grid> */}
                 <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Area Head"
@@ -345,9 +343,6 @@ const CreateBranchForm = ({
                         error={createBranchFormHandler.errors.area_head_employee_number}
                         allowClear
                     />
-                </Grid>
-
-                <Grid cols={2}>
                     <BranchEmployeeDropDown
                         label="Mancom"
                         placeholder="select mancom"
@@ -358,7 +353,6 @@ const CreateBranchForm = ({
                         allowClear
                     />
                 </Grid>
-
                 <p className="mt-3">Timekeeping</p>
                 <Grid
                     cols={2}
