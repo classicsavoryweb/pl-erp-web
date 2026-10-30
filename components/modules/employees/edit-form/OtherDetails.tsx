@@ -18,7 +18,7 @@ const OtherDetails = ({
         <Card
             loading={loading}
         >
-            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Others</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-blue-500">Others</p>
             <ReferralDropDown
                 onChange={formHandler.handleChange}
                 label='Referred By:'

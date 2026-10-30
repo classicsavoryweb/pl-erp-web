@@ -17,7 +17,7 @@ const EditEmergencyContactDetails = ({
         <Card
             loading={loading}
         >
-            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Emergency Contact Details</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-blue-500">Emergency Contact Details</p>
             <Textfield
                 onChange={formHandler.handleChange}
                 label='Contact Name'

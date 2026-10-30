@@ -17,7 +17,7 @@ const EditContactDetails = ({
         <Card
             loading={loading}
         >
-            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Contact Details</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-blue-500">Contact Details</p>
             <Grid cols={2}>
                 <Textfield
                     onChange={formHandler.handleChange}
@@ -35,14 +35,14 @@ const EditContactDetails = ({
                     placeholder='enter email'
                     required
                 />
-                <Textfield
+                {/* <Textfield
                     label='Region'
                     name="region"
                     value={formHandler.values.region || ""}
                     placeholder='auto-filled from home branch'
                     required
                     disabled
-                />
+                /> */}
             </Grid>
             <TextArea
                 onChange={formHandler.handleChange}
@@ -52,14 +52,14 @@ const EditContactDetails = ({
                 placeholder='enter present address'
                 required
             />
-            <TextArea
+            {/* <TextArea
                 onChange={formHandler.handleChange}
                 label='Permanent Address'
                 name="provincial_address"
                 placeholder='enter permanent address'
                 value={formHandler.values.provincial_address || ""}
                 required
-            />
+            /> */}
         </Card>
     );
 };

@@ -18,7 +18,7 @@ const EditDependents = ({
         <Card
             loading={loading}
         >
-            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Dependents</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-blue-500">Dependents</p>
 
             <Grid cols={2}>
                 {[...Array(5)].map((_, index) => (
