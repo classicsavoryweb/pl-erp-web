@@ -110,11 +110,11 @@ const EmployeeDetailsCard = () => {
                                 />
                             </>
                         }
-                        <Textfield
+                        {/* <Textfield
                             disabled
                             label="2nd Employee Number"
                             value={employee.employee_number_2}
-                        />
+                        /> */}
                     </Grid>
                 </Card>
 
@@ -143,7 +143,7 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="Civil Status"
-                            value={employee.civil_status}
+                            value={employee.civil_status ?? ""}
                         />
                         <Textfield
                             disabled
@@ -197,11 +197,6 @@ const EmployeeDetailsCard = () => {
                         />
                         <Textfield
                             disabled
-                            label="Permanent Address"
-                            value={employee.provincial_address}
-                        />
-                        <Textfield
-                            disabled
                             label="Region"
                             value={employee.region}
                         />
@@ -235,11 +230,11 @@ const EmployeeDetailsCard = () => {
                             label="Philhealth"
                             value={employee.philhealth}
                         />
-                        <Textfield
+                        {/* <Textfield
                             disabled
                             label="Tax Type"
                             value={employee.tax_type}
-                        />
+                        /> */}
                     </Grid>
                 </Card>
 
@@ -289,11 +284,11 @@ const EmployeeDetailsCard = () => {
                         label="Date Started"
                         value={employee.positions && moment(employee.positions[employee.positions.length - 1]?.pivot.date_started).format("MMMM DD, YYYY")}
                     />
-                    <Textfield
+                    {/* <Textfield
                         disabled
                         label="Station"
                         value={employee.station?.name}
-                    />
+                    /> */}
                 </Card>
                 <div className="py-[2px]"/>
                 <Card
@@ -320,28 +315,28 @@ const EmployeeDetailsCard = () => {
                         label="Date Assigned"
                         value={employee.branches && moment(employee.branches[employee.branches.length - 1]?.pivot.date_assigned).format("MMMM DD, YYYY")}
                     />
-                    <Textfield
+                    {/* <Textfield
                         disabled
                         label="Home Branch"
                         value={employee.home_branch?.name}
-                    />
-                    <Textfield
+                    /> */}
+                    {/* <Textfield
                         disabled
                         label="Region"
                         value={employee.home_branch?.location}
-                    />
+                    /> */}
                     <div className="py-3">
                         <hr className=" text-slate-300" />
                     </div>
                     <Textfield
                         disabled
-                        label="Branch OIC"
+                        label="Branch Head"
                         value={employee.current_branch?.branch_head}
                     />
                     <Textfield
                         disabled
-                        label="Group Head"
-                        value={employee.current_branch?.group_head}
+                        label="Area Head"
+                        value={employee.current_branch?.area_head}
                     />
                 </Card>
 

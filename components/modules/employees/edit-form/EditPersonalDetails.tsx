@@ -19,7 +19,7 @@ const EditPersonalDetails = ({
             loading={loading}
             size='medium'
         >
-            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Personal Details</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-blue-500">Personal Details</p>
 
             <Grid
                 cols={2}

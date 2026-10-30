@@ -16,7 +16,7 @@ const EditGovernmentIdentification = ({
         <Card
             loading={loading}
         >
-            <p className="text-md font-semibold text-blue-950 dark:text-red-500">Government Identification</p>
+            <p className="text-md font-semibold text-blue-950 dark:text-blue-500">Government Identification</p>
 
             <Textfield
                 onChange={formHandler.handleChange}
@@ -54,7 +54,7 @@ const EditGovernmentIdentification = ({
                 required
                 disabled={formHandler.values.type == "Agency"}
             />
-            <TaxTypeDropDown
+            {/* <TaxTypeDropDown
                 onChange={formHandler.handleChange}
                 label='Tax Type'
                 name="tax_type"
@@ -62,7 +62,7 @@ const EditGovernmentIdentification = ({
                 placeholder='select tax type'
                 required
                 disabled={formHandler.values.type == "Agency"}
-            />
+            /> */}
         </Card>
     );
 };

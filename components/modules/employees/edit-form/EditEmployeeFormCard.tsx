@@ -6,6 +6,7 @@ import { useContext, useEffect } from "react";
 import EditEmploymentDetails from "./EditEmploymentDetails";
 import EditPersonalDetails from "./EditPersonalDetails";
 import EditContactDetails from "./EditContactDetails";
+import EditDailyRates from "./EditAdditionalDailyRates";
 import EditGovernmentIdentification from "./EditGovernmentIdentification";
 import OtherDetails from "./OtherDetails";
 import EditEmergencyContactDetails from "./EditEmergencyContactDetails";
@@ -91,6 +92,11 @@ const EditEmployeeFormCard = () => {
                 highschool_date_started: "",
                 highschool_date_graduated: "",
                 remarks: null
+            },
+            additional_daily_rate: {
+                id: "",
+                amount: "0",
+                created_at: "",
             },
             dependents: [],
             contracts: [],
@@ -183,11 +189,16 @@ const EditEmployeeFormCard = () => {
                             loading={loading}
                             formHandler={editEmployeeForm}
                         /> */}
+                         <EditDailyRates
+                            loading={loading}
+                            formHandler={editEmployeeForm} 
+                        />
                         <div className="py-[2px]"/>
                         <EditGovernmentIdentification
                             loading={loading}
                             formHandler={editEmployeeForm}
                         />
+    
                         <div className="py-[2px]"/>
                         <EditEducation
                             loading={loading}
