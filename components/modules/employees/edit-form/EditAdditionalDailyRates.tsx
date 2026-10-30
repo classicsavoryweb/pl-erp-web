@@ -11,12 +11,6 @@ const EditDailyRates = ({
     formHandler,
     loading = true,
 }: FormInterface) => {
-
-    console.log(
-        "Additional Daily Rate:",
-        formHandler.values.additional_daily_rate
-    );
-
     return (
         <Card loading={loading}>
             <p className="text-md font-semibold text-blue-950 dark:text-blue-400">
