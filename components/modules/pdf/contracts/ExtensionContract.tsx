@@ -415,6 +415,7 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                     style={{
                         ...styles.sectionPersonalData,
                         flexDirection: "row",
+                        flexWrap : "wrap",
                         alignItems: "center",
                         gap: 30,
                     }}
@@ -434,9 +435,7 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                     <Text>
                         Provincial Address: <Text style={styles.linedText}> {data.employee.address} </Text>
                     </Text>
-                    <Text>
-                        Contact Number: <Text style={styles.linedText}> {data.employee.contact_number} </Text>
-                    </Text>
+                    
                 </View>
                 <View
                     style={{
@@ -446,6 +445,9 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                         gap: 30,
                     }}
                 >
+                    <Text>
+                        Contact Number: <Text style={styles.linedText}> {data.employee.contact_number} </Text>
+                    </Text>
                     <Text>
                         Birth Date: <Text style={styles.linedText}> {data.employee.birthday} </Text>
                     </Text>

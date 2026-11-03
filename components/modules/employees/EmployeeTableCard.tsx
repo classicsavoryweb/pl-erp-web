@@ -178,7 +178,7 @@ const EmployeeTableCard = () => {
             value: "home_branch.name",
         },
         {
-            label: "Date Hired",
+            label: "Tenured",
             value: "date_hired",
             checked: true,
         },
@@ -195,7 +195,7 @@ const EmployeeTableCard = () => {
             value: "type",
         },
         {
-            label: "Regularization Date",
+            label: "Regular Tenured",
             value: "regularization_date",
         },
         {

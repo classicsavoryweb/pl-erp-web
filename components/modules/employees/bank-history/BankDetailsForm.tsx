@@ -37,7 +37,7 @@ const BankDetailsForm = ({
         initialValues: {
             id: "",
             bank_number: "",
-            bank_account_type_id: "",
+            bank_account_type_id: "2",
             remarks: "",
         },
         validateOnChange: false,
@@ -123,7 +123,7 @@ const BankDetailsForm = ({
             loading={modal.loading}
         >    
         <form onSubmit={formHandler.handleSubmit}>
-            <BankAccountTypeDropDown
+            {/* <BankAccountTypeDropDown
                 label="Bank Account Type"
                 required
                 name="bank_account_type_id"
@@ -132,7 +132,7 @@ const BankDetailsForm = ({
                 onChange={formHandler.handleChange}
                 placeholder="select bank account type"
                 disabled={action === "edit"}
-            />
+            /> */}
             <Textfield
                 label="Bank Number"
                 required
