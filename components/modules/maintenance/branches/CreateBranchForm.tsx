@@ -80,7 +80,7 @@ const CreateBranchForm = ({
             status: Yup.string().required("Status is required."),
             //travel_time: Yup.string().required("Travel time is required."),
             //device_name: Yup.string().required("Device name is required."),
-            short_name: Yup.string().required("Short name is required."),
+            short_name: Yup.string().required("Short name is required.").max(3,"Short name must not exceed 3 Characters."),
             type: Yup.string().required("Type is required."),
             address: Yup.string().required("Address is required."),
             location: Yup.string().required("Region is required."),

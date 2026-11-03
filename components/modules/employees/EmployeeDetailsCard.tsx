@@ -74,22 +74,22 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="Employee Number"
-                            value={employee.employee_number}
+                            value={employee.employee_number ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Biometric Number"
-                            value={employee.biometric_number}
+                            value={employee.biometric_number ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Date Hired"
-                            value={ moment(employee.date_hired).format("MMMM DD, YYYY")}
+                            value={ moment(employee.date_hired).format("MMMM DD, YYYY") ?? "" }
                         />
                         <Textfield
                             disabled
                             label="Employment Type"
-                            value={employee.type}
+                            value={employee.type ?? ""}
                         />
                         <Textfield
                             disabled
@@ -106,7 +106,7 @@ const EmployeeDetailsCard = () => {
                                 <Textfield
                                     disabled
                                     label="Separation Reason"
-                                    value={employee.separation?.description}
+                                    value={employee.separation?.description ?? ""}
                                 />
                             </>
                         }
@@ -128,17 +128,17 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="First Name"
-                            value={employee.first_name}
+                            value={employee.first_name ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Middle Name"
-                            value={employee.middle_name}
+                            value={employee.middle_name ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Last Name"
-                            value={employee.last_name}
+                            value={employee.last_name ?? ""}
                         />
                         <Textfield
                             disabled
@@ -153,22 +153,22 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="Age"
-                            value={employee.age}
+                            value={employee.age ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Birthplace"
-                            value={employee.birthplace}
+                            value={employee.birthplace ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Gender"
-                            value={employee.gender}
+                            value={employee.gender ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Height"
-                            value={employee.height}
+                            value={employee.height ?? ""}
                         /> 
                     </Grid>
                 </Card>
@@ -183,22 +183,22 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="Email"
-                            value={employee.email}
+                            value={employee.email ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Contact Number"
-                            value={employee.contact_number}
+                            value={employee.contact_number ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Present Address"
-                            value={employee.address}
+                            value={employee.address ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Region"
-                            value={employee.region}
+                            value={employee.region ?? ""}
                         />
                     </Grid>
                 </Card>
@@ -213,22 +213,22 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="TIN"
-                            value={employee.tin}
+                            value={employee.tin ?? ""}
                         />
                         <Textfield
                             disabled
                             label="SSS"
-                            value={employee.sss}
+                            value={employee.sss ?? ""}
                         />
                         <Textfield
                             disabled
                             label="PAGIBIG"
-                            value={employee.pagibig}
+                            value={employee.pagibig ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Philhealth"
-                            value={employee.philhealth}
+                            value={employee.philhealth ?? ""}
                         />
                         {/* <Textfield
                             disabled
@@ -248,22 +248,22 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="Contact Name"
-                            value={employee.emergency_contact_name}
+                            value={employee.emergency_contact_name ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Contact Number"
-                            value={employee.emergency_contact_number}
+                            value={employee.emergency_contact_number ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Relationship"
-                            value={employee.emergency_contact_relationship}
+                            value={employee.emergency_contact_relationship ?? ""}
                         />
                         <Textfield
                             disabled
                             label="Address"
-                            value={employee.emergency_contact_address}
+                            value={employee.emergency_contact_address ?? ""}
                         />
                     </Grid>
                 </Card>
@@ -277,12 +277,12 @@ const EmployeeDetailsCard = () => {
                     <Textfield
                         disabled
                         label="Description"
-                        value={employee.current_position?.description}
+                        value={employee.current_position?.description ?? ""}
                     />
                     <Textfield
                         disabled
                         label="Date Started"
-                        value={employee.positions && moment(employee.positions[employee.positions.length - 1]?.pivot.date_started).format("MMMM DD, YYYY")}
+                        value={employee.positions && moment(employee.positions[employee.positions.length - 1]?.pivot.date_started).format("MMMM DD, YYYY")  }
                     />
                     {/* <Textfield
                         disabled
@@ -298,22 +298,22 @@ const EmployeeDetailsCard = () => {
                     <Textfield
                         disabled
                         label="Current Branch"
-                        value={employee.current_branch?.name}
+                        value={employee.current_branch?.name ?? ""}
                     />
                     <Textfield
                         disabled
                         label="Region"
-                        value={employee.current_branch?.location}
+                        value={employee.current_branch?.location ?? ""}
                     />
                     <Textfield
                         disabled
                         label="Company"
-                        value={employee.current_branch?.company}
+                        value={employee.current_branch?.company ?? ""}
                     />
                     <Textfield
                         disabled
                         label="Date Assigned"
-                        value={employee.branches && moment(employee.branches[employee.branches.length - 1]?.pivot.date_assigned).format("MMMM DD, YYYY")}
+                        value={employee.branches && moment(employee.branches[employee.branches.length - 1]?.pivot.date_assigned).format("MMMM DD, YYYY") }
                     />
                     {/* <Textfield
                         disabled
@@ -331,12 +331,12 @@ const EmployeeDetailsCard = () => {
                     <Textfield
                         disabled
                         label="Branch Head"
-                        value={employee.current_branch?.branch_head}
+                        value={employee.current_branch?.branch_head ?? ""}
                     />
                     <Textfield
                         disabled
                         label="Area Head"
-                        value={employee.current_branch?.area_head}
+                        value={employee.current_branch?.area_head ?? ""}
                     />
                 </Card>
 
@@ -348,17 +348,17 @@ const EmployeeDetailsCard = () => {
                     <Textfield
                         disabled
                         label="College"
-                        value={employee.education?.college}
+                        value={employee.education?.college ?? ""}
                     />
                     <Textfield
                         disabled
                         label="Course"
-                        value={employee.education?.course}
+                        value={employee.education?.course ?? ""}
                     />
                     <Textfield
                         disabled
                         label="Address"
-                        value={employee.education?.college_address}
+                        value={employee.education?.college_address ?? ""}
                     />
                     <Textfield
                         disabled
@@ -371,12 +371,12 @@ const EmployeeDetailsCard = () => {
                     <Textfield
                         disabled
                         label="Highschool"
-                        value={employee.education?.highschool}
+                        value={employee.education?.highschool ?? ""}
                     />
                     <Textfield
                         disabled
                         label="Address"
-                        value={employee.education?.highschool_address}
+                        value={employee.education?.highschool_address ?? ""}
                     />
                     <Textfield
                         disabled
@@ -402,12 +402,12 @@ const EmployeeDetailsCard = () => {
                                             <Textfield
                                                 disabled
                                                 label="Name"
-                                                value={dependent.dependent_name}
+                                                value={dependent.dependent_name ?? ""}
                                             />
                                             <Textfield
                                                 disabled
                                                 label="Birthday"
-                                                value={moment(dependent.birthday).format("MMMM DD, YYYY")}
+                                                value={moment(dependent.birthday).format("MMMM DD, YYYY") ?? ""}
                                             />
                                         </div>
                                     )
@@ -449,7 +449,7 @@ const EmployeeDetailsCard = () => {
                         <TextArea
                             disabled
                             label="Remarks"
-                            value={employee.remarks}
+                            value={employee.remarks ?? ""}
                         />
                 </Card>
             </div>
