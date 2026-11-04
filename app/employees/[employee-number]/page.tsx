@@ -23,7 +23,7 @@ const Page = () => {
 
     return (
         <>
-            <title>{`${employeeNumber} | Classic Savory ERP`}</title>
+            <title>{`${employeeNumber} | Photoline ERP`}</title>
             <div className="w-11/12">
                 <EmployeeDetailsCard/>
             </div>

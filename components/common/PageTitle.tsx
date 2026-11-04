@@ -8,7 +8,7 @@ const PageTitle = ({
 }: TitleInterface) => {
     return (
         <>
-            <title>{`${title} | Classic Savory ERP`}</title>
+            <title>{`${title} | Photoline ERP`}</title>
             <p className="text-[13.5px] font-semibold text-gray-500 pb-2 tracking-[.020rem] dark:text-slate-200">
                 {title}
             </p>

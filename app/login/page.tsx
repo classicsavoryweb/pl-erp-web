@@ -6,7 +6,7 @@ import Image from "next/image";
 const LoginPage = () => {
     return (
         <Guest>
-            <title>Classic Savory ERP</title>
+            <title>Photoline ERP</title>
             <div className="w-[400px]">
                 <Card>
                     <div className="w-full flex justify-center py-8">

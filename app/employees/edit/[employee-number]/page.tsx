@@ -10,7 +10,7 @@ const Page = () => {
 
     return (
         <>
-            <title>{`${employeeNumber} | Classic Savory ERP`}</title>
+            <title>{`${employeeNumber} | Photoline ERP`}</title>
             <EditEmployeeFormCard/>
         </>
     );
