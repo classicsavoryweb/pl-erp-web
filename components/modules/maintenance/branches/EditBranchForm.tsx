@@ -600,7 +600,7 @@ const EditBranchForm = ({
                         label="Type"
                         placeholder="select type"
                         name="type"
-                        value={editBranchFormHandler.values.type}
+                        value={editBranchFormHandler.values.type ?? ""}
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.type}
@@ -620,7 +620,7 @@ const EditBranchForm = ({
                         label="Status"
                         placeholder="select status"
                         name="status"
-                        value={editBranchFormHandler.values.status}
+                        value={editBranchFormHandler.values.status ?? ""}
                         required
                         onChange={editBranchFormHandler.handleChange}
                         error={editBranchFormHandler.errors.status}
