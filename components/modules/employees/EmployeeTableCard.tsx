@@ -158,25 +158,25 @@ const EmployeeTableCard = () => {
             value: "current_branch.name",
         },
         {
-            label: "Branch OIC",
+            label: "Branch Head",
             value: "current_branch.branch_oic.full_name",
         },
         {
-            label: "Branch OIC Gender",
+            label: "Branch Head Gender",
             value: "current_branch.branch_oic.gender",
         },
         {
-            label: "Group Head",
+            label: "Area Head",
             value: "current_branch.group_head",
         },
         {
-            label: "Group Head Gender",
+            label: "Area Head Gender",
             value: "current_branch.group_head.gender",
         },
-        {
-            label: "Home Branch",
-            value: "home_branch.name",
-        },
+        // {
+        //     label: "Home Branch",
+        //     value: "home_branch.name",
+        // },
         {
             label: "Tenured",
             value: "date_hired",
@@ -287,11 +287,11 @@ const EmployeeTableCard = () => {
             value: "current_branch.branch_head",
         },
         {
-            label: "Branch Employee Number",
+            label: "Branch Head Employee Number",
             value: "current_branch.branch_head_employee_number",
         },
         {
-            label: "Group Head Employee Number",
+            label: "Area Head Employee Number",
             value: "current_branch.group_head_employee_number",
         },
         {
