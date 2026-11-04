@@ -9,7 +9,7 @@ import { ToastContainer } from "react-toastify";
 import ToastProvider from "@/components/layouts/ToastProvider";
 
 export const metadata: Metadata = {
-  	description: "A web-based entity resource planning application for classic savory",
+  	description: "A web-based entity resource planning application for photoline",
 };
 
 export default function RootLayout({

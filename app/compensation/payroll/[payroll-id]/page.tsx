@@ -175,7 +175,7 @@ const Page = () => {
 
     return (
         <>
-            <title>{`PR-${payrollId} | Classic Savory ERP`}</title>
+            <title>{`PR-${payrollId} | Photoline ERP`}</title>
             
             <div className="flex gap-x-4 w-full">
                 <div className="w-8/12">
