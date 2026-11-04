@@ -148,7 +148,7 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="Birthday"
-                            value={employee.birthday ? moment(employee.birthday).format("MMMM DD, YYYY") : "—" }
+                            value={employee?.birthday ? moment(employee.birthday).format("MMMM DD, YYYY") : "—" }
                         />
                         <Textfield
                             disabled
@@ -363,7 +363,7 @@ const EmployeeDetailsCard = () => {
                     <Textfield
                         disabled
                         label="Duration"
-                        value={`${employee.education.college_date_started ?? ""} - ${employee.education.college_date_graduated ?? ""}`}
+                        value={`${employee.education?.college_date_started ?? ""} - ${employee.education?.college_date_graduated ?? ""}`}
                     />
                     <div className="py-3">
                         <hr className=" text-slate-300" />
@@ -381,7 +381,7 @@ const EmployeeDetailsCard = () => {
                     <Textfield
                         disabled
                         label="Duration"
-                        value={`${employee.education.highschool_date_started ?? ""} - ${employee.education.highschool_date_graduated ?? ""}`}
+                        value={`${employee.education?.highschool_date_started ?? ""} - ${employee.education?.highschool_date_graduated ?? ""}`}
                     />
                 </Card>
                 
@@ -407,7 +407,7 @@ const EmployeeDetailsCard = () => {
                                             <Textfield
                                                 disabled
                                                 label="Birthday"
-                                                value={moment(dependent.birthday).format("MMMM DD, YYYY") ?? ""}
+                                                value={moment(dependent.birthday ?? "").format("MMMM DD, YYYY") ?? ""}
                                             />
                                         </div>
                                     )

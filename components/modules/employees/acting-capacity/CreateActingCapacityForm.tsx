@@ -122,10 +122,11 @@ const CreateActingCapacityForm = ({
                             placeholder="select employee"
                             name="employee"
                             onChange={(e) => {
-                                setEmployee(e.target.value);
+                                const selectedEmployee = e.target.value;
+                                setEmployee(selectedEmployee);
                                 formHandler.setFieldValue("branch_assignment_id", e.target.value.branch_id);
                                 formHandler.setFieldValue("employee_number", e.target.value.employee_number);
-                                const station = String(e.target.value.current_position.station.name).toLowerCase();
+                                const station = String(selectedEmployee.current_position?.station?.name ?? "").toLowerCase();
                                 const oicEmpNumber = (station == "back of the house")
                                     ? e.target.value.current_branch.lab_head_employee_number
                                     : e.target.value.current_branch.branch_head_employee_number;
@@ -183,7 +184,7 @@ const CreateActingCapacityForm = ({
                         />
 
                         <EmployeeDropDown
-                            label="Branch/Kitchen OIC"
+                            label="Branch Head/Lab Head"
                             name="oic_employee_number"
                             placeholder="select oic"
                             onChange={formHandler.handleChange}
