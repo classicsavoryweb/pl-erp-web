@@ -126,7 +126,7 @@ const CreateActingCapacityForm = ({
                                 setEmployee(selectedEmployee);
                                 formHandler.setFieldValue("branch_assignment_id", e.target.value.branch_id);
                                 formHandler.setFieldValue("employee_number", e.target.value.employee_number);
-                                const station = String(selectedEmployee.current_position?.station?2.name ?? "").toLowerCase();
+                                const station = String(selectedEmployee.current_position?.station?.name ?? "").toLowerCase();
                                 const oicEmpNumber = (station == "back of the house")
                                     ? e.target.value.current_branch.lab_head_employee_number
                                     : e.target.value.current_branch.branch_head_employee_number;
