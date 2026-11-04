@@ -184,7 +184,7 @@ const CreateActingCapacityForm = ({
                         />
 
                         <EmployeeDropDown
-                            label="Branch/Kitchen OIC"
+                            label="Branch Head/Lab Head"
                             name="oic_employee_number"
                             placeholder="select oic"
                             onChange={formHandler.handleChange}
