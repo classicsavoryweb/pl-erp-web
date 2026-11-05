@@ -103,16 +103,15 @@ const FirstContract = ({ data }: CoeInterface) => {
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
 
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_location}
                                 </Text>
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_STREET}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_address}
                                 </Text>
-
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                {/* <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
-                                </Text>
+                                </Text> */}
                             </View>
                         </View>
                     </View>
@@ -290,16 +289,15 @@ const FirstContract = ({ data }: CoeInterface) => {
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
 
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_location}
                                 </Text>
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_STREET}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_address}
                                 </Text>
-
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                {/* <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
-                                </Text>
+                                </Text> */}
                             </View>
                         </View>
                     </View>
@@ -462,16 +460,15 @@ const FirstContract = ({ data }: CoeInterface) => {
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
 
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_location}
                                 </Text>
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_STREET}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_address}
                                 </Text>
-
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                {/* <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
-                                </Text>
+                                </Text> */}
                             </View>
                         </View>
                     </View>

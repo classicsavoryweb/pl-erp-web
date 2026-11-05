@@ -46,9 +46,15 @@ const EmployeeDetailsCard = () => {
                             <div>
                                 <p className="text-2xl font-semibold">{employee.last_name}, {employee.first_name} {employee.middle_name && String(employee.middle_name).charAt(0) + "."}</p>
                                 <p className="text-md font-semibold text-gray-500 dark:text-gray-300">{employee.current_position?.description} - {employee.employee_number}</p>
-                                <p className="text-md font-semibold text-gray-500 dark:text-gray-300">
-                                    {getTenure(employee.date_hired, employee.separation_date)}
-                                </p>
+                                {employee.regularization_date ? (
+                                    <p className="text-md font-semibold text-gray-500 dark:text-gray-300">
+                                        Regular Tenurity: {getTenure(employee.regularization_date, employee.separation_date)}
+                                    </p>
+                                ) : (
+                                    <p className="text-md font-semibold text-gray-500 dark:text-gray-300">
+                                        Tenurity: {getTenure(employee.date_hired, employee.separation_date)}
+                                    </p>
+                                )}
                                 <p className="text-md font-semibold text-gray-500 dark:text-gray-300">{employee.employee_status?.description}</p>
                                 <Badge
                                     status={employee.status === "active" ? "success" : "danger"}
@@ -446,6 +452,11 @@ const EmployeeDetailsCard = () => {
                         loading={loading}
                     >
                         <p className="text-md font-semibold text-blue-950 dark:text-gray-300">Others</p>
+                         <Textfield
+                            disabled
+                            label="Referred By:"
+                            value={employee.referred_by ?? ""}
+                        />
                         <TextArea
                             disabled
                             label="Remarks"

@@ -154,16 +154,16 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
 
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_location}
                                 </Text>
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_STREET}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_address}
                                 </Text>
 
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                {/* <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
-                                </Text>
+                                </Text> */}
                             </View>
                         </View>
                     </View>
@@ -343,17 +343,16 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                                 >
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
-
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_location}
                                 </Text>
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
-                                    {process.env.NEXT_PUBLIC_COMPANY_STREET}
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {data.branch_address}
                                 </Text>
 
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                {/* <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
-                                </Text>
+                                </Text> */}
                             </View>
                         </View>
                     </View>
@@ -652,13 +651,13 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                             <View style={styles.childrenNameLeftIndent}>
                                 <Text>High School</Text>
                             </View>
-                            <View style={{...styles.childrenName,flex:3}}>
+                            <View style={{...styles.childrenNameLeftIndent,flex:3}}>
                                 <Text>{data.education.highschool} / {data.education.highschool_address}</Text>
                             </View>
                             <View style={{...styles.childrenName,flex:2}}>
                                 <Text> </Text>
                             </View>
-                            <View style={styles.childrenName}>
+                            <View style={styles.childrenNameLeftIndent}>
                                 <Text>{data.education.highschool_date_started} - {data.education.highschool_date_graduated}</Text>
                             </View>
                         </View>
@@ -666,13 +665,13 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                             <View style={styles.childrenNameLeftIndent}>
                                 <Text>College</Text>
                             </View>
-                            <View style={{...styles.childrenName,flex:3}}>
+                            <View style={{...styles.childrenNameLeftIndent,flex:3}}>
                                 <Text>{data.education.college} / {data.education.college_address}</Text>
                             </View>
-                            <View style={{...styles.childrenName,flex:2}}>
+                            <View style={{...styles.childrenNameLeftIndent,flex:2}}>
                                 <Text>{data.education.course}</Text>
                             </View>
-                            <View style={styles.childrenName}>
+                            <View style={styles.childrenNameLeftIndent}>
                                 <Text>{data.education.college_date_started} - {data.education.college_date_graduated}</Text>
                             </View>
                         </View>
