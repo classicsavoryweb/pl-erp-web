@@ -27,6 +27,7 @@ const EditEmployeeFormCard = () => {
     const {permissions} = useContext(AuthContext);
     const {employee, loading, triggerReload} = useContext(EmployeeContext);
     const router = useRouter();
+    const canAdditionalRate = permissions.includes("perform_additional_daily_rate");
 
     const editEmployeeForm = useFormik({
         initialValues: {
@@ -108,11 +109,11 @@ const EditEmployeeFormCard = () => {
         validationSchema: Yup.object().shape({
             employee_status_id: Yup.string(),
             status: Yup.string(),
-            regularization_date: Yup.string().when('employee_status_id', (status, schema) => 
-                Number(status) === 2
-                    ? schema.required('Regularization date is required')
-                    : schema.notRequired()
-            ),
+            // regularization_date: Yup.string().when('employee_status_id', (status, schema) => 
+            //     Number(status) === 2
+            //         ? schema.required('Regularization date is required')
+            //         : schema.notRequired()
+            // ),
             separation_reason: Yup.string().when('status', (status, schema) => 
                 String(status) === "inactive"
                     ? schema.required('Separation reason is required')
@@ -189,10 +190,14 @@ const EditEmployeeFormCard = () => {
                             loading={loading}
                             formHandler={editEmployeeForm}
                         /> */}
-                         <EditDailyRates
-                            loading={loading}
-                            formHandler={editEmployeeForm} 
-                        />
+                        {canAdditionalRate && (
+                        <div>
+                            <EditDailyRates
+                                loading={loading}
+                                formHandler={editEmployeeForm} 
+                            />
+                        </div>
+                        )}
                         <div className="py-[2px]"/>
                         <EditGovernmentIdentification
                             loading={loading}

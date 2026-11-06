@@ -111,7 +111,6 @@ const EditEmploymentDetails = ({
                     label='Regularization Date'
                     name="regularization_date"
                     value={formHandler.values.regularization_date || ""}
-                    disabled={formHandler.values.employee_status_id != 2}
                     error={formHandler.errors.regularization_date?.toString() || ""}
                 />
                 <ActiveInactiveDropDown
@@ -144,7 +143,7 @@ const EditEmploymentDetails = ({
                         />
                     </>
                 }
-                    <BranchDropDown
+                    {/* <BranchDropDown
                         onChange={(e) => {
                             formHandler.handleChange(e);
                             formHandler.setFieldValue("region", e.target.obj?.location ?? "");
@@ -154,7 +153,7 @@ const EditEmploymentDetails = ({
                         value={Number(formHandler.values.home_branch_id) || ""}
                         placeholder='select branch'
                         required
-                    />
+                    /> */}
             </Grid>
         </Card>
     );

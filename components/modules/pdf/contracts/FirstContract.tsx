@@ -103,13 +103,12 @@ const FirstContract = ({ data }: CoeInterface) => {
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
 
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
                                 </Text>
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_STREET}
                                 </Text>
-
                                 <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
                                 </Text>
@@ -289,14 +288,12 @@ const FirstContract = ({ data }: CoeInterface) => {
                                 >
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
-
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
                                 </Text>
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_STREET}
                                 </Text>
-
                                 <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
                                 </Text>
@@ -462,13 +459,12 @@ const FirstContract = ({ data }: CoeInterface) => {
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
 
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
                                 </Text>
-                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_STREET}
                                 </Text>
-
                                 <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
                                 </Text>

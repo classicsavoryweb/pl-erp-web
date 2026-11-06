@@ -49,7 +49,31 @@ const AddEmployeeForm = () => {
             branch_id: Yup.string().required("Branch is required"),
             home_branch_id: Yup.string().required("Home branch is required"),
             date_hired: Yup.string().required("Date hired is required"),
-            birthday: Yup.string().required("Birthday is required"),
+            birthday: Yup.string()
+            .required("Birthday is required")
+            .test(
+                "minimum-age",
+                "Employee must be at least 18 years old",
+                (value) => {
+                    if (!value) return true;
+
+                    const birthday = new Date(value);
+                    const today = new Date();
+
+                    let age = today.getFullYear() - birthday.getFullYear();
+
+                    const monthDifference = today.getMonth() - birthday.getMonth();
+
+                    if (
+                        monthDifference < 0 ||
+                        (monthDifference === 0 && today.getDate() < birthday.getDate())
+                    ) {
+                        age--;
+                    }
+
+                    return age >= 18;
+                }
+            ),
             contract_duration: Yup.string().required("Contract duration is required"),
             contact_number: Yup.string().required("Contact number is required")
                 .min(11, "Minimum of 11 characters")
@@ -206,16 +230,20 @@ const AddEmployeeForm = () => {
                         error={addEmployeeHandler.errors.date_hired}
                         required
                     />
-                    <BranchDropDown
+                   <BranchDropDown
                         label="Branch"
                         name="branch_id"
                         placeholder="select branch"
-                        onChange={addEmployeeHandler.handleChange}
+                        onChange={(e) => {
+                            addEmployeeHandler.handleChange(e);
+                            addEmployeeHandler.setFieldValue("home_branch_id",e.target.value);
+                            addEmployeeHandler.setFieldValue("region", e.target.obj?.location ?? "");
+                        }}
                         value={addEmployeeHandler.values.branch_id}
                         error={addEmployeeHandler.errors.branch_id}
                         required
                     />
-                    <BranchDropDown
+                    {/* <BranchDropDown
                         label="Home Branch"
                         name="home_branch_id"
                         placeholder="select branch"
@@ -226,7 +254,7 @@ const AddEmployeeForm = () => {
                         value={addEmployeeHandler.values.home_branch_id}
                         error={addEmployeeHandler.errors.home_branch_id}
                         required
-                    />
+                    /> */}
                     <Textfield
                         label="Region"
                         name="region"
