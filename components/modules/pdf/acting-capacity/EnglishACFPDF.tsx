@@ -9,8 +9,8 @@ const styles = StyleSheet.create({
         height: '87vh',
     },
     page: {
-        paddingLeft: 35,
-        paddingRight: 35,
+        paddingLeft: 50,
+        paddingRight: 50,
         fontSize: 11,
         lineHeight: 1.25,
         textAlign: 'justify'
@@ -19,7 +19,8 @@ const styles = StyleSheet.create({
         fontWeight: "bold"
     },
     section: {
-        paddingBottom: 10
+        paddingBottom: 10,
+        flexDirection: 'row'
     },
     sectionCenter: {
         flexDirection: "column",
@@ -63,11 +64,11 @@ const EnglishACFPDF = ({
             <Document>
                 <Page size="LETTER" style={styles.page}>
                     <View
-                        style={styles.sectionCenter}
+                        style={{...styles.sectionCenter,paddingBottom:40}}
                     >   
                         <View
                             style={{
-                                paddingTop: 10,
+                                paddingTop: 30,
                                 flexDirection: "row",
                                 justifyContent: "center"
                             }}
@@ -79,137 +80,82 @@ const EnglishACFPDF = ({
                         </View>
                         <Text style={{
                                 ...styles.bold,
-                                marginTop: -15,
+                                marginTop: 20,
                                 textDecoration: "underline",
+                                fontSize: 14
+                            }}
+                        >
+                            Photoline Enterprises Corporation
+                        </Text>
+                        <Text style={{
+                                ...styles.bold,
+                                marginTop: 8,
                                 fontSize: 11
                             }}
                         >
-                            ACTING CAPACITY APPOINTMENT
+                            Head Office
                         </Text>
                     </View>
-                    
-                    <View
-                        style={{
-                            paddingVertical: 30,
-                            display: "flex",
-                            flexDirection: "row",
-                            justifyContent: "space-between"
-                        }}
-                    >
-                        <View>
-                            <View
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    rowGap: 5
-                                }}
-                            >
-                                <Text>Name: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text>
-                            </View>
 
-                            <View
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    rowGap: 5
-                                }}
-                            >
-                                <Text>Current Position: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.current_position.description}</Text>
-                            </View>                        
+                    <View style={{ flexDirection: 'column' }}>
+                        <View style={{...styles.section,paddingBottom:20}}>
+                            <Text style={{width:100}}>Date: </Text>
+                            <Text>{moment().format('MMMM DD, YYYY')}</Text>
                         </View>
-
-                        <View>
-                            <View
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    rowGap: 5
-                                }}
-                            >
-                                <Text>Department: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch.name}</Text>
-                            </View>
-
-                            <View
-                                style={{
-                                    display: "flex",
-                                    flexDirection: "row",
-                                    rowGap: 5
-                                }}
-                            >
-                                <Text>Recommended Position: </Text>
-                                <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text>
-                            </View>                        
+                        <View style={{...styles.section,paddingBottom:20}}>
+                            <Text style={{width:100}}>To: </Text>
+                            <Text>{data.acting_capacity?.employee?.proper_full_name}</Text>
+                        </View>
+                        <View style={{...styles.section,paddingBottom:20}}>
+                            <Text style={{width:100}}>From: </Text>
+                            <Text>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY}</Text>
+                        </View>
+                        <View style={{...styles.section,paddingBottom:30}}>
+                            <Text style={{width:100}}>RE:</Text>
+                            <Text>NEW APPOINTMENT</Text>
                         </View>
                     </View>
-
-                    <View
-                        style={styles.section}
-                    >
-                        <Text>This is to confirm your appointment as <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> in an acting capacity of not less than <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.period}</Text>, effective {moment(data.acting_capacity.start_date).format("MMMM DD, YYYY")}.</Text>
-                    </View>
-
-                    <View
-                        style={styles.section}
-                    >
-                        <Text>You shall be assigned at <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.branch_assignment.name}</Text> and shall report to <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.oic.formal_full_name}</Text>.</Text>
-                    </View>
-
-                    <View
-                        style={styles.section}
-                    >
-                        <Text>During your Acting Capacity Appointment, you shall comply all the duties and responsibilities of your assigned position.</Text>
-                    </View>
-
-                    <View
-                        style={styles.section}
-                    >
-                        <Text>It is expressly understood that should you fail to meet the set performance standards, management reserves the right to revert you to your previous position. In any case, you shall be notified of your performance appraisal and status before or upon the completion of your Acting Capacity Appointment.</Text>
-                    </View>
-                    
-                    <Text style={{paddingTop:30 , paddingBottom:40 , fontWeight: "bold"}}>Conforme:</Text>
-                    
-                    <View
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            gap: 75,
-                        }}
-                    >
-                        <Text>Name & Signature of Employee</Text>
-                        <Text>Date:</Text>
-                    </View>
-                    { data.with_recommendation &&
-                        <>
-                            <Text style={{paddingBottom: 40, paddingTop: 30,fontWeight: "bold"}}>Recommended by:</Text>
-                            
-                            <View>
-                                <Text
-                                    style={{
-                                        textDecoration: "underline"
-                                    }}
-                                >
-                                    {data.recommended_by.formal_full_name}
-                                </Text>
-                                <Text>{data.recommended_by.current_position.description}</Text>
-                            </View>
-                        </>
-                    }
-
-                    <Text style={{paddingBottom: 40, paddingTop: 30, fontWeight: "bold"}}>Approved by:</Text>
-                    
-                    <View>
-                        <Text
-                            style={{
-                                textDecoration: "underline"
-                            }}
-                        >
-                            {data.approved_by.formal_full_name}
+                    <View style={{...styles.section}}>
+                        <Text style={{
+                            textAlign: 'justify',
+                            textIndent: 30,
+                            lineHeight: 1,
+                            marginBottom: 15,
+                        }}>
+                        {INDENT}
+                        {/* As a result of the favorable of your most recent performance evaluation as <Text>{data.acting_capacity?.current_position?.description}</Text>, we are pleased to announce your new appointment as <Text>{data.acting_capacity?.recommended_position?.description}</Text> of the Cavite Areas in R4A effective on <Text>{moment(data.acting_capacity?.start_date).format("MMMM DD, YYYY")}</Text>.     */}
+                         As a result of the favorable of your most recent performance evaluation as <Text>{data.acting_capacity?.current_position?.description}</Text>, we are pleased to announce your new appointment as <Text>{data.acting_capacity?.recommended_position?.description}</Text>, effective on <Text>{moment(data.acting_capacity?.start_date).format("MMMM DD, YYYY")}</Text>.    
                         </Text>
-                        <Text>{data.approved_by.current_position.description}</Text>
                     </View>
+                    <View style={{...styles.section,paddingBottom:50,marginBottom:50}}>
+                        <Text style={{
+                            textAlign: 'justify',
+                            textIndent: 30,
+                            lineHeight: 1,
+                            marginBottom: 15,
+                        }}>
+                            {INDENT}
+                            In view of this new appointment, we trust that you shall continue to abide by company policies, rules and regulations.	You are likewise expected to fulfill duties assigned to you, follow instructions of your superior, exercise discretion in connection with any information you may acquire by reason of your new appointment and maintain confidentiality thereof until after your employment with us.     
+                        </Text>
+                    </View>
+                     <View style={{...styles.section,paddingBottom:50,marginBottom:15}}>
+                        <Text>
+                            Noted:   
+                        </Text>
+                    </View>    
+                    <View style={{ flexDirection: 'column' }}>
+                        <View style={{...styles.bold, flexDirection: 'row', paddingBottom: 5,textAlign:'center' }}>
+                            <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15 }}>{data.acting_capacity?.employee?.proper_full_name}</Text>
+                            <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15  }}>{data.approved_by?.formal_full_name}</Text>
+                            <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15 }}>{process.env.NEXT_PUBLIC_HR_SIGNATORY}</Text>
+                        </View>
+                        <View style={{...styles.bold, flexDirection: 'row', paddingBottom: 3,textAlign:'center'}}>
+                            <Text style={{ flex: 1 }}>Signature over Printed Name</Text>
+                            <Text style={{ flex: 1 }}>{data.approved_by?.current_position?.description}</Text>
+                            <Text style={{ flex: 1 }}>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY_POSITION}</Text>
+                        </View>
+                    </View>
+
                 </Page>
             </Document>
         </PDFViewer>
