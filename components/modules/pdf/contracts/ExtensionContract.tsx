@@ -153,18 +153,16 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                                 >
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
-
                                 <Text style={{ fontSize: 9, color: "#28669D" }}>
-                                    {data.branch_location}
+                                    {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
                                 </Text>
                                 <Text style={{ fontSize: 9, color: "#28669D" }}>
-                                    {data.branch_address}
+                                    {process.env.NEXT_PUBLIC_COMPANY_STREET}
                                 </Text>
-
-                                {/* <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
-                                </Text> */}
-                            </View>
+                                </Text>
+                        </View>
                         </View>
                     </View>
                 </View>
@@ -344,15 +342,14 @@ const ExtensionContract = ({ data }: CoeInterface) => {
                                     {process.env.NEXT_PUBLIC_COMPANY}
                                 </Text>
                                 <Text style={{ fontSize: 9, color: "#28669D" }}>
-                                    {data.branch_location}
+                                    {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
                                 </Text>
                                 <Text style={{ fontSize: 9, color: "#28669D" }}>
-                                    {data.branch_address}
+                                    {process.env.NEXT_PUBLIC_COMPANY_STREET}
                                 </Text>
-
-                                {/* <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
-                                </Text> */}
+                                </Text>
                             </View>
                         </View>
                     </View>

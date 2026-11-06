@@ -107,7 +107,7 @@ const CreateReportCoeRequestForm = ({
                         setStatus(employeeDetails.status);
                         setEmployment(employeeDetails.employee_status.description);
                         createFormHandler.setFieldValue("employee", employeeDetails);
-                        createFormHandler.setFieldValue("coe_format", employeeDetails.status === "active" ? "Normal Format" : "Special Format");
+                        createFormHandler.setFieldValue("coe_format", employeeDetails.status === "active" ? "Normal Format" : "With Compensation");
                         createFormHandler.setFieldValue("employee_number", employeeDetails.employee_number);
                         createFormHandler.setFieldValue("coe_reason", "whatever legal purpose it may serve");
                     }}
@@ -135,7 +135,9 @@ const CreateReportCoeRequestForm = ({
                     name="coe_format"
                     value={createFormHandler.values.coe_format}
                     required
-                    onChange={createFormHandler.handleChange}
+                    onChange={(e) => {
+                        createFormHandler.setFieldValue("coe_format", e.target.value);
+                    }}
                     error={createFormHandler.errors.coe_format}
                     options={[
                         {
@@ -143,9 +145,10 @@ const CreateReportCoeRequestForm = ({
                             value: "Normal Format",
                         },
                         {
-                            label: "Special Format",
-                            value: "Special Format",
+                            label: "With Compensation",
+                            value: "With Compensation",
                         },
+                        
                     ]}
                     disabled={employeeStatus === "inactive"}
                 />
