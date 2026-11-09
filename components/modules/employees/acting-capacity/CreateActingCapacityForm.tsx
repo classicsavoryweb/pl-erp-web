@@ -145,7 +145,7 @@ const CreateActingCapacityForm = ({
                             name="recommended_position_id"
                             onChange={(e) => {
                                 formHandler.handleChange(e);
-                                const station = String(e.target.obj.station.name).toLowerCase();
+                                const station = String(e.target.obj?.station?.name).toLowerCase();
                                 setStation(station);
                             }}
                             value={formHandler.values.recommended_position_id ?? ""}
