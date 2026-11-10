@@ -81,7 +81,7 @@ const EnglishPromotionPDF = ({
                         </View>
                         <Text style={{
                                 ...styles.bold,
-                                marginTop: -15,
+                                marginTop: 15,
                                 textDecoration: "underline",
                                 fontSize: 11
                             }}
