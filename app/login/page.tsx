@@ -11,7 +11,7 @@ const LoginPage = () => {
                 <Card>
                     <div className="w-full flex justify-center py-8">
                         <Image
-                            src="/images/photoline.png"
+                            src="/images/photoline_header.png"
                             width={400}
                             height={100}
                             alt="photoline logo"
