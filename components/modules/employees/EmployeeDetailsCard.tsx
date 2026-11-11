@@ -3,7 +3,7 @@ import Button from "@/components/common/Button";
 import Card from "@/components/common/Card";
 import Image from "next/image";
 import { useParams, useRouter } from "next/navigation";
-import { useContext } from "react";
+import { useContext, useState  } from "react";
 import Badge from "@/components/common/Badge";
 import { getTenure } from "@/helper/tenure";
 import { EmployeeContext } from "@/context/EmployeeProvider";
@@ -20,6 +20,7 @@ const EmployeeDetailsCard = () => {
     const employeeNumber = params["employee-number"];
     const router = useRouter();
     const {employee, loading} = useContext(EmployeeContext);
+    const [editLoading, setEditLoading] = useState(false);
     const { permissions } = useContext(AuthContext);
 
     return (
@@ -66,10 +67,13 @@ const EmployeeDetailsCard = () => {
                         <div>
                             <Button
                                 label="Edit"
+                                loading={editLoading}
+                                disabled={editLoading}
                                 onClick={() => {
                                     if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", employee.employee_number, 0)) {
                                         return;
                                     }
+                                    setEditLoading(true);
                                     router.push(`/employees/edit/${employeeNumber}`)
                                 }}
                             />
