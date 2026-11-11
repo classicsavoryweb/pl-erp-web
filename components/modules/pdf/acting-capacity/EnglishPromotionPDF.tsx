@@ -338,7 +338,8 @@ const EnglishPromotionPDF = ({
                             SERVICE BOND AGREEMENT FOR MANAGEMENT TEAM EMPLOYEES
                         </Text>
                     </View>
-                    <View style={styles.section}>
+                    
+                    <View style={{...styles.section}}>
                             <Text
                             style={{...styles.boldedLinedText,
                                     paddingTop:15,
@@ -347,40 +348,26 @@ const EnglishPromotionPDF = ({
                             Karagdagang Kasunduan sa Employment Contract
                         </Text>
                     </View>
-                    <View
-                        style={styles.section}
-                    >
-                        <Text>
-                            Petsa: {moment().format("MMMM DD, YYYY")}
-                        </Text>
+                   <View style={{ flexDirection: 'column',paddingTop:10 }}>
+                        <View style={{...styles.section, flexDirection: 'row', paddingBottom: 20}}>
+                            <Text style={{width: 100}}>Petsa:</Text>
+                            <Text>{moment().format('MMMM DD, YYYY')}</Text>
+                        </View>
                     </View>
-                    <View
-                        style={styles.section}
-                    >
-                        <Text>
-                            Ito ay karagdagang kasunduan sa pagitan nina:
-                        </Text>
+                    <View style={styles.section}>
+                        <View style={{paddingBottom: 10}}>
+                            <Text >Ito ay karagdagang kasunduan sa pagitan nina:</Text>
+                        </View>
                     </View>
-                    <View
-                        style={styles.section}
-                    >
-                        <Text>
-                            Employer: <Text style={styles.boldedLinedText}>{process.env.NEXT_PUBLIC_COMPANY}</Text>
-                        </Text>
-                    </View>
-                    <View
-                        style={styles.section}
-                    >
-                        <Text>
-                            Empleyado:<Text style={styles.boldedLinedText}>{data.acting_capacity.employee.proper_full_name}</Text>
-                        </Text>
-                    </View>
-                        <View
-                        style={{...styles.section,paddingTop:20}}
-                    >
-                        <Text style={styles.boldedLinedText}>
-                            Probisyon sa Liquidated Damages:
-                        </Text>
+                    <View style={{ flexDirection: 'column' }}>
+                        <View style={{...styles.section, flexDirection: 'row', paddingBottom: 20}}>
+                            <Text style={{width: 100}}>Employer:</Text>
+                            <Text>{process.env.NEXT_PUBLIC_COMPANY}</Text>
+                        </View>
+                        <View style={{...styles.section, flexDirection: 'row', paddingBottom: 20}}>
+                            <Text style={{width: 100}}>Empleyado:</Text>
+                            <Text>{data.acting_capacity.employee.proper_full_name}</Text>
+                        </View>
                     </View>
                     <View
                         style={styles.section}
@@ -390,7 +377,7 @@ const EnglishPromotionPDF = ({
                                 paddingBottom: 10
                             }}
                             
-                        >Kung ang Empleyado ay magbitiw o umalis sa trabaho bago ang itinakdang pagtatapos ng kontrata nang walang sapat na dahilan o hindi alinsunod sa Labor Code, siya ay sumasang-ayon na magbayad ng Bond Amount na nagkakahalaga ng <Text style={styles.boldedLinedText}>{convertToPesosAndCentavos(Number(data.acting_capacity.bond_amount))} (Php {Number(data.acting_capacity.bond_amount).toFixed(2)})</Text> bilang danyos sa Employer.</Text>
+                        >Kung ang Empleyado ay magbitiw o umalis sa trabaho bago ang itinakdang pagtatapos ng kontrata nang walang sapat na dahilan o hindi alinsunod sa Labor Code, siya ay sumasang-ayon na magbayad ng Bond Amount na nagkakahalaga ng <Text>{convertToPesosAndCentavos(Number(data.acting_capacity.bond_amount))} (Php {Number(data.acting_capacity.bond_amount).toFixed(2)})</Text> bilang danyos sa Employer.</Text>
                     </View>
                         <View
                         style={styles.section}
@@ -408,7 +395,7 @@ const EnglishPromotionPDF = ({
                         <Text
                             style={{
                                 paddingBottom: 10,
-                                paddingTop:50,
+                                paddingTop:35,
                             }}
                             
                         >Pinagtibay at Nilagdaan ng mga Panig:
@@ -416,8 +403,8 @@ const EnglishPromotionPDF = ({
                     </View>
                     <View
                         style={{
-                            marginTop:65,
-                            paddingTop:50,  
+                            marginTop:45,
+                            paddingTop:30,  
                             display: "flex",
                             justifyContent: "space-between",
                             flexDirection: "row"
@@ -425,7 +412,6 @@ const EnglishPromotionPDF = ({
                     >
                         <Text
                             style={{
-                                ...styles.bold,
                                 width: 200,
                                 borderBottom: 1,
                                 paddingBottom: 1,
@@ -436,7 +422,6 @@ const EnglishPromotionPDF = ({
                         </Text>
                             <Text
                             style={{
-                                ...styles.bold,
                                 width: 200,
                                 borderBottom: 1,
                                 paddingBottom: 1,
@@ -456,7 +441,6 @@ const EnglishPromotionPDF = ({
                     >
                         <Text
                             style={{
-                                ...styles.bold,
                                 width: 200,
                                 textAlign: "center"
                             }}
@@ -465,7 +449,6 @@ const EnglishPromotionPDF = ({
                         </Text>
                         <Text
                             style={{
-                                ...styles.bold,
                                 width: 200,
                                 textAlign: "center"
                             }}
