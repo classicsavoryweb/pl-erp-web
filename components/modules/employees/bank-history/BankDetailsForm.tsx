@@ -37,7 +37,7 @@ const BankDetailsForm = ({
         initialValues: {
             id: "",
             bank_number: "",
-            bank_account_type_id: "2",
+            bank_account_type_id: "",
             remarks: "",
         },
         validateOnChange: false,
