@@ -146,12 +146,12 @@ const EnglishACFPDF = ({
                     <View style={{ flexDirection: 'column' }}>
                         <View style={{...styles.bold, flexDirection: 'row', paddingBottom: 5,textAlign:'center' }}>
                             <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15 }}>{data.acting_capacity?.employee?.proper_full_name}</Text>
-                            <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15  }}>{data.approved_by?.formal_full_name}</Text>
+                            {/* <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15  }}>{data.approved_by?.formal_full_name}</Text> */}
                             <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15 }}>{process.env.NEXT_PUBLIC_HR_SIGNATORY}</Text>
                         </View>
                         <View style={{...styles.bold, flexDirection: 'row', paddingBottom: 3,textAlign:'center'}}>
                             <Text style={{ flex: 1 }}>Signature over Printed Name</Text>
-                            <Text style={{ flex: 1 }}>{data.approved_by?.current_position?.description}</Text>
+                            {/* <Text style={{ flex: 1 }}>{data.approved_by?.current_position?.description}</Text> */}
                             <Text style={{ flex: 1 }}>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY_POSITION}</Text>
                         </View>
                     </View>

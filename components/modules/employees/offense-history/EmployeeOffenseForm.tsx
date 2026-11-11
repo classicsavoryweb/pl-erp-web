@@ -136,11 +136,10 @@ const EmployeeOffenseForm = ({
                     onChange={formHandler.handleChange}
                     placeholder="select transgression"
                     options={[
-                        {label: "1st Degree", value: "1st Degree"},
-                        {label: "2nd Degree", value: "2nd Degree"},
-                        {label: "3rd Degree", value: "3rd Degree"},
-                        {label: "4th Degree", value: "4th Degree"},
-                        {label: "5th Degree", value: "5th Degree"},
+                        {label: "Magaan na Paglabag", value: "Magaan na Paglabag"},
+                        {label: "Hindi Gaanong Seryosong Paglabag", value: "Hindi Gaanong Seryosong Paglabag"},
+                        {label: "Seryosong Paglabag", value: "Seryosong Paglabag"},
+                        {label: "Grabeng Paglabag", value: "Grabeng Paglabag"},
                     ]}
                 />
                 <Dropdown
