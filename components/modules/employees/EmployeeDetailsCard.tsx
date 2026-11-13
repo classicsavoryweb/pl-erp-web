@@ -284,6 +284,21 @@ const EmployeeDetailsCard = () => {
                 <Card
                     loading={loading}
                 >
+                    <p className="font-semibold text-blue-950 dark:text-gray-300">Additional Daily Rate</p>
+                    <Textfield
+                        disabled
+                        label="Additional Rate"
+                        value={employee.additional_daily_rate?.amount ?? ""}
+                    />
+                    <Textfield
+                        disabled
+                        label="Last Update date"
+                        value={moment(employee.additional_daily_rate?.updated_at).format("MMMM DD, YYYY") ?? ""}
+                    />
+                </Card>
+                <Card
+                    loading={loading}
+                >
                     <p className="font-semibold text-blue-950 dark:text-gray-300">Position</p>
                     <Textfield
                         disabled

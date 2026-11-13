@@ -17,6 +17,7 @@ import { useAsyncEffect } from "@/hooks/async-effect";
 import { useApiCall } from "@/hooks/api-call";
 import { PDFViewer } from "@react-pdf/renderer";
 import IFramePDFViewer from "@/components/common/IFramePDFViewer";
+import { useState } from "react";
 
 interface FormModalInterface {
     modal: any;
@@ -29,7 +30,7 @@ const GeneratePromotionConfirmationForm = ({
     id,
     onSubmitCallBack
 }: FormModalInterface) => {
-
+    const [submitLoading , setSubmitLoading] = useState(false);
     const api = useApiCall();
     const formHandler = useFormik({
         initialValues: {
@@ -57,9 +58,8 @@ const GeneratePromotionConfirmationForm = ({
                 title: "Generate Confirmation Documents",
                 message: "Are you sure you want to save changes?"
             });
-
             if (isConfirmed) {
-                setSubmitting(true);
+                setSubmitLoading(true);
                 generateConfirmationPromotion(id, values)
                 .then((resp) => {
                     if (!resp.error) {
@@ -73,6 +73,7 @@ const GeneratePromotionConfirmationForm = ({
                     toast.error("Error encountered");
                 }).finally(() => {
                     setSubmitting(false);
+                    setSubmitLoading(false);
                 });
             }
         }
@@ -248,6 +249,8 @@ const GeneratePromotionConfirmationForm = ({
                             type="submit"
                             label="Submit"
                             onClick={() => {}}
+                            loading={submitLoading}
+                            disabled={submitLoading}
                         />
                     </div>
                     <div>

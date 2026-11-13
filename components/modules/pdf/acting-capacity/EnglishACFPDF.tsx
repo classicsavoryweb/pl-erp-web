@@ -64,7 +64,7 @@ const EnglishACFPDF = ({
             <Document>
                 <Page size="LETTER" style={styles.page}>
                     <View
-                        style={{...styles.sectionCenter,paddingBottom:40}}
+                        style={{...styles.sectionCenter,paddingBottom:20}}
                     >   
                         <View
                             style={{
@@ -108,13 +108,22 @@ const EnglishACFPDF = ({
                         </View>
                         <View style={{...styles.section,paddingBottom:20}}>
                             <Text style={{width:100}}>From: </Text>
-                            <Text>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY}</Text>
+                            <Text>{process.env.NEXT_PUBLIC_HR_SIGNATORY}</Text>
                         </View>
-                        <View style={{...styles.section,paddingBottom:30}}>
+                        <View style={{...styles.section,paddingBottom:15}}>
                             <Text style={{width:100}}>RE:</Text>
                             <Text>NEW APPOINTMENT</Text>
                         </View>
                     </View>
+                    <View
+                        style={{
+                            borderTopWidth: 1,
+                            borderTopColor: '#000',
+                            width: '100%',
+                            paddingBottom:10
+
+                        }}
+                    />
                     <View style={{...styles.section}}>
                         <Text style={{
                             textAlign: 'justify',
@@ -127,7 +136,7 @@ const EnglishACFPDF = ({
                          As a result of the favorable of your most recent performance evaluation as <Text>{data.acting_capacity?.current_position?.description}</Text>, we are pleased to announce your new appointment as <Text>{data.acting_capacity?.recommended_position?.description}</Text>, effective on <Text>{moment(data.acting_capacity?.start_date).format("MMMM DD, YYYY")}</Text>.    
                         </Text>
                     </View>
-                    <View style={{...styles.section,paddingBottom:50,marginBottom:50}}>
+                    <View style={{...styles.section,paddingBottom:10,marginBottom:10}}>
                         <Text style={{
                             textAlign: 'justify',
                             textIndent: 30,
@@ -138,23 +147,39 @@ const EnglishACFPDF = ({
                             In view of this new appointment, we trust that you shall continue to abide by company policies, rules and regulations.	You are likewise expected to fulfill duties assigned to you, follow instructions of your superior, exercise discretion in connection with any information you may acquire by reason of your new appointment and maintain confidentiality thereof until after your employment with us.     
                         </Text>
                     </View>
-                     <View style={{...styles.section,paddingBottom:50,marginBottom:15}}>
+                     <View style={{...styles.section,paddingBottom:40,marginBottom:30}}>
                         <Text>
                             Noted:   
                         </Text>
                     </View>    
-                    <View style={{ flexDirection: 'column' }}>
-                        <View style={{...styles.bold, flexDirection: 'row', paddingBottom: 5,textAlign:'center' }}>
-                            <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15 }}>{data.acting_capacity?.employee?.proper_full_name}</Text>
+                    <View style={{ flexDirection: 'column', paddingBottom:30 }}>
+                        <View style={{ flexDirection: 'row', paddingBottom: 5,textAlign:'center' }}>
+                            <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15 }}>{process.env.NEXT_PUBLIC_PRESIDENT_SIGNATORY}</Text>
                             {/* <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15  }}>{data.approved_by?.formal_full_name}</Text> */}
                             <Text style={{ flex: 1,borderBottom:1,marginHorizontal:15 }}>{process.env.NEXT_PUBLIC_HR_SIGNATORY}</Text>
                         </View>
-                        <View style={{...styles.bold, flexDirection: 'row', paddingBottom: 3,textAlign:'center'}}>
-                            <Text style={{ flex: 1 }}>Signature over Printed Name</Text>
+                        <View style={{ flexDirection: 'row', paddingBottom: 3,textAlign:'center'}}>
+                            <Text style={{ flex: 1 }}>{process.env.NEXT_PUBLIC_PRESIDENT_SIGNATORY_POSITION}</Text>
                             {/* <Text style={{ flex: 1 }}>{data.approved_by?.current_position?.description}</Text> */}
                             <Text style={{ flex: 1 }}>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY_POSITION}</Text>
                         </View>
                     </View>
+                     <View style={{...styles.section,paddingBottom:40,marginBottom:15}}>
+                        <Text>
+                            Conforme:   
+                        </Text>
+                    </View>    
+                    <View style={{ width: '50%', alignSelf: 'flex-start'}}>
+                      <View style={{ flexDirection: 'row', paddingBottom: 5, textAlign: 'center'}}>
+                            <Text style={{ flex: 1, borderBottom: 1, marginHorizontal: 15 }}>
+                                {data.acting_capacity?.employee?.proper_full_name}
+                            </Text>
+                        </View>
+                        <View style={{ flexDirection: 'row', paddingBottom: 3, textAlign: 'center'}}>
+                            <Text style={{ flex: 1 }}>Signature over Printed Name</Text>
+                        </View>
+                    </View>
+                    
 
                 </Page>
             </Document>
