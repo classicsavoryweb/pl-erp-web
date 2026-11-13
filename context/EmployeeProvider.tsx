@@ -59,6 +59,7 @@ interface EmployeeContextType {
         education: any,
         dependents: any[],
         contracts: any[],
+        additional_daily_rate: any,
         regularization_date: string,
         separation_date: string,
         separation_reason: string,
@@ -119,6 +120,10 @@ const EmployeeInitialValue = {
     branches: [],
     positions: [],
     separation: {},
+    additional_daily_rate:{
+        amount: "",
+        updated_at: ""
+    },
     education: {
         employee_id: "",
         employee_number: "",
