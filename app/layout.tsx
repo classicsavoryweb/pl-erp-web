@@ -27,7 +27,7 @@ export default function RootLayout({
 					disableTransitionOnChange
 				>
 					<HolyLoader
-						color="#fda4af"
+						color="#3e6bfc"
 						height="3px"
 						speed={250}
 						easing="linear"

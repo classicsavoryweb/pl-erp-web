@@ -30,6 +30,7 @@ const CreateActingCapacityForm = ({
 
     const [employee, setEmployee] = useState<any>({});
     const [current_station, setStation] = useState<string>("");
+    const [submitLoading, setSubmitLoading] = useState(false);
 
     const formHandler = useFormik({
         initialValues: {
@@ -76,7 +77,7 @@ const CreateActingCapacityForm = ({
                     : schema.required('Recommendation letter is required')
             }
             ),
-            oic_employee_number: Yup.string().required("OIC is required"),
+            oic_employee_number: Yup.string().required("Branch Head is required"),
             branch_assignment_id: Yup.string().required("Branch assignment is required"),
         }),
         onSubmit: async (values, {setSubmitting, resetForm}) => {
@@ -87,6 +88,7 @@ const CreateActingCapacityForm = ({
 
             if (isConfirmed) {
                 setSubmitting(true);
+                setSubmitLoading(true);
                 addActingCapacity(values).then((resp) => {
                     if (!resp.error) {
                         toast.success(resp.data.message);
@@ -99,6 +101,7 @@ const CreateActingCapacityForm = ({
                     toast.error("Error encountered");
                 }).finally(() => {
                     setSubmitting(false);
+                    setSubmitLoading(false);
                 });
             }
         }
@@ -281,6 +284,8 @@ const CreateActingCapacityForm = ({
                             type="submit"
                             label="Submit"
                             onClick={() => {}}
+                            loading={submitLoading}
+                            disabled={submitLoading}
                         />         
                     </div>
                 </div>
