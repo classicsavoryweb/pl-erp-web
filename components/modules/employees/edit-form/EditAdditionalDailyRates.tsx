@@ -13,7 +13,7 @@ const EditDailyRates = ({
 }: FormInterface) => {
     return (
         <Card loading={loading}>
-            <p className="text-md font-semibold text-blue-950 dark:text-blue-400">
+            <p className="text-md font-semibold text-blue-800 dark:text-blue-400">
                 Additional Daily Rates
             </p>
 

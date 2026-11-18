@@ -175,7 +175,7 @@ const ViewThirteenthMonthMonthlyAllocationModal = ({
             size="entireScreen"
         >
             <Card>
-                <p className=" font-semibold text-blue-950">Filters</p>
+                <p className=" font-semibold text-blue-800">Filters</p>
                 <form onSubmit={formHandler.handleSubmit}>
                     <Grid cols={4}>
                         <SearchEmployeeDropDown

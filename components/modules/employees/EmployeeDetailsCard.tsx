@@ -80,7 +80,7 @@ const EmployeeDetailsCard = () => {
                         </div>
                     </div>
 
-                    <p className="text-md font-semibold text-blue-950 dark:text-gray-300">Employment Details</p>
+                    <p className="text-md font-semibold text-blue-800 dark:text-gray-300">Employment Details</p>
                     <Grid cols={2}>
                         <Textfield
                             disabled
@@ -134,7 +134,7 @@ const EmployeeDetailsCard = () => {
                     loading={loading}
                     size="medium"
                 >
-                    <p className="text-md font-semibold text-blue-950 dark:text-gray-300">Personal Details</p>
+                    <p className="text-md font-semibold text-blue-800 dark:text-gray-300">Personal Details</p>
                     <Grid cols={2}>
                         <Textfield
                             disabled
@@ -189,7 +189,7 @@ const EmployeeDetailsCard = () => {
                     loading={loading}
                     size="medium"
                 >
-                    <p className="text-md font-semibold text-blue-950 dark:text-gray-300">Contact Details</p>
+                    <p className="text-md font-semibold text-blue-800 dark:text-gray-300">Contact Details</p>
                     <Grid cols={2}>
                         <Textfield
                             disabled
@@ -219,7 +219,7 @@ const EmployeeDetailsCard = () => {
                     loading={loading}
                     size="medium"
                 >
-                    <p className="text-md font-semibold text-blue-950 dark:text-gray-300">Government Identification</p>
+                    <p className="text-md font-semibold text-blue-800 dark:text-gray-300">Government Identification</p>
                     <Grid cols={2}>
                         <Textfield
                             disabled
@@ -254,7 +254,7 @@ const EmployeeDetailsCard = () => {
                     loading={loading}
                     size="medium"
                 >
-                    <p className="font-semibold text-blue-950 dark:text-gray-300">Emergency Contact</p>
+                    <p className="font-semibold text-blue-800 dark:text-gray-300">Emergency Contact</p>
                     <Grid cols={2}>
                         <Textfield
                             disabled
@@ -284,7 +284,7 @@ const EmployeeDetailsCard = () => {
                 <Card
                     loading={loading}
                 >
-                    <p className="font-semibold text-blue-950 dark:text-gray-300">Additional Daily Rate</p>
+                    <p className="font-semibold text-blue-800 dark:text-gray-300">Additional Daily Rate</p>
                     <Textfield
                         disabled
                         label="Additional Rate"
@@ -299,7 +299,7 @@ const EmployeeDetailsCard = () => {
                 <Card
                     loading={loading}
                 >
-                    <p className="font-semibold text-blue-950 dark:text-gray-300">Position</p>
+                    <p className="font-semibold text-blue-800 dark:text-gray-300">Position</p>
                     <Textfield
                         disabled
                         label="Description"
@@ -320,7 +320,7 @@ const EmployeeDetailsCard = () => {
                 <Card
                     loading={loading}
                 >
-                    <p className="font-semibold text-blue-950 dark:text-gray-300">Branch</p>
+                    <p className="font-semibold text-blue-800 dark:text-gray-300">Branch</p>
                     <Textfield
                         disabled
                         label="Current Branch"
@@ -370,7 +370,7 @@ const EmployeeDetailsCard = () => {
                 <Card
                     loading={loading}
                 >
-                    <p className="font-semibold text-blue-950 dark:text-gray-300">Education</p>
+                    <p className="font-semibold text-blue-800 dark:text-gray-300">Education</p>
                     <Textfield
                         disabled
                         label="College"
@@ -417,7 +417,7 @@ const EmployeeDetailsCard = () => {
                         <Card
                             loading={loading}
                         >
-                            <p className="font-semibold text-blue-950 dark:text-gray-300">Dependents</p>
+                            <p className="font-semibold text-blue-800 dark:text-gray-300">Dependents</p>
                             { employee.dependents &&
                                 employee.dependents.map((dependent: any, idx: number) => {
                                     return (
@@ -448,7 +448,7 @@ const EmployeeDetailsCard = () => {
                         <Card
                             loading={loading}
                         >
-                            <p className="font-semibold text-blue-950 dark:text-gray-300">Schedule Details</p>
+                            <p className="font-semibold text-blue-800 dark:text-gray-300">Schedule Details</p>
                             <Textfield
                                 disabled
                                 label="Schedule Type"
@@ -471,7 +471,7 @@ const EmployeeDetailsCard = () => {
                     <Card
                         loading={loading}
                     >
-                        <p className="text-md font-semibold text-blue-950 dark:text-gray-300">Others</p>
+                        <p className="text-md font-semibold text-blue-800 dark:text-gray-300">Others</p>
                          <Textfield
                             disabled
                             label="Referred By:"
