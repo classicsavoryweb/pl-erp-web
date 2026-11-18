@@ -30,6 +30,7 @@ const AddEmployeeForm = () => {
             position_id: "",
             branch_id: "",
             home_branch_id: "",
+            email: "",
             region: "",
             date_hired: "",
             birthday: "",
@@ -44,6 +45,7 @@ const AddEmployeeForm = () => {
             // type: Yup.string().required("Type is required"),
             first_name: Yup.string().required("First name is required"),
             last_name: Yup.string().required("Last name is required"),
+            email: Yup.string().required("Email is required"),
             gender: Yup.string().required("Gender is required"),
             position_id: Yup.string().required("Position is required"),
             branch_id: Yup.string().required("Branch is required"),
@@ -153,6 +155,16 @@ const AddEmployeeForm = () => {
                         value={addEmployeeHandler.values.last_name}
                         error={addEmployeeHandler.errors.last_name}
                         isUpperCase
+                        required
+                    />
+                    <Textfield
+                        label="Email"
+                        name="email"
+                        placeholder="enter email"
+                        onChange={addEmployeeHandler.handleChange}
+                        value={addEmployeeHandler.values.email}
+                        error={addEmployeeHandler.errors.email}
+                        type="email"
                         required
                     />
                     <GenderDropDown
