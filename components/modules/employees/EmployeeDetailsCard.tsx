@@ -89,13 +89,18 @@ const EmployeeDetailsCard = () => {
                         />
                         <Textfield
                             disabled
+                            label="Employment Status"
+                            value={ employee.employee_status?.description}
+                        />
+                        <Textfield
+                            disabled
                             label="Biometric Number"
                             value={employee.biometric_number ?? ""}
                         />
                         <Textfield
                             disabled
-                            label="Date Hired"
-                            value={ moment(employee.date_hired).format("MMMM DD, YYYY") ?? "" }
+                            label="Regularization Date"
+                            value={ employee.regularization_date ? moment(employee.regularization_date).format("MMMM DD, YYYY") : "—" }
                         />
                         <Textfield
                             disabled
@@ -104,9 +109,11 @@ const EmployeeDetailsCard = () => {
                         />
                         <Textfield
                             disabled
-                            label="Regularization Date"
-                            value={ employee.regularization_date ? moment(employee.regularization_date).format("MMMM DD, YYYY") : "—" }
+                            label="Date Hired"
+                            value={ moment(employee.date_hired).format("MMMM DD, YYYY") ?? "" }
                         />
+                        
+                        
                         { employee.status === "inactive" &&
                             <>
                                 <Textfield
@@ -201,16 +208,13 @@ const EmployeeDetailsCard = () => {
                             label="Contact Number"
                             value={employee.contact_number ?? ""}
                         />
-                        <Textfield
-                            disabled
-                            label="Present Address"
-                            value={employee.address ?? ""}
-                        />
-                        <Textfield
-                            disabled
-                            label="Region"
-                            value={employee.region ?? ""}
-                        />
+                        <div className="col-span-2">
+                            <Textfield
+                                disabled
+                                label="Present Address"
+                                value={employee.address ?? ""}
+                            />
+                        </div>
                     </Grid>
                 </Card>
 
