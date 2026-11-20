@@ -134,7 +134,7 @@ const BankDetailsForm = ({
                 disabled={action === "edit"}
             /> */}
             <Textfield
-                label="Bank Number"
+                label="Savings Account Number"
                 required
                 name="bank_number"
                 value={formHandler.values.bank_number || ""}

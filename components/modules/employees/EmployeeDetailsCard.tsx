@@ -208,13 +208,16 @@ const EmployeeDetailsCard = () => {
                             label="Contact Number"
                             value={employee.contact_number ?? ""}
                         />
-                        <div className="col-span-2">
-                            <Textfield
-                                disabled
-                                label="Present Address"
-                                value={employee.address ?? ""}
-                            />
-                        </div>
+                        <Textfield
+                            disabled
+                            label="Present Address"
+                            value={employee.address ?? ""}
+                        />
+                        <Textfield
+                            disabled
+                            label="Permanent Address"
+                            value={employee.provincial_address ?? ""}
+                        />
                     </Grid>
                 </Card>
 
