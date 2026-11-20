@@ -1,6 +1,7 @@
 import Card from '@/components/common/Card';
 import Textfield from '@/components/common/Textfield';
 import { FormikProps } from 'formik';
+import moment from 'moment';
 
 interface FormInterface {
     formHandler: FormikProps<any>;
@@ -29,7 +30,7 @@ const EditDailyRates = ({
                 name="additional_daily_rate.updated_at"
                 value={
                     formHandler.values.additional_daily_rate?.updated_at
-                        ? formHandler.values.additional_daily_rate.updated_at.slice(0, 10)
+                        ?  moment(formHandler.values.additional_daily_rate.updated_at).format("MM/DD/YYYY")
                         : ""
                 }
                 placeholder="Date added"
