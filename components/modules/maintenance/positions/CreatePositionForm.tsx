@@ -31,12 +31,14 @@ const CreatePositionForm = ({
             rank: "1",
             schedule_type: "Normal Schedule",
             timekeeping_type: "Daily",
-            status: "active"
+            status: "active",
+            branch_type: ""
         },
         validateOnChange: false,
         validationSchema: Yup.object().shape({
             // station_id: Yup.string().required("Station is required."),
             description: Yup.string().required("Description is required."),
+            branch_type: Yup.string().required("Branch type is required."),
             // rank: Yup.string().required("Rank is required."),
             // status: Yup.string().required("Status is required."),
             // schedule_type: Yup.string().required("Schedule type is required."),
@@ -90,6 +92,25 @@ const CreatePositionForm = ({
                     required
                     onChange={createPositionFormHandler.handleChange}
                     error={createPositionFormHandler.errors.description}
+                />
+                <Dropdown
+                    label="Branch Type"
+                    placeholder="select branch type"
+                    name="branch_type"
+                    value={createPositionFormHandler.values.branch_type}
+                    required
+                    onChange={createPositionFormHandler.handleChange}
+                    error={createPositionFormHandler.errors.branch_type}
+                    options={[
+                        {
+                            label: "Head Office",
+                            value: "Head Office"
+                        },
+                        {
+                            label: "Branch",
+                            value: "Branch"
+                        }
+                    ]}
                 />
                 <ActiveInactiveDropDown
                     label="Status"
