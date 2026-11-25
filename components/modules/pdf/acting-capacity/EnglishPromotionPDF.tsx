@@ -127,7 +127,7 @@ const EnglishPromotionPDF = ({
                     <View
                         style={styles.section}
                     >
-                        <Text>This is to confirm your promotion as <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.recommended_position.description}</Text> effective {moment(data.acting_capacity.effectivity_date).format("MMMM DD, YYYY")}.</Text>
+                        <Text>This is to confirm your promotion as <Text style={{ textDecoration: "underline" }}>{data.acting_capacity?.recommended_position?.description}</Text> effective {moment(data.acting_capacity.effectivity_date).format("MMMM DD, YYYY")}.</Text>
                     </View>
 
                     <View
@@ -172,9 +172,9 @@ const EnglishPromotionPDF = ({
                                         textDecoration: "underline"
                                     }}
                                 >
-                                    {data.recommended_by.formal_full_name}
+                                    {data.recommended_by?.formal_full_name}
                                 </Text>
-                                <Text>{data.recommended_by.current_position.description}</Text>
+                                <Text>{data.recommended_by?.current_position?.description}</Text>
                             </View>
                         </>
                     }
@@ -187,9 +187,9 @@ const EnglishPromotionPDF = ({
                                 textDecoration: "underline"
                             }}
                         >
-                            {data.approved_by.formal_full_name}
+                            {data.approved_by?.formal_full_name}
                         </Text>
-                        <Text>{data.approved_by.current_position.description}</Text>
+                        <Text>{data.approved_by?.current_position.description}</Text>
                     </View>
                 </Page>
 
