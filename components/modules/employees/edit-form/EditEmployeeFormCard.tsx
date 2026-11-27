@@ -54,6 +54,7 @@ const EditEmployeeFormCard = () => {
             philhealth: "",
             pagibig: "",
             referred_by: "",
+            employee_referred: "",
             remarks: "",
             date_hired: "",
             regularization_date: "",

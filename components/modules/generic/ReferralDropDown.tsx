@@ -36,6 +36,10 @@ const ReferralDropDown = ({
                     value: "Absorbed"
                 },
                 {
+                    label: "Facebook Page",
+                    value: "Facebook Page"
+                },
+                {
                     label: "Flyers",
                     value: "Flyers"
                 },
@@ -46,6 +50,10 @@ const ReferralDropDown = ({
                 {
                     label: "Gmail",
                     value: "Gmail"
+                },
+                {
+                    label: "Indeed",
+                    value: "Indeed"
                 },
                 {
                     label: "Job Posting",
@@ -66,6 +74,10 @@ const ReferralDropDown = ({
                 {
                     label: "PESO",
                     value: "PESO"
+                },
+                {
+                    label: "Philjobnet",
+                    value: "Philjobnet"
                 },
                 {
                     label: "Photoline",
@@ -95,18 +107,8 @@ const ReferralDropDown = ({
                     label: "Work Abroad",
                     value: "Work Abroad"
                 },
-                {
-                    label: "Facebook Page",
-                    value: "Facebook Page"
-                },
-                {
-                    label: "Indeed",
-                    value: "Indeed"
-                },
-                {
-                    label: "Philjobnet",
-                    value: "Philjobnet"
-                },
+                
+              
             ]}
             required={required}
         />

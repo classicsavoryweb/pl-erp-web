@@ -126,6 +126,42 @@ const SummaryCards = () => {
         ]
     };
 
+    const inactiveLineGraphData = {
+        labels: [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+        ],
+        datasets: [
+        {
+            label: 'Inactive Employees',
+            data: Array.from({ length: 12 }, (_, i) => data.monthly_inactive?.[i + 1] ?? 0),
+            borderColor: 'rgb(255, 0, 0)',
+            backgroundColor: 'rgba(168, 40, 40, 0.4)',
+            pointBackgroundColor: 'rgb(247, 0, 0)',
+            pointRadius: 4,
+            tension: 0.3,
+            fill: true,
+        }
+        ]
+    };
+
+    const inactiveGraphOptions = {
+        responsive: true,
+        plugins: {
+            legend: {
+            display: false,
+            },
+        },
+        scales: {
+            y: {
+            beginAtZero: true,
+            ticks: {
+                stepSize: 10,
+            }
+            }
+        }
+    };
+
     const promotionGraphOptions = {
         responsive: true,
         plugins: {
@@ -183,13 +219,13 @@ const SummaryCards = () => {
                     loading={loading}
                 />
                 <SummaryCardCount
-                    title="Contractual Employees"
-                    displayReport={data.contractual_employees || 0}
+                    title="Inactive Employees"
+                    displayReport={data.inactive_employees || 0}
                     loading={loading}
                 />
             </Grid>
         
-            <Grid cols={3}>
+            <Grid cols={4}>
 				<Card
                     size="graph"
                     loading={loading}
@@ -220,6 +256,17 @@ const SummaryCards = () => {
                     <div className="pt-3">
                         <Line
                             data={tardyLineGraphData} options={tardyGraphOptions}
+                        />
+                    </div>
+				</Card>
+                <Card
+                    size="graph"
+                    loading={loading}
+                >
+					<p>Monthly Inactive Employees</p>
+                    <div className="pt-3">
+                        <Line
+                            data={inactiveLineGraphData} options={inactiveGraphOptions}
                         />
                     </div>
 				</Card>

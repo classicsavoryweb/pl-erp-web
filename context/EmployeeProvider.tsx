@@ -32,6 +32,8 @@ interface EmployeeContextType {
         philhealth: string,
         pagibig: string,
         referred_by: string,
+        employee_referred: string,
+        employee_referred_name: string,
         remarks: string,
         date_hired: string,
         type: string,
@@ -63,6 +65,7 @@ interface EmployeeContextType {
         regularization_date: string,
         separation_date: string,
         separation_reason: string,
+        separation_remarks: string,
         profile_picture: any;
         age: string;
         schedule: any
@@ -96,6 +99,8 @@ const EmployeeInitialValue = {
     philhealth: "",
     pagibig: "",
     referred_by: "",
+    employee_referred: "",
+    employee_referred_name: "",
     remarks: "",
     date_hired: "",
     type: "",
@@ -143,6 +148,7 @@ const EmployeeInitialValue = {
     regularization_date: "",
     separation_date: "",
     separation_reason: "",
+    separation_remarks: "",
     profile_picture: "",
     age: "",
     schedule: {}

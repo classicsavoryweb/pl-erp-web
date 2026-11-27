@@ -5,6 +5,7 @@ import ActiveInactiveDropDown from '../../generic/ActiveInactiveDropDown';
 import BranchDropDown from '../../generic/BranchDropDown';
 import Grid from '@/components/common/Grid';
 import Textfield from '@/components/common/Textfield';
+import TextArea from '@/components/common/TextArea';
 import Badge from '@/components/common/Badge';
 import { getTenure } from '@/helper/tenure';
 import { useContext, useEffect, useState } from 'react';
@@ -140,6 +141,13 @@ const EditEmploymentDetails = ({
                             name="separation_date"
                             value={formHandler.values.separation_date || ""}
                             error={formHandler.errors.separation_date?.toString() ||  ""}
+                        />
+                        <TextArea
+                            onChange={formHandler.handleChange}
+                            label='Separation Remarks'
+                            name="separation_remarks"
+                            value={formHandler.values.separation_remarks || ""}
+                            error={formHandler.errors.separation_remarks?.toString() ||  ""}
                         />
                     </>
                 }
