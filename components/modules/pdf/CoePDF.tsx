@@ -1,5 +1,5 @@
 import React from 'react';
-import { Document, Page, Text, View, PDFViewer, StyleSheet } from '@react-pdf/renderer';
+import { Document, Page, Text, View, PDFViewer, StyleSheet, Image } from '@react-pdf/renderer';
 import moment from 'moment';
 
 const styles = StyleSheet.create({
@@ -8,7 +8,7 @@ const styles = StyleSheet.create({
         height: '85vh',
     },
     page: {
-        paddingTop: 160,
+        paddingTop: 30,
         paddingLeft: 81,
         paddingRight: 81,
         paddingBottom: 40,
@@ -76,6 +76,16 @@ const styles = StyleSheet.create({
     sectiontwo: {
         marginBottom: 15,
     },
+    image: {
+        width: 150,
+    },
+    sectionCenter: {
+        flexDirection: "column",
+        justifyContent: "center",
+        alignContent: "center",
+        textAlign: "center",
+        paddingBottom: 50
+    },
     
     
 });
@@ -98,6 +108,61 @@ const CoePDF = ({
         {data.coe_format === "Normal Format" &&
          data.employment_status === "Regular" && (
             <Page size="LETTER" style={styles.page}>
+                <View
+                    style={{...styles.sectionCenter,paddingLeft:0 , marginLeft:-42}}
+                >   
+                    <View
+                        style={{
+                            flexDirection: "row",
+                            alignItems: "flex-start",
+                        }}
+                    >
+                        <Image
+                            style={styles.image}
+                            src="/images/photoline_header.png"
+                        />
+                        <View
+                            style={{
+                                flexDirection: "row",
+                                marginLeft: 8,
+                                height: 55,
+                            }}
+                        >
+                            <View
+                                style={{
+                                    width: 1,
+                                    backgroundColor: "#28669D",
+                                    marginRight: 8,
+                                }}
+                            />
+
+                            <View>
+                                <Text
+                                    style={{
+                                        fontSize: 10,
+                                        fontWeight: "bold",
+                                        color: "#28669D",
+                                    }}
+                                >
+                                    {process.env.NEXT_PUBLIC_COMPANY}
+                                </Text>
+
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+                                </Text>
+                                <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                    {process.env.NEXT_PUBLIC_COMPANY_STREET}
+                                </Text>
+                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                    {process.env.NEXT_PUBLIC_COMPANY_CITY}
+                                </Text>
+                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                    {process.env.NEXT_PUBLIC_COMPANY_CITY1}
+                                </Text> 
+                            </View>
+                        </View>
+                    </View>
+                </View>
                 <View style={styles.section}>
                     <Text style={styles.textTitle}>Certification</Text>
                 </View>
@@ -234,6 +299,29 @@ const CoePDF = ({
                 <View style={styles.signature}>
                     <Text style={{...styles.bold,borderTop: 1,}}>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY}</Text>
                     <Text style={{...styles.bold,marginTop: -5}}>{process.env.NEXT_PUBLIC_SECONDARY_HR_SIGNATORY_POSITION}</Text>
+                </View>
+                <View
+                    style={{
+                        position: "absolute",
+                        bottom: 15,
+                        left: -72,
+                     
+                        width:750,
+                        height: 20,
+                        backgroundColor: "#0066FF",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        paddingHorizontal: 30,
+                    }}
+                >
+                    <Text style={{ color: "#FFFFFF", fontSize: 11 , lineHeight: 1,}}>
+                        Telephone: {process.env.NEXT_PUBLIC_COMPANY_CONTACT} / {process.env.NEXT_PUBLIC_SECOND_COMPANY_CONTACT}
+                    </Text>
+
+                    <Text style={{ color: "#FFFFFF", fontSize: 11, lineHeight: 1, }}>
+                        Email Address: {process.env.NEXT_PUBLIC_HR_EMAIL}
+                    </Text>
                 </View>
             </Page>
          )}

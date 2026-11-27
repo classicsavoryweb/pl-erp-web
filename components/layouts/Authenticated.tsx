@@ -11,7 +11,7 @@ const Authenticated = ({ children }: { children: React.ReactNode }) => {
                 <div className="flex justify-start items-center gap-x-3">
                     <Image
                         src="/images/photoline_header.png"
-                        width={200}
+                        width={225}
                         height={100}
                         alt="photoline logo"
                         className="invert brightness-1"

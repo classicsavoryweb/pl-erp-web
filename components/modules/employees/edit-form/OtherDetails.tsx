@@ -4,6 +4,7 @@ import TextArea from '@/components/common/TextArea';
 import Textfield from '@/components/common/Textfield';
 import { FormikProps } from 'formik';
 import ReferralDropDown from '../../generic/ReferralDropDown';
+import EmployeeDropDown from '../../generic/EmployeeDropDown';
 
 interface FormInterface {
     formHandler: FormikProps<any>;
@@ -14,6 +15,7 @@ const OtherDetails = ({
     formHandler,
     loading = true,
 }: FormInterface) => {
+    const isPhotoline = formHandler.values.referred_by === "Photoline";
     return (
         <Card
             loading={loading}
@@ -21,11 +23,20 @@ const OtherDetails = ({
             <p className="text-md font-semibold text-blue-800 dark:text-blue-500">Others</p>
             <ReferralDropDown
                 onChange={formHandler.handleChange}
-                label='Referred By:'
+                label='Source of hire:'
                 name="referred_by"
                 placeholder='select referral'
                 value={formHandler.values.referred_by || ""}
             />
+            {isPhotoline && (
+                <EmployeeDropDown
+                    onChange={formHandler.handleChange}
+                    label='Referred By:'
+                    name="employee_referred"
+                    placeholder='select referral'
+                    value={formHandler.values.employee_referred || ""}
+                />
+            )}
             <TextArea
                 onChange={formHandler.handleChange}
                 label='Remarks'

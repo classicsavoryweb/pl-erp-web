@@ -15,6 +15,7 @@ import Textfield from "@/components/common/Textfield";
 import Grid from "@/components/common/Grid";
 import TextArea from "@/components/common/TextArea";
 
+
 const EmployeeDetailsCard = () => {
     const params = useParams();
     const employeeNumber = params["employee-number"];
@@ -22,6 +23,16 @@ const EmployeeDetailsCard = () => {
     const {employee, loading} = useContext(EmployeeContext);
     const [editLoading, setEditLoading] = useState(false);
     const { permissions } = useContext(AuthContext);
+    const formatID = (value: string | number | null | undefined): string => {
+        return value
+        ? String(value)
+            .replace(/\D/g, "")
+            .slice(0, 12)
+            .replace(/^(\d{2})(\d{0,9})(\d{0,1})$/, (_, a, b, c) =>
+                [a, b, c].filter(Boolean).join("-")
+            )
+        : "";
+    };
 
     return (
         <div className="flex gap-x-4">
@@ -51,9 +62,9 @@ const EmployeeDetailsCard = () => {
                                 <p className="text-md font-semibold text-gray-500 dark:text-gray-300">
                                     Tenurity: {getTenure(employee.date_hired, employee.separation_date)}
                                 </p>    
-                                {employee.regularization_date && (
+                                {employee.contracts?.some((contract) => contract.contract_number === "2nd") && (
                                     <p className="text-md font-semibold text-gray-500 dark:text-gray-300">
-                                        Regular Tenurity: {getTenure(employee.regularization_date, employee.separation_date)}
+                                        Regular Tenurity: {getTenure(employee.contracts?.reduce((latest, contract) =>contract.contract_start_date > latest? contract.contract_start_date: latest,"") || null,employee.separation_date)}
                                     </p>
                                 )}
                                 </div>
@@ -126,6 +137,14 @@ const EmployeeDetailsCard = () => {
                                     label="Separation Reason"
                                     value={employee.separation?.description ?? ""}
                                 />
+                                <div className="col-span-2">
+                                    <TextArea
+                                        disabled
+                                        label="Separation Reason"
+                                        value={employee.separation_remarks ?? ""}
+                                    />
+                                </div>
+                               
                             </>
                         }
                         {/* <Textfield
@@ -246,7 +265,7 @@ const EmployeeDetailsCard = () => {
                         <Textfield
                             disabled
                             label="Philhealth"
-                            value={employee.philhealth ?? ""}
+                            value={formatID(employee?.philhealth)}
                         />
                         {/* <Textfield
                             disabled
@@ -481,8 +500,13 @@ const EmployeeDetailsCard = () => {
                         <p className="text-md font-semibold text-blue-800 dark:text-gray-300">Others</p>
                          <Textfield
                             disabled
-                            label="Referred By:"
+                            label="Source of hire:"
                             value={employee.referred_by ?? ""}
+                        />
+                         <Textfield
+                            disabled
+                            label="Referred By:"
+                            value={employee.employee_referred_name ?? ""}
                         />
                         <TextArea
                             disabled

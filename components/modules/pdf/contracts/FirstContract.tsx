@@ -64,7 +64,7 @@ const FirstContract = ({ data }: CoeInterface) => {
                 }}
             >
                 <View
-                    style={styles.sectionCenter}
+                    style={{...styles.sectionCenter,paddingLeft:0 , marginLeft:-42}}
                 >   
                    <View
                         style={{
@@ -75,7 +75,7 @@ const FirstContract = ({ data }: CoeInterface) => {
                     >
                         <Image
                             style={styles.image}
-                            src="/images/contract-header.png"
+                            src="/images/photoline_header.png"
                         />
                         <View
                             style={{
@@ -112,6 +112,9 @@ const FirstContract = ({ data }: CoeInterface) => {
                                 <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
                                 </Text>
+                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                    {process.env.NEXT_PUBLIC_COMPANY_CITY1}
+                                </Text> 
                             </View>
                         </View>
                     </View>
@@ -136,7 +139,7 @@ const FirstContract = ({ data }: CoeInterface) => {
                 <View style={styles.section}>
                     <View style={styles.itemFlex}>
                         <Text>1</Text>
-                        <Text>Ako ay maglilingkod sa Photoline Enterprises Corporation <Text style={styles.boldedLinedText}>{data.branch}</Text> Branch bilang isang probationary employee mula <Text style={styles.boldedLinedText}>{moment(data.contract_start_date).format('MMMM DD, YYYY')}</Text> hanggang <Text style={styles.boldedLinedText}>{moment(data.contract_end_date).format('MMMM DD, YYYY')}</Text> o sa loob ng <Text style={styles.boldedLinedText}>{data.duration} Buwan</Text>.  Ang mga pamantayan ng kumpanya na dapat kong ipasa upang maging regular na empleyado ay ipinagbigay-alam sa akin sa araw na ako ay naging probationary na empleyado. Naiintindihan ko na  maaari akong matanggal ng mas maaga pa sa ating kasunduan sa kadahilanang  hindi naging maganda ang aking performance sa trabaho labag sa mga pamantayan na ipinagbigay-alam sa akin ng kumpanya o ang hindi pagsunod sa alituntunin ng kumpanya.</Text>
+                        <Text>Ako ay maglilingkod sa Photoline Enterprises Corporation <Text style={styles.boldedLinedText}>{data.branch}</Text> Branch bilang isang probationary employee mula <Text style={styles.boldedLinedText}>                       </Text> hanggang <Text style={styles.boldedLinedText}>                       </Text> o sa loob ng <Text style={styles.boldedLinedText}>                       </Text>.  Ang mga pamantayan ng kumpanya na dapat kong ipasa upang maging regular na empleyado ay ipinagbigay-alam sa akin sa araw na ako ay naging probationary na empleyado. Naiintindihan ko na  maaari akong matanggal ng mas maaga pa sa ating kasunduan sa kadahilanang  hindi naging maganda ang aking performance sa trabaho labag sa mga pamantayan na ipinagbigay-alam sa akin ng kumpanya o ang hindi pagsunod sa alituntunin ng kumpanya.</Text>
                     </View>
                     <View style={styles.itemFlex}>
                         <Text>2</Text>
@@ -184,8 +187,8 @@ const FirstContract = ({ data }: CoeInterface) => {
                 </View>
                 <View
                     style={{
-                        marginTop:30,
-                        paddingTop:50,  
+                        marginTop:15,
+                        paddingTop:30,  
                         display: "flex",
                         justifyContent: "space-between",
                         flexDirection: "row"
@@ -241,6 +244,29 @@ const FirstContract = ({ data }: CoeInterface) => {
                         Pangalan at Lagda
                     </Text>
                 </View>
+                <View
+                    style={{
+                        position: "absolute",
+                        bottom: 15,
+                        left: -72,
+                        
+                        width:750,
+                        height: 20,
+                        backgroundColor: "#0066FF",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        paddingHorizontal: 30,
+                    }}
+                >
+                    <Text style={{ color: "#FFFFFF", fontSize: 11 , lineHeight: 1,}}>
+                        Telephone: {process.env.NEXT_PUBLIC_COMPANY_CONTACT} / {process.env.NEXT_PUBLIC_SECOND_COMPANY_CONTACT}
+                    </Text>
+
+                    <Text style={{ color: "#FFFFFF", fontSize: 11, lineHeight: 1, }}>
+                        Email Address: {process.env.NEXT_PUBLIC_HR_EMAIL}
+                    </Text>
+                </View>
             </Page>
            <Page
                 size={[612, 700]}
@@ -250,7 +276,7 @@ const FirstContract = ({ data }: CoeInterface) => {
                 }}
             >
                <View
-                    style={styles.sectionCenter}
+                    style={{...styles.sectionCenter,paddingLeft:0 , marginLeft:-42}}
                 >   
                    <View
                         style={{
@@ -261,7 +287,7 @@ const FirstContract = ({ data }: CoeInterface) => {
                     >
                         <Image
                             style={styles.image}
-                            src="/images/contract-header.png"
+                            src="/images/photoline_header.png"
                         />
                         <View
                             style={{
@@ -297,6 +323,9 @@ const FirstContract = ({ data }: CoeInterface) => {
                                 <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
                                 </Text>
+                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                    {process.env.NEXT_PUBLIC_COMPANY_CITY1}
+                                </Text> 
                             </View>
                         </View>
                     </View>
@@ -321,7 +350,7 @@ const FirstContract = ({ data }: CoeInterface) => {
                 <View style={styles.section}>
                     <View style={styles.itemFlex}>
                         <Text>1</Text>
-                        <Text>Ako ay kusang loob na pumayag na maging Probationary Employee ng Photoline Enterprises Corporation sa loob ng <Text style={styles.boldedLinedText}>{data.duration} Buwan</Text>.</Text>
+                        <Text>Ako ay kusang loob na pumayag na maging Probationary Employee ng Photoline Enterprises Corporation sa loob ng <Text style={styles.boldedLinedText}>                           </Text>.</Text>
                     </View>
                     <View style={styles.itemFlex}>
                         <Text>2</Text>
@@ -411,6 +440,29 @@ const FirstContract = ({ data }: CoeInterface) => {
                         Pangalan at Lagda
                     </Text>
                 </View>
+                <View
+                    style={{
+                        position: "absolute",
+                        bottom: 15,
+                        left: -72,
+                        
+                        width:750,
+                        height: 20,
+                        backgroundColor: "#0066FF",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        paddingHorizontal: 30,
+                    }}
+                >
+                    <Text style={{ color: "#FFFFFF", fontSize: 11 , lineHeight: 1,}}>
+                        Telephone: {process.env.NEXT_PUBLIC_COMPANY_CONTACT} / {process.env.NEXT_PUBLIC_SECOND_COMPANY_CONTACT}
+                    </Text>
+
+                    <Text style={{ color: "#FFFFFF", fontSize: 11, lineHeight: 1, }}>
+                        Email Address: {process.env.NEXT_PUBLIC_HR_EMAIL}
+                    </Text>
+                </View>
             </Page>
             <Page
                 size={[612, 700]}
@@ -420,7 +472,7 @@ const FirstContract = ({ data }: CoeInterface) => {
                 }}
             >
                 <View
-                    style={styles.sectionCenter}
+                    style={{...styles.sectionCenter,paddingLeft:0 , marginLeft:-42}}
                 >   
                    <View
                         style={{
@@ -431,7 +483,7 @@ const FirstContract = ({ data }: CoeInterface) => {
                     >
                         <Image
                             style={styles.image}
-                            src="/images/contract-header.png"
+                            src="/images/photoline_header.png"
                         />
                         <View
                             style={{
@@ -468,6 +520,9 @@ const FirstContract = ({ data }: CoeInterface) => {
                                 <Text style={{ fontSize: 8, color: "#28669D" }}>
                                     {process.env.NEXT_PUBLIC_COMPANY_CITY}
                                 </Text>
+                                <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                    {process.env.NEXT_PUBLIC_COMPANY_CITY1}
+                                </Text> 
                             </View>
                         </View>
                     </View>
@@ -605,6 +660,29 @@ const FirstContract = ({ data }: CoeInterface) => {
                         }}
                     >
                         Pangalan at Lagda
+                    </Text>
+                </View>
+                 <View
+                    style={{
+                        position: "absolute",
+                        bottom: 15,
+                        left: -72,
+                        
+                        width:750,
+                        height: 20,
+                        backgroundColor: "#0066FF",
+                        flexDirection: "row",
+                        alignItems: "center",
+                        justifyContent: "space-around",
+                        paddingHorizontal: 30,
+                    }}
+                >
+                    <Text style={{ color: "#FFFFFF", fontSize: 11 , lineHeight: 1,}}>
+                        Telephone: {process.env.NEXT_PUBLIC_COMPANY_CONTACT} / {process.env.NEXT_PUBLIC_SECOND_COMPANY_CONTACT}
+                    </Text>
+
+                    <Text style={{ color: "#FFFFFF", fontSize: 11, lineHeight: 1, }}>
+                        Email Address: {process.env.NEXT_PUBLIC_HR_EMAIL}
                     </Text>
                 </View>
             </Page>

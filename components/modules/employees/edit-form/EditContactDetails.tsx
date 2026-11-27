@@ -52,14 +52,14 @@ const EditContactDetails = ({
                 placeholder='enter present address'
                 required
             />
-            {/* <TextArea
+            <TextArea
                 onChange={formHandler.handleChange}
                 label='Permanent Address'
                 name="provincial_address"
                 placeholder='enter permanent address'
                 value={formHandler.values.provincial_address || ""}
                 required
-            /> */}
+            />
         </Card>
     );
 };
