@@ -103,7 +103,6 @@ interface CoeInterface {
     data: any;
 }
 const ExtensionContract = ({ data }: CoeInterface) => { 
-    console.log(data);
     return (
     <PDFViewer style={styles.fullPage}>
         <Document>

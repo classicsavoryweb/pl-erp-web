@@ -31,11 +31,11 @@ const OffenseActionDropDown = ({
             value={value}
             options={[
                 {
-                    label: "AO for Email",
+                    label: "AO for Email/Viber/Messenger",
                     value: "AO for Email"
                 },
                 {
-                    label: "Short Memo for Email",
+                    label: "Short Memo for Email/Viber/Messenger",
                     value: "Short Memo for Email"
                 },
                 {
@@ -47,7 +47,7 @@ const OffenseActionDropDown = ({
                     value: "Signed AO for Suspension"
                 },
                 {
-                    label: "DA for Email",
+                    label: "DA for Email/Viber/Messenger",
                     value: "Male"
                 },
                 {

@@ -23,7 +23,7 @@ const OtherDetails = ({
             <p className="text-md font-semibold text-blue-800 dark:text-blue-500">Others</p>
             <ReferralDropDown
                 onChange={formHandler.handleChange}
-                label='Source of hire:'
+                label='Source From:'
                 name="referred_by"
                 placeholder='select referral'
                 value={formHandler.values.referred_by || ""}

@@ -500,7 +500,7 @@ const EmployeeDetailsCard = () => {
                         <p className="text-md font-semibold text-blue-800 dark:text-gray-300">Others</p>
                          <Textfield
                             disabled
-                            label="Source of hire:"
+                            label="Source From:"
                             value={employee.referred_by ?? ""}
                         />
                          <Textfield

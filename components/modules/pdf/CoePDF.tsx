@@ -100,7 +100,6 @@ interface CoeInterface {
 const CoePDF = ({
     data
 }: CoeInterface) => {
-        console.log("COE PDF DATA:", data);
         return(
     <PDFViewer style={styles.fullPage}>
         <Document>

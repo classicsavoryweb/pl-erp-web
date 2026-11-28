@@ -126,33 +126,47 @@ const EditEmployeeFormCard = () => {
                     : schema.notRequired()
             ),
         }),
-        onSubmit:async (values, {setSubmitting}) => {
-            if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE",employee.employee_number, 0)) {
-                return;
-            }
-            const isConfirmed = await confirm({
-            title: "Edit Employee Details",
-                message: "Are you sure you want to save changes?"
-            });
+        onSubmit: async (values, { setSubmitting }) => {
+        if (!canEditRestrictedRecords(permissions, "EMPLOYEES", "EMPLOYEE", employee.employee_number, 0)) {
+            return;
+        }
+        if (
+            values.separation_date &&
+            values.date_hired &&
+            new Date(values.separation_date) < new Date(values.date_hired)
+        ) {
+            toast.error("Separation date cannot be earlier than date hired.");
+            return;
+        }
 
-            if (isConfirmed) {
-                setSubmitting(true);
-                updateEmployee(employee.employee_number, values)
+        const isConfirmed = await confirm({
+            title: "Edit Employee Details",
+            message: "Are you sure you want to save changes?"
+        });
+
+        if (isConfirmed) {
+            setSubmitting(true);
+
+            updateEmployee(employee.employee_number, values)
                 .then((resp) => {
                     if (!resp.error) {
                         triggerReload();
                         router.push(`/employees/${employee.employee_number}`);
-                        toast.success("Employee record updated successfully.")
+                        toast.success("Employee record updated successfully.");
                     } else {
                         toast.error(resp.data.message);
                     }
-                }).catch((err) => {
-                    toast.error("Error encountered")
-                }).finally(() => {
+                })
+                .catch((err) => {
+                    toast.error(
+                        err.response?.data?.message || "Error encountered"
+                    );
+                })
+                .finally(() => {
                     setSubmitting(false);
                 });
-            }
         }
+    }
     });
 
     useEffect(() => {
