@@ -80,8 +80,8 @@ const ReferralDropDown = ({
                     value: "Philjobnet"
                 },
                 {
-                    label: "Photoline",
-                    value: "Photoline"
+                    label: "Photoline Employee",
+                    value: "Photoline Employee"
                 },
                 {
                     label: "Radio Ads",

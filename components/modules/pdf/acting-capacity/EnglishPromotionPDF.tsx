@@ -64,22 +64,64 @@ const EnglishPromotionPDF = ({
         <PDFViewer style={styles.fullPage}>
             <Document>
                 <Page size="LETTER" style={styles.page}>
-                    <View
-                        style={styles.sectionCenter}
+                     <View
+                        style={{...styles.sectionCenter,paddingLeft:0 , marginLeft:-35}}
                     >   
                         <View
                             style={{
-                                paddingTop: 10,
                                 flexDirection: "row",
-                                justifyContent: "center"
+                                paddingTop: 20,
+                                alignItems: "flex-start",
                             }}
                         >
                             <Image
                                 style={styles.image}
-                                src={"/images/contract-header.png"}
+                                src="/images/photoline_header.png"
                             />
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    marginLeft: 8,
+                                    height: 55,
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        width: 1,
+                                        backgroundColor: "#28669D",
+                                        marginRight: 8,
+                                    }}
+                                />
+    
+                                <View>
+                                    <Text
+                                        style={{
+                                            fontSize: 10,
+                                            fontWeight: "bold",
+                                            color: "#28669D",
+                                        }}
+                                    >
+                                        {process.env.NEXT_PUBLIC_COMPANY}
+                                    </Text>
+    
+                                    <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                        {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+                                    </Text>
+                                    <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                        {process.env.NEXT_PUBLIC_COMPANY_STREET}
+                                    </Text>
+                                    <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                        {process.env.NEXT_PUBLIC_COMPANY_CITY}
+                                    </Text>
+                                    <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                        {process.env.NEXT_PUBLIC_COMPANY_CITY1}
+                                    </Text> 
+                                </View>
+                            </View>
                         </View>
-                        <Text style={{
+                    </View>
+                    <View style={styles.sectionCenter}>
+                         <Text style={{
                                 ...styles.bold,
                                 marginTop: 15,
                                 textDecoration: "underline",
@@ -88,8 +130,8 @@ const EnglishPromotionPDF = ({
                         >
                             PROMOTION CONFIRMATION FORM
                         </Text>
+
                     </View>
-                    
                     <View
                         style={{
                             paddingVertical: 30,
@@ -191,27 +233,91 @@ const EnglishPromotionPDF = ({
                         </Text>
                         <Text>{data.approved_by?.current_position.description}</Text>
                     </View>
+                     <View
+                        style={{
+                            position: "absolute",
+                            bottom: 15,
+                            left: -72,
+                            
+                            width:750,
+                            height: 20,
+                            backgroundColor: "#0066FF",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                            paddingHorizontal: 30,
+                        }}
+                    >
+                        <Text style={{ color: "#FFFFFF", fontSize: 11 , lineHeight: 1,}}>
+                            Telephone: {process.env.NEXT_PUBLIC_COMPANY_CONTACT} / {process.env.NEXT_PUBLIC_SECOND_COMPANY_CONTACT}
+                        </Text>
+    
+                        <Text style={{ color: "#FFFFFF", fontSize: 11, lineHeight: 1, }}>
+                            Email Address: {process.env.NEXT_PUBLIC_HR_EMAIL}
+                        </Text>
+                    </View>
                 </Page>
 
                 <Page size={[612, 936]} style={styles.page}>
                     <View
-                        style={styles.sectionCenter}
+                        style={{...styles.sectionCenter,paddingLeft:0 , marginLeft:-35}}
                     >   
                         <View
                             style={{
-                                paddingTop: 10,
                                 flexDirection: "row",
-                                justifyContent: "center"
+                                paddingTop: 20,
+                                alignItems: "flex-start",
                             }}
                         >
                             <Image
                                 style={styles.image}
-                                src={"/images/contract-header.png"}
+                                src="/images/photoline_header.png"
                             />
+                            <View
+                                style={{
+                                    flexDirection: "row",
+                                    marginLeft: 8,
+                                    height: 55,
+                                }}
+                            >
+                                <View
+                                    style={{
+                                        width: 1,
+                                        backgroundColor: "#28669D",
+                                        marginRight: 8,
+                                    }}
+                                />
+    
+                                <View>
+                                    <Text
+                                        style={{
+                                            fontSize: 10,
+                                            fontWeight: "bold",
+                                            color: "#28669D",
+                                        }}
+                                    >
+                                        {process.env.NEXT_PUBLIC_COMPANY}
+                                    </Text>
+    
+                                    <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                        {process.env.NEXT_PUBLIC_COMPANY_ADDRESS}
+                                    </Text>
+                                    <Text style={{ fontSize: 9, color: "#28669D" }}>
+                                        {process.env.NEXT_PUBLIC_COMPANY_STREET}
+                                    </Text>
+                                    <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                        {process.env.NEXT_PUBLIC_COMPANY_CITY}
+                                    </Text>
+                                    <Text style={{ fontSize: 8, color: "#28669D" }}>
+                                        {process.env.NEXT_PUBLIC_COMPANY_CITY1}
+                                    </Text> 
+                                </View>
+                            </View>
                         </View>
+                    </View>
+                    <View style={styles.sectionCenter}>
                         <Text style={{
                                 ...styles.bold,
-                                marginTop: 15,
                                 textDecoration: "underline",
                                 fontSize: 11
                             }}
@@ -305,155 +411,27 @@ const EnglishPromotionPDF = ({
                         <Text>Name & Signature of Employee: <Text style={{ textDecoration: "underline" }}>{data.acting_capacity.employee.proper_full_name}</Text></Text>
                         <Text>Date:</Text>
                     </View>
-                </Page>
-                <Page
-                    size={[612, 700]}
-                    style={{
-                        ...styles.page,
-                        lineHeight: 1.15,
-                    }}
-                >
-                    <View
-                        style={styles.sectionCenter}
-                    >   
-                        <View
-                            style={{
-                                paddingTop: 10,
-                                flexDirection: "row",
-                                justifyContent: "center"
-                            }}
-                        >
-                            <Image
-                                style={styles.image}
-                                src={"/images/contract-header.png"}
-                            />
-                        </View>
-                        <Text style={{
-                                ...styles.bold,
-                                marginTop: 15,
-                                textDecoration: "underline",
-                                fontSize: 11
-                            }}
-                        >
-                            SERVICE BOND AGREEMENT FOR MANAGEMENT TEAM EMPLOYEES
-                        </Text>
-                    </View>
-                    
-                    <View style={{...styles.section}}>
-                            <Text
-                            style={{...styles.boldedLinedText,
-                                    paddingTop:15,
-                                }}
-                        >
-                            Karagdagang Kasunduan sa Employment Contract
-                        </Text>
-                    </View>
-                   <View style={{ flexDirection: 'column',paddingTop:10 }}>
-                        <View style={{...styles.section, flexDirection: 'row', paddingBottom: 20}}>
-                            <Text style={{width: 100}}>Petsa:</Text>
-                            <Text>{moment().format('MMMM DD, YYYY')}</Text>
-                        </View>
-                    </View>
-                    <View style={styles.section}>
-                        <View style={{paddingBottom: 10}}>
-                            <Text >Ito ay karagdagang kasunduan sa pagitan nina:</Text>
-                        </View>
-                    </View>
-                    <View style={{ flexDirection: 'column' }}>
-                        <View style={{...styles.section, flexDirection: 'row', paddingBottom: 20}}>
-                            <Text style={{width: 100}}>Employer:</Text>
-                            <Text>{process.env.NEXT_PUBLIC_COMPANY}</Text>
-                        </View>
-                        <View style={{...styles.section, flexDirection: 'row', paddingBottom: 20}}>
-                            <Text style={{width: 100}}>Empleyado:</Text>
-                            <Text>{data.acting_capacity.employee.proper_full_name}</Text>
-                        </View>
-                    </View>
-                    <View
-                        style={styles.section}
-                    >
-                        <Text
-                            style={{
-                                paddingBottom: 10
-                            }}
-                            
-                        >Kung ang Empleyado ay magbitiw o umalis sa trabaho bago ang itinakdang pagtatapos ng kontrata nang walang sapat na dahilan o hindi alinsunod sa Labor Code, siya ay sumasang-ayon na magbayad ng Bond Amount na nagkakahalaga ng <Text>{convertToPesosAndCentavos(Number(data.acting_capacity.bond_amount))} (Php {Number(data.acting_capacity.bond_amount).toFixed(2)})</Text> bilang danyos sa Employer.</Text>
-                    </View>
-                        <View
-                        style={styles.section}
-                    >
-                        <Text
-                            style={{
-                                paddingBottom: 10
-                            }}
-                            
-                        >Inaatasan ng empleyado ang employer na ibawas sa huling sahod at anumang benepisyo ang nasabing company bond amount ng wala ng pangangailangan ng demand letter o anumang pagdedemanda.</Text>
-                    </View>
-                    <View
-                        style={styles.section}
-                    >
-                        <Text
-                            style={{
-                                paddingBottom: 10,
-                                paddingTop:35,
-                            }}
-                            
-                        >Pinagtibay at Nilagdaan ng mga Panig:
-                        </Text>
-                    </View>
                     <View
                         style={{
-                            marginTop:45,
-                            paddingTop:30,  
-                            display: "flex",
-                            justifyContent: "space-between",
-                            flexDirection: "row"
+                            position: "absolute",
+                            bottom: 15,
+                            left: -72,
+                            
+                            width:750,
+                            height: 20,
+                            backgroundColor: "#0066FF",
+                            flexDirection: "row",
+                            alignItems: "center",
+                            justifyContent: "space-around",
+                            paddingHorizontal: 30,
                         }}
                     >
-                        <Text
-                            style={{
-                                width: 200,
-                                borderBottom: 1,
-                                paddingBottom: 1,
-                                textAlign: "center"
-                            }}
-                        >
-                            {process.env.NEXT_PUBLIC_HR_SIGNATORY?.toUpperCase()} 
+                        <Text style={{ color: "#FFFFFF", fontSize: 11 , lineHeight: 1,}}>
+                            Telephone: {process.env.NEXT_PUBLIC_COMPANY_CONTACT} / {process.env.NEXT_PUBLIC_SECOND_COMPANY_CONTACT}
                         </Text>
-                            <Text
-                            style={{
-                                width: 200,
-                                borderBottom: 1,
-                                paddingBottom: 1,
-                                textAlign: "center"
-                            }}
-                        >
-                            {String(data.acting_capacity.employee.proper_full_name).toUpperCase()}
-                        </Text>
-                    </View>
     
-                    <View
-                        style={{
-                            display: "flex",
-                            justifyContent: "space-between",
-                            flexDirection: "row"
-                        }}
-                    >
-                        <Text
-                            style={{
-                                width: 200,
-                                textAlign: "center"
-                            }}
-                        >
-                            Director of Operations
-                        </Text>
-                        <Text
-                            style={{
-                                width: 200,
-                                textAlign: "center"
-                            }}
-                        >
-                            Pangalan at Lagda
+                        <Text style={{ color: "#FFFFFF", fontSize: 11, lineHeight: 1, }}>
+                            Email Address: {process.env.NEXT_PUBLIC_HR_EMAIL}
                         </Text>
                     </View>
                 </Page>

@@ -268,14 +268,11 @@ export const addEmployeeOffense = async ( employeeNumber: string, payload: {}) =
     return resData;
 };
 
-export const updateEmployeeOffense = async ( employeeNumber: string, payload: {}) => {
+export const updateEmployeeOffense = async (employeeNumber: string,payload: FormData) => {
     const resData = await axiosHelper({
         func_path: `/edit-employee-offense/${employeeNumber}`,
         method: 'POST',
         payload: payload,
-        additionalHeaders: {
-            "Content-Type": "multipart/form-data"
-        }
     });
 
     return resData;

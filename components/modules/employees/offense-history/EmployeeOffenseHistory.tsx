@@ -160,12 +160,16 @@ const EmployeeOffenseHistory = () => {
                     suspension_dates : data.suspension_dates,
                     date_served_da : data.date_served_da,
                     remarks : data.remarks,
-                    attachment : data.attachment,
-                    attachment_file_name : data.attachment_file_name,
-                    attached_file: data.attached_file,
+                    attachments : data.attachments || [],
                     voided: data.voided,
                     void_reason: data.void_reason,
                     tardiness_id: data.tardiness_id,
+                    remarks_one: data.remarks_one,
+                    sanction_id_two: data.sanction_id_two,
+                    sanction_id_three: data.sanction_id_three,
+                    date_memo_three: data.date_memo_three,
+                    remarks_two: data.remarks_two,
+                    remarks_three: data.remarks_three
                 });
                 modal.onOpen();
             }
